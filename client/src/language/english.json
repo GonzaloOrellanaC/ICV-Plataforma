@@ -1,0 +1,9 @@
+{
+    "login": {
+        "emailField": "E-mail",
+        "passwordField": "Password",
+        "loginButton": "Login",
+        "forgotPasswordText": "Forgot password.",
+        "forgotPasswordLink": "Click here."
+    }
+}

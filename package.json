@@ -1,0 +1,20 @@
+{
+    "name": "boilerplate",
+    "version": "1.0.0",
+    "description": "Fullstack boilerplate kauel",
+    "main": "index.js",
+    "scripts": {
+        "server": "npm run start-dev --prefix server",
+        "client": "npm run start --prefix client",
+        "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+        "install:server": "cd server && npm install",
+        "install:client": "cd client && npm install",
+        "postinstall": "npm run install:server && npm run install:client"
+    },
+    "author": "Javier Romero <javier.romero@kauel.com>",
+    "license": "ISC",
+    "devDependencies": {
+        "concurrently": "^6.2.0"
+    },
+    "dependencies": {}
+}
