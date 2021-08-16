@@ -1,9 +1,9 @@
 /* Material UI */
-import { createTheme } from '@material-ui/core'
+import { createTheme, makeStyles } from '@material-ui/core'
 import { esES } from '@material-ui/core/locale'
 import backgroundimg from '../assets/backgroundimg.webp'
 
-const theme = createTheme({
+export const theme = createTheme({
     palette: {
         background: {
             default: '#000'
@@ -22,7 +22,19 @@ const theme = createTheme({
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
                     backgroundPositionX: 'center',
-                    backgroundPositionY: 'center'
+                    backgroundPositionY: 'center',
+                    backgroundAttachment: 'fixed',
+                    '& ::-webkit-scrollbar': {
+                        width: '0.4em'
+                    },
+                    '& ::-webkit-scrollbar-track': {
+                        boxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+                        webkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)'
+                    },
+                    '& ::-webkit-scrollbar-thumb': {
+                        borderRadius: 10,
+                        backgroundColor: 'rgb(160,160,160)'
+                    }
                 }
             }
         },
@@ -34,9 +46,13 @@ const theme = createTheme({
                 padding: 10
             }
         },
+        MuiInputLabel: {
+            outlined: {
+                transform: 'translate(14px, 12px) scale(1)'
+            }
+        },
         MuiButton: {
             root: {
-                borderRadius: 20,
                 paddingLeft: 30,
                 paddingRight: 30
             }
@@ -44,4 +60,27 @@ const theme = createTheme({
     }
 }, esES)
 
-export default theme
+export const useStylesTheme = makeStyles(theme => ({
+    pageRoot: {
+        height: '100%'
+    },
+    pageContainer: {
+        height: '100%',
+        maxHeight: 'calc(100vh - 90px)',
+        [theme.breakpoints.down('sm')]: {
+            padding: 10
+        }
+    },
+    pageCard: {
+        marginLeft: 48,
+        height: '100%',
+        backgroundColor: 'rgba(255,255,255, 0.8)',
+        borderRadius: 0,
+        boxShadow: 'none',
+        padding: 20,
+        overflowY: 'auto'
+    },
+    noNavBarMargin: {
+        marginLeft: 0
+    }
+}))

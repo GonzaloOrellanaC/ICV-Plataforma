@@ -5,6 +5,9 @@ export default {
                 credentialsRequired: 'Requires both email and password',
                 informationMissing: 'Missing information, requires both email and password',
                 missingEmail: 'Requires email address'
+            },
+            success: {
+                login: 'Logged in successfully'
             }
         },
         graphql: {

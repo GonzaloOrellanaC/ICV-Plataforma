@@ -1,7 +1,7 @@
 import { environment } from '../config'
 import { EmailServices, UserServices } from '../services'
 
-const { error: errorMsg } = environment.messages.controller.auth
+const { error: errorMsg, success: successMsg } = environment.messages.controller.auth
 
 const login = async (req, res, next) => {
     const { body: { user } } = req
@@ -17,14 +17,7 @@ const login = async (req, res, next) => {
             ...(environment.env === 'production' && { secure: true }),
             ...(environment.env === 'production' && { sameSite: 'strict' })
         })
-        return res.status(200).json({
-            userInfo: {
-                name: authenticatedUser.name,
-                lastName: authenticatedUser.lastName,
-                fullName: authenticatedUser.fullName,
-                email: authenticatedUser.email
-            }
-        })
+        return res.status(200).end(successMsg.login)
     } catch (error) {
         console.error(error.message)
         return res.status(401).end(error.message)
@@ -40,7 +33,7 @@ const register = async (req, res, next) => {
 
     try {
         const registerUser = await UserServices.createUser(userData, password)
-        return res.status(200).json({ user: registerUser.toAuthJSON() })
+        return res.status(200).json({ user: registerUser.generateJWT() })
     } catch (error) {
         return res.status(400).end(error.message)
     }

@@ -1,13 +1,21 @@
 import React, { useState } from 'react'
 
-import { Button, Grid, Link, TextField } from '@material-ui/core'
+import { Button, Grid, Link, makeStyles, TextField } from '@material-ui/core'
 import { useAuth, useLanguage } from '../../context'
+
+const useStyles = makeStyles(theme => ({
+    button: {
+        borderRadius: 20
+    }
+}))
 
 const Login = () => {
     const { dictionary } = useLanguage()
     const { login } = useAuth()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
+    const classes = useStyles()
 
     const handleChange = (event) => {
         switch (event?.target?.name) {
@@ -48,7 +56,7 @@ const Login = () => {
                         />
                     </Grid>
                     <Grid item xs={12} container justifyContent='center'>
-                        <Button type='submit' variant='contained' color='primary'>
+                        <Button className={classes.button} type='submit' variant='contained' color='primary'>
                             {dictionary.login.loginButton}
                         </Button>
                     </Grid>

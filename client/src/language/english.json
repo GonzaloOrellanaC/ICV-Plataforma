@@ -5,5 +5,11 @@
         "loginButton": "Login",
         "forgotPasswordText": "Forgot password.",
         "forgotPasswordLink": "Click here."
+    },
+    "welcome": {
+        "inspectionButton": "Inspection",
+        "maintenanceButton": "Maintenance",
+        "reportsButton": "Reports",
+        "configurationButton": "Configuration"
     }
 }

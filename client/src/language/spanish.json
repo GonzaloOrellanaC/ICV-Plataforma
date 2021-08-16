@@ -5,5 +5,11 @@
         "loginButton": "Entrar",
         "forgotPasswordText": "Olvidé mi contraseña.",
         "forgotPasswordLink": "Click aquí."
+    },
+    "welcome": {
+        "inspectionButton": "Inspección",
+        "maintenanceButton": "Mantención",
+        "reportsButton": "Reportes",
+        "configurationButton": "Configuración"
     }
 }

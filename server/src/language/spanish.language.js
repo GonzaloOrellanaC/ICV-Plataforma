@@ -5,6 +5,9 @@ export default {
                 credentialsRequired: 'Requiere ingresar tanto email como contraseña',
                 informationMissing: 'Información faltante, requiere tanto email como contraseña',
                 missingEmail: 'Requiere ingresar email'
+            },
+            success: {
+                login: 'Conectado con éxito'
             }
         },
         graphql: {

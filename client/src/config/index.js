@@ -1,5 +1,6 @@
-import theme from './theme.config'
+import { theme, useStylesTheme } from './theme.config'
 
 export {
-    theme
+    theme,
+    useStylesTheme
 }

@@ -38,7 +38,7 @@ const deleteUser = async (userId) => {
 
 const authenticateUser = (req, res, next) => {
     return new Promise((resolve, reject) => {
-        passport.authenticate('local', { session: false }, (err, passportUser, info) => {
+        passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
             if (err) {
                 reject(new Error(errorMsg.unauthorized))
             }
@@ -46,7 +46,6 @@ const authenticateUser = (req, res, next) => {
                 if (!passportUser.enabled) {
                     reject(new Error(errorMsg.userDisabled))
                 }
-
                 resolve(passportUser)
             }
             reject(new Error(errorMsg.badCredentials))
