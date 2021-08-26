@@ -1,14 +1,17 @@
 import React, { } from 'react'
-import { Divider, Drawer, Grid, IconButton, InputAdornment, List, ListItem, ListItemIcon, ListItemText, makeStyles, TextField } from '@material-ui/core'
+import { Link } from 'react-router-dom'
+
+import { Divider, Drawer, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles } from '@material-ui/core'
 import { PlayArrow } from '@material-ui/icons'
+
 import clsx from 'clsx'
 
 import logo from '../../assets/logo.webp'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserCircle as farUserCircle } from '@fortawesome/free-regular-svg-icons'
-import { faClipboard, faCog, faHome, faInfoCircle, faSearch, faSignOutAlt, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faClipboard, faCog, faHome, faInfoCircle, faSignOutAlt, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { useAuth, useNavigation } from '../../context'
-import { Link } from 'react-router-dom'
+import { FilterField } from '../../components/fields'
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -45,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     drawerBottom: {
         position: 'absolute',
         backgroundColor: 'rgb(228, 228, 228)',
-        height: 70,
+        minHeight: 70,
         width: '100%',
         display: 'flex',
         alignItems: 'center',
@@ -64,10 +67,7 @@ const useStyles = makeStyles(theme => ({
         '& .MuiFormLabel-root': {
             color: 'white'
         },
-        '& .MuiOutlinedInput-notchedOutline .MuiOutlinedInput-root': {
-            borderColor: 'white'
-        },
-        '& :hover .MuiOutlinedInput-notchedOutline': {
+        '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
             borderColor: 'white!important'
         },
         '& .fa-search': {
@@ -114,7 +114,9 @@ const Navbar = () => {
                         (
                             <div style={{ overflowY: 'auto', width: '100%', maxHeight: 'calc(100vh - 224px)' }}>
                                 <Grid item xs={12} container justifyContent='center'>
-                                    <img src={logo} width='100%' style={{ maxWidth: 200 }}/>
+                                    <Link to='/'>
+                                        <img src={logo} width='100%' style={{ maxWidth: 200 }}/>
+                                    </Link>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <List>
@@ -134,7 +136,7 @@ const Navbar = () => {
                                             <Divider className={classes.divider} light/>
                                         </ListItem>
                                         <ListItem>
-                                            <TextField
+                                            {/* <TextField
                                                 className={classes.searchField}
                                                 type='text'
                                                 name='searchFilter'
@@ -146,7 +148,8 @@ const Navbar = () => {
                                                         <FontAwesomeIcon icon={faSearch}/>
                                                     </InputAdornment>
                                                 }}
-                                            />
+                                            /> */}
+                                            <FilterField lightVariant fullWidth/>
                                         </ListItem>
                                     </List>
                                 </Grid>
@@ -159,11 +162,9 @@ const Navbar = () => {
                         navBarOpen &&
                         <Grid container justifyContent='center' alignItems='center' spacing={1}>
                             <Grid item>
-                                <Link to='/'>
-                                    <IconButton className={classes.bottomButtons}>
-                                        <FontAwesomeIcon icon={faHome}/>
-                                    </IconButton>
-                                </Link>
+                                <IconButton component={Link} to='/' onClick={handleNavBar} className={classes.bottomButtons}>
+                                    <FontAwesomeIcon icon={faHome}/>
+                                </IconButton>
                             </Grid>
                             <Grid item>
                                 <IconButton className={classes.bottomButtons}>

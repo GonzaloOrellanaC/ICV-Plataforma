@@ -3,7 +3,8 @@ import { dictionaryList, languageOptions } from '../language'
 
 const LanguageContext = createContext({
     userLanguage: 'es',
-    dictionary: dictionaryList.es
+    dictionary: dictionaryList.es,
+    languageOptions
 })
 
 export const LanguageProvider = (props) => {
@@ -13,6 +14,7 @@ export const LanguageProvider = (props) => {
     const provider = {
         userLanguage,
         dictionary: dictionaryList[userLanguage],
+        languageOptions,
         userLanguageChange: (selected) => {
             const newLanguage = languageOptions[selected] ? selected : 'es'
             setUserLanguage(newLanguage)

@@ -9,7 +9,7 @@ import { checkAuth } from '../middleware'
 
 const router = new Router()
 
-router.post('/login', checkAuth.optional, AuthController.login)
+router.post('/login', AuthController.login)
 router.post('/register', checkAuth.optional, AuthController.register)
 router.post('/forgotpassword', checkAuth.optional, AuthController.forgotPassword)
 router.post('/resetpassword/:token', checkAuth.reset, AuthController.resetPassword)

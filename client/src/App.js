@@ -8,13 +8,13 @@ import { onError } from '@apollo/client/link/error'
 import { createUploadLink } from 'apollo-upload-client'
 
 /* Material UI */
-import { Box, CssBaseline, ThemeProvider } from '@material-ui/core'
-import { theme } from './config'
+import { Backdrop, Box, CssBaseline, ThemeProvider } from '@material-ui/core'
+import { theme, useStylesTheme } from './config'
 
 import './App.css'
-import { AuthProvider, LanguageProvider, NavigationProvider, useAuth } from './context'
+import { AuthProvider, LanguageProvider, NavigationProvider, useAuth, useNavigation } from './context'
 import { Header, Navbar } from './containers'
-import { InspectionPage, LoadingPage, LoginPage, WelcomePage } from './pages'
+import { AppliancePage, LoadingPage, LoginPage, MachinesPage, WelcomePage } from './pages'
 
 /* GraphQL Configuration */
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
@@ -41,6 +41,8 @@ const client = new ApolloClient({
 
 const OnApp = () => {
     const { isAuthenticated, loading } = useAuth()
+    const { navBarOpen, handleNavBar } = useNavigation()
+    const classes = useStylesTheme()
 
     return (
         <Box height='100vh' display='flex' flexDirection='column'>
@@ -49,6 +51,7 @@ const OnApp = () => {
                 isAuthenticated && !loading &&
                 <Navbar />
             }
+            <Backdrop className={classes.backDrop} open={navBarOpen} onClick={handleNavBar}/>
             <Switch>
                 {
                     !isAuthenticated &&
@@ -84,10 +87,30 @@ const OnApp = () => {
                     path={[
                         '/inspection'
                     ]}
-                    render={() => (
-                        <InspectionPage />
-                    )}
-                />
+                >
+                    <Switch>
+                        <Route exact path='/inspection'>
+                            <MachinesPage route={'inspection'}/>
+                        </Route>
+                        <Route exact path='/inspection/:id'>
+                            <AppliancePage route='inspection'/>
+                        </Route>
+                    </Switch>
+                </Route>
+                <Route
+                    path={[
+                        '/maintenance'
+                    ]}
+                >
+                    <Switch>
+                        <Route exact path='/maintenance'>
+                            <MachinesPage route={'maintenance'}/>
+                        </Route>
+                        <Route exact path='/maintenance/:id'>
+                            <AppliancePage route='maintenance'/>
+                        </Route>
+                    </Switch>
+                </Route>
             </Switch>
         </Box>
     )

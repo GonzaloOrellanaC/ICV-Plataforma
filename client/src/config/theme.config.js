@@ -56,6 +56,11 @@ export const theme = createTheme({
                 paddingLeft: 30,
                 paddingRight: 30
             }
+        },
+        MuiListItemIcon: {
+            root: {
+                justifyContent: 'center'
+            }
         }
     }
 }, esES)
@@ -79,6 +84,19 @@ export const useStylesTheme = makeStyles(theme => ({
         boxShadow: 'none',
         padding: 20,
         overflowY: 'auto'
+    },
+    pageTitle: {
+        padding: '40px 0px',
+        textAlign: 'center',
+        textTransform: 'uppercase',
+        // fontWeight: 'bold',
+        fontSize: '1.5rem',
+        color: theme.palette.primary.main
+    },
+    backDrop: {
+        zIndex: theme.zIndex.drawer - 1,
+        marginTop: 90,
+        color: '#fff'
     },
     noNavBarMargin: {
         marginLeft: 0

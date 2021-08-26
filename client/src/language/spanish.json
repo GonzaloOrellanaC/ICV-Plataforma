@@ -11,5 +11,20 @@
         "maintenanceButton": "Mantención",
         "reportsButton": "Reportes",
         "configurationButton": "Configuración"
+    },
+    "machines": {
+        "title": "Selecciona tipo de máquina"
+    },
+    "location": {
+        "start": "Inicio",
+        "inspection": "Inspección",
+        "maintenance": "Mantención",
+        "reports": "Reportes",
+        "configuration": "Configuración"
+    },
+    "components": {
+        "fields": {
+            "filter": "Buscar"
+        }
     }
 }

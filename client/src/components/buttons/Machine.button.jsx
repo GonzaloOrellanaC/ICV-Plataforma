@@ -1,18 +1,30 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { makeStyles } from '@material-ui/core'
-// import { useLanguage } from '../../context'
+import { Button, makeStyles } from '@material-ui/core'
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
     root: {
         display: 'inline-block',
         height: 220,
         width: 220,
-        border: '5px solid gray'
+        border: '5px solid gray',
+        padding: 0,
+        '&:hover': {
+            '& .overlay': {
+                width: 220,
+                height: 220,
+                top: -5,
+                left: -5,
+                position: 'absolute',
+                backgroundColor: 'rgba(255,0,0,0.3)',
+                borderRadius: 4
+            }
+        }
     },
     imageContainer: {
         width: 210,
-        height: 160,
+        height: 150,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
@@ -29,19 +41,19 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-const MachineButton = ({ image, text }) => {
-    // const { dictionary } = useLanguage()
+const MachineButton = ({ image, text, route }) => {
     const classes = useStyles()
 
     return (
-        <div className={classes.root}>
+        <Button className={classes.root} component={Link} to={`/${route}/machinecode`}>
+            <div className='overlay'></div>
             <div className={classes.imageContainer}>
                 <img className={classes.image} src={image} alt={text}/>
             </div>
             <div className={classes.textContainer}>
                 {text}
             </div>
-        </div>
+        </Button>
     )
 }
 
