@@ -9,6 +9,10 @@ import passport from 'passport'
 import { environment, localStrategy } from '../config'
 import router from '../routes'
 
+/**
+ * Initialization of the Express framework and the configuration of it.
+ * Configures parsers, passport, CORS, security headers and routes.
+ */
 export default async () => {
     const app = express()
 

@@ -1,6 +1,9 @@
 import mongoose from 'mongoose'
 import { environment } from '../config'
 
+/**
+ * Initialization of the Database, in this case MongoDB through the Mongoose ODM
+ */
 export default async () => {
     mongoose.Promise = global.Promise
     try {

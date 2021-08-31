@@ -6,7 +6,8 @@ const PermissionRolesSchema = new Schema({
     name: {
         /* Use a generic name and translate in front */
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     resources: {
         /* Example, Name the resource with the mongoose data name

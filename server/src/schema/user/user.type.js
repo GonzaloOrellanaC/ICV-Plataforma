@@ -9,6 +9,7 @@ export const UsersType = new GraphQLObjectType({
         name: { type: GraphQLString },
         lastName: { type: GraphQLString },
         fullName: { type: GraphQLString },
+        permissionRole: { type: GraphQLID },
         enabled: { type: GraphQLBoolean },
         createdAt: { type: GraphQLDateTime },
         updatedAt: { type: GraphQLDateTime }

@@ -1,3 +1,6 @@
+/**
+ * Spanish language dictionary.
+ */
 export default {
     controller: {
         auth: {
@@ -16,7 +19,19 @@ export default {
             }
         }
     },
+    schema: {
+        generic: {
+            error: {
+                noPermission: 'No tienes los permisos requeridos para realizar esta acción'
+            }
+        }
+    },
     services: {
+        accessControl: {
+            error: {
+                roleNotFound: 'Rol de permisos no encontrado'
+            }
+        },
         user: {
             error: {
                 badCredentials: 'Credenciales incorrectas',

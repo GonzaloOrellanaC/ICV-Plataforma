@@ -33,6 +33,10 @@ const UsersSchema = new Schema({
         required: true,
         default: 'Doe'
     },
+    permissionRole: {
+        type: Schema.Types.ObjectId,
+        ref: 'PermissionRole'
+    },
     enabled: {
         type: Boolean,
         default: true

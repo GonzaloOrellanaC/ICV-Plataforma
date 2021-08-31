@@ -4,12 +4,17 @@ import { environment } from '../config'
 
 /**
  * Function that allows to obtain the authentication token from jwt cookie of a request.
- * @param {Object} req - Request body.
+ * @param {Object} req Request body.
  */
 const getTokenFromCookies = (req) => {
     return req.cookies.jwt
 }
 
+/**
+ * Function that allows to obtain the token from the url of a request, specifically used in the
+ * case of a password reset token
+ * @param {*} req Request body
+ */
 const getTokenFromURL = (req) => {
     const { params: { token } } = req
     return token
@@ -21,6 +26,7 @@ const getTokenFromURL = (req) => {
  * data from the token but a valid token or a token itself are not necessary to validate the request
  * @property {function} required - Middleware that requires credentials to be valid.
  * @property {function} optional - Middleware that does not require credentials to be valid.
+ * @property {function} reset - Middleware that verifies the validity of a reset password token.
  */
 export default {
     required: jwt({

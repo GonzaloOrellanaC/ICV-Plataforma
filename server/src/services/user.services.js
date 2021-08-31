@@ -7,6 +7,14 @@ import { EncryptionServices } from '.'
 
 const { error: errorMsg, success: successMsg } = environment.messages.services.user
 
+/**
+ * Creates an user with data and password, it's important that the user object follows
+ * the template given by the user model, needs some type of verification for that. Password
+ * is set apart.
+ * @param {*} user User data, should follow User model schema
+ * @param {*} password User password, can not be falsy
+ * @returns Users, newly created user document
+ */
 const createUser = async (user, password) => {
     if (!user || !password) {
         throw new Error(errorMsg.missingParameters)
@@ -27,15 +35,31 @@ const createUser = async (user, password) => {
     }
 }
 
+/**
+ * Deletes an user using it's id.
+ * @param {*} userId ID of the user to delete in DB
+ * @returns Users, the deleted user document
+ */
 const deleteUser = async (userId) => {
     try {
-        await Users.findByIdAndDelete(userId)
-        return true
+        const deleted = await Users.findByIdAndDelete(userId)
+        if (!deleted) {
+            throw new Error(errorMsg.userNotFound)
+        }
+        return deleted
     } catch (error) {
         throw new Error(errorMsg.unableToDelete)
     }
 }
 
+/**
+ * Authentication middleware, uses req, res, next from the express request that applies it
+ * to authenticate via local strategy of passport.
+ * @param {*} req Expres request
+ * @param {*} res Express response
+ * @param {*} next Express next
+ * @returns resolves or rejects the request, on resolve returns passportUser
+ */
 const authenticateUser = (req, res, next) => {
     return new Promise((resolve, reject) => {
         passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
@@ -53,8 +77,17 @@ const authenticateUser = (req, res, next) => {
     })
 }
 
+/**
+ * Allows to change password through the user ID.
+ * @param {*} userId ID of the User in DB
+ * @param {*} password New password to change
+ * @returns Message, success or error message
+ */
 const changePassword = async (userId, password) => {
     const findUser = await Users.findById(userId)
+    if (!password) {
+        throw new Error(errorMsg.missingParameters)
+    }
     if (!findUser) {
         throw new Error(errorMsg.userNotFound)
     }
@@ -64,6 +97,11 @@ const changePassword = async (userId, password) => {
     return successMsg.savedPassword
 }
 
+/**
+ * Initiates reset password process for a given email
+ * @param {*} email Email for which to initiate the reset password process
+ * @returns Object, data to generate email to send (reset token, fullname, email)
+ */
 const forgotPassword = async (email) => {
     const findUser = await Users.findOneAndUpdate({ email }, { updatedAt: new Date() }, { new: true, timestamps: false })
     try {
@@ -74,6 +112,13 @@ const forgotPassword = async (email) => {
     }
 }
 
+/**
+ * Resets password given a valid reset token, userId and new password
+ * @param {*} userId ID of the user in DB
+ * @param {*} token Password reset token
+ * @param {*} password New password
+ * @returns Message, success or error depending the outcome
+ */
 const resetPassword = async (userId, token, password) => {
     try {
         const findUser = await Users.findById(userId)

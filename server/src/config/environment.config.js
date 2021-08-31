@@ -11,6 +11,13 @@ const languageSelector = (select) => {
     }
 }
 
+/**
+ * Environment configuration given by default parameters or environment variables if they are
+ * configured, this allows to use autocomplete suggestions from the IDE. Language selection should
+ * in the future be changed to a function that allows to request a certain message in a given language,
+ * that way it could be used to generate messages in the required language on demand to send to the user
+ * if they configured a certain language.
+ */
 const environment = {
     dbURL: process.env.DB_URL || 'mongodb://localhost:27017/test',
     port: process.env.PORT || 5000,
@@ -31,7 +38,60 @@ const environment = {
             resetPassword: process.env.ROUTE_RESET_PASS || 'resetpassword/'
         }
     },
-    messages: languageSelector(process.env.DEFAULT_LANGUAGE)
+    messages: languageSelector(process.env.DEFAULT_LANGUAGE),
+    adminRole: {
+        name: 'admin',
+        resources: {
+            User: {
+                'create:any': ['*'],
+                'read:any': ['*'],
+                'update:any': ['*'],
+                'delete:any': ['*']
+            },
+            PermissionRole: {
+                'create:any': ['*'],
+                'read:any': ['*'],
+                'update:any': ['*'],
+                'delete:any': ['*']
+            },
+            Site: {
+                'create:any': ['*'],
+                'read:any': ['*'],
+                'update:any': ['*'],
+                'delete:any': ['*']
+            },
+            Division: {
+                'create:any': ['*'],
+                'read:any': ['*'],
+                'update:any': ['*'],
+                'delete:any': ['*']
+            },
+            MachinePrototype: {
+                'create:any': ['*'],
+                'read:any': ['*'],
+                'update:any': ['*'],
+                'delete:any': ['*']
+            },
+            Machine: {
+                'create:any': ['*'],
+                'read:any': ['*'],
+                'update:any': ['*'],
+                'delete:any': ['*']
+            },
+            AssignedInspection: {
+                'create:any': ['*'],
+                'read:any': ['*'],
+                'update:any': ['*'],
+                'delete:any': ['*']
+            },
+            AssignedMaintenance: {
+                'create:any': ['*'],
+                'read:any': ['*'],
+                'update:any': ['*'],
+                'delete:any': ['*']
+            }
+        }
+    }
 }
 
 export default environment

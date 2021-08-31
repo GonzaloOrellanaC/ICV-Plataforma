@@ -23,6 +23,14 @@ const mailgun = (new Mailgun(formData)).client({
     Function to send an email, needs a from address, to addres, a subject and an html
     message in String form.
 */
+/**
+ * Function to send an email
+ * @param {*} from Sender of the email, in most cases this will be configured from environment
+ * @param {*} to Recipient of the email
+ * @param {*} subject Subject of the email
+ * @param {*} html Content of the email in a string following an html format
+ * @returns Result from the creation of the email
+ */
 const sendEmail = (from, to, subject, html) => {
     if (!from || !to || !subject || !html) {
         throw new Error(errorMsg.sendEmail)
@@ -38,13 +46,16 @@ const sendEmail = (from, to, subject, html) => {
     )
 }
 
-/*
-    Function to send a forgot password email, uses the fullname of the person to addornate the message,
-    a token to include in the url link for password reset, a language argument that should be 'es' or 'en' and the
-    to argument which is the receiver of the email.
-    The template used is in email.templates/forgotPassword.<language>.hbs where <language> corresponds to the language code.
-    The associated .json file is to preview the handlebars template using Handlebars Preview VSCode extension
-*/
+/**
+ * Function to send a password email, uses data to addornate the message.
+ * The template used is in email.templates/forgotPassword.<language>.hbs where <language> corresponds to the language code.
+ * The associated .json file is to preview the handlebars template using Handlebars Preview VSCode extension
+ * @param {*} fullName Fullname of the recipient
+ * @param {*} token Password reset token
+ * @param {*} language Chosen language for the email template (e.g. 'es', 'en')
+ * @param {*} email Email of the recipient
+ * @returns Message, success or error of the function
+ */
 const forgotPasswordEmail = async (fullName, token, language, email) => {
     try {
         const htmlFile = await fsPromises.readFile(path.join(__dirname, 'email.templates', `forgotPassword.${language}.hbs`))

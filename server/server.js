@@ -3,9 +3,11 @@ import path from 'path'
 
 import { environment } from './src/config'
 import { databaseLoader, expressLoader } from './src/loaders'
+import { AccessControlServices } from './src/services'
 
 const startServer = async () => {
     await databaseLoader()
+    await AccessControlServices.initAccessControl()
 
     const app = await expressLoader()
 

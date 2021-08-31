@@ -1,3 +1,6 @@
+/**
+ * English language dictionary.
+ */
 export default {
     controller: {
         auth: {
@@ -16,7 +19,19 @@ export default {
             }
         }
     },
+    schema: {
+        generic: {
+            error: {
+                noPermission: 'You do not have the required permissions for this action'
+            }
+        }
+    },
     services: {
+        accessControl: {
+            error: {
+                roleNotFound: 'Permission Role not found'
+            }
+        },
         user: {
             error: {
                 badCredentials: 'Bad Credentials',
