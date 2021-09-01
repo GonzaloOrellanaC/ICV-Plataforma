@@ -5,6 +5,9 @@ import { environment } from './src/config'
 import { databaseLoader, expressLoader } from './src/loaders'
 import { AccessControlServices } from './src/services'
 
+/**
+ * Starts server using each loader and init function and then usess app.listen to serve.
+ */
 const startServer = async () => {
     await databaseLoader()
     await AccessControlServices.initAccessControl()

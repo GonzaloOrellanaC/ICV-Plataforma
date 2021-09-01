@@ -19,10 +19,6 @@ const mailgun = (new Mailgun(formData)).client({
     key: environment.mailApi.key
 })
 
-/*
-    Function to send an email, needs a from address, to addres, a subject and an html
-    message in String form.
-*/
 /**
  * Function to send an email
  * @param {*} from Sender of the email, in most cases this will be configured from environment
