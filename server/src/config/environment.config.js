@@ -38,7 +38,7 @@ const environment = {
             resetPassword: process.env.ROUTE_RESET_PASS || 'resetpassword/'
         }
     },
-    messages: languageSelector(process.env.DEFAULT_LANGUAGE),
+    messages: languageSelector(process.env.DEFAULT_LANGUAGE), // Cambiar por funcion para sacar mensaje en caso de múltiples lenguajes
     adminRole: {
         name: 'admin',
         resources: {

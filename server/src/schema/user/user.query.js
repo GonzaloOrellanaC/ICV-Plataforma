@@ -19,7 +19,7 @@ export default {
         description: 'Allows to query the database for **Users**. Requires administrative read permissions to access.',
         type: new GraphQLList(UsersType),
         async resolve (parent, args, { user: { permissionRole } }) {
-            const permission = AccessControlServices.ac.can(permissionRole.toString()).readAny('User')
+            const permission = AccessControlServices.check(permissionRole, 'User', 'readAny')
             if (!permission.granted) {
                 throw new Error(errorMsg.noPermission)
             }
