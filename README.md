@@ -49,3 +49,20 @@ Explicación de los npm scripts en package.json:
 - ```prestart```: script pre npm run start, el cual ejecuta npm install y el script de build:client
 - ```start```: inicia el servidor en produccion (se debe cambiar npm run start-dev en este script una vez se pase a producción)
 
+
+
+# Actualizaciones
+
+<h3>Semana 13</h3>
+
+- Se toma conocimiento del proyecto.
+- Se agregan Assets a Frontend para eliminar errores
+- Se conecta con base de datos en modo local para desarrollo y pruebas
+- Se hace revisión UX/UI desarrollado y se planifica reprogramación en base a diseño entregado en <a href="https://www.figma.com/file/grZYy6qrd0msfdjx9JBJuF/Wireframes-en-media-fidelidad?node-id=2%3A5">Figma</a>
+- En Backend se realiza revisión del código y se ajusta para ejecución de servidor
+- Se hacen pruebas de:
+    * Creación de base de datos desde Servidor
+    * Creación de Administrador por Defecto
+    * Login de Admin
+    * Logout de Admin
+
