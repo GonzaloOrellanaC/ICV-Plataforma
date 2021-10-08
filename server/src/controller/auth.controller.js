@@ -24,6 +24,20 @@ const login = async (req, res, next) => {
     }
 }
 
+const logout = async (req, res, next) => {
+    console.log('Inicio de revisión de usuario ', req.body.userData)
+    const user = req.body.userData;
+
+    if( !user ) {
+        return res.status(400).end(errorMsg.missingInfoUser)
+    } else {
+        const userOut = await UserServices.logout(user._id);
+        console.log('Usuario: ', userOut)
+        return res.send(userOut);
+    }
+    
+}
+
 const register = async (req, res, next) => {
     const { body: { userData, password } } = req
 
@@ -71,6 +85,7 @@ const resetPassword = async (req, res, next) => {
 export default {
     login,
     register,
+    logout,
     forgotPassword,
     resetPassword
 }

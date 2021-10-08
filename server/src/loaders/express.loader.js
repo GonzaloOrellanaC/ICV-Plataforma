@@ -16,6 +16,8 @@ import router from '../routes'
 export default async () => {
     const app = express()
 
+    console.log('Iniciando node JS')
+
     app.use(express.json({ limit: '50mb', extended: true }))
     app.use(express.urlencoded({ limit: '50mb', extended: true }))
     app.use(cookieParser())

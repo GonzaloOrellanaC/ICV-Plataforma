@@ -12,18 +12,26 @@ const startServer = async () => {
     await databaseLoader()
     await AccessControlServices.initAccessControl()
 
-    const app = await expressLoader()
+    const app = await expressLoader();
+
+    if(app) {
+        console.log('Ok APP')
+    }
 
     if (environment.env === 'production') {
+        /* Solo se ejecuta en producción */
         console.info('The server is in production mode')
         app.use(express.static(path.resolve(__dirname, '../client/build')))
 
         app.get('/*', (req, res) => {
             res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'))
         })
+    }else{
+        console.info('The server is in development mode')
     }
 
     app.listen(environment.port, (err) => {
+        console.log(environment)
         if (err) {
             console.error('Express startup error: ', err)
             throw err

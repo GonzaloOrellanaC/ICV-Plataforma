@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { environment } from '../config'
+import { PermissionRoles } from '../models'
 
 /**
  * Initialization of the Database, in this case MongoDB through the Mongoose ODM
@@ -12,7 +13,14 @@ export default async () => {
             useUnifiedTopology: true,
             useCreateIndex: true,
             useFindAndModify: false
+        }).then(()=> {
+            /* .... */
+
+            /* const rol = await PermissionRoles.findOne({
+                name: ADMIN
+            }) */
         })
+
 
         console.info(`Succesful connection to database: ${environment.dbURL}`)
         return connection

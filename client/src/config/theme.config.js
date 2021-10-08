@@ -1,7 +1,7 @@
 /* Material UI */
 import { createTheme, makeStyles } from '@material-ui/core'
 import { esES } from '@material-ui/core/locale'
-import backgroundimg from '../assets/backgroundimg.webp'
+import backgroundimg from '../assets/slider_home_01.jpg'
 
 export const theme = createTheme({
     palette: {
@@ -71,7 +71,7 @@ export const useStylesTheme = makeStyles(theme => ({
     },
     pageContainer: {
         height: '100%',
-        maxHeight: 'calc(100vh - 90px)',
+        //maxHeight: 'calc(100vh - 90px)',
         [theme.breakpoints.down('sm')]: {
             padding: 10
         }

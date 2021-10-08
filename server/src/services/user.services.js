@@ -78,6 +78,18 @@ const authenticateUser = (req, res, next) => {
 }
 
 /**
+
+ */
+ const logout = (userId) => {
+    return new Promise( async (resolve, reject) => {
+        const findUser = await Users.findById(userId);
+        if(findUser) {
+            resolve(findUser)
+        }
+    })
+}
+
+/**
  * Allows to change password through the user ID.
  * @param {*} userId ID of the User in DB
  * @param {*} password New password to change
@@ -140,6 +152,7 @@ export default {
     createUser,
     deleteUser,
     authenticateUser,
+    logout,
     changePassword,
     forgotPassword,
     resetPassword

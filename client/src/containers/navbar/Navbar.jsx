@@ -1,17 +1,19 @@
 import React, { } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 import { Divider, Drawer, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles } from '@material-ui/core'
 import { PlayArrow } from '@material-ui/icons'
 
 import clsx from 'clsx'
 
-import logo from '../../assets/logo.webp'
+//import logo from '../../assets/logo.webp'
+import logo from '../../assets/logo_icv.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserCircle as farUserCircle } from '@fortawesome/free-regular-svg-icons'
 import { faClipboard, faCog, faHome, faInfoCircle, faSignOutAlt, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { useAuth, useNavigation } from '../../context'
 import { FilterField } from '../../components/fields'
+import { authRoutes } from '../../routes'
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -86,7 +88,12 @@ const useStyles = makeStyles(theme => ({
 const Navbar = () => {
     const classes = useStyles()
     const { navBarOpen, handleNavBar } = useNavigation()
-    const { userData } = useAuth()
+    const { userData } = useAuth();
+
+    const logout = async () => {
+        window.localStorage.setItem('isauthenticated', false);
+        window.location.reload();
+    }
 
     return (
         <Drawer
@@ -182,7 +189,7 @@ const Navbar = () => {
                                 </IconButton>
                             </Grid>
                             <Grid item>
-                                <IconButton className={classes.bottomButtons}>
+                                <IconButton onClick={logout} className={classes.bottomButtons}>
                                     <FontAwesomeIcon icon={faSignOutAlt}/>
                                 </IconButton>
                             </Grid>

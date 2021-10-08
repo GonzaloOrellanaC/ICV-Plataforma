@@ -44,50 +44,19 @@ const OnApp = () => {
     const { navBarOpen, handleNavBar } = useNavigation()
     const classes = useStylesTheme()
 
+    console.log(isAuthenticated)
+
     return (
         <Box height='100vh' display='flex' flexDirection='column'>
-            <Header />
-            {
-                isAuthenticated && !loading &&
-                <Navbar />
-            }
+            {isAuthenticated && <Route path={['/']}>
+                <Header /> {isAuthenticated && !loading && <Navbar />}
+            </Route>}
             <Backdrop className={classes.backDrop} open={navBarOpen} onClick={handleNavBar}/>
             <Switch>
-                {
-                    !isAuthenticated &&
-                    <Route
-                        path={[
-                            '/'
-                        ]}
-                        render={() => (
-                            <LoginPage />
-                        )}
-                    />
-                }
-                {
-                    loading &&
-                    <Route
-                        path={[
-                            '/'
-                        ]}
-                        render={() => (
-                            <LoadingPage />
-                        )}
-                    />
-                }
-                <Route
-                    exact path={[
-                        '/', '/welcome'
-                    ]}
-                    render={() => (
-                        <WelcomePage />
-                    )}
-                />
-                <Route
-                    path={[
-                        '/inspection'
-                    ]}
-                >
+                {!isAuthenticated && <Route path={['/']} render={() => (<LoginPage />)}/>}
+                {loading && <Route path={['/']} render={() => (<LoadingPage />)}/>}
+                <Route exact path={['/', '/welcome']} render={() => (<WelcomePage />)}/>
+                <Route path={['/inspection']}>
                     <Switch>
                         <Route exact path='/inspection'>
                             <MachinesPage route={'inspection'}/>
@@ -97,11 +66,7 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                <Route
-                    path={[
-                        '/maintenance'
-                    ]}
-                >
+                <Route path={['/maintenance']}>
                     <Switch>
                         <Route exact path='/maintenance'>
                             <MachinesPage route={'maintenance'}/>

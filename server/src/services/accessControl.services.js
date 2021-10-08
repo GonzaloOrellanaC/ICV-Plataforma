@@ -1,4 +1,5 @@
 import { AccessControl } from 'accesscontrol'
+import { UserServices } from '.'
 import { environment } from '../config'
 import { PermissionRoles } from '../models'
 
@@ -22,17 +23,30 @@ const ac = new AccessControl()
 const initAccessControl = async () => {
     try {
         const findRole = await PermissionRoles.findOne({ name: environment.adminRole.name })
-        let adminResult = ''
+        let adminResult = '';
+        console.log(findRole)
         if (findRole) {
             await updateRole(findRole._id, environment.adminRole.resources)
-            adminResult = 'Admin Role updated'
+            adminResult = 'Admin Role updated';
         } else {
             await createRole(environment.adminRole.name, environment.adminRole.resources)
             adminResult = 'Admin Role created'
+            createAdminDefault()
         }
         console.info(`Initialized access control. ${adminResult}`)
     } catch (error) {
         console.error(error)
+    }
+}
+
+const createAdminDefault = async () => {
+    try {
+        let newUser = await UserServices.createUser(environment.adminDefaultData, environment.adminDefaultData.password);
+        if(newUser) {
+            console.log(newUser);
+        }
+    } catch(error) {
+        console.log(error)
     }
 }
 

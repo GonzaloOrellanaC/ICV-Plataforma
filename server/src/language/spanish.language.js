@@ -7,7 +7,8 @@ export default {
             error: {
                 credentialsRequired: 'Requiere ingresar tanto email como contraseña',
                 informationMissing: 'Información faltante, requiere tanto email como contraseña',
-                missingEmail: 'Requiere ingresar email'
+                missingEmail: 'Requiere ingresar email',
+                missingInfoUser: 'Error de lectura de los datos de usuario. Intente nuevamente.'
             },
             success: {
                 login: 'Conectado con éxito'

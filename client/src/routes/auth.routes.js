@@ -18,5 +18,12 @@ export default {
         }
 
         return axios.post('/auth/register', requestBody)
+    },
+    logout: (userData) => {
+        const requestBody = {
+            userData
+        }
+
+        return axios.post('/auth/logout', requestBody)
     }
 }

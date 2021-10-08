@@ -6,15 +6,17 @@ import { authRoutes } from '../routes'
 const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
-    const defaultAuthenticated = window.localStorage.getItem('isauthenticated')
-    const [userData, setUserData] = useState({})
+    const defaultAuthenticated  = Boolean(JSON.parse(window.localStorage.getItem('isauthenticated')));
     const [isAuthenticated, setIsAuthenticated] = useState(defaultAuthenticated || false)
     const [getSelf, { loading, error, data }] = useLazyQuery(UsersGraphQL.query.GET_SELF)
+    const [userData, setUserData] = useState({})
 
     useEffect(() => {
-        console.log(data)
         if (data?.self) {
             setUserData(data.self)
+        }
+        if(!data) {
+            console.log('NO HAY AUTENTICACIÓN')
         }
     }, [data])
 
@@ -36,18 +38,18 @@ export const AuthProvider = (props) => {
         error,
         login: (email, password) => {
             authRoutes.login(email, password)
-                .then(response => {
-                    setUserData(response.data.userInfo)
-                    setIsAuthenticated(true)
-                    window.localStorage.setItem('isauthenticated', true)
-                    getSelf()
-                })
-                .catch(error => {
-                    console.log('REPLACE: Error notification')
-                    console.log(error)
-                    setIsAuthenticated(false)
-                    window.localStorage.setItem('isauthenticated', false)
-                })
+            .then(response => {
+                setUserData(response.data.userInfo)
+                setIsAuthenticated(true)
+                window.localStorage.setItem('isauthenticated', true)
+                getSelf()
+            })
+            .catch(error => {
+                console.log('REPLACE: Error notification')
+                console.log(error)
+                setIsAuthenticated(false)
+                window.localStorage.setItem('isauthenticated', false)
+            })
         }
     }
 

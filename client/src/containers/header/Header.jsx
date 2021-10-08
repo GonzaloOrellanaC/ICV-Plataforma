@@ -7,7 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faTools, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { faChartBar, faClipboard } from '@fortawesome/free-regular-svg-icons'
 
-import logo from '../../assets/logo.webp'
+//import logo from '../../assets/logo.webp'
+import logo from '../../assets/logo_icv.png'
 import { useAuth, useLanguage, useNavigation } from '../../context'
 
 const useStyles = makeStyles((theme) => ({
