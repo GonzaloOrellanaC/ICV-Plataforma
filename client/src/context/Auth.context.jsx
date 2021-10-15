@@ -16,7 +16,7 @@ export const AuthProvider = (props) => {
             setUserData(data.self)
         }
         if(!data) {
-            console.log('NO HAY AUTENTICACIÓN')
+            console.log('NO HAY AUTENTICACIÓN');
         }
     }, [data])
 

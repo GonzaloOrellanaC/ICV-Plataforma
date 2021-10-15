@@ -38,9 +38,9 @@ const AppliancePage = ({ route }) => {
                 <Grid className={classes.pageContainer} item xs={12}>
                     <Card className={classes.pageCard}>
                         <Grid container alignItems='center' justifyContent='center'>
-                            <Grid container item xs={12} justifyContent='flex-end'>
+                            {/* <Grid container item xs={12} justifyContent='flex-end'>
                                 <FilterField value={filter} onChange={handleFilter}/>
-                            </Grid>
+                            </Grid> */}
                             <Grid item xs={12}>
                                 <div className={classes.pageTitle}>
                                     INFORMACIÓN MAQUINARIA

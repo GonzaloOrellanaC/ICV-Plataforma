@@ -61,8 +61,10 @@ const forgotPassword = async (req, res, next) => {
     }
 
     try {
-        const { token, fullName, email: sendEmail } = await UserServices.forgotPassword(email)
-        const message = await EmailServices.forgotPasswordEmail(fullName, token, 'es', sendEmail)
+        const { token, fullName, email: sendEmail } = await UserServices.forgotPassword(email);
+        console.log(token, fullName, email)
+        
+        const message = await EmailServices.sendEmail(fullName, token, 'es', sendEmail)
         res.status(200).json({ message })
     } catch (error) {
         console.log(error.message)

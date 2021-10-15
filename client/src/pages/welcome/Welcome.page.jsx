@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Card, Grid } from '@material-ui/core'
 import { useStylesTheme } from '../../config'
-import { SectionButton } from '../../components/buttons'
+import { CardButton } from '../../components/buttons'
 
 const WelcomePage = () => {
     const classes = useStylesTheme()
@@ -13,16 +13,16 @@ const WelcomePage = () => {
                         <Grid container style={{ height: '100%' }} alignItems='center' justifyContent='center'>
                             <Grid container item spacing={5} justifyContent='center'>
                                 <Grid item>
-                                    <SectionButton variant='inspection'/>
+                                    <CardButton variant='inspection'/>
                                 </Grid>
                                 <Grid item>
-                                    <SectionButton variant='maintenance'/>
+                                    <CardButton variant='maintenance'/>
                                 </Grid>
                                 <Grid item>
-                                    <SectionButton variant='reports'/>
+                                    <CardButton variant='reports'/>
                                 </Grid>
                                 <Grid item>
-                                    <SectionButton variant='configuration'/>
+                                    <CardButton variant='configuration'/>
                                 </Grid>
                             </Grid>
                         </Grid>

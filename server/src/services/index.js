@@ -1,5 +1,5 @@
 import AccessControlServices from './accessControl.services'
-import EmailServices from './email.services'
+import EmailServices from './nodemailer.services'
 import EncryptionServices from './encryption.services'
 import UserServices from './user.services'
 

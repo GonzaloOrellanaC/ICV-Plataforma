@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom'
 import { alpha, AppBar, makeStyles, /* MenuItem, Select, */ Toolbar } from '@material-ui/core'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome, faTools, faUserCog } from '@fortawesome/free-solid-svg-icons'
+import { faBell, faHome, faInfoCircle, faTools, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { faChartBar, faClipboard } from '@fortawesome/free-regular-svg-icons'
 
 //import logo from '../../assets/logo.webp'
-import logo from '../../assets/logo_icv.png'
+import logo from '../../assets/logo_icv_blanco.png'
 import { useAuth, useLanguage, useNavigation } from '../../context'
 
 const useStyles = makeStyles((theme) => ({
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const NavigationTitle = (location, dictionary) => {
+/* const NavigationTitle = (location, dictionary) => {
     switch (location) {
     case 'inspection':
         return dictionary.location.inspection
@@ -75,7 +75,7 @@ const NavigationIcon = (location) => {
     default:
         return faHome
     }
-}
+} */
 
 /* <Select
     className={classes.languageSelector}
@@ -89,29 +89,54 @@ const NavigationIcon = (location) => {
 const Header = () => {
     const classes = useStyles()
     const { navBarOpen, locationData } = useNavigation()
-    const { isAuthenticated } = useAuth()
+    const { isAuthenticated, userData } = useAuth()
     const { dictionary/* , languageOptions, userLanguage, userLanguageChange */ } = useLanguage()
 
-    return (
-        <Fragment>
-            <AppBar position='sticky' className={classes.appbar}>
-                <Toolbar className={classes.toolbar}>
-                    {!navBarOpen && <Link to='/'><img src={logo} height={75} style={{ marginTop: 15 }}/></Link>}
-                    {
-                        isAuthenticated &&
+    console.log(isAuthenticated);
+    if(!userData) {
+        useAuth()
+    }
+    
+    console.log(userData);
+    if(isAuthenticated) {
+        
+        return (
+            <Fragment>
+                <AppBar position='sticky' className={classes.appbar}>
+                    <Toolbar className={classes.toolbar}>
+                        {!navBarOpen && <Link to='/'><img src={logo} height={75} style={{ marginLeft: 30 }}/></Link>}
+                        {isAuthenticated && <Fragment>
+                            <dl>
+                                <dt style={{margin: 0}}>{isAuthenticated && <div> <h4> {userData.name} {userData.lastName} </h4> </div>}</dt>
+                                <dt>{userData.name === 'ADMINISTRADOR' && <div> <h5> Administrador </h5> </div>}</dt>
+                            </dl>
+                        </Fragment>}
                         <Fragment>
                             <p className={classes.locationText}>
-                                {NavigationTitle(locationData, dictionary)}
+                                {<FontAwesomeIcon icon={faBell} size='2x'/>}
                             </p>
                             <div className={classes.locationIcon}>
-                                {<FontAwesomeIcon icon={NavigationIcon(locationData)} size='3x' />}
+                                {<FontAwesomeIcon icon={faInfoCircle} size='2x'/>}
                             </div>
                         </Fragment>
-                    }
-                </Toolbar>
-            </AppBar>
-        </Fragment>
-    )
+                        {
+                            /* isAuthenticated &&
+                            <Fragment>
+                                <p className={classes.locationText}>
+                                    {NavigationTitle(locationData, dictionary)}
+                                </p>
+                                <div className={classes.locationIcon}>
+                                    {<FontAwesomeIcon icon={NavigationIcon(locationData)} size='3x' />}
+                                </div>
+                            </Fragment> */
+                        }
+                    </Toolbar>
+                </AppBar>
+            </Fragment>
+        )
+    }
+
+    
 }
 
 export default Header

@@ -14,13 +14,15 @@ import { theme, useStylesTheme } from './config'
 import './App.css'
 import { AuthProvider, LanguageProvider, NavigationProvider, useAuth, useNavigation } from './context'
 import { Header, Navbar } from './containers'
-import { AppliancePage, LoadingPage, LoginPage, MachinesPage, WelcomePage } from './pages'
+import { AppliancePage, LoadingPage, LoginPage, MachinesPage, WelcomePage, ResetPasswordPage, DivisionsPage, Vista3D } from './pages'
 
 /* GraphQL Configuration */
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
     if (networkError?.statusCode === 401) {
         console.log(`[Network error]: ${networkError.statusCode}`)
         // window.location.href = '/'
+    }else{
+
     }
 })
 
@@ -44,18 +46,28 @@ const OnApp = () => {
     const { navBarOpen, handleNavBar } = useNavigation()
     const classes = useStylesTheme()
 
-    console.log(isAuthenticated)
+    //console.log(isAuthenticated, loading)
 
     return (
-        <Box height='100vh' display='flex' flexDirection='column'>
+        <Box height='100vh' display='flex' flexDirection='column' style={{fontFamily: 'Roboto'}}>
             {isAuthenticated && <Route path={['/']}>
-                <Header /> {isAuthenticated && !loading && <Navbar />}
-            </Route>}
-            <Backdrop className={classes.backDrop} open={navBarOpen} onClick={handleNavBar}/>
+                    {isAuthenticated && !loading && <Navbar />} {isAuthenticated && !loading && <Header />}
+                </Route>}
+            {/* <Backdrop className={classes.backDrop} open={navBarOpen} onClick={handleNavBar}/> */}
             <Switch>
+                {!isAuthenticated && <Route exact path={['/reset-password']} render={() => (<ResetPasswordPage />)}/>}
                 {!isAuthenticated && <Route path={['/']} render={() => (<LoginPage />)}/>}
                 {loading && <Route path={['/']} render={() => (<LoadingPage />)}/>}
-                <Route exact path={['/', '/welcome']} render={() => (<WelcomePage />)}/>
+                <Route exact path={['/', '/welcome']} render={() => (
+                    <WelcomePage />
+                )}/>
+                <Route path={['/divisions']}>
+                    <Switch>
+                        <Route exact path='/divisions'>
+                            <DivisionsPage route={'divisions'}/>
+                        </Route>
+                    </Switch>
+                </Route>
                 <Route path={['/inspection']}>
                     <Switch>
                         <Route exact path='/inspection'>
@@ -77,6 +89,9 @@ const OnApp = () => {
                     </Switch>
                 </Route>
             </Switch>
+            <Route exact path='/vista-3d'>
+                <Vista3D route='vista-3d' />
+            </Route>
         </Box>
     )
 }

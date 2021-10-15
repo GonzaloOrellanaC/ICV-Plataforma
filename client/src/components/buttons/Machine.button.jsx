@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
         width: 220,
         border: '5px solid gray',
         padding: 0,
+        backgroundColor: 'rgba(255,255,255,0.5)',
         '&:hover': {
             '& .overlay': {
                 width: 220,
@@ -37,21 +38,22 @@ const useStyles = makeStyles(theme => ({
         padding: 5,
         color: theme.palette.primary.main,
         textTransform: 'uppercase',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textAlign: 'center'
     }
 }))
 
-const MachineButton = ({ image, text, route }) => {
+const MachineButton = ({ image, machine, route }) => {
     const classes = useStyles()
 
     return (
         <Button className={classes.root} component={Link} to={`/${route}/machinecode`}>
             <div className='overlay'></div>
             <div className={classes.imageContainer}>
-                <img className={classes.image} src={image} alt={text}/>
+                <img className={classes.image} src={image} alt={machine.model}/>
             </div>
             <div className={classes.textContainer}>
-                {text}
+                {`${machine.type} ${machine.brand} ${machine.model}`}
             </div>
         </Button>
     )

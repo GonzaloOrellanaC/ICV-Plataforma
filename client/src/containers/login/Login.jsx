@@ -26,9 +26,10 @@ const Login = () => {
         }
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
-        login(email, password)
+        let data = await login(email, password);
+        console.log(data)
     }
 
     return (
@@ -61,7 +62,7 @@ const Login = () => {
                         </Button>
                     </Grid>
                     <Grid item xs={12} container justifyContent='center'>
-                        {dictionary.login.forgotPasswordText} <Link >{dictionary.login.forgotPasswordLink}</Link>
+                        {dictionary.login.forgotPasswordText} <Link href="/reset-password" >{dictionary.login.forgotPasswordLink}</Link>
                     </Grid>
                 </Grid>
             </form>

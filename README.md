@@ -53,6 +53,28 @@ Explicación de los npm scripts en package.json:
 
 # Actualizaciones
 
+<h3>Semana 14</h3>
+
+- En Backend se corrige gestor de correo electrónico. Se utilizará <a href="https://nodemailer.com">Nodemailer</a>.
+- En Frontend se actualiza vistas web respecto a diseño figma.
+- Preparación de recepción vistas 3D
+- Pantallas
+
+    * Login <br>
+    <img src="./pantallas/Login.PNG" style="max-width: 600px">
+
+    * Welcome <br>
+    <img src="./pantallas/Welcome.PNG" style="max-width: 600px">
+
+    * Welcome (Side Bar) <br>
+    <img src="./pantallas/Welcome-Sidebar.PNG" style="max-width: 600px">
+
+    * Inspeccion-Maquinaria <br>
+    <img src="./pantallas/Inspeccion-Maquinaria.PNG" style="max-width: 600px">
+
+    * Prueba de Vistas 3D <br>
+    <img src="./pantallas/Vista-3D.gif" style="max-width: 600px">
+
 <h3>Semana 13</h3>
 
 - Se toma conocimiento del proyecto.
@@ -65,4 +87,3 @@ Explicación de los npm scripts en package.json:
     * Creación de Administrador por Defecto
     * Login de Admin
     * Logout de Admin
-

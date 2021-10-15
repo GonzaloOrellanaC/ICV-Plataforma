@@ -19,6 +19,13 @@ export default {
 
         return axios.post('/auth/register', requestBody)
     },
+    forgotPassword: (email) => {
+        const requestBody = {
+            email
+        }
+
+        return axios.post('/auth/forgotpassword', requestBody)
+    },
     logout: (userData) => {
         const requestBody = {
             userData
