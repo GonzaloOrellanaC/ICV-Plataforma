@@ -26,20 +26,20 @@ const ResetPassword = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-        console.log(email);
+        //console.log(email);
         let forgotPasswordState = await requestNewPassword();
-        console.log(forgotPasswordState)
+        //console.log(forgotPasswordState)
     }
 
     const requestNewPassword = () => {
         return new Promise(resolve=>{
             authRoutes.forgotPassword(email)
             .then(data=>{
-                console.log(data);
+                //console.log(data);
                 resolve(data)
             })
             .catch(err=>{
-                console.log(err)
+                //console.log(err)
                 resolve(err)
             })
         })

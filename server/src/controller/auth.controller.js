@@ -19,7 +19,7 @@ const login = async (req, res, next) => {
         })
         return res.status(200).end(successMsg.login)
     } catch (error) {
-        console.error(error.message)
+        console.error('0001', error.message)
         return res.status(401).end(error.message)
     }
 }

@@ -36,7 +36,8 @@ const useStyles = makeStyles(theme => ({
     },
     textContainer: {
         padding: 5,
-        color: theme.palette.primary.main,
+        //color: theme.palette.primary.main,
+        color: '#505050',
         textTransform: 'uppercase',
         fontWeight: 'bold',
         textAlign: 'center'
@@ -44,10 +45,10 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const MachineButton = ({ image, machine, route }) => {
-    const classes = useStyles()
+    const classes = useStyles();
 
     return (
-        <Button className={classes.root} component={Link} to={`/${route}/machinecode`}>
+        <Button className={classes.root} component={Link} to={`/${route}/${JSON.stringify(machine)}`}>
             <div className='overlay'></div>
             <div className={classes.imageContainer}>
                 <img className={classes.image} src={image} alt={machine.model}/>

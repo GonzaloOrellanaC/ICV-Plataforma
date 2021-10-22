@@ -5,7 +5,10 @@ import { useAuth, useLanguage } from '../../context'
 
 const useStyles = makeStyles(theme => ({
     button: {
-        borderRadius: 20
+        borderRadius: 20,
+        maxWidth: 400, 
+        minWidth: 300, 
+        width: '100%'
     }
 }))
 
@@ -28,15 +31,14 @@ const Login = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-        let data = await login(email, password);
-        console.log(data)
+        login(email, password);
     }
 
     return (
-        <Grid container style={{ padding: 20, height: '100%' }} alignItems='center' justifyContent='center'>
+        <Grid container style={{ padding: 10, height: '100%' }} alignItems='center' justifyContent='center'>
             <form onSubmit={handleSubmit}>
                 <Grid container item spacing={2}>
-                    <Grid item xs={12} container justifyContent='center'>
+                    <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
                         <TextField
                             type='email'
                             name='email'
@@ -44,9 +46,10 @@ const Login = () => {
                             value={email}
                             onChange={handleChange}
                             variant='outlined'
+                            style={{maxWidth: 400, minWidth: 300, width: '100%'}}
                         />
                     </Grid>
-                    <Grid item xs={12} container justifyContent='center'>
+                    <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
                         <TextField
                             type='password'
                             name='password'
@@ -54,15 +57,17 @@ const Login = () => {
                             value={password}
                             onChange={handleChange}
                             variant='outlined'
+                            style={{maxWidth: 400, minWidth: 300, width: '100%'}}
                         />
                     </Grid>
-                    <Grid item xs={12} container justifyContent='center'>
+                    <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
                         <Button className={classes.button} type='submit' variant='contained' color='primary'>
                             {dictionary.login.loginButton}
                         </Button>
                     </Grid>
                     <Grid item xs={12} container justifyContent='center'>
-                        {dictionary.login.forgotPasswordText} <Link href="/reset-password" >{dictionary.login.forgotPasswordLink}</Link>
+                        {/* {dictionary.login.forgotPasswordText} <Link href="/reset-password" >{dictionary.login.forgotPasswordLink}</Link> */}
+                        <Link href="/reset-password" > {dictionary.login.forgotPasswordText} </Link>
                     </Grid>
                 </Grid>
             </form>

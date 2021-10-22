@@ -53,6 +53,34 @@ Explicación de los npm scripts en package.json:
 
 # Actualizaciones
 
+<h3>Semana 15</h3>
+
+- Se avanza desarrollo de front end.
+- Se conforma reuniones de seguimiento, ajuste y muestra de funcionamiento de templates 3D.
+- Se ajustan vistas según aprobación. Ver a continuación.
+- Pantallas
+
+    * Login <br>
+    <img src="./pantallas_v2/Login.PNG" style="max-width: 600px">
+
+    * Welcome <br>
+    <img src="./pantallas_v2/Welcome.PNG" style="max-width: 600px">
+
+    * Welcome (Side Bar) <br>
+    <img src="./pantallas_v2/Welcome-Sidebar.PNG" style="max-width: 600px">
+
+    * Inspeccion-Maquinaria <br>
+    <img src="./pantallas_v2/Inspeccion-Maquinaria.PNG" style="max-width: 600px">
+
+    * Reportes <br>
+    <img src="./pantallas_v2/Reportes.PNG" style="max-width: 600px">
+
+    * Selección de Obras <br>
+    <img src="./pantallas_v2/Sitios.PNG" style="max-width: 600px">
+
+    * Prueba de Vistas 3D con Camión Caterpillar<br>
+    <img src="./pantallas_v2/Vista-3D.gif" style="max-width: 600px">
+
 <h3>Semana 14</h3>
 
 - En Backend se corrige gestor de correo electrónico. Se utilizará <a href="https://nodemailer.com">Nodemailer</a>.

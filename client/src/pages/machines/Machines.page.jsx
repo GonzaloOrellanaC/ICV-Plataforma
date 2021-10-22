@@ -1,16 +1,10 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Box, Card, Grid } from '@material-ui/core'
-
+import { Box, Card, Grid, Toolbar, IconButton } from '@material-ui/core'
+import { ArrowBackIos } from '@material-ui/icons'
 import { useStylesTheme } from '../../config'
 import { MachineButton } from '../../components/buttons'
-//import machineImg1 from '../../assets/machineexample1.png'
-//import machineImg2 from '../../assets/machineexample2.png'
-//import machineImg3 from '../../assets/machineexample3.png'
-import machineImg1 from '../../assets/793F.png'
-import machineImg2 from '../../assets/PC5500.png'
-import machineImg3 from '../../assets/logo_icv.png'
-/* import { FilterField } from '../../components/fields' */
+import { useHistory } from 'react-router-dom'
 import { useLanguage } from '../../context'
 
 const MachinesPage = ({ route }) => {
@@ -30,11 +24,25 @@ const MachinesPage = ({ route }) => {
             brand: 'Komatsu'
         }
     ]
-    /* const [filter, setFilter] = useState('') */
 
-    /* const handleFilter = (event) => {
-        setFilter(event.target.value)
-    } */
+    let site = localStorage.getItem('sitio');
+
+    const history = useHistory()
+
+    if(!site) {
+        history.goBack()
+    }
+
+
+    let routeData;
+
+    //console.log(route);
+
+    if(route === 'inspection') {
+        routeData = 'Inspección'
+    }else if(route === 'maintenance') {
+        routeData = 'Mantención'
+    }
 
     return (
         <Box height='100%'>
@@ -42,31 +50,21 @@ const MachinesPage = ({ route }) => {
                 <Grid className={classes.pageContainer} item xs={12}>
                     <Card className={classes.pageCard}>
                         <Grid container alignItems='center' justifyContent='center'>
-                            <div style={{width: '100%', textAlign: 'left', color: '#fff' }}>
-                                <h1 style={{marginTop: 0}}>Inspección </h1>
-                            </div>
-                            {/* <Grid item xs={12}>
-                                <div className={classes.pageTitle}>
-                                    {dictionary.machines.title}
+                            <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
+                                <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
+                                    <Toolbar style={{paddingLeft: 0}}>
+                                        <IconButton onClick={() => setTimeout(() => {
+                                            history.goBack()
+                                        }, 500)}> 
+                                            <ArrowBackIos style={{color: '#333', fontSize: 35}}/> 
+                                        </IconButton> 
+                                        <h1 style={{marginTop: 0, marginBottom: 0}}> {`${routeData}/${site}`} </h1>
+                                    </Toolbar>
                                 </div>
-                            </Grid> */}
+                            </div>
                             <Grid container item spacing={5} justifyContent='center'>
                                 {
                                     machinesList.filter(a => a.toString()).map((machine) => {
-                                    //[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].filter(a => a.toString().includes(filter)).map((number) => {
-                                        /* const imgNumber = number % 3 + 1
-                                        let img = null
-                                        switch (imgNumber) {
-                                        case 1:
-                                            img = machineImg1
-                                            break
-                                        case 2:
-                                            img = machineImg2
-                                            break
-                                        case 3:
-                                            img = machineImg3
-                                            break
-                                        } */
                                         return (
                                             <Grid item key={machine.id}>
                                                 <MachineButton machine={machine} image={`/assets/${machine.model}.png`} route={route}/>

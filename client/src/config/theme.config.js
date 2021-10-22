@@ -77,7 +77,7 @@ export const useStylesTheme = makeStyles(theme => ({
         }
     },
     pageCard: {
-        marginLeft: 48,
+        marginLeft: 99,
         height: '100%',
         backgroundColor: 'rgba(255,255,255, 0.8)',
         borderRadius: 0,

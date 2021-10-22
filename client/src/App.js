@@ -14,7 +14,7 @@ import { theme, useStylesTheme } from './config'
 import './App.css'
 import { AuthProvider, LanguageProvider, NavigationProvider, useAuth, useNavigation } from './context'
 import { Header, Navbar } from './containers'
-import { AppliancePage, LoadingPage, LoginPage, MachinesPage, WelcomePage, ResetPasswordPage, DivisionsPage, Vista3D } from './pages'
+import { AppliancePage, LoadingPage, LoginPage, MachinesPage, WelcomePage, ResetPasswordPage, DivisionsPage, ReportsPage, AlertPage, InfoPage, ConfigurationPage, SitesPage } from './pages'
 
 /* GraphQL Configuration */
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
@@ -68,6 +68,27 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
+                <Route path={['/reports']}>
+                    <Switch>
+                        <Route exact path='/reports'>
+                            <ReportsPage route={'reports'}/>
+                        </Route>
+                    </Switch>
+                </Route>
+                <Route path={['/alerts']}>
+                    <Switch>
+                        <Route exact path='/alerts'>
+                            <AlertPage route={'alerts'}/>
+                        </Route>
+                    </Switch>
+                </Route>
+                <Route path={['/info']}>
+                    <Switch>
+                        <Route exact path='/info'>
+                            <InfoPage route={'info'}/>
+                        </Route>
+                    </Switch>
+                </Route>
                 <Route path={['/inspection']}>
                     <Switch>
                         <Route exact path='/inspection'>
@@ -88,10 +109,27 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
+                <Route path={['/sites']}>
+                    <Switch>
+                        <Route exact path='/sites'>
+                            <SitesPage route={'sites'}/>
+                        </Route>
+                        {/* <Route exact path='/sites/:id'>
+                            <AppliancePage route='sites'/>
+                        </Route> */}
+                    </Switch>
+                </Route>
+                <Route path={['/configuration']}>
+                    <Switch>
+                        <Route exact path='/configuration'>
+                            <ConfigurationPage route={'configuration'}/>
+                        </Route>
+                    </Switch>
+                </Route>
             </Switch>
-            <Route exact path='/vista-3d'>
+            {/* <Route exact path='/vista-3d'>
                 <Vista3D route='vista-3d' />
-            </Route>
+            </Route> */}
         </Box>
     )
 }

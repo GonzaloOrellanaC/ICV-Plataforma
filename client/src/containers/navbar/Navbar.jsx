@@ -1,8 +1,8 @@
 import React, { } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
-import { Divider, Drawer, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles } from '@material-ui/core'
-import { PlayArrow, Menu, Close } from '@material-ui/icons'
+import { Drawer, Grid, IconButton, makeStyles } from '@material-ui/core'
+import { Menu, Close } from '@material-ui/icons'
 
 import clsx from 'clsx'
 
@@ -10,7 +10,7 @@ import clsx from 'clsx'
 import logo from '../../assets/logo_icv.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserCircle as farUserCircle } from '@fortawesome/free-regular-svg-icons'
-import { faClipboard, faCog, faHome, faInfoCircle, faSignOutAlt, faTools, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faClipboard, faCog, faHome, faInfoCircle, faSignOutAlt, faTools, faChartBar, faSearch, faClipboardList, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons'
 import { useAuth, useNavigation } from '../../context'
 import { FilterField } from '../../components/fields'
 import { authRoutes } from '../../routes'
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
         whiteSpace: 'nowrap'
     },
     drawerOpen: {
-        width: 250,
+        width: 330,
         maxWidth: '100vw',
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
         overflow: 'hidden'
     },
     drawerClose: {
-        width: 48,
+        width: 99,
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen
@@ -40,7 +40,8 @@ const useStyles = makeStyles(theme => ({
     },
     drawerPaper: {
         marginTop: 0,
-        backgroundColor: 'rgb(127, 127, 127)',
+        //backgroundColor: 'rgb(127, 127, 127)',
+        backgroundColor: '#F9F9F9',
         border: 'none'
     },
     drawerContainer: {
@@ -65,12 +66,13 @@ const useStyles = makeStyles(theme => ({
     sideButtons: {
         paddingTop: 10,
         width: '100%',
-        color: '#fff',
+        color: '#505050',
         
     },
     divider: {
         width: '100%',
         backgroundColor: 'rgba(255, 255, 255, 0.18)'
+        //backgroundColor: '#505050'
     },
     searchField: {
         '& .MuiFormLabel-root': {
@@ -98,9 +100,17 @@ const Navbar = () => {
     const { userData } = useAuth();
 
     const logout = async () => {
-        window.localStorage.setItem('isauthenticated', false);
+        window.localStorage.clear();
         window.location.reload();
     }
+
+    const closeSideBar = () => {
+        if(navBarOpen) {
+            handleNavBar()
+        }
+    }
+
+    
 
     return (
         <Drawer
@@ -119,33 +129,43 @@ const Navbar = () => {
             <div className={classes.drawerContainer}>
                 <Grid container spacing={2} style={{ padding: navBarOpen ? 8 : '8px 0 0 0' }}>
                     <Grid item xs={12} container>
-                        <IconButton onClick={handleNavBar} style={{ color: 'white' }}>
+                        <IconButton onClick={handleNavBar} style={{ color: '#505050', width: "100%", marginBottom: 50, marginTop: 15 }}>
                             {navBarOpen ? <Close /> : <Menu />}
                         </IconButton>
-                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                            <div component={Link} to='/' className={classes.sideButtons}>
+                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}} onClick={closeSideBar}>
+                            <Link to='/' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                 <FontAwesomeIcon icon={faHome}/> {navBarOpen ?  ' Inicio' : ''}
-                            </div>
+                            </Link>
                         </IconButton>
-                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                            <div className={classes.sideButtons}>
-                                <FontAwesomeIcon icon={faClipboard}/> {navBarOpen ?  ' Inspección' : ''}
-                            </div>
+                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}} onClick={closeSideBar}>
+                            <Link to='/sites' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                <FontAwesomeIcon icon={faMapMarkerAlt}/> {navBarOpen ?  ' Sitios' : ''}
+                            </Link>
                         </IconButton>
-                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                            <div className={classes.sideButtons}>
+                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}} onClick={closeSideBar}>
+                            <Link to='/inspection' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                <FontAwesomeIcon icon={faSearch}/> {navBarOpen ?  ' Inspección' : ''}
+                            </Link>
+                        </IconButton>
+                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}} onClick={closeSideBar}>
+                            <Link to='/maintenance' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                 <FontAwesomeIcon icon={faTools}/> {navBarOpen ?  ' Mantención' : ''}
-                            </div>
+                            </Link>
                         </IconButton>
-                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                            <div className={classes.sideButtons}>
+                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}} onClick={closeSideBar}>
+                            <Link to='/reports' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                <FontAwesomeIcon icon={faClipboardList}/> {navBarOpen ?  ' Reportes' : ''}
+                            </Link>
+                        </IconButton>
+                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}} onClick={closeSideBar}>
+                            <Link to='/configuration' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                 <FontAwesomeIcon icon={faCog}/> {navBarOpen ?  ' Configuración' : ''}
-                            </div>
+                            </Link>
                         </IconButton>
-                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                            <div className={classes.sideButtons}>
+                        <IconButton style={{ width: '100%', textAlign: navBarOpen ? 'left' : 'center'}} onClick={closeSideBar}>
+                            <Link to='/information' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                 <FontAwesomeIcon icon={faInfoCircle}/> {navBarOpen ?  ' Información' : ''}
-                            </div>
+                            </Link>
                         </IconButton>
                     </Grid>
                     <Grid item style={{ position: 'absolute', bottom: 0, width: '100%' }}>

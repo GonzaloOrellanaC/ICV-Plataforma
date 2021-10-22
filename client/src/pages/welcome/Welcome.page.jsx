@@ -18,6 +18,8 @@ const WelcomePage = () => {
                                 <Grid item>
                                     <CardButton variant='maintenance'/>
                                 </Grid>
+                            {/* </Grid>
+                            <Grid container item spacing={5} justifyContent='center'> */}
                                 <Grid item>
                                     <CardButton variant='reports'/>
                                 </Grid>

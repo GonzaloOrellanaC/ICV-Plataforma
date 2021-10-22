@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Button, makeStyles, Card, alpha } from '@material-ui/core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChartBar, faClipboard, faClipboardList, faTools, faUserCog } from '@fortawesome/free-solid-svg-icons'
+import { faChartBar, faSearch, faClipboard, faClipboardList, faTools, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { useLanguage } from '../../context'
 import { Link } from 'react-router-dom'
 
@@ -11,22 +11,26 @@ const useStyles = makeStyles(theme => ({
         display: 'inline-block',
         textAlign: 'center',
         padding: 10,
-        minWidth: 300,
+        minWidth: 400,
         backgroundColor: 'transparent'
     },
     icon: {
-        marginBottom: 15
+        //marginBottom: 15,
+        padding: 20,
+        width: '100%',
     },
     button: {
         minWidth: 180
     },
     buttonSelection: {
-        backgroundColor: alpha(theme.palette.primary.main, 1),
-        color: 'white',
-        minWidth: 170
+        //backgroundColor: alpha(theme.palette.primary.main, 1),
+        backgroundColor: '#F9F9F9',
+        color: '#505050',
+        minWidth: 300
     },
     iconButton: {
-        color: '#600000'
+        color: '#505050',
+        //color: '#600000'
     }
 }))
 
@@ -38,13 +42,13 @@ const CardButton = ({ variant }) => {
     const handleTypeIcon = () => {
         switch (variant) {
         case 'inspection':
-            return (<FontAwesomeIcon icon={faClipboardList} size='8x' className={classes.iconButton}/>)
+            return (<FontAwesomeIcon icon={faSearch} size='4x' className={classes.iconButton}/>)
         case 'maintenance':
-            return (<FontAwesomeIcon icon={faTools} size='8x' className={classes.iconButton}/>)
+            return (<FontAwesomeIcon icon={faTools} size='4x' className={classes.iconButton}/>)
         case 'reports':
-            return (<FontAwesomeIcon icon={faChartBar} size='8x' className={classes.iconButton}/>)
+            return (<FontAwesomeIcon icon={faClipboardList} size='4x' className={classes.iconButton}/>)
         case 'configuration':
-            return (<FontAwesomeIcon icon={faUserCog} size='8x' className={classes.iconButton}/>)
+            return (<FontAwesomeIcon icon={faUserCog} size='4x' className={classes.iconButton}/>)
         }
     }
     const handleTypeText = () => {
@@ -62,12 +66,13 @@ const CardButton = ({ variant }) => {
 
     return (
         <div className={classes.root} component={Link}>
-            <div className={classes.icon}>
-                {handleTypeIcon()}
-            </div>
-            <Link to={`/${variant}`}>
+            <Link to={`/${variant}`} style={{textDecoration: 'none'}}>
                 <Button variant="contained" className={classes.buttonSelection} >
-                    {handleTypeText()}
+                    <div className={classes.icon}>
+                        {handleTypeIcon()}
+                        <br />
+                        <p style={{fontSize:21, marginBottom: 0}}>{handleTypeText()}</p>
+                    </div>
                 </Button>
             </Link>
         </div>
