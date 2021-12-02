@@ -3,7 +3,7 @@ import { model, Schema } from 'mongoose'
 import { FormSectionSchema } from './maintenancePlan'
 
 /* AssignedMaintenance Schema */
-const AssignedMaintenancesSchema = new Schema({
+const AssignedMaintenanceSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -13,15 +13,15 @@ const AssignedMaintenancesSchema = new Schema({
         required: true
     },
     info: {
-        /* machineAssociated: {
+        machineAssociated: {
             type: Schema.Types.ObjectId,
             ref: 'Machine'
-        }, */
-        /* machinePrototype: {
+        },
+        machinePrototype: {
             type: Schema.Types.ObjectId,
             ref: 'MachinePrototype',
             required: true
-        }, */
+        },
         documentId: {
             type: String,
             default: ''
@@ -58,6 +58,6 @@ const AssignedMaintenancesSchema = new Schema({
 }
 )
 
-const AssignedMaintenances = model('AssignedMaintenance', AssignedMaintenancesSchema)
+const AssignedMaintenance = model('AssignedMaintenance', AssignedMaintenanceSchema)
 
-export default AssignedMaintenances
+export default AssignedMaintenance

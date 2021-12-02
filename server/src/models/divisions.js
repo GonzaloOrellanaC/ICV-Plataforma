@@ -2,7 +2,7 @@
 import { model, Schema } from 'mongoose'
 
 /* Division Schema */
-const DivisionsSchema = new Schema({
+const DivisionSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -10,6 +10,14 @@ const DivisionsSchema = new Schema({
     image: {
         type: String,
         required: true
+    },
+    site: {
+        type: Schema.Types.ObjectId,
+        ref: 'Site'
+    },
+    users: {
+        type: Array,
+        default: []
     }
 },
 {
@@ -17,6 +25,6 @@ const DivisionsSchema = new Schema({
 }
 )
 
-const Divisions = model('Division', DivisionsSchema)
+const Division = model('Division', DivisionSchema)
 
-export default Divisions
+export default Division

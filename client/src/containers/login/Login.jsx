@@ -17,7 +17,6 @@ const Login = () => {
     const { login } = useAuth()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-
     const classes = useStyles()
 
     const handleChange = (event) => {

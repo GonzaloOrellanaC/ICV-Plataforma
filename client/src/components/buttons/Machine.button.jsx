@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => ({
         border: '5px solid gray',
         padding: 0,
         backgroundColor: 'rgba(255,255,255,0.5)',
+        boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)',
         '&:hover': {
             '& .overlay': {
                 width: 220,
@@ -23,15 +24,18 @@ const useStyles = makeStyles(theme => ({
             }
         }
     },
+    card: {
+        boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)',
+    },
     imageContainer: {
-        width: 210,
-        height: 150,
+        width: '100%',
+        height: 250,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
     },
     image: {
-        maxWidth: '100%',
+        width: '100%',
         maxHeight: '100%'
     },
     textContainer: {
@@ -46,9 +50,11 @@ const useStyles = makeStyles(theme => ({
 
 const MachineButton = ({ image, machine, route }) => {
     const classes = useStyles();
+    console.log(route);
+    console.log(machine);
 
     return (
-        <Button className={classes.root} component={Link} to={`/${route}/${JSON.stringify(machine)}`}>
+        <Button className={classes.root} style={{borderRadius: 20}} component={Link} to={`/${route}/${JSON.stringify(machine)}`}>
             <div className='overlay'></div>
             <div className={classes.imageContainer}>
                 <img className={classes.image} src={image} alt={machine.model}/>

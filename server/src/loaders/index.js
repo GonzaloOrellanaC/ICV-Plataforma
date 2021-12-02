@@ -3,5 +3,5 @@ import expressLoader from './express.loader'
 
 export {
     databaseLoader,
-    expressLoader
+    expressLoader,
 }

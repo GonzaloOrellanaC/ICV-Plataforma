@@ -34,8 +34,6 @@ const ReportsPage = () => {
     }
 
     
-    
-    
     return (
         <Box height='100%'>
             <Grid className={classes.pageRoot} container spacing={0}>

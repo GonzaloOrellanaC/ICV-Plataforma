@@ -53,7 +53,7 @@ export const FormSectionSchema = new Schema({
 })
 
 /* MaintenancePlan Schema */
-const MaintenancePlansSchema = new Schema({
+const MaintenancePlanSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -101,9 +101,9 @@ const MaintenancePlansSchema = new Schema({
  * Allows to obtain a virtual document property with the full name of the template without
  * saving it to the database by concatenating code and name in the correct way
  */
-MaintenancePlansSchema.virtual('templateName')
+MaintenancePlanSchema.virtual('templateName')
     .get(function () { return `${this.code} - ${this.name}` })
 
-const MaintenancePlans = model('MaintenancePlan', MaintenancePlansSchema)
+const MaintenancePlan = model('MaintenancePlan', MaintenancePlanSchema)
 
-export default MaintenancePlans
+export default MaintenancePlan

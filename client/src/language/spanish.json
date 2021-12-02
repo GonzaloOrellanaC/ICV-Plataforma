@@ -10,7 +10,11 @@
         "inspectionButton": "Inspección",
         "maintenanceButton": "Mantención",
         "reportsButton": "Reportes",
-        "configurationButton": "Configuración"
+        "configurationButton": "Configuración",
+        "administrationButton": "Administración"
+    },
+    "admin": {
+        "adminUsersButton": "Usuarios"
     },
     "machines": {
         "title": "Selecciona tipo de máquina"

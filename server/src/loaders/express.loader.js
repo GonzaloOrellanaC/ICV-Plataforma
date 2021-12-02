@@ -80,7 +80,7 @@ export default async () => {
     })
 
     /* Configure Routes */
-    app.use('/', router)
+    app.use('/', router);
 
     return app
 }

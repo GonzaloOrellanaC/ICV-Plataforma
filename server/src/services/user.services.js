@@ -16,12 +16,12 @@ const { error: errorMsg, success: successMsg } = environment.messages.services.u
  * @returns Users, newly created user document
  */
 const createUser = async (user, password) => {
+    console.log(user, password)
     if (!user || !password) {
         throw new Error(errorMsg.missingParameters)
     }
     const registerUser = new Users(user)
     registerUser.setPassword(password)
-
     try {
         await registerUser.save()
         return registerUser
@@ -63,6 +63,7 @@ const deleteUser = async (userId) => {
 const authenticateUser = (req, res, next) => {
     return new Promise((resolve, reject) => {
         passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
+            //console.log('Usuario Passport:', passportUser)
             if (err) {
                 reject(new Error(errorMsg.unauthorized))
             }

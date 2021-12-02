@@ -15,35 +15,7 @@ export const NavigationProvider = (props) => {
 
     useEffect(() => {
         const splitLocation = location?.pathname?.split('/')[1]
-
         setLocationData(splitLocation)
-        /* switch (splitLocation) {
-        case 'inspection':
-            return setLocationData({
-                icon: faClipboard,
-                title: dictionary.location.inspection
-            })
-        case 'maintenance':
-            return setLocationData({
-                icon: faTools,
-                title: dictionary.location.maintenance
-            })
-        case 'reports':
-            return setLocationData({
-                icon: faChartBar,
-                title: dictionary.location.reports
-            })
-        case 'configuration':
-            return setLocationData({
-                icon: faUserCog,
-                title: dictionary.location.configuration
-            })
-        default:
-            return setLocationData({
-                icon: faHome,
-                title: dictionary.location.start
-            })
-        } */
     }, [location])
 
     const provider = {

@@ -23,4 +23,15 @@ yarn-debug.log*
 yarn-error.log*
 
 # assets
-src/assets/*
+#src/assets/*
+
+# files > 100Mb
+public/assets/camion
+public/assets/pala
+public/assets/park
+
+find . -size +100M | cat >> .gitignore
+
+git filter-branch --prune-empty -d /tmp/scratch \
+  --index-filter "git rm --cached -f --ignore-unmatch client/public/assets/pala/Komatsu_PC5500_Preview.glb" \
+  --tag-name-filter cat -- --all

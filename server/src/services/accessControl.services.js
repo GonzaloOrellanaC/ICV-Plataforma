@@ -1,7 +1,7 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { PermissionRoles } from '../models'
+import { PermissionRoles, Roles } from '../models'
 
 const { error: errorMsg } = environment.messages.services.accessControl
 
@@ -22,18 +22,34 @@ const ac = new AccessControl()
  */
 const initAccessControl = async () => {
     try {
-        const findRole = await PermissionRoles.findOne({ name: environment.adminRole.name })
+        /* const findRole = await PermissionRoles.findOne({ name: environment.adminRole.name }) */
+        const findRole = await Roles.findOne({ name: environment.roles[0].name })
         let adminResult = '';
-        console.log(findRole)
+        console.log('Log!!!!!!', findRole)
         if (findRole) {
-            await updateRole(findRole._id, environment.adminRole.resources)
-            adminResult = 'Admin Role updated';
+            //await updateRole(findRole._id, environment.adminRole.resources)
+            //adminResult = 'Admin Role updated';
+            //createAdminDefault()
         } else {
-            await createRole(environment.adminRole.name, environment.adminRole.resources)
-            adminResult = 'Admin Role created'
-            createAdminDefault()
+            environment.roles.forEach(async (role, index) => {
+                let roleCreated = await createRole(role.name, role.dbName);
+                if(roleCreated) {
+                    //console.log(roleCreated);
+                    let result = `${role.name} created`;
+                    console.log(result);
+                }
+                if(index == (environment.roles.length - 1)) {
+
+                }
+            })
+            //let roleCreated = await createRole(environment.adminRole.name, environment.adminRole.resources)
+            //adminResult = 'Admin Role created'
+            //console.log(roleCreated)
+            /* if(roleCreated) {
+                createAdminDefault()
+            } */
         }
-        console.info(`Initialized access control. ${adminResult}`)
+        //console.info(`Initialized access control. ${adminResult}`)
     } catch (error) {
         console.error(error)
     }
@@ -110,7 +126,20 @@ const check = (role, resource, type) => {
  * @param {*} resources Object with the resource type of access and attributes (e.g. { User: { 'create:any': ['*'], ... } })
  * @returns PermissionRoles, the newly created permission role document
  */
-const createRole = async (name, resources) => {
+const createRole = async (name, dbName) => {
+    try {
+        const newRole = new Roles({
+            name,
+            dbName
+        })
+        await newRole.save()
+        return newRole
+    } catch (error) {
+        // Add error message to be sent
+        throw new Error(error.message)
+    }
+}
+/* const createRole = async (name, resources) => {
     try {
         const newRole = new PermissionRoles({
             name,
@@ -123,7 +152,7 @@ const createRole = async (name, resources) => {
         // Add error message to be sent
         throw new Error(error.message)
     }
-}
+} */
 
 /**
  * Updates a role using it's id and a new resources object, this object will completely replace the old
@@ -135,7 +164,9 @@ const createRole = async (name, resources) => {
  */
 const updateRole = async (roleId, newResources) => {
     try {
-        const updated = await PermissionRoles.findByIdAndUpdate(roleId, { resources: newResources }, { new: true })
+        const updated = await PermissionRoles.findByIdAndUpdate(roleId, { resources: newResources }, { new: true });
+
+        //console.log('Actualizado: ', updated)
         if (!updated) {
             throw new Error(errorMsg.roleNotFound)
         }

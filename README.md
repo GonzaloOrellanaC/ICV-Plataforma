@@ -52,6 +52,12 @@ Explicación de los npm scripts en package.json:
 
 
 # Actualizaciones
+<h3>Semana 16 y 17</h3>
+
+- Se avanza desarrollo de back end.
+- Llegan anrchivos JSON para pruebas de base de datos de ICV.
+- Se modifica librería visora 3D de A-Frame a Google Model Viewer.
+
 
 <h3>Semana 15</h3>
 

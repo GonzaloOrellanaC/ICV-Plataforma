@@ -2,7 +2,7 @@
 import { model, Schema } from 'mongoose'
 
 /* Machine Schema */
-const MachinesSchema = new Schema({
+const MachineSchema = new Schema({
     number: {
         type: String,
         required: true
@@ -21,6 +21,10 @@ const MachinesSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'AssignedInspection'
         }]
+    },
+    division: {
+        type: Schema.Types.ObjectId,
+        ref: 'Division'
     }
 },
 {
@@ -28,6 +32,6 @@ const MachinesSchema = new Schema({
 }
 )
 
-const Machines = model('Machine', MachinesSchema)
+const Machine = model('Machine', MachineSchema)
 
-export default Machines
+export default Machine

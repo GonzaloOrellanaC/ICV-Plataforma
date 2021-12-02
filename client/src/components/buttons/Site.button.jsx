@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Grid, Button, Snackbar, IconButton,  } from '@material-ui/core'
 import { Close } from '@material-ui/icons';
 
 const SiteButton = ({ site }) => {
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -14,27 +14,23 @@ const SiteButton = ({ site }) => {
     };
 
     const seleccionarSitio = () => {
-        //console.log(site);
-        localStorage.setItem('sitio', site.name);
+        localStorage.setItem('sitio', site.descripcion);
         setOpen(true);
     }
 
     return (
         <Grid container style={{borderStyle: 'solid', borderWidth: 2, borderColor: '#505050', borderRadius:20, padding: 20}}>
-            <div style={{padding: 'auto'}}>
-                <img src={site.image} width={100} height={100} style={{objectFit: 'cover'}}/>
-            </div>
-            <div style={{margin: 'auto', marginLeft: 20, textAlign: 'left'}}>
-                <h1> {site.name} </h1>
+            <div style={{margin: 'auto', textAlign: 'left'}}>
+                <h1> {site.descripcion} </h1>
             </div>
             <div style={{position: 'relative', right: 20, margin: 'auto', marginRight: 80, maxWidth: 50, textAlign: 'right'}}>
-                <Button onClick={seleccionarSitio} style={{borderStyle: 'solid', borderWidth: 2, borderColor: '#505050', color: '#505050', borderRadius:20, padding: 20}}>Seleccionar</Button>
+                <Button onClick={seleccionarSitio} style={{borderStyle: 'solid', borderWidth: 2, backgroundColor: '#BE2E26', borderColor: '#BE2E26', color: '#FFF', borderRadius:20, padding: 20}}>Seleccionar</Button>
             </div>
             <Snackbar
                 open={open}
                 autoHideDuration={2000}
                 onClose={handleClose}
-                message={`${site.name} seleccionado`}
+                message={`${site.descripcion} seleccionado`}
                 action={
                     <React.StrictMode>
                         <Button color="secondary" size="small" onClick={handleClose}>

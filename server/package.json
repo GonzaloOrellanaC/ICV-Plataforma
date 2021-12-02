@@ -10,6 +10,7 @@
     "author": "Javier Romero <javier.romero@kauel.com>",
     "license": "ISC",
     "dependencies": {
+        "@azure/storage-blob": "^12.8.0",
         "accesscontrol": "^2.2.1",
         "cookie-parser": "^1.4.5",
         "cors": "^2.8.5",

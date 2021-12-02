@@ -1,29 +1,27 @@
 import express from 'express'
 import path from 'path'
+import { ApiIcv } from './src/api-icv'
 
 import { environment } from './src/config'
 import { databaseLoader, expressLoader } from './src/loaders'
-import { AccessControlServices, EmailServices } from './src/services'
+import { AccessControlServices } from './src/services'
 
-/**
- * Starts server using each loader and init function and then usess app.listen to serve.
- */
 const startServer = async () => {
     await databaseLoader()
-    await AccessControlServices.initAccessControl()
+    await AccessControlServices.initAccessControl();
+
+    const machines = await ApiIcv.getAllPMList();
+    if(machines) {
+        machines.forEach(async (machine, index) => {
+            const PMHeaderList = await ApiIcv.getAllPMHeaderAndStruct(machine.pIDPM);
+            //console.log(PMHeaderList)
+        });
+    };
+
+    ApiIcv.createSiteToSend();
 
     const app = await expressLoader();
 
-    /* let data = {
-        logoAlt: 'Logo',
-        fullName: 'Gonzalo Orellana',
-        platformURL: 'https://kauel.com',
-        platformName: 'ICV Platform',
-        email: 'gonzalo.orellana@kauel.com',
-        resetLink: 'https://tesso.cl',
-    } */
-
-    //EmailServices.sendEmail('forgotPassword', data , 'es')
     if(app) {
         console.log('Ok APP')
     }
@@ -41,7 +39,6 @@ const startServer = async () => {
     }
 
     app.listen(environment.port, (err) => {
-        //console.log(environment)
         if (err) {
             console.error('Express startup error: ', err)
             throw err

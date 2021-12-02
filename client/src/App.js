@@ -8,19 +8,37 @@ import { onError } from '@apollo/client/link/error'
 import { createUploadLink } from 'apollo-upload-client'
 
 /* Material UI */
-import { Backdrop, Box, CssBaseline, ThemeProvider } from '@material-ui/core'
-import { theme, useStylesTheme } from './config'
+import { Box, CssBaseline, ThemeProvider } from '@material-ui/core'
+import { theme } from './config'
 
 import './App.css'
-import { AuthProvider, LanguageProvider, NavigationProvider, useAuth, useNavigation } from './context'
+import { AuthProvider, LanguageProvider, NavigationProvider, useAuth } from './context'
 import { Header, Navbar } from './containers'
-import { AppliancePage, LoadingPage, LoginPage, MachinesPage, WelcomePage, ResetPasswordPage, DivisionsPage, ReportsPage, AlertPage, InfoPage, ConfigurationPage, SitesPage } from './pages'
+import { 
+    AppliancePage, 
+    LoadingPage, 
+    LoginPage, 
+    MachinesPage, 
+    WelcomePage, 
+    ResetPasswordPage, 
+    DivisionsPage, 
+    ReportsPage, 
+    AlertPage, 
+    InfoPage, 
+    ConfigurationPage, 
+    SitesPage,
+    AdminPage,
+    MaintencePage,
+    PmsPage,
+    PautaDetailPage,
+    MachinesListPage,
+    AdminUsersPage,
+    AdminNewUserPage
+} from './pages';
 
-/* GraphQL Configuration */
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
     if (networkError?.statusCode === 401) {
         console.log(`[Network error]: ${networkError.statusCode}`)
-        // window.location.href = '/'
     }else{
 
     }
@@ -39,21 +57,17 @@ const link = ApolloLink.from([
 const client = new ApolloClient({
     link: link,
     cache: new InMemoryCache()
-})
+});
+    
 
 const OnApp = () => {
-    const { isAuthenticated, loading } = useAuth()
-    const { navBarOpen, handleNavBar } = useNavigation()
-    const classes = useStylesTheme()
-
-    //console.log(isAuthenticated, loading)
+    const { isAuthenticated, loading } = useAuth();  
 
     return (
         <Box height='100vh' display='flex' flexDirection='column' style={{fontFamily: 'Roboto'}}>
             {isAuthenticated && <Route path={['/']}>
-                    {isAuthenticated && !loading && <Navbar />} {isAuthenticated && !loading && <Header />}
+                    {isAuthenticated && !loading && <Navbar/>} {isAuthenticated && !loading && <Header />}
                 </Route>}
-            {/* <Backdrop className={classes.backDrop} open={navBarOpen} onClick={handleNavBar}/> */}
             <Switch>
                 {!isAuthenticated && <Route exact path={['/reset-password']} render={() => (<ResetPasswordPage />)}/>}
                 {!isAuthenticated && <Route path={['/']} render={() => (<LoginPage />)}/>}
@@ -95,7 +109,10 @@ const OnApp = () => {
                             <MachinesPage route={'inspection'}/>
                         </Route>
                         <Route exact path='/inspection/:id'>
-                            <AppliancePage route='inspection'/>
+                            <MachinesListPage route='inspection'/>
+                        </Route>
+                        <Route exact path='/inspection/machine-detail/:id'>
+                            <AppliancePage route={'inspection/machine-detail'}/>
                         </Route>
                     </Switch>
                 </Route>
@@ -105,7 +122,10 @@ const OnApp = () => {
                             <MachinesPage route={'maintenance'}/>
                         </Route>
                         <Route exact path='/maintenance/:id'>
-                            <AppliancePage route='maintenance'/>
+                            <MachinesListPage route='maintenance'/>
+                        </Route>
+                        <Route exact path='/maintenance/machine-detail/:id'>
+                            <AppliancePage route={'maintenance/machine-detail'}/>
                         </Route>
                     </Switch>
                 </Route>
@@ -114,9 +134,13 @@ const OnApp = () => {
                         <Route exact path='/sites'>
                             <SitesPage route={'sites'}/>
                         </Route>
-                        {/* <Route exact path='/sites/:id'>
-                            <AppliancePage route='sites'/>
-                        </Route> */}
+                    </Switch>
+                </Route>
+                <Route path={['/maintance']}>
+                    <Switch>
+                        <Route exact path='/maintance'>
+                            <MaintencePage route={'maintance'}/>
+                        </Route>
                     </Switch>
                 </Route>
                 <Route path={['/configuration']}>
@@ -126,16 +150,49 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
+                <Route path={['/pms']}>
+                    <Switch>
+                        <Route exact path='/pms'>
+                            <PmsPage route={'pms'}/>
+                        </Route>
+                    </Switch>
+                </Route>
+                <Route path={['/pauta-detail']}>
+                    <Switch>
+                        <Route exact path='/pauta-detail/:id'>
+                            <PautaDetailPage route={'pauta-detail'}/>
+                        </Route>
+                    </Switch>
+                </Route>
+                <Route path={['/administration']}>
+                    <Switch>
+                        <Route exact path='/administration'>
+                            <AdminPage route={'administration'}/>
+                        </Route>
+                    </Switch>
+                </Route>
+                <Route path={['/users']}>
+                    <Switch>
+                        <Route exact path='/users'>
+                            <AdminUsersPage route={'users'}/>
+                        </Route>
+                    </Switch>
+                </Route>
+                <Route path={['/new-users']}>
+                    <Switch>
+                        <Route exact path='/new-users'>
+                            <AdminNewUserPage route={'new-users'}/>
+                        </Route>
+                    </Switch>
+                </Route>
             </Switch>
-            {/* <Route exact path='/vista-3d'>
-                <Vista3D route='vista-3d' />
-            </Route> */}
         </Box>
     )
 }
 
 /*  Main app component, activates providers for the whole app (Theme, Snackbar, Apollo and AuthContext) */
-function App () {
+const App = () => {   
+
     return (
         <Router>
             <ApolloProvider client={client}>
@@ -151,7 +208,8 @@ function App () {
                 </AuthProvider>
             </ApolloProvider>
         </Router>
-    )
+    );
+    
 }
 
 export default App

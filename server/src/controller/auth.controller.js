@@ -4,14 +4,18 @@ import { EmailServices, UserServices } from '../services'
 const { error: errorMsg, success: successMsg } = environment.messages.controller.auth
 
 const login = async (req, res, next) => {
-    const { body: { user } } = req
+    const { body: { user } } = req;
+
+    console.log(req.body)
 
     if (!user.email || !user.password) {
         return res.status(400).end(errorMsg.credentialsRequired)
     }
 
     try {
-        const authenticatedUser = await UserServices.authenticateUser(req, res, next)
+        const authenticatedUser = await UserServices.authenticateUser(req, res, next);
+        //console.log('Usuario autenticado: ', authenticatedUser)
+        //console.log('JWK_log: ', authenticatedUser.generateJWT())
         res.cookie('jwt', authenticatedUser.generateJWT(), {
             httpOnly: true,
             ...(environment.env === 'production' && { secure: true }),

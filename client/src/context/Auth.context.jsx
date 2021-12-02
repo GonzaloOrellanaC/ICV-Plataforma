@@ -6,7 +6,8 @@ import { authRoutes } from '../routes'
 const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
-    const defaultAuthenticated  = Boolean(JSON.parse(window.localStorage.getItem('isauthenticated')));
+    //const defaultAuthenticated  = Boolean(JSON.parse(window.localStorage.getItem('isauthenticated')));
+    const defaultAuthenticated  = Boolean(window.localStorage.getItem('isauthenticated'));
     const [isAuthenticated, setIsAuthenticated] = useState(defaultAuthenticated || false)
     const [getSelf, { loading, error, data }] = useLazyQuery(UsersGraphQL.query.GET_SELF)
     const [userData, setUserData] = useState({})
@@ -22,13 +23,15 @@ export const AuthProvider = (props) => {
 
     useEffect(() => {
         if (error) {
-            setIsAuthenticated(true)
+            setIsAuthenticated(false)
+            //setIsAuthenticated(true)
             window.localStorage.setItem('isauthenticated', false)
         }
     }, [error])
 
     useEffect(() => {
         getSelf()
+        console.log('Prueba get self', loading, error, data)
     }, [])
 
     const provider = {

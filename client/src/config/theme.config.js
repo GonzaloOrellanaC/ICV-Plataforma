@@ -6,7 +6,7 @@ import backgroundimg from '../assets/slider_home_01.jpg'
 export const theme = createTheme({
     palette: {
         background: {
-            default: '#000'
+            default: '#fff'
         },
         primary: {
             light: '#DE0000',
@@ -18,7 +18,7 @@ export const theme = createTheme({
         MuiCssBaseline: {
             '@global': {
                 body: {
-                    backgroundImage: `url(${backgroundimg})`,
+                    //backgroundImage: `url(${backgroundimg})`,
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
                     backgroundPositionX: 'center',
@@ -67,7 +67,8 @@ export const theme = createTheme({
 
 export const useStylesTheme = makeStyles(theme => ({
     pageRoot: {
-        height: '100%'
+        height: '100%',
+        fontFamily:'Raleway'
     },
     pageContainer: {
         height: '100%',
@@ -79,7 +80,7 @@ export const useStylesTheme = makeStyles(theme => ({
     pageCard: {
         marginLeft: 99,
         height: '100%',
-        backgroundColor: 'rgba(255,255,255, 0.8)',
+        //backgroundColor: 'rgba(255,255,255, 0.8)',
         borderRadius: 0,
         boxShadow: 'none',
         padding: 20,

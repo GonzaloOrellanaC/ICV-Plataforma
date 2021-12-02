@@ -1,0 +1,660 @@
+[33mcommit 0da26a8d94dc391bcac7e77fc9a1949d11eba7cc[m
+Author: GonzaloOrellanaC <gonzalo.orellana@kahuel.com>
+Date:   Fri Nov 5 19:06:37 2021 -0300
+
+    actualización semana 17
+
+[1mdiff --git a/README.md b/README.md[m
+[1mindex 1875fd0..cc7f682 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -52,6 +52,12 @@[m [mExplicación de los npm scripts en package.json:[m
+ [m
+ [m
+ # Actualizaciones[m
+[32m+[m[32m<h3>Semana 16 y 17</h3>[m
+[32m+[m
+[32m+[m[32m- Se avanza desarrollo de back end.[m
+[32m+[m[32m- Llegan anrchivos JSON para pruebas de base de datos de ICV.[m
+[32m+[m[32m- Se modifica librería visora 3D de A-Frame a Google Model Viewer.[m
+[32m+[m
+ [m
+ <h3>Semana 15</h3>[m
+ [m
+[1mdiff --git a/client/package-lock.json b/client/package-lock.json[m
+[1mindex bdac844..f551af6 100644[m
+[1m--- a/client/package-lock.json[m
+[1m+++ b/client/package-lock.json[m
+[36m@@ -24,6 +24,168 @@[m
+         "zen-observable": "^0.8.14"[m
+       }[m
+     },[m
+[32m+[m[32m    "@azure/abort-controller": {[m
+[32m+[m[32m      "version": "1.0.4",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@azure/abort-controller/-/abort-controller-1.0.4.tgz",[m
+[32m+[m[32m      "integrity": "sha512-lNUmDRVGpanCsiUN3NWxFTdwmdFI53xwhkTFfHDGTYk46ca7Ind3nanJc+U6Zj9Tv+9nTCWRBscWEW1DyKOpTw==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "tslib": "^2.0.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "tslib": {[m
+[32m+[m[32m          "version": "2.3.1",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz",[m
+[32m+[m[32m          "integrity": "sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw=="[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "@azure/core-asynciterator-polyfill": {[m
+[32m+[m[32m      "version": "1.0.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@azure/core-asynciterator-polyfill/-/core-asynciterator-polyfill-1.0.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-kmv8CGrPfN9SwMwrkiBK9VTQYxdFQEGe0BmQk+M8io56P9KNzpAxcWE/1fxJj7uouwN4kXF0BHW8DNlgx+wtCg=="[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "@azure/core-auth": {[m
+[32m+[m[32m      "version": "1.3.2",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@azure/core-auth/-/core-auth-1.3.2.tgz",[m
+[32m+[m[32m      "integrity": "sha512-7CU6DmCHIZp5ZPiZ9r3J17lTKMmYsm/zGvNkjArQwPkrLlZ1TZ+EUYfGgh2X31OLMVAQCTJZW4cXHJi02EbJnA==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "@azure/abort-controller": "^1.0.0",[m
+[32m+[m[32m        "tslib": "^2.2.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "tslib": {[m
+[32m+[m[32m          "version": "2.3.1",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz",[m
+[32m+[m[32m          "integrity": "sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw=="[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "@azure/core-http": {[m
+[32m+[m[32m      "version": "2.2.1",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@azure/core-http/-/core-http-2.2.1.tgz",[m
+[32m+[m[32m      "integrity": "sha512-7ATnV3OGzCO2K9kMrh3NKUM8b4v+xasmlUhkNZz6uMbm+8XH/AexLkhRGsoo0GyKNlEGvyGEfytqTk0nUY2I4A==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "@azure/abort-controller": "^1.0.0",[m
+[32m+[m[32m        "@azure/core-asynciterator-polyfill": "^1.0.0",[m
+[32m+[m[32m        "@azure/core-auth": "^1.3.0",[m
+[32m+[m[32m        "@azure/core-tracing": "1.0.0-preview.13",[m
+[32m+[m[32m        "@azure/logger": "^1.0.0",[m
+[32m+[m[32m        "@types/node-fetch": "^2.5.0",[m
+[32m+[m[32m        "@types/tunnel": "^0.0.3",[m
+[32m+[m[32m        "form-data": "^4.0.0",[m
+[32m+[m[32m        "node-fetch": "^2.6.0",[m
+[32m+[m[32m        "process": "^0.11.10",[m
+[32m+[m[32m        "tough-cookie": "^4.0.0",[m
+[32m+[m[32m        "tslib": "^2.2.0",[m
+[32m+[m[32m        "tunnel": "^0.0.6",[m
+[32m+[m[32m        "uuid": "^8.3.0",[m
+[32m+[m[32m        "xml2js": "^0.4.19"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "form-data": {[m
+[32m+[m[32m          "version": "4.0.0",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/form-data/-/form-data-4.0.0.tgz",[m
+[32m+[m[32m          "integrity": "sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==",[m
+[32m+[m[32m          "requires": {[m
+[32m+[m[32m            "asynckit": "^0.4.0",[m
+[32m+[m[32m            "combined-stream": "^1.0.8",[m
+[32m+[m[32m            "mime-types": "^2.1.12"[m
+[32m+[m[32m          }[m
+[32m+[m[32m        },[m
+[32m+[m[32m        "tslib": {[m
+[32m+[m[32m          "version": "2.3.1",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz",[m
+[32m+[m[32m          "integrity": "sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw=="[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "@azure/core-lro": {[m
+[32m+[m[32m      "version": "2.2.1",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@azure/core-lro/-/core-lro-2.2.1.tgz",[m
+[32m+[m[32m      "integrity": "sha512-HE6PBl+mlKa0eBsLwusHqAqjLc5n9ByxeDo3Hz4kF3B1hqHvRkBr4oMgoT6tX7Hc3q97KfDctDUon7EhvoeHPA==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "@azure/abort-controller": "^1.0.0",[m
+[32m+[m[32m        "@azure/core-tracing": "1.0.0-preview.13",[m
+[32m+[m[32m        "@azure/logger": "^1.0.0",[m
+[32m+[m[32m        "tslib": "^2.2.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "tslib": {[m
+[32m+[m[32m          "version": "2.3.1",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz",[m
+[32m+[m[32m          "integrity": "sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw=="[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "@azure/core-paging": {[m
+[32m+[m[32m      "version": "1.2.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@azure/core-paging/-/core-paging-1.2.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-ZX1bCjm/MjKPCN6kQD/9GJErYSoKA8YWp6YWoo5EIzcTWlSBLXu3gNaBTUl8usGl+UShiKo7b4Gdy1NSTIlpZg==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "@azure/core-asynciterator-polyfill": "^1.0.0",[m
+[32m+[m[32m        "tslib": "^2.2.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "tslib": {[m
+[32m+[m[32m          "version": "2.3.1",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz",[m
+[32m+[m[32m          "integrity": "sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw=="[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "@azure/core-tracing": {[m
+[32m+[m[32m      "version": "1.0.0-preview.13",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@azure/core-tracing/-/core-tracing-1.0.0-preview.13.tgz",[m
+[32m+[m[32m      "integrity": "sha512-KxDlhXyMlh2Jhj2ykX6vNEU0Vou4nHr025KoSEiz7cS3BNiHNaZcdECk/DmLkEB0as5T7b/TpRcehJ5yV6NeXQ==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "@opentelemetry/api": "^1.0.1",[m
+[32m+[m[32m        "tslib": "^2.2.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "tslib": {[m
+[32m+[m[32m          "version": "2.3.1",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz",[m
+[32m+[m[32m          "integrity": "sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw=="[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "@azure/logger": {[m
+[32m+[m[32m      "version": "1.0.3",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@azure/logger/-/logger-1.0.3.tgz",[m
+[32m+[m[32m      "integrity": "sha512-aK4s3Xxjrx3daZr3VylxejK3vG5ExXck5WOHDJ8in/k9AqlfIyFMMT1uG7u8mNjX+QRILTIn0/Xgschfh/dQ9g==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "tslib": "^2.2.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "tslib": {[m
+[32m+[m[32m          "version": "2.3.1",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz",[m
+[32m+[m[32m          "integrity": "sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw=="[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "@azure/storage-blob": {[m
+[32m+[m[32m      "version": "12.8.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@azure/storage-blob/-/storage-blob-12.8.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-c8+Wz19xauW0bGkTCoqZH4dYfbtBniPiGiRQOn1ca6G5jsjr4azwaTk9gwjVY8r3vY2Taf95eivLzipfIfiS4A==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "@azure/abort-controller": "^1.0.0",[m
+[32m+[m[32m        "@azure/core-http": "^2.0.0",[m
+[32m+[m[32m        "@azure/core-lro": "^2.2.0",[m
+[32m+[m[32m        "@azure/core-paging": "^1.1.1",[m
+[32m+[m[32m        "@azure/core-tracing": "1.0.0-preview.13",[m
+[32m+[m[32m        "@azure/logger": "^1.0.0",[m
+[32m+[m[32m        "events": "^3.0.0",[m
+[32m+[m[32m        "tslib": "^2.2.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "tslib": {[m
+[32m+[m[32m          "version": "2.3.1",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz",[m
+[32m+[m[32m          "integrity": "sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw=="[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "@babel/code-frame": {[m
+       "version": "7.14.5",[m
+       "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.14.5.tgz",[m
+[36m@@ -1481,6 +1643,11 @@[m
+         "prop-types": "^15.7.2"[m
+       }[m
+     },[m
+[32m+[m[32m    "@google/model-viewer": {[m
+[32m+[m[32m      "version": "1.9.2",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@google/model-viewer/-/model-viewer-1.9.2.tgz",[m
+[32m+[m[32m      "integrity": "sha512-bFn6TJPvPHZDPQ0vYOx1O57A5t4cVjpxaYyYeq2OqOpbZ6+Rkq1PLdyYx8Do7Id1ZPr6WqOaIAxajZ7Jy56G/g=="[m
+[32m+[m[32m    },[m
+     "@graphql-typed-document-node/core": {[m
+       "version": "3.1.0",[m
+       "resolved": "https://registry.npmjs.org/@graphql-typed-document-node/core/-/core-3.1.0.tgz",[m
+[36m@@ -2051,6 +2218,11 @@[m
+         }[m
+       }[m
+     },[m
+[32m+[m[32m    "@opentelemetry/api": {[m
+[32m+[m[32m      "version": "1.0.3",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@opentelemetry/api/-/api-1.0.3.tgz",[m
+[32m+[m[32m      "integrity": "sha512-puWxACExDe9nxbBB3lOymQFrLYml2dVOrd7USiVRnSbgXE+KwBu+HxFvxrzfqsiSda9IWsXJG1ef7C1O2/GmKQ=="[m
+[32m+[m[32m    },[m
+     "@pmmmwh/react-refresh-webpack-plugin": {[m
+       "version": "0.4.3",[m
+       "resolved": "https://registry.npmjs.org/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.4.3.tgz",[m
+[36m@@ -2465,6 +2637,15 @@[m
+       "resolved": "https://registry.npmjs.org/@types/node/-/node-16.3.2.tgz",[m
+       "integrity": "sha512-jJs9ErFLP403I+hMLGnqDRWT0RYKSvArxuBVh2veudHV7ifEC1WAmjJADacZ7mRbA2nWgHtn8xyECMAot0SkAw=="[m
+     },[m
+[32m+[m[32m    "@types/node-fetch": {[m
+[32m+[m[32m      "version": "2.5.12",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@types/node-fetch/-/node-fetch-2.5.12.tgz",[m
+[32m+[m[32m      "integrity": "sha512-MKgC4dlq4kKNa/mYrwpKfzQMB5X3ee5U6fSprkKpToBqBmX4nFZL9cW5jl6sWn+xpRJ7ypWh2yyqqr8UUCstSw==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "@types/node": "*",[m
+[32m+[m[32m        "form-data": "^3.0.0"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "@types/normalize-package-data": {[m
+       "version": "2.4.1",[m
+       "resolved": "https://registry.npmjs.org/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz",[m
+[36m@@ -2559,6 +2740,14 @@[m
+         "@types/jest": "*"[m
+       }[m
+     },[m
+[32m+[m[32m    "@types/tunnel": {[m
+[32m+[m[32m      "version": "0.0.3",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@types/tunnel/-/tunnel-0.0.3.tgz",[m
+[32m+[m[32m      "integrity": "sha512-sOUTGn6h1SfQ+gbgqC364jLFBw2lnFqkgF3q0WovEHRLMrVD1sd5aufqi/aJObLekJO+Aq5z646U4Oxy6shXMA==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "@types/node": "*"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "@types/uglify-js": {[m
+       "version": "3.13.1",[m
+       "resolved": "https://registry.npmjs.org/@types/uglify-js/-/uglify-js-3.13.1.tgz",[m
+[36m@@ -7372,8 +7561,7 @@[m
+     "events": {[m
+       "version": "3.3.0",[m
+       "resolved": "https://registry.npmjs.org/events/-/events-3.3.0.tgz",[m
+[31m-      "integrity": "sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==",[m
+[31m-      "dev": true[m
+[32m+[m[32m      "integrity": "sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q=="[m
+     },[m
+     "events-to-array": {[m
+       "version": "1.1.2",[m
+[36m@@ -7769,6 +7957,11 @@[m
+         }[m
+       }[m
+     },[m
+[32m+[m[32m    "file-saver": {[m
+[32m+[m[32m      "version": "2.0.5",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/file-saver/-/file-saver-2.0.5.tgz",[m
+[32m+[m[32m      "integrity": "sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA=="[m
+[32m+[m[32m    },[m
+     "filesize": {[m
+       "version": "6.1.0",[m
+       "resolved": "https://registry.npmjs.org/filesize/-/filesize-6.1.0.tgz",[m
+[36m@@ -8257,7 +8450,6 @@[m
+       "version": "3.0.1",[m
+       "resolved": "https://registry.npmjs.org/form-data/-/form-data-3.0.1.tgz",[m
+       "integrity": "sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==",[m
+[31m-      "dev": true,[m
+       "requires": {[m
+         "asynckit": "^0.4.0",[m
+         "combined-stream": "^1.0.8",[m
+[36m@@ -12611,6 +12803,35 @@[m
+         }[m
+       }[m
+     },[m
+[32m+[m[32m    "node-fetch": {[m
+[32m+[m[32m      "version": "2.6.6",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.6.tgz",[m
+[32m+[m[32m      "integrity": "sha512-Z8/6vRlTUChSdIgMa51jxQ4lrw/Jy5SOW10ObaA47/RElsAN2c5Pn8bTgFGWn/ibwzXTE8qwr1Yzx28vsecXEA==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "whatwg-url": "^5.0.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "tr46": {[m
+[32m+[m[32m          "version": "0.0.3",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/tr46/-/tr46-0.0.3.tgz",[m
+[32m+[m[32m          "integrity": "sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o="[m
+[32m+[m[32m        },[m
+[32m+[m[32m        "webidl-conversions": {[m
+[32m+[m[32m          "version": "3.0.1",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-3.0.1.tgz",[m
+[32m+[m[32m          "integrity": "sha1-JFNCdeKnvGvnvIZhHMFq4KVlSHE="[m
+[32m+[m[32m        },[m
+[32m+[m[32m        "whatwg-url": {[m
+[32m+[m[32m          "version": "5.0.0",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/whatwg-url/-/whatwg-url-5.0.0.tgz",[m
+[32m+[m[32m          "integrity": "sha1-lmRU6HZUYuN2RNNib2dCzotwll0=",[m
+[32m+[m[32m          "requires": {[m
+[32m+[m[32m            "tr46": "~0.0.3",[m
+[32m+[m[32m            "webidl-conversions": "^3.0.0"[m
+[32m+[m[32m          }[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "node-forge": {[m
+       "version": "0.10.0",[m
+       "resolved": "https://registry.npmjs.org/node-forge/-/node-forge-0.10.0.tgz",[m
+[36m@@ -16090,8 +16311,7 @@[m
+     "psl": {[m
+       "version": "1.8.0",[m
+       "resolved": "https://registry.npmjs.org/psl/-/psl-1.8.0.tgz",[m
+[31m-      "integrity": "sha512-RIdOzyoavK+hA18OGGWDqUTsCLhtA7IcZ/6NCs4fFJaHBDab+pDDmDIByWFRQJq2Cd7r1OoQxBGKOaztq+hjIQ==",[m
+[31m-      "dev": true[m
+[32m+[m[32m      "integrity": "sha512-RIdOzyoavK+hA18OGGWDqUTsCLhtA7IcZ/6NCs4fFJaHBDab+pDDmDIByWFRQJq2Cd7r1OoQxBGKOaztq+hjIQ=="[m
+     },[m
+     "public-encrypt": {[m
+       "version": "4.0.3",[m
+[36m@@ -16151,8 +16371,7 @@[m
+     "punycode": {[m
+       "version": "2.1.1",[m
+       "resolved": "https://registry.npmjs.org/punycode/-/punycode-2.1.1.tgz",[m
+[31m-      "integrity": "sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==",[m
+[31m-      "dev": true[m
+[32m+[m[32m      "integrity": "sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A=="[m
+     },[m
+     "q": {[m
+       "version": "1.5.1",[m
+[36m@@ -19378,7 +19597,6 @@[m
+       "version": "4.0.0",[m
+       "resolved": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-4.0.0.tgz",[m
+       "integrity": "sha512-tHdtEpQCMrc1YLrMaqXXcj6AxhYi/xgit6mZu1+EDWUn+qhUf8wMQoFIy9NXuq23zAwtcB0t/MjACGR18pcRbg==",[m
+[31m-      "dev": true,[m
+       "requires": {[m
+         "psl": "^1.1.33",[m
+         "punycode": "^2.1.1",[m
+[36m@@ -19388,8 +19606,7 @@[m
+         "universalify": {[m
+           "version": "0.1.2",[m
+           "resolved": "https://registry.npmjs.org/universalify/-/universalify-0.1.2.tgz",[m
+[31m-          "integrity": "sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==",[m
+[31m-          "dev": true[m
+[32m+[m[32m          "integrity": "sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg=="[m
+         }[m
+       }[m
+     },[m
+[36m@@ -19460,6 +19677,11 @@[m
+       "integrity": "sha1-oVe6QC2iTpv5V/mqadUk7tQpAaY=",[m
+       "dev": true[m
+     },[m
+[32m+[m[32m    "tunnel": {[m
+[32m+[m[32m      "version": "0.0.6",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/tunnel/-/tunnel-0.0.6.tgz",[m
+[32m+[m[32m      "integrity": "sha512-1h/Lnq9yajKY2PEbBadPXj3VxsDDu844OnaAo52UVmIzIvwwtBPIuNvkjuzBlTWpfJyUbG3ez0KSBibQkj4ojg=="[m
+[32m+[m[32m    },[m
+     "tunnel-agent": {[m
+       "version": "0.4.3",[m
+       "resolved": "https://registry.npmjs.org/tunnel-agent/-/tunnel-agent-0.4.3.tgz",[m
+[36m@@ -19893,9 +20115,7 @@[m
+     "uuid": {[m
+       "version": "8.3.2",[m
+       "resolved": "https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz",[m
+[31m-      "integrity": "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==",[m
+[31m-      "dev": true,[m
+[31m-      "optional": true[m
+[32m+[m[32m      "integrity": "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg=="[m
+     },[m
+     "v8-compile-cache": {[m
+       "version": "2.3.0",[m
+[1mdiff --git a/client/package.json b/client/package.json[m
+[1mindex 6b6adcf..9bf1a62 100644[m
+[1m--- a/client/package.json[m
+[1m+++ b/client/package.json[m
+[36m@@ -4,10 +4,12 @@[m
+     "private": true,[m
+     "dependencies": {[m
+         "@apollo/client": "^3.3.21",[m
+[32m+[m[32m        "@azure/storage-blob": "^12.8.0",[m
+         "@fortawesome/fontawesome-svg-core": "^1.2.36",[m
+         "@fortawesome/free-regular-svg-icons": "^5.15.4",[m
+         "@fortawesome/free-solid-svg-icons": "^5.15.4",[m
+         "@fortawesome/react-fontawesome": "^0.1.15",[m
+[32m+[m[32m        "@google/model-viewer": "^1.9.2",[m
+         "@material-ui/core": "^4.12.2",[m
+         "@material-ui/icons": "^4.11.2",[m
+         "@testing-library/jest-dom": "^5.14.1",[m
+[36m@@ -27,6 +29,7 @@[m
+         "babel-preset-react": "^6.24.1",[m
+         "babelify": "^10.0.0",[m
+         "clsx": "^1.1.1",[m
+[32m+[m[32m        "file-saver": "^2.0.5",[m
+         "graphql": "^15.5.1",[m
+         "prop-types": "^15.7.2",[m
+         "react": "^17.0.2",[m
+[1mdiff --git a/client/public/assets/PC5500.rar b/client/public/assets/PC5500.rar[m
+[1mnew file mode 100644[m
+[1mindex 0000000..9c9e952[m
+Binary files /dev/null and b/client/public/assets/PC5500.rar differ
+[1mdiff --git a/client/public/assets/buggy/Buggy.glb b/client/public/assets/buggy/Buggy.glb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..90b401e[m
+Binary files /dev/null and b/client/public/assets/buggy/Buggy.glb differ
+[1mdiff --git a/client/public/assets/pala/Komatsu_PC5500_Preview.glb b/client/public/assets/pala/Komatsu_PC5500_Preview.glb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..61885fc[m
+Binary files /dev/null and b/client/public/assets/pala/Komatsu_PC5500_Preview.glb differ
+[1mdiff --git a/client/public/assets/park/whipple_creek_regional_park_04_1k.hdr b/client/public/assets/park/whipple_creek_regional_park_04_1k.hdr[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d649a0c[m
+Binary files /dev/null and b/client/public/assets/park/whipple_creek_regional_park_04_1k.hdr differ
+[1mdiff --git a/client/public/message.html b/client/public/message.html[m
+[1mnew file mode 100644[m
+[1mindex 0000000..581e9d9[m
+[1m--- /dev/null[m
+[1m+++ b/client/public/message.html[m
+[36m@@ -0,0 +1 @@[m
+[32m+[m[32m<p> This example is a simple starting point to build immersive UIs compatible with all headsets. It relies on a laser pointer style input from the <a href="https://aframe.io/docs/1.0.0/components/laser-controls.html#sidebar">laser-controls component</a> while also providing a mouse and keyboard fallback from the <a href="https://aframe.io/docs/1.0.0/components/cursor.html#properties_rayorigin">cursor component</a></p>[m
+[1mdiff --git a/client/src/App.css b/client/src/App.css[m
+[1mindex 74b5e05..b35731a 100644[m
+[1m--- a/client/src/App.css[m
+[1m+++ b/client/src/App.css[m
+[36m@@ -1,5 +1,11 @@[m
+[32m+[m[32m@font-face {[m
+[32m+[m[32m  font-family: 'Raleway';[m
+[32m+[m[32m  src: url(./static/Raleway-Regular.ttf);[m
+[32m+[m[32m}[m
+[32m+[m
+ .App {[m
+   text-align: center;[m
+[32m+[m[32m  font-family: 'Raleway';[m
+ }[m
+ [m
+ .App-logo {[m
+[1mdiff --git a/client/src/App.js b/client/src/App.js[m
+[1mindex 6a814c8..a84250a 100644[m
+[1m--- a/client/src/App.js[m
+[1m+++ b/client/src/App.js[m
+[36m@@ -8,15 +8,29 @@[m [mimport { onError } from '@apollo/client/link/error'[m
+ import { createUploadLink } from 'apollo-upload-client'[m
+ [m
+ /* Material UI */[m
+[31m-import { Backdrop, Box, CssBaseline, ThemeProvider } from '@material-ui/core'[m
+[32m+[m[32mimport { Backdrop, Box, CssBaseline, ThemeProvider, Modal, Typography } from '@material-ui/core'[m
+ import { theme, useStylesTheme } from './config'[m
+ [m
+ import './App.css'[m
+ import { AuthProvider, LanguageProvider, NavigationProvider, useAuth, useNavigation } from './context'[m
+ import { Header, Navbar } from './containers'[m
+[31m-import { AppliancePage, LoadingPage, LoginPage, MachinesPage, WelcomePage, ResetPasswordPage, DivisionsPage, ReportsPage, AlertPage, InfoPage, ConfigurationPage, SitesPage } from './pages'[m
+[32m+[m[32mimport {[m[41m [m
+[32m+[m[32m    AppliancePage,[m[41m [m
+[32m+[m[32m    LoadingPage,[m[41m [m
+[32m+[m[32m    LoginPage,[m[41m [m
+[32m+[m[32m    MachinesPage,[m[41m [m
+[32m+[m[32m    WelcomePage,[m[41m [m
+[32m+[m[32m    ResetPasswordPage,[m[41m [m
+[32m+[m[32m    DivisionsPage,[m[41m [m
+[32m+[m[32m    ReportsPage,[m[41m [m
+[32m+[m[32m    AlertPage,[m[41m [m
+[32m+[m[32m    InfoPage,[m[41m [m
+[32m+[m[32m    ConfigurationPage,[m[41m [m
+[32m+[m[32m    SitesPage,[m
+[32m+[m[32m    AdminPage,[m
+[32m+[m[32m    UserformPage[m
+[32m+[m[32m} from './pages'[m
+ [m
+[31m-/* GraphQL Configuration */[m
+ const errorLink = onError(({ graphQLErrors, networkError, response }) => {[m
+     if (networkError?.statusCode === 401) {[m
+         console.log(`[Network error]: ${networkError.statusCode}`)[m
+[36m@@ -45,7 +59,6 @@[m [mconst OnApp = () => {[m
+     const { isAuthenticated, loading } = useAuth()[m
+     const { navBarOpen, handleNavBar } = useNavigation()[m
+     const classes = useStylesTheme()[m
+[31m-[m
+     //console.log(isAuthenticated, loading)[m
+ [m
+     return ([m
+[36m@@ -126,6 +139,20 @@[m [mconst OnApp = () => {[m
+                         </Route>[m
+                     </Switch>[m
+                 </Route>[m
+[32m+[m[32m                <Route path={['/administration']}>[m
+[32m+[m[32m                    <Switch>[m
+[32m+[m[32m                        <Route exact path='/administration'>[m
+[32m+[m[32m                            <AdminPage route={'administration'}/>[m
+[32m+[m[32m                        </Route>[m
+[32m+[m[32m                    </Switch>[m
+[32m+[m[32m                </Route>[m
+[32m+[m[32m                <Route path={['/new-user']}>[m
+[32m+[m[32m                    <Switch>[m
+[32m+[m[32m                        <Route exact path='/new-user'>[m
+[32m+[m[32m                            <UserformPage route={'new-user'}/>[m
+[32m+[m[32m                        </Route>[m
+[32m+[m[32m                    </Switch>[m
+[32m+[m[32m                </Route>[m
+             </Switch>[m
+             {/* <Route exact path='/vista-3d'>[m
+                 <Vista3D route='vista-3d' />[m
+[36m@@ -135,7 +162,9 @@[m [mconst OnApp = () => {[m
+ }[m
+ [m
+ /*  Main app component, activates providers for the whole app (Theme, Snackbar, Apollo and AuthContext) */[m
+[31m-function App () {[m
+[32m+[m[32mconst App = () => {[m
+[32m+[m[32m    console.log('2Activado');[m
+[32m+[m[41m    [m
+     return ([m
+         <Router>[m
+             <ApolloProvider client={client}>[m
+[36m@@ -151,7 +180,8 @@[m [mfunction App () {[m
+                 </AuthProvider>[m
+             </ApolloProvider>[m
+         </Router>[m
+[31m-    )[m
+[32m+[m[32m    );[m
+[32m+[m[41m    [m
+ }[m
+ [m
+ export default App[m
+[1mdiff --git a/client/src/components/buttons/Card.button.jsx b/client/src/components/buttons/Card.button.jsx[m
+[1mindex abe00a1..062c444 100644[m
+[1m--- a/client/src/components/buttons/Card.button.jsx[m
+[1m+++ b/client/src/components/buttons/Card.button.jsx[m
+[36m@@ -1,8 +1,8 @@[m
+ import React from 'react'[m
+ import PropTypes from 'prop-types'[m
+[31m-import { Button, makeStyles, Card, alpha } from '@material-ui/core'[m
+[32m+[m[32mimport { Button, makeStyles } from '@material-ui/core'[m
+ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'[m
+[31m-import { faChartBar, faSearch, faClipboard, faClipboardList, faTools, faUserCog } from '@fortawesome/free-solid-svg-icons'[m
+[32m+[m[32mimport { faSearch, faClipboardList, faTools, faUserCog } from '@fortawesome/free-solid-svg-icons'[m
+ import { useLanguage } from '../../context'[m
+ import { Link } from 'react-router-dom'[m
+ [m
+[36m@@ -11,34 +11,34 @@[m [mconst useStyles = makeStyles(theme => ({[m
+         display: 'inline-block',[m
+         textAlign: 'center',[m
+         padding: 10,[m
+[31m-        minWidth: 400,[m
+[32m+[m[32m        minWidth: 280,[m
+         backgroundColor: 'transparent'[m
+     },[m
+     icon: {[m
+[31m-        //marginBottom: 15,[m
+         padding: 20,[m
+         width: '100%',[m
+     },[m
+     button: {[m
+[31m-        minWidth: 180[m
+[32m+[m[32m        minWidth: 300[m
+     },[m
+     buttonSelection: {[m
+[31m-        //backgroundColor: alpha(theme.palette.primary.main, 1),[m
+         backgroundColor: '#F9F9F9',[m
+         color: '#505050',[m
+[31m-        minWidth: 300[m
+[32m+[m[32m        minWidth: 280,[m
+[32m+[m[32m        minHeight: 340,[m
+[32m+[m[32m        borderRadius: 20,[m
+[32m+[m[32m        fontFamily:'Raleway',[m
+[32m+[m[32m        textTransform: 'none'[m
+     },[m
+     iconButton: {[m
+         color: '#505050',[m
+[31m-        //color: '#600000'[m
+     }[m
+ }))[m
+ [m
+ const CardButton = ({ variant }) => {[m
+     const { dictionary } = useLanguage()[m
+[31m-[m
+     const classes = useStyles()[m
+[31m-[m
+[32m+[m[41m  [m
+     const handleTypeIcon = () => {[m
+         switch (variant) {[m
+         case 'inspection':[m
+[36m@@ -47,7 +47,7 @@[m [mconst CardButton = ({ variant }) => {[m
+             return (<FontAwesomeIcon icon={faTools} size='4x' className={classes.iconButton}/>)[m
+         case 'reports':[m
+             return (<FontAwesomeIcon icon={faClipboardList} size='4x' className={classes.iconButton}/>)[m
+[31m-        case 'configuration':[m
+[32m+[m[32m        case 'administration':[m
+             return (<FontAwesomeIcon icon={faUserCog} size='4x' className={classes.iconButton}/>)[m
+         }[m
+     }[m
+[36m@@ -59,29 +59,46 @@[m [mconst CardButton = ({ variant }) => {[m
+             return dictionary.welcome.maintenanceButton[m
+         case 'reports':[m
+             return dictionary.welcome.reportsButton[m
+[31m-        case 'configuration':[m
+[31m-            return dictionary.welcome.configurationButton[m
+[32m+[m[32m        case 'administration':[m
+[32m+[m[32m            return dictionary.welcome.administrationButton[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    let openModal = false;[m
+[32m+[m
+[32m+[m[32m    if((variant === 'inspection')||(variant === 'maintenance')) {[m
+[32m+[m[32m        if(localStorage.getItem('sitio')){[m
+[32m+[m
+[32m+[m[32m        }else{[m
+[32m+[m[32m            openModal = true;[m
+         }[m
+     }[m
+ [m
+     return ([m
+         <div className={classes.root} component={Link}>[m
+[31m-            <Link to={`/${variant}`} style={{textDecoration: 'none'}}>[m
+[32m+[m[32m            {openModal && <Button disabled variant="contained" className={classes.buttonSelection} >[m
+[32m+[m[32m                <div className={classes.icon}>[m
+[32m+[m[32m                    {handleTypeIcon()}[m
+[32m+[m[32m                    <br />[m
+[32m+[m[32m                    <p style={{fontSize:17, marginBottom: 0, fontWeight: 'bold'}}> <strong>{handleTypeText()}</strong> </p>[m
+[32m+[m[32m                    <p style={{fontSize:13, marginBottom: 0, marginTop: 0}}> <strong>Requiere <br /> seleccionar faena</strong> </p>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m            </Button>}[m
+[32m+[m[32m            {!openModal && <Link to={`/${variant}`} style={{textDecoration: 'none'}} className={classes.buttonSelection}>[m
+                 <Button variant="contained" className={classes.buttonSelection} >[m
+                     <div className={classes.icon}>[m
+                         {handleTypeIcon()}[m
+                         <br />[m
+[31m-                        <p style={{fontSize:21, marginBottom: 0}}>{handleTypeText()}</p>[m
+[32m+[m[32m                        <p style={{fontSize:21, marginBottom: 0, fontWeight: 'bold'}}>{handleTypeText()}</p>[m
+                     </div>[m
+                 </Button>[m
+[31m-            </Link>[m
+[32m+[m[32m            </Link>}[m
+         </div>[m
+[31m-        [m
+     )[m
+ }[m
+ [m
+ CardButton.propTypes = {[m
+[31m-    variant: PropTypes.oneOf(['inspection', 'maintenance', 'reports', 'configuration'])[m
+[32m+[m[32m    variant: PropTypes.oneOf(['inspection', 'maintenance', 'reports', 'configuration', 'administration'])[m
+ }[m
+ [m
+ export default CardButton[m
+[1mdiff --git a/client/src/config/theme.config.js b/client/src/config/theme.config.js[m
+[1mindex 1eab47e..e2bc607 100644[m
+[1m--- a/client/src/config/theme.config.js[m
+[1m+++ b/client/src/config/theme.config.js[m
+[36m@@ -67,7 +67,8 @@[m [mexport const theme = createTheme({[m
+ [m
+ export const useStylesTheme = makeStyles(theme => ({[m
+     pageRoot: {[m
+[31m-        height: '100%'[m
+[32m+[m[32

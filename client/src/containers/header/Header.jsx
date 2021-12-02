@@ -8,14 +8,16 @@ import { faBell, faHome, faInfoCircle, faTools, faUserCog } from '@fortawesome/f
 //import { faChartBar, faClipboard } from '@fortawesome/free-regular-svg-icons'
 
 //import logo from '../../assets/logo.webp'
-import logo from '../../assets/logo_icv_blanco.png'
+import logo from '../../assets/logo_icv_gris.png'
 import { useAuth, useLanguage, useNavigation } from '../../context'
 
 const useStyles = makeStyles((theme) => ({
     appbar: {
         //backgroundColor: alpha(theme.palette.primary.main, 0.6),
         height: 90,
-        backgroundColor: '#505050'
+        backgroundColor: '#fff',
+        borderBottomRightRadius: 30,
+        color: '#000'
     },
     toolbar: {
         height: 90
@@ -78,14 +80,14 @@ const Header = () => {
                             <div className={classes.locationText}>
                                 <Link to="/info">
                                     <Button>
-                                        {<FontAwesomeIcon icon={faInfoCircle} size='2x' color="#fff"/>}
+                                        {<FontAwesomeIcon icon={faInfoCircle} size='2x'/>}
                                     </Button>
                                 </Link>
                             </div>
                             <div className={classes.locationIcon}>
                                 <Link to="/alerts">
                                     <Button>
-                                        {<FontAwesomeIcon icon={faBell} size='2x' color="#fff"/>}
+                                        {<FontAwesomeIcon icon={faBell} size='2x'/>}
                                     </Button>
                                 </Link>
                             </div>

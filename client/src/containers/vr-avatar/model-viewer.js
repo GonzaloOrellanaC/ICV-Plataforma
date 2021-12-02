@@ -1,4 +1,5 @@
-/* global AFRAME, THREE */
+
+
 AFRAME.registerComponent('model-viewer', {
     schema: {
       gltfModel: {default: ''},
@@ -7,7 +8,13 @@ AFRAME.registerComponent('model-viewer', {
     },
     init: function () {
       var el = this.el;
-  
+
+      var button1 = document.getElementById('ruedas-id');
+      button1.addEventListener("click", () => {
+        console.log('Hello!!!')
+        /* this.onClickButon1() */
+      })
+
       el.setAttribute('renderer', {colorManagement: true});
       el.setAttribute('cursor', {rayOrigin: 'mouse', fuse: false});
       el.setAttribute('webxr', {optionalFeatures: 'hit-test, local-floor'});
@@ -37,7 +44,7 @@ AFRAME.registerComponent('model-viewer', {
   
       this.initCameraRig();
       this.initEntities();
-      this.initBackground();
+      //this.initBackground();
   
       if (this.data.uploadUIEnabled) { this.initUploadInput(); }
   
@@ -67,7 +74,28 @@ AFRAME.registerComponent('model-viewer', {
       this.el.sceneEl.addEventListener('exit-vr', this.onExitVR);
   
       this.modelEl.addEventListener('model-loaded', this.onModelLoaded);
+            
     },
+
+
+    /*click: function (evt) {
+      console.log(evt)
+       var movieInfo = this.movieInfo[evt.currentTarget.id];
+  
+      this.backgroundEl.object3D.scale.set(1, 1, 1);
+  
+      this.el.object3D.scale.set(1, 1, 1);
+      if (AFRAME.utils.device.isMobile()) { this.el.object3D.scale.set(1.4, 1.4, 1.4); }
+      this.el.object3D.visible = true;
+      this.fadeBackgroundEl.object3D.visible = true;
+  
+      if (this.movieImageEl) { this.movieImageEl.object3D.visible = false; }
+      this.movieImageEl = movieInfo.imgEl;
+      this.movieImageEl.object3D.visible = true;
+  
+      this.movieTitleEl.setAttribute('text', 'value', movieInfo.title);
+      this.movieDescriptionEl.setAttribute('text', 'value', movieInfo.description); 
+    },*/
   
     initUploadInput: function () {
       var uploadContainerEl = this.uploadContainerEl = document.createElement('div');
@@ -138,6 +166,7 @@ AFRAME.registerComponent('model-viewer', {
     },
   
     submitURLButtonClicked: function (evt) {
+      console.log(evt)
       var modelURL //= this.inputEl.value;
       if (modelURL === this.inputDefaultValue) { return; }
       this.el.setAttribute('model-viewer', 'gltfModel', modelURL);
@@ -151,7 +180,7 @@ AFRAME.registerComponent('model-viewer', {
   
       cameraEl.setAttribute('camera', {fov: 60});
       cameraEl.setAttribute('look-controls', {
-        magicWindowTrackingEnabled: false,
+        magicWindowTrackingEnabled: true,
         mouseEnabled: false,
         touchEnabled: false
       });
@@ -173,7 +202,7 @@ AFRAME.registerComponent('model-viewer', {
       this.el.appendChild(cameraRigEl);
     },
   
-    initBackground: function () {
+    /* initBackground: function () {
       let backgroundEl = this.backgroundEl = document.querySelector('a-entity');
       backgroundEl.setAttribute('geometry', {primitive: 'sphere', radius: 65});
       backgroundEl.setAttribute('material', {
@@ -183,7 +212,7 @@ AFRAME.registerComponent('model-viewer', {
         side: 'back'
       });
       backgroundEl.setAttribute('hide-on-enter-ar', '');
-    },
+    }, */
   
     initEntities: function () {
       // Container for our entities to keep the scene clean and tidy.
@@ -209,7 +238,7 @@ AFRAME.registerComponent('model-viewer', {
   
       sceneLightEl.setAttribute('light', {
         type: 'hemisphere',
-        intensity: 1
+        intensity: 0.9
       });
   
       modelPivotEl.id = 'modelPivot';
@@ -230,11 +259,11 @@ AFRAME.registerComponent('model-viewer', {
       laserHitPanelEl.setAttribute('visible', 'false');
       laserHitPanelEl.classList.add('raycastable');
   
-      this.containerEl.appendChild(laserHitPanelEl);
+      //this.containerEl.appendChild(laserHitPanelEl);
   
       modelEl.setAttribute('rotation', '0 -90 0');
       modelEl.setAttribute('animation-mixer', '');
-      modelEl.setAttribute('shadow', 'cast: true; receive: false');
+      modelEl.setAttribute('shadow', 'cast: false; receive: false');
   
       modelPivotEl.appendChild(modelEl);
   
@@ -251,7 +280,7 @@ AFRAME.registerComponent('model-viewer', {
       arShadowEl.setAttribute('ar-shadows', 'opacity: 0.2');
       arShadowEl.setAttribute('visible', 'false');
   
-      //modelPivotEl.appendChild(arShadowEl);
+      modelPivotEl.appendChild(arShadowEl);
   
       titleEl.id = 'title';
       titleEl.setAttribute('text', 'value: ' + this.data.title + '; width: 6');
@@ -271,7 +300,7 @@ AFRAME.registerComponent('model-viewer', {
         shadowCameraRight: 5,
         shadowCameraBottom: -5,
         shadowCameraTop: 5,
-        intensity: 0.5,
+        intensity: 0.9,
         target: 'modelPivot'
       });
   
@@ -325,6 +354,13 @@ AFRAME.registerComponent('model-viewer', {
       } else {
         this.cameraRigEl.object3D.position.z += 1;
       }
+    },
+
+    
+
+    onClickButon1: function () {
+      console.log('Clicked!!!');
+      this.centerAndScaleModel();
     },
   
     tick: function () {
@@ -400,6 +436,7 @@ AFRAME.registerComponent('model-viewer', {
       // Clamp x rotation to [-90,90]
       modelPivotEl.object3D.rotation.x = Math.min(Math.max(-Math.PI / 2, modelPivotEl.object3D.rotation.x), Math.PI / 2);
       this.oldClientY = evt.touches[0].clientY;
+      
     },
   
     onPinchMove: function (evt) {
@@ -469,6 +506,7 @@ AFRAME.registerComponent('model-viewer', {
   
       this.oldClientX = evt.clientX;
       this.oldClientY = evt.clientY;
+      //console.log(dX, dY)
     },
   
     onModelLoaded: function () {
@@ -533,72 +571,3 @@ AFRAME.registerComponent('model-viewer', {
       this.oldClientY = evt.clientY;
     }
 });
-
-/* AFRAME.registerComponent('sunrise', {
-  schema: {
-    from: {
-      type: 'vec3',
-      default: {
-        x: 0,
-        y: 1,
-        z: -0.2,
-      },
-    },
-    to: {
-      type: 'vec3',
-      default: {
-        x: 0,
-        y: 1,
-        z: 0.2,
-      },
-    },
-    duration: {
-      type: 'int',
-      default: 5000,
-    },
-  },
-  init() {
-    this.sunPos = {
-      x: this.data.from.x,
-      y: this.data.from.y,
-      z: this.data.from.z,
-    };
-
-    this.moveSun(this.sunPos);
-  },
-  update() {
-    const self = this;
-
-    AFRAME.ANIME({
-      targets: this.el,
-      translateX: [this.data.from.x, this.data.to.x],
-      translateY: [this.data.from.y, this.data.to.y],
-      translateZ: [this.data.from.z, this.data.to.z],
-      easing: 'easeInQuad',
-      duration: this.data.duration,
-      update(anim) {
-        const curPos = {
-          x: anim.animations[0].currentValue,
-          y: anim.animations[1].currentValue,
-          z: anim.animations[2].currentValue,
-        };
-
-        self.moveSun(curPos);
-      },
-      complete() {
-        console.log('sunrise complete!');
-      },
-    });
-  },
-  moveSun(curPos) {
-    this.el.setAttribute('environment', {
-      lightPosition: {
-        x: curPos.x,
-        y: curPos.y,
-        z: curPos.z,
-      },
-    });
-  },
-});
- */
-  
