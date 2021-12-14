@@ -41,43 +41,41 @@ const environment = {
             resetPassword: process.env.ROUTE_RESET_PASS || 'resetpassword/'
         }
     },
-    adminDefaultData: {
-        name: process.env.NOMBRE,
-        lastName: process.env.APELLIDO,
-        email: process.env.EMAIL,
-        password: process.env.PASSWORD,
-        permissionRole: 'admin'
-    },
     messages: languageSelector(process.env.DEFAULT_LANGUAGE), // Cambiar por funcion para sacar mensaje en caso de múltiples lenguajes
     roles: [
         {
             id: 0,
+            name: 'Super Administrador',
+            dbName: 'superAdmin'
+        },
+        {
+            id: 1,
             name: 'Ejecutivo SAP',
             dbName: 'sapExecutive'
         },
         {
-            id: 1,
+            id: 2,
             name: 'Operario de Inspección',
             dbName: 'inspectionWorker'
         },
         {
-            id: 2,
+            id: 3,
             name: 'Operario de Mantención',
             dbName: 'maintenceOperator'
         },
         {
-            id: 3,
+            id: 4,
             name: 'Jefe de turno - Inspección y Mantención',
             dbName: 'shiftManager'
         },
         {
-            id: 4,
+            id: 5,
             name: 'Jefe de maquinaria',
             dbName: 'chiefMachinery'
         }
     ],
-    permisos: {
-        reportes: {
+    permisos: [
+        {
             name: 'reportes',
             resources: [
                 {
@@ -107,8 +105,8 @@ const environment = {
                 },
             ]
         },
-        usuarios: {
-            name: 'reportes',
+        {
+            name: 'usuarios',
             resources: [
                 {
                     id: 0,
@@ -131,7 +129,15 @@ const environment = {
                     name: 'Borrar usuarios'
                 },
             ]
-        },
+        }
+    ],
+    
+    adminDefaultData: {
+        name: process.env.NOMBRE,
+        lastName: process.env.APELLIDO,
+        email: process.env.EMAIL,
+        password: process.env.PASSWORD,
+        permissionRole: 'superAdmin'
     },
     adminRole: {
         name: 'admin',

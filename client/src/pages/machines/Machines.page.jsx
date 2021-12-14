@@ -23,6 +23,7 @@ const MachinesPage = ({ route }) => {
         console.log(networkDetect);
         if(networkDetect) {
             const machines = await getMachines();
+            console.log(machines)
             trucksDatabase.initDbMachines()
             .then(async db => {
                 machines.forEach(async (machine, index) => {

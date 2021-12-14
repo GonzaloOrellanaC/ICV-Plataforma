@@ -6,7 +6,7 @@ import path from 'path';
 const fsPromises = fs.promises;
 
 
-const sendEmail = async (fullName, token, language, email) => {
+const sendEmail = async (typeEmail, fullName, language, email) => {
 
     const mailInfo = {
         host: "mail.tesso.cl",

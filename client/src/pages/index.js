@@ -5,7 +5,7 @@ import { WelcomePage } from './welcome'
 import { ResetPasswordPage } from './reset-password'
 import { MaintencePage } from './maintence'
 import { DivisionsPage } from './divisions'
-import { ReportsPage } from './reports'
+import { ReportsPage, CreateReports } from './reports'
 import { AlertPage } from './alerts'
 import { InfoPage } from './info'
 import { ConfigurationPage } from './configuration'
@@ -24,6 +24,7 @@ export {
     ResetPasswordPage,
     DivisionsPage,
     ReportsPage,
+    CreateReports,
     AlertPage,
     InfoPage,
     ConfigurationPage,
@@ -35,5 +36,6 @@ export {
     UserPage,
     MaintencePage,
     PmsPage,
-    PautaDetailPage
+    PautaDetailPage,
+    
 }

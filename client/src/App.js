@@ -33,7 +33,8 @@ import {
     PautaDetailPage,
     MachinesListPage,
     AdminUsersPage,
-    AdminNewUserPage
+    AdminNewUserPage,
+    CreateReports
 } from './pages';
 
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
@@ -85,7 +86,10 @@ const OnApp = () => {
                 <Route path={['/reports']}>
                     <Switch>
                         <Route exact path='/reports'>
-                            <ReportsPage route={'reports'}/>
+                            <ReportsPage route='reports'/>
+                        </Route>
+                        <Route exact path='/reports/create-report'>
+                            <CreateReports route='reports'/>
                         </Route>
                     </Switch>
                 </Route>
@@ -182,6 +186,13 @@ const OnApp = () => {
                     <Switch>
                         <Route exact path='/new-users'>
                             <AdminNewUserPage route={'new-users'}/>
+                        </Route>
+                    </Switch>
+                </Route>
+                <Route path={['/edit-user']}>
+                    <Switch>
+                        <Route exact path='/edit-user/:id'>
+                            <AdminNewUserPage route={'edit-user'}/>
                         </Route>
                     </Switch>
                 </Route>

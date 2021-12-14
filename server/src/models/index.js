@@ -9,6 +9,8 @@ import PermissionRoles from './permissionRole';
 import Site from './site';
 import Users from './users';
 import Roles from './roles';
+import Permisos from './permisos';
+import Reports from './reports'
 
 export {
     AssignedMaintenance,
@@ -20,5 +22,7 @@ export {
     PermissionRoles,
     Site,
     Users,
-    Roles
+    Roles,
+    Permisos,
+    Reports
 }

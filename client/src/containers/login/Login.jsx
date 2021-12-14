@@ -15,9 +15,10 @@ const useStyles = makeStyles(theme => ({
 const Login = () => {
     const { dictionary } = useLanguage()
     const { login } = useAuth()
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [ email, setEmail ] = useState('')
+    const [ password, setPassword ] = useState('')
     const classes = useStyles()
+    const [ userData, setUserData ] = useState({})
 
     const handleChange = (event) => {
         switch (event?.target?.name) {
@@ -30,7 +31,16 @@ const Login = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-        login(email, password);
+        let loginState = await login(email, password);
+        if(loginState) {
+            let userDataToSave = loginState.response.data;
+            setUserData(userDataToSave);
+            localStorage.setItem('email', userDataToSave.email);
+            localStorage.setItem('fullName', userDataToSave.fullName);
+            localStorage.setItem('name', userDataToSave.name);
+            localStorage.setItem('lastName', userDataToSave.lastName);
+            localStorage.setItem('_id', userDataToSave._id);
+        }
     }
 
     return (

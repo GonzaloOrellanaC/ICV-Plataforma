@@ -1,7 +1,15 @@
 import authRoutes from './auth.routes';
 import apiIvcRoutes from './api-icv.routes';
+import rolesRoutes from './roles.routes';
+import permisosRoutes from './permisos.routes';
+import usersRoutes from './users.routes';
+import reportsRoutes from './reports.routes';
 
 export {
     authRoutes,
-    apiIvcRoutes
+    apiIvcRoutes,
+    rolesRoutes,
+    permisosRoutes,
+    usersRoutes,
+    reportsRoutes
 }

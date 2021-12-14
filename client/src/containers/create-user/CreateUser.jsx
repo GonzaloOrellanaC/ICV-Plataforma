@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { makeStyles, Grid, Box, FormControl, IconButton } from "@material-ui/core";
 import { faEye, faEyeSlash, faPaperclip, faUserCog } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { rolesRoutes } from '../../routes';
+import { validate, clean, format, getCheckDigit } from 'rut.js';
 
 const useStyles = makeStyles(theme => ({
     inputsStyle: {
@@ -9,38 +11,22 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const CreateUser = ({height}) => {
+const CreateUser = ({height, typeDisplay}) => {
 
     const [ tiposUsuarios, setTiposUsuarios ] = useState([]);
     const [ verPassword, setVerPassword ] = useState('password');
     const [ verConfirmarPassword, setVerConfirmarPassword ] = useState('password');
 
-    const usersTypes = [
-        {
-            id: 0,
-            name: 'Elija uno...'
-        },
-        {
-            id: 1,
-            name: 'Ejecutivo SAP'
-        },
-        {
-            id: 2,
-            name: 'Operario de Inspección'
-        },
-        {
-            id: 3,
-            name: 'Operario de Mantención'
-        },
-        {
-            id: 4,
-            name: 'Jefe de turno - Inspección y Mantención'
-        },
-        {
-            id: 5,
-            name: 'Jefe de maquinaria'
-        },
-    ]
+    //UserData
+    const [ name, setName ] = useState('');
+    const [ lastName, setLastName ] = useState('');
+    const [ rut, setRut ] = useState('');
+    const [ role, setUserType ] = useState('');
+    const [ email, setEmail ] = useState('');
+    const [ phone, setPhone ] = useState('');
+    const [ password, setPassword ] = useState('');
+    const [ confirmPassword, setConfirmPassword ] = useState('');
+    const [ usersTypes, setUserTypes ] = useState([]);
 
     const cambiarVistaPassword = () => {
         if(verPassword === 'password') {
@@ -48,6 +34,23 @@ const CreateUser = ({height}) => {
         }else{
             setVerPassword('password')
         } 
+    }
+
+    const userData = {
+        name: name,
+        lastName: lastName,
+        rut: rut,
+        role: role,
+        email: email,
+        phone: phone,
+        password: password,
+        confirmPassword: confirmPassword,
+        createdBy: localStorage.getItem('_id')
+    }
+
+    const saveUserData = () => {
+        localStorage.setItem('userDataToSave', JSON.stringify(userData));
+        console.log(JSON.parse(localStorage.getItem('userDataToSave')));
     }
 
     const cambiarVistaConfirmarPassword = () => {
@@ -58,14 +61,58 @@ const CreateUser = ({height}) => {
         } 
     }
 
-    const classes = useStyles()
-
-    const handleChange = () => {
-
+    const getRoles = () => {
+        return new Promise(async resolve => {
+            const responseRoles = await rolesRoutes.getRoles();
+            setUserTypes(responseRoles.data);
+        })
     }
+
+    const changeRut = (numero) => {
+        if(numero==='') {
+
+        }else{
+            setRut(format(numero))
+        }
+    }
+
+    const classes = useStyles()
         
     useEffect(() => {
-        setTiposUsuarios(usersTypes)
+        setTimeout(() => {
+            let userDataToContinue = localStorage.getItem('userDataToSave');
+            if(userDataToContinue) {
+                //console.log(JSON.parse(userDataToContinue));
+                let data = JSON.parse(userDataToContinue);
+                if(data.rut) {
+                    setRut(data.rut)
+                }
+                if(data.name) {
+                    setName(data.name)
+                }
+                if(data.lastName) {
+                    setLastName(data.lastName)
+                }
+                if(data.email) {
+                    setEmail(data.email)
+                }
+                if(data.phone) {
+                    setPhone(data.phone)
+                }
+                if(data.role) {
+                    setUserType(data.role)
+                }
+                if(data.password && (typeDisplay === 'Nuevo usuario')) {
+                    setPassword(data.password)
+                }
+                if(data.confirmPassword && (typeDisplay === 'Nuevo usuario')) {
+                    setConfirmPassword(data.confirmPassword)
+                }
+                
+            }
+            setTiposUsuarios(usersTypes)
+            getRoles()
+        }, 500);
     }, []);
 
     return (
@@ -90,17 +137,26 @@ const CreateUser = ({height}) => {
                                 <FormControl fullWidth>
                                     {/* <TextField id="outlined-basic" label="Rut" variant="outlined" /> */}
                                     <p>RUT</p>
-                                    <input className={classes.inputsStyle} placeholder="11222333-K" type="text" style={{width: 293, height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <input maxLength={12} onBlur={()=>saveUserData()} onInput={(e)=>changeRut(e.target.value)} /* onChange={(e)=>{setRut(e.target.value)}} */ value={rut} className={classes.inputsStyle} placeholder="11.222.333-K" type="text" style={{width: 293, height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
                             <div style={{float: 'left'}}>
                                 <FormControl fullWidth>
                                     <p>Tipo de usuario</p>
-                                    <select className={classes.inputsStyle} name="userType" id="userType" style={{width: 248, height: 44, borderRadius: 10, fontSize: 20}}>
+                                    <select 
+                                        onBlur={()=>saveUserData()} 
+                                        className={classes.inputsStyle} 
+                                        name="userType" 
+                                        id="userType" 
+                                        style={{width: 248, height: 44, borderRadius: 10, fontSize: 20}}
+                                        onChange={(e)=> setUserType(e.target.value)}
+                                        value={role} 
+                                    >
+                                        <option key={100} value={''}>Seleccione...</option>
                                         {
-                                            tiposUsuarios.map((usuario, index) => {
+                                            usersTypes.filter((item, i) => {if(i > 0) { return item }}).map((usuario, index) => {
                                                 return(
-                                                    <option key={index} value={usuario.name.toLowerCase()}>{usuario.name}</option>
+                                                    <option key={index} value={usuario.dbName}>{usuario.name}</option>
                                                 )
                                             })
                                         }
@@ -111,40 +167,36 @@ const CreateUser = ({height}) => {
                         <div style={{width: '70vw', height: '12vh'}}>
                             <div style={{float: 'left', width: '45%', marginRight: 10}}>
                                 <FormControl fullWidth>
-                                    {/* <TextField id="outlined-basic" label="Rut" variant="outlined" /> */}
                                     <p>Nombre</p>
-                                    <input className={classes.inputsStyle} placeholder="John" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <input onBlur={()=>saveUserData()} onChange={(e)=>setName(e.target.value)} value={name} className={classes.inputsStyle} placeholder="John" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
                             <div style={{float: 'left', width: '45%'}}>
                                 <FormControl fullWidth>
-                                    {/* <TextField id="outlined-basic" label="Rut" variant="outlined" /> */}
                                     <p>Apellido</p>
-                                    <input className={classes.inputsStyle} placeholder="Doe" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <input onBlur={()=>saveUserData()} onChange={(e)=>setLastName(e.target.value)} value={lastName} className={classes.inputsStyle} placeholder="Doe" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
                         </div> 
                         <div style={{width: '70vw', height: '12vh'}}>
                             <div style={{float: 'left', width: '60%', marginRight: 10}}>
                                 <FormControl fullWidth>
-                                    {/* <TextField id="outlined-basic" label="Rut" variant="outlined" /> */}
                                     <p>Correo electrónico</p>
-                                    <input className={classes.inputsStyle} placeholder="nombre@correo.cl" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <input onBlur={()=>saveUserData()} onChange={(e)=>setEmail(e.target.value)} value={email} className={classes.inputsStyle} placeholder="nombre@correo.cl" type="email" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
                             <div style={{float: 'left', width: '30%'}}>
                                 <FormControl fullWidth>
-                                    {/* <TextField id="outlined-basic" label="Rut" variant="outlined" /> */}
                                     <p>Número de teléfono</p>
-                                    <input className={classes.inputsStyle} placeholder="999998888" type="number" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <input max={9} onBlur={()=>saveUserData()} onInput={(e)=>{e.target.value = e.target.value.slice(0, 9); console.log(e.target.value)}} onChange={(e)=>setPhone(e.target.value)} value={phone} className={classes.inputsStyle} placeholder="999998888" type="number" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
                         </div> 
-                        <div style={{width: '70vw', height: '12vh'}}>
+                        {(typeDisplay === 'Nuevo usuario') && <div style={{width: '70vw', height: '12vh'}}>
                             <div style={{float: 'left', width: '37%', marginRight: 10}}>
                                 <p>Contraseña</p>
                                 <div style={{float: 'left', width: '100%'}}>
-                                    <input maxLength={10}  className={classes.inputsStyle} placeholder="Min 6 carácteres" type={verPassword}
+                                    <input onBlur={()=>saveUserData()} onChange={(e)=>setPassword(e.target.value)} value={password} maxLength={10}  className={classes.inputsStyle} placeholder="Min 6 carácteres" type={verPassword}
                                         style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
                                 </div>
                                 <div style={{float: 'left', width: '1%', marginLeft: -50}}>
@@ -161,7 +213,7 @@ const CreateUser = ({height}) => {
                             <div style={{float: 'left', width: '37%'}}>
                                 <p>Confirmar contraseña</p>
                                 <div style={{float: 'left', width: '100%'}}>
-                                    <input maxLength={10} className={classes.inputsStyle} placeholder="Repita contraseña" type={verConfirmarPassword}
+                                    <input onBlur={()=>saveUserData()} onChange={(e)=>setConfirmPassword(e.target.value)} value={confirmPassword} maxLength={10} className={classes.inputsStyle} placeholder="Repita contraseña" type={verConfirmarPassword}
                                         style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
                                 </div>
                                 <div style={{float: 'left', width: '1%', marginLeft: -50}}>
@@ -175,7 +227,7 @@ const CreateUser = ({height}) => {
                                     </IconButton>
                                 </div>
                             </div>
-                        </div>                
+                        </div> }                
                     </div>
                 </Grid>
             </div>

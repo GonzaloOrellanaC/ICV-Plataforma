@@ -2,7 +2,7 @@
     "name": "boilerplate",
     "version": "1.0.0",
     "description": "Fullstack boilerplate kauel",
-    "main": "index.js",
+    "main": "server/server.js",
     "scripts": {
         "server": "npm run start-dev --prefix server",
         "client": "npm run start --prefix client",

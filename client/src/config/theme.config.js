@@ -79,7 +79,7 @@ export const useStylesTheme = makeStyles(theme => ({
     },
     pageCard: {
         marginLeft: 99,
-        height: '100%',
+        height: '90vh',
         //backgroundColor: 'rgba(255,255,255, 0.8)',
         borderRadius: 0,
         boxShadow: 'none',
@@ -103,3 +103,16 @@ export const useStylesTheme = makeStyles(theme => ({
         marginLeft: 0
     }
 }))
+
+export const styleModal = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '50%',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    borderRadius: 20,
+    boxShadow: 24,
+    p: 4,
+};

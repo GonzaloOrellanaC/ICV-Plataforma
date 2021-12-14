@@ -1,10 +1,162 @@
 import fs from 'fs';
 import fetch from 'node-fetch'
+import { resolve } from 'path';
 import { environment } from '../config';
 
-const sendFileOfMachines = ( req, res ) => {
-    res.download('../files/machines/machines.json');
+
+/* Descargar obras desde API ICV y guardar en archivos */
+
+const createSiteToSend = () => {
+    return new Promise(async resolve => {
+        const sites = await fetch(`${environment.icvApi.url}pmobras`);
+        if( sites ) {
+            const body = await sites.json();
+            if( body ) {
+                if(fs.existsSync(`../files/SitesToSend/sites.json`)) {
+                    const removedFile = await borrarArchivo(`../files/SitesToSend/sites.json`);
+                    if(removedFile) {
+                        const data = await guardarArchivo(body);
+                        if(data) {
+                            resolve(true)
+                        }else{
+                            resolve(false);
+                        }
+                    }else{
+                        resolve(false)
+                    }
+                }else{
+                    const data = await guardarArchivo(body);
+                    if(data) {
+                        resolve(true)
+                    }else{
+                        resolve(false)
+                    }
+                }
+            }else{
+                resolve(false)
+            }
+        }else{
+            resolve(false)
+        }
+    })
 }
+
+/* Borrar archivo */
+
+const borrarArchivo = (path) => {
+    return new Promise(resolve => {
+        fs.rm(path, (err) => {
+            if(err) {
+                resolve(false)
+            }
+            resolve(true)
+        })
+    })
+}
+
+/* Guardar archivo */
+
+const guardarArchivo = (body) => {
+    return new Promise(resolve => {
+        fs.writeFile(`../files/SitesToSend/sites.json`, JSON.stringify(body.data), (err) => {
+            if (err) {
+                resolve(false)
+            }
+            resolve(true)
+        });
+    })
+}
+
+/* Leer archivo */
+
+const leerArchivo = (type) => {
+    let path;
+    if(type === 'sitios') {
+        path = '../files/SitesToSend/sites.json'
+    }else if(type === 'maquinas') {
+        path = '../files/SitesToSend/machines.json'
+    }
+    return new Promise(resolve => {
+        if(fs.existsSync(path)) {
+            fs.readFile(path, (err, data) => {
+                if(err) {
+                    console.log(err)
+                    resolve({
+                        state: false,
+                        data: {
+                            message: 'Error de lectura. Revisar consola'
+                        }
+                    })
+                }
+                resolve({
+                    state: true,
+                    data: JSON.parse(data.toString())
+                })
+            })
+        }
+    })
+}
+
+/* Leer máquinas */
+
+const leerMaquinas = () => {
+    return new Promise(resolve => {
+
+    })
+}
+
+/* Descargar máquinas por obra desde API ICV y guardar en archivos*/
+const createMachinesToSend = async (pIDOBRA) => {
+    console.log(pIDOBRA)
+    const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`);
+    if( machines ) {
+        const body = await machines.json();
+        if( body ) {
+            fs.writeFile(`../files/SitesToSend/machines.json`, JSON.stringify(body.data), (err) => {
+                if (err) throw err;
+            })
+        }
+    }
+}
+
+/* Descargar pautas desde API ICV y guardar en archivos*/
+const createPMsToSend = async ({idpm, typepm}) => {
+    const response1 = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${idpm}`);
+    const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${idpm}&pTypePm=${typepm}`);
+    const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${idpm}&pTypePm=${typepm}`);
+    const body1 = await response1.json();
+    const body2 = await response2.json();
+    const body3 = await response3.json();
+    if( body1 && body2 && body3 ) {
+        let file = {
+            data: body1.data.find(el => el.typepm === typepm),
+            header: body2 ,
+            struct: body3
+        }
+        fs.writeFile(`../files/PM_TO_SEND/file_${idpm}_${typepm}.json`, JSON.stringify(file), (err) => {
+            if (err) {
+                console.log('Hay un error')
+            }; 
+        });
+    }
+}
+
+
+//Enviar listado de máquinas
+const sendFileOfMachines = ( req, res ) => {
+    try{
+        res.download('../files/machines/machines.json');
+    }catch(err) {
+        console.log(err);
+        res.json({
+            message: 'Error en la lectura del servidor.'
+        })
+    }
+}
+
+
+
+
 
 const filesPetition = ( req, res ) => {
     const files = fs.readdirSync('../files/PM_TO_SEND');
@@ -18,6 +170,12 @@ const filePetition = ( req, res ) => {
 
 const readSites = ( req, res ) => {
     res.download(`../files/SitesToSend/sites.json`)
+}
+
+const readMachines = ( req, res ) => {
+    const {body} = res;
+    console.log(body)
+    //res.download(`../files/machines/file_${body.pIDOBRA}.json`)
 }
 
 const getAllPMList = () => {
@@ -43,38 +201,9 @@ const getAllPMHeaderAndStruct = (pIDPM) => {
     })
 }
 
-const createPMsToSend = async ({idpm, typepm}) => {
-    const response1 = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${idpm}`);
-    const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${idpm}&pTypePm=${typepm}`);
-    const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${idpm}&pTypePm=${typepm}`);
-    const body1 = await response1.json();
-    const body2 = await response2.json();
-    const body3 = await response3.json();
-    if( body1 && body2 && body3 ) {
-        let file = {
-            data: body1.data.find(el => el.typepm === typepm),
-            header: body2 ,
-            struct: body3
-        }
-        fs.writeFile(`../files/PM_TO_SEND/file_${idpm}_${typepm}.json`, JSON.stringify(file), (err) => {
-            if (err) {
-                console.log('Hay un error')
-            }; 
-        });
-    }
-}
 
-const createSiteToSend = async () => {
-    const sites = await fetch(`${environment.icvApi.url}pmobras`);
-    if(sites) {
-        const body = await sites.json();
-        if(body) {
-            fs.writeFile(`../files/SitesToSend/sites.json`, JSON.stringify(body.data), (err) => {
-                if (err) throw err; 
-            })
-        }
-    }
-}
+
+
 
 const downloadPMType =  ({pIDPM}) => {
     return new Promise( async resolve => {
@@ -87,6 +216,19 @@ const downloadPMType =  ({pIDPM}) => {
         }
     })
 }
+
+/* const downloadMachineBySite = ({pIDOBRA}) => {
+    console.log(pIDOBRA)
+    return new Promise (async resolve => {
+        const response = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`);
+        const body = await response.text();
+        if(body) {
+            fs.writeFile(`../files/machines/file_${pIDOBRA}.json`, body, (err) => {
+                if (err) throw err; 
+            })
+        }
+    })
+} */
 
 const downloadPMHeader =  ({idpm, typepm}) => {
     return new Promise( async resolve => {
@@ -148,6 +290,10 @@ export default {
     createPMsToSend,
     getAllPMHeaderAndStruct,
     readAllPMHeadAndStruct,
+    /* downloadMachineBySite, */
     createSiteToSend,
-    readSites
+    readSites,
+    readMachines,
+    leerArchivo,
+    createMachinesToSend
 }

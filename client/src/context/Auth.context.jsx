@@ -6,7 +6,6 @@ import { authRoutes } from '../routes'
 const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
-    //const defaultAuthenticated  = Boolean(JSON.parse(window.localStorage.getItem('isauthenticated')));
     const defaultAuthenticated  = Boolean(window.localStorage.getItem('isauthenticated'));
     const [isAuthenticated, setIsAuthenticated] = useState(defaultAuthenticated || false)
     const [getSelf, { loading, error, data }] = useLazyQuery(UsersGraphQL.query.GET_SELF)
@@ -17,21 +16,19 @@ export const AuthProvider = (props) => {
             setUserData(data.self)
         }
         if(!data) {
-            //console.log('NO HAY AUTENTICACIÓN');
+
         }
     }, [data])
 
     useEffect(() => {
         if (error) {
             setIsAuthenticated(false)
-            //setIsAuthenticated(true)
             window.localStorage.setItem('isauthenticated', false)
         }
     }, [error])
 
     useEffect(() => {
         getSelf()
-        console.log('Prueba get self', loading, error, data)
     }, [])
 
     const provider = {
@@ -40,33 +37,37 @@ export const AuthProvider = (props) => {
         loading,
         error,
         login: (email, password) => {
-            authRoutes.login(email, password)
-            .then(response => {
-                setUserData(response.data.userInfo);
-                window.localStorage.setItem('email', userData.email);
-                window.localStorage.setItem('fullName', userData.fullName);
-                window.localStorage.setItem('name', userData.name);
-                window.localStorage.setItem('lastName', userData.lastName);
-                setTimeout(() => {
-                    setIsAuthenticated(true)
-                    window.localStorage.setItem('isauthenticated', true)
-                    //getSelf();
-                    console.log(userData)
-                }, 500);
-                
-            })
-            .catch(error => {
-                //console.log('REPLACE: Error notification')
-                //console.log(error)
-                setIsAuthenticated(false)
-                window.localStorage.setItem('isauthenticated', false)
+            return new Promise(resolve => {
+                authRoutes.login(email, password)
+                .then(response => {
+                    if(response.data.enabled) {
+                        setIsAuthenticated(true);
+                        resolve({
+                            state: true,
+                            response: response
+                        })
+                    }else{
+                        setIsAuthenticated(false);
+                        alert('Su cuenta no está habilitada, debe confirmarla.')
+                        resolve({
+                            state: false,
+                        })
+                    }
+                })
+                .catch(error => {
+                    alert('Error de autenticación.')
+                    setIsAuthenticated(false);
+                    localStorage.setItem('isauthenticated', false);
+                })
             })
         }
         
     }
 
     return (
+        
         <AuthContext.Provider value={provider} {...props} />
+        
     )
 }
 

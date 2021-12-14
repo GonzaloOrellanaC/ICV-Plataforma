@@ -1,20 +1,70 @@
 import { useState, useEffect } from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
-import { Toolbar, ListItem, IconButton, Checkbox, Button } from "@material-ui/core";
-import CircleCheckedFilled from '@material-ui/icons/CheckCircle';
-import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked';
-import { faEye, faPen, faUser } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Link } from 'react-router-dom'
+import { Toolbar, ListItem, IconButton } from "@material-ui/core";
+import { faInfoCircle, faPen, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link, useHistory } from 'react-router-dom';
+import { usersRoutes } from '../../routes';
+import { changeTypeUser } from '../../config';
+import { UserListDataModal } from '../../modals'
 
 const UsersList = ({height}) => {
     const [ usuarios, setUsuarios ] = useState([])
-    
+    const [ open, setOpen ] = useState(false);
+    const [ userModal, setUserModal ] = useState({});
+    const [ indice, setIndice ] = useState(0);
+    const [ checked, setCheck ] = useState(false);
+    const [ permissionsReports, setPermissionsReports ] = useState([]);
+    const [ permissionsUsers, setPermissionsUsers ] = useState([])
+
+    const history = useHistory()
+
+    const handleChange = (event) => {
+        setCheck(event.target.checked);
+        usuarios[indice].enabled = event.target.checked
+    }
+
+    const openModal = (user, i) => {
+        setUserModal(user);
+        setCheck(user.enabled)
+        setPermissionsReports(user.permissionsReports)
+        setPermissionsUsers(user.permissionsUsers)
+        setIndice(i)
+        setOpen(true)
+    }
+    const closeModal = (user) => {
+        setOpen(false);
+        actualiceUser(user)
+    }
+
+    const actualiceUser = (user) => {
+        usersRoutes.editUser(user).then(response=>{
+
+        })
+    }
+
     useEffect(() => {
-        
+        readAllUsers();
+        localStorage.removeItem('userDataToSave')
+        setTimeout(() => {
+
+        }, 1000);
     }, []);
+
+    const readAllUsers = () => {
+        usersRoutes.getAllUsers().then(users=> {
+            setUsuarios(users.data)
+        })
+    }
+
+    const deleteUser = (userId, userName, userLastName) => {
+        if(confirm(`Removerá al usuario ${userName} ${userLastName}. Confirme la acción.`)) {
+            usersRoutes.removeUser(userId).then(data=>{
+                if(data) {
+                    readAllUsers()
+                }
+            })
+        }else{}
+    }
 
     const well = {
         height: 70,
@@ -34,52 +84,91 @@ const UsersList = ({height}) => {
                         </button>
                     </Link>
                 </Toolbar>
-                <ListItem>
-                    <div style={{width: '25%', marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>Nombre de usuario</strong> </p>
-                    </div>
-                    <div style={{width: '20%', marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>Correo electrónico</strong> </p>
-                    </div>
-                    <div style={{width: '15%', marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>Contraseña</strong> </p>
-                    </div>
-                    <div style={{width: '15%', marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>Faena/Obra</strong> </p>
-                    </div>
-                    <div style={{width: '25%', marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>Estado</strong> </p>
-                    </div>
-                </ListItem>
-                {usuarios && <div style={{height: height, overflowY: 'scroll'}}>
+                <div>
+                    <ListItem>
+                        <div style={{width: '15%', marginLeft: 5}}>
+                            <p style={{margin: 0}}> <strong>Nombre de usuario</strong> </p>
+                        </div>
+                        <div style={{width: '20%', marginLeft: 5}}>
+                            <p style={{margin: 0}}> <strong>Correo electrónico</strong> </p>
+                        </div>
+                        <div style={{width: '10%', marginLeft: 5}}>
+                            <p style={{margin: 0}}> <strong>RUN</strong> </p>
+                        </div>
+                        <div style={{width: '20%', marginLeft: 5}}>
+                            <p style={{margin: 0}}> <strong>Rol</strong> </p>
+                        </div>
+                        <div style={{width: '10%', marginLeft: 5}}>
+                            <p style={{margin: 0}}> <strong>Faena/Obra</strong> </p>
+                        </div>
+                        <div style={{width: '10%', marginLeft: 5}}>
+                            <p style={{margin: 0}}> <strong>Estado</strong> </p>
+                        </div>
+                    </ListItem>
+                </div>
+
+                <div style={{overflowY: 'auto'}}>
                     {
                         usuarios.map((e, n) => {
-                            if(!e.obs01) {
-                                e.obs01 = 'Sin Observaciones'
-                            }
+                            e.roleTranslated = changeTypeUser(e.role);
                             return(
                                 <ListItem key={n} style={well}>
                                     <div style={{width: '15%', marginLeft: 5 }}>
-                                        {e.workteamdesc}    
+                                        {e.name} {e.lastName}    
                                     </div>
-                                    <div style={{width: '30%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
-                                        {e.taskdesc}  
+                                    <div style={{width: '20%', marginLeft: 5 }}>
+                                        {e.email}  
                                     </div>
-                                    <div style={{width: '40%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
-                                        {e.obs01}  
+                                    <div style={{width: '10%', marginLeft: 5 }}>
+                                          {e.rut}
                                     </div>
-                                    <IconButton>
-                                        <FontAwesomeIcon icon={faEye}/>
+                                    <div style={{width: '20%', marginLeft: 5 }}>
+                                          {e.roleTranslated}
+                                    </div>
+                                    <div style={{width: '10%', marginLeft: 5 }}>
+                                        
+                                    </div>
+                                    <div style={{width: '10%', marginLeft: 5 }}>
+                                        {
+                                            e.enabled &&
+                                            <p style={{borderRadius: 5, maxWidth: 200, textAlign: 'center', backgroundColor: '#C3EBD4', paddingTop: 3, paddingRight: 28, paddingBottom: 3, paddingLeft: 28}}>
+                                                ACTIVO
+                                            </p>
+                                        }
+                                        {
+                                            !e.enabled &&
+                                            <p style={{borderRadius: 5, maxWidth: 200, textAlign: 'center', backgroundColor: '#F9F9F9', paddingTop: 3, paddingRight: 28, paddingBottom: 3, paddingLeft: 28}}>
+                                                INACTIVO
+                                            </p>
+                                        }
+                                    </div>
+                                    <IconButton onClick={() => openModal(e, n)}>
+                                        <FontAwesomeIcon icon={faInfoCircle}/>
                                     </IconButton>
-                                    <IconButton>
-                                        <FontAwesomeIcon icon={faPen}/>
+                                    <Link to={`/edit-user/${e._id}`}>
+                                        <IconButton>
+                                            <FontAwesomeIcon icon={faPen}/>
+                                        </IconButton>
+                                    </Link>
+                                    <IconButton onClick={()=>{deleteUser(e._id, e.name, e.lastName)}}>
+                                        <FontAwesomeIcon icon={faTrash}/>
                                     </IconButton>
-                                    <Checkbox style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: '#27AE60'}} />} />
                                 </ListItem>
                             )
                         })
-                    }   
-                </div>}
+                    }
+                    {
+                        userModal && <UserListDataModal 
+                            open={open} 
+                            userModal={userModal} 
+                            handleChange={handleChange} 
+                            checked={checked}
+                            permissionsReports={permissionsReports}
+                            permissionsUsers={permissionsUsers}
+                            closeModal={closeModal}
+                            />
+                    }
+                </div>
             </div>
         </div>
     )

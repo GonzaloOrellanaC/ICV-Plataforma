@@ -12,7 +12,7 @@ import { EncryptionServices } from '../services'
 /* User Schema */
 const UsersSchema = new Schema({
     email: {
-        type: String,
+        type: Schema.Types.String,
         lowercase: true,
         unique: [true, 'Email has already been used'],
         validate: {
@@ -24,23 +24,43 @@ const UsersSchema = new Schema({
         required: true
     },
     name: {
-        type: String,
+        type: Schema.Types.String,
         required: true,
         default: 'John'
     },
     lastName: {
-        type: String,
+        type: Schema.Types.String,
         required: true,
         default: 'Doe'
     },
-    permissionRole: {
-         /* type: Schema.Types.ObjectId, */
-        ref: 'PermissionRole',
+    rut: {
+        type: Schema.Types.String
+    },
+    phone: {
+        type: Schema.Types.Number
+    },
+    role: {
+        //ref: 'PermissionRole',
+        type: Schema.Types.String
+    },
+    permissionsReports:{
+        type: Schema.Types.Array
+    },
+    permissionsUsers:{
+        type: Schema.Types.Array
+    },
+    createdBy:{
+        type: Schema.Types.String
+    },
+    updatedBy:{
+        type: Schema.Types.String
+    },
+    imageUrl:{
         type: Schema.Types.String
     },
     enabled: {
-        type: Boolean,
-        default: true
+        type: Schema.Types.Boolean,
+        default: false
     },
     hash: { type: String },
     salt: { type: String }

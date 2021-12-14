@@ -8,6 +8,7 @@ import { VRAvatar, VRAvatarPreview, MVAvatar} from './vr-avatar'
 import { PautaDetail } from './pauta-detail'
 import { UsersList } from './users-list'
 import { CreateUser, PermissionUser } from './create-user'
+import { ReportsList } from './reports-list'
 
 export {
     Header,
@@ -22,5 +23,6 @@ export {
     PautaDetail,
     UsersList,
     CreateUser,
-    PermissionUser
+    PermissionUser,
+    ReportsList
 }

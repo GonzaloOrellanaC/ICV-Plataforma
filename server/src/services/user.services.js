@@ -35,6 +35,19 @@ const createUser = async (user, password) => {
     }
 }
 
+const editUser = async (user) => {
+    try {
+        Users.findByIdAndUpdate(user._id, user, (err, user) => {
+            console.log('Usuario editado: ', user);
+            if(user) {
+                return user
+            }
+        });
+    } catch (err) {
+
+    }
+}
+
 /**
  * Deletes an user using it's id.
  * @param {*} userId ID of the user to delete in DB
@@ -49,6 +62,17 @@ const deleteUser = async (userId) => {
         return deleted
     } catch (error) {
         throw new Error(errorMsg.unableToDelete)
+    }
+}
+
+/* Obtener usuario */
+
+const getUser = async (userId) => {
+    try{
+        const user = await Users.findById(userId);
+        return user
+    }catch (err) {
+        console.log(err)
     }
 }
 
@@ -151,10 +175,12 @@ const resetPassword = async (userId, token, password) => {
 
 export default {
     createUser,
+    editUser,
     deleteUser,
     authenticateUser,
     logout,
     changePassword,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    getUser
 }

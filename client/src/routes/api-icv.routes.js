@@ -5,6 +5,12 @@ export default {
     getMachines: () => {
         return axios.get('/icv/fileMachines')
     },
+    /* getmachinesFinal: (pIDOBRA) => {
+        const requestBody = {
+            pIDOBRA
+        }
+        return axios.post('/icv/getMachines', requestBody)
+    }, */
     getPMList: () => {
         return axios.get('/icv/petitionFiles')
     },
