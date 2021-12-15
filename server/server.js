@@ -1,53 +1,30 @@
 import express from 'express'
 import path from 'path'
-import { ApiIcv } from './src/api-icv'
+import { ApiIcv } from './src/api-icv';
 
 import { environment } from './src/config'
-import { databaseLoader, expressLoader } from './src/loaders'
+import { databaseLoader, expressLoader, apiIcvLoader } from './src/loaders'
 import { AccessControlServices } from './src/services'
 
 const startServer = async () => {
+
+
+    /* Conexión a MongoDB  */
+
     await databaseLoader()
-    await AccessControlServices.initAccessControl();
-
-    const machines = await ApiIcv.getAllPMList();
-    //console.log(machines)
-    if(machines) {
-        machines.forEach(async (machine, index) => {
-            const PMHeaderList = await ApiIcv.getAllPMHeaderAndStruct(machine.pIDPM);
-            //console.log(PMHeaderList)
-        });
-    };
-
-    /* const machinesToSend = await ApiIcv.downloadMachineBySite({pIDOBRA: '0372'});
-    console.log(machinesToSend)*/
-
-    const sitesCreated = await ApiIcv.createSiteToSend(); 
-    if(sitesCreated) {
-        console.log('Sitios creados!', sitesCreated);
-        const readFileSites = await ApiIcv.leerArchivo('sitios');
-        readFileSites.data.forEach(async(sitio, index) => {
-            ApiIcv.createMachinesToSend(sitio.idobra);
-            if(index == (readFileSites.data.length - 1)) {
-                const readMachines = await ApiIcv.leerArchivo('maquinas');
-                if(readMachines.state) {
-                    console.log(readMachines.data)
-                    readMachines.data.forEach((machine, i) => {
-                        if(machine.modelo.includes('793')) {
-                            console.log('Incluye Camión')
-                        }else if(machine.modelo.includes('PC5500')) {
-                            console.log('Incluye Pala')
-                        }else{
-                            console.log('No se detecta modelo')
-                        }
-                    })
-                }
-            }
-        })
-    }
-
+    
+    /* Carga de recursos servidor */
     const app = await expressLoader();
 
+    
+    /* Carga de recursos desde API ICV */
+    await apiIcvLoader();
+
+
+    /* Conexión a control de acceso a servidor */
+    await AccessControlServices.initAccessControl();
+    
+    /* Inicio de Servidor */
     if(app) {
         console.log('Ok APP')
     }
@@ -72,6 +49,9 @@ const startServer = async () => {
 
         console.info(`Express server started in port: ${environment.port}`)
     })
+
+
+    
 }
 
 startServer()

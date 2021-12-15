@@ -33,7 +33,13 @@ const UserListDataModal = ({open, userModal, handleChange, checked, permissionsR
                     
                     <div style={{float: 'right', width: '30%'}}>
                         <ListItem>
-                            <Switch onChange={handleChange} checked={checked} ></Switch> <p>Usuario activo</p>
+                            <Switch onChange={handleChange} checked={checked} ></Switch> 
+                            {
+                                checked && <p>Usuario activo</p>
+                            }
+                            {
+                                !checked && <p>Usuario inactivo</p>
+                            }
                         </ListItem>
                     </div>
                 </div>

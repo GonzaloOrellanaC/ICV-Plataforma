@@ -39,6 +39,7 @@ import {
 
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
     if (networkError?.statusCode === 401) {
+        console.log(networkError)
         console.log(`[Network error]: ${networkError.statusCode}`)
     }else{
 

@@ -29,6 +29,7 @@
         "babel-preset-react": "^6.24.1",
         "babelify": "^10.0.0",
         "clsx": "^1.1.1",
+        "dotenv": "^10.0.0",
         "file-saver": "^2.0.5",
         "graphql": "^15.5.1",
         "prop-types": "^15.7.2",
@@ -91,5 +92,5 @@
         "path": false,
         "os": false
     },
-    "proxy": "http://localhost:5000"
+    "proxy": "http://localhost:5000/"
 }

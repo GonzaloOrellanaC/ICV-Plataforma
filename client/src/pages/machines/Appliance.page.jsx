@@ -46,7 +46,7 @@ const AppliancePage = ({ route }) => {
         })
     }, [])
 
-    let site = localStorage.getItem('sitio');
+    let site = JSON.parse(localStorage.getItem('sitio')).descripcion;
 
     const history = useHistory()
 

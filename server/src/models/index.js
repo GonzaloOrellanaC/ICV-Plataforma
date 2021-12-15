@@ -3,13 +3,13 @@ import AssignedMaintenance from './assignedMaintenance';
 import AssignedInspections from './assignedInspection';
 import Division from './divisions';
 import Machine from './machine';
+import MachineOfProject from './machineOfProject';
 import MachinePrototypes from './machinePrototype';
 import MaintenancePlan from './maintenancePlan';
-import PermissionRoles from './permissionRole';
 import Site from './site';
 import Users from './users';
 import Roles from './roles';
-import Permisos from './permisos';
+import Permission from './permission';
 import Reports from './reports'
 
 export {
@@ -17,12 +17,12 @@ export {
     AssignedInspections,
     Division,
     Machine,
+    MachineOfProject,
     MachinePrototypes,
     MaintenancePlan,
-    PermissionRoles,
     Site,
     Users,
     Roles,
-    Permisos,
+    Permission,
     Reports
 }

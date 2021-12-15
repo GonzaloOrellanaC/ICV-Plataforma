@@ -26,7 +26,11 @@ const SitesPage = () => {
             <Grid className={classes.pageRoot} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
                     <Card className={classes.pageCard}>
+                        <div style={{width: '100%'}}>
+                        <h1>Para navegar en la plataforma debe seleccionar una obra.</h1>
+                        </div>
                         <Grid container style={{ height: '75vh' }} alignItems='center' justifyContent='center'>
+                            
                             {
                                 sites.filter(a => a.toString()).map((site) => {
                                     return (

@@ -2,7 +2,9 @@ import '@google/model-viewer';
 import './domarrow'
 import { Box, List, ListItem } from '@material-ui/core';
 
-import {useEffect, useState} from 'react'
+import {useEffect, useState} from 'react';
+
+import { environment } from '../../config';
 
 const loadSprite = () => {
     let state = true;
@@ -24,9 +26,9 @@ const MVAvatar = ({machine}) => {
     console.log(machine);
 
      if(machine.type === 'Camión') {
-        newMachine = '../../../assets/camion/' + machine.brand + '_' + machine.model + '_' + 'Preview.gltf'
+        newMachine = environment.storageURL + 'maquinas/camiones/' + machine.brand.toUpperCase() + '/' + machine.brand.toUpperCase() + '_' + machine.model + '_' + 'Preview.gltf'
     }else if(machine.type === 'Pala') {
-        newMachine = '../../../assets/pala/' + machine.brand + '_' + machine.model + '_' + 'Preview.gltf'
+        newMachine = environment.storageURL + 'maquinas/palas/' + machine.brand.toUpperCase() + '/' + machine.brand + '_' + machine.model + '_' + 'Preview.gltf'
     }
 
     console.log(newMachine);
@@ -40,12 +42,12 @@ const MVAvatar = ({machine}) => {
             //console.log(e)
             //console.log(mv)
             const changeColor = async (event) => {
-                console.log(event)
+                //console.log(event)
                 let material = mv.materialFromPoint(event.clientX, event.clientY);
                 
                 if(material != null) {
                     //console.log(event)
-                    console.log(material)
+                    //console.log(material)
                   //material.pbrMetallicRoughness.setBaseColorFactor([0, 0, 0, 0.1]) //([Math.random(), Math.random(), Math.random(), 0.5])
                 }
               }
@@ -238,51 +240,53 @@ const MVAvatar = ({machine}) => {
                     
 
                     </model-viewer>
-                <div style={{float: 'right' ,height: '100%', width: '20%', textAlign: 'center', backgroundColor: 'transparent', paddingTop: 70 }}>
-                <button onClick={() => terminar()}style={{
-                        minWidth: 170, 
-                        margin: 10, 
-                        padding: 20, 
-                        fontSize: 20,
-                        borderRadius: 30
-                    }}>Terminar</button>
-                    <button onClick={() => cabinaPosition()}style={{
-                        minWidth: 170, 
-                        margin: 10, 
-                        padding: 20, 
-                        fontSize: 20,
-                        borderRadius: 30
-                    }}>Cabina</button>
-                    <button onClick={() => palaPosition()} style={{
-                        minWidth: 170, 
-                        margin: 10, 
-                        padding: 20, 
-                        fontSize: 20,
-                        borderRadius: 30
-                    }}>Balde</button>
-                    <button onClick={() => brazoPosition()} style={{
-                        minWidth: 170, 
-                        margin: 10, 
-                        padding: 20, 
-                        fontSize: 20,
-                        borderRadius: 30
-                    }}>Brazo</button>
-                    <button onClick={() => cuerpoPosition()} style={{
-                        minWidth: 170, 
-                        margin: 10, 
-                        padding: 20, 
-                        fontSize: 20,
-                        borderRadius: 30
-                    }}>Cuerpo</button>
-                    <button onClick={() => orugaPosition()} style={{
-                        minWidth: 170, 
-                        margin: 10, 
-                        padding: 20, 
-                        fontSize: 20,
-                        borderRadius: 30
-                    }}>Oruga</button>
-
-                </div>
+                {
+                     (machine.type === 'Pala') && <div style={{float: 'right' ,height: '100%', width: '20%', textAlign: 'center', backgroundColor: 'transparent', paddingTop: 70 }}>
+                     <button onClick={() => terminar()}style={{
+                             minWidth: 170, 
+                             margin: 10, 
+                             padding: 20, 
+                             fontSize: 20,
+                             borderRadius: 30
+                         }}>Terminar</button>
+                         <button onClick={() => cabinaPosition()}style={{
+                             minWidth: 170, 
+                             margin: 10, 
+                             padding: 20, 
+                             fontSize: 20,
+                             borderRadius: 30
+                         }}>Cabina</button>
+                         <button onClick={() => palaPosition()} style={{
+                             minWidth: 170, 
+                             margin: 10, 
+                             padding: 20, 
+                             fontSize: 20,
+                             borderRadius: 30
+                         }}>Balde</button>
+                         <button onClick={() => brazoPosition()} style={{
+                             minWidth: 170, 
+                             margin: 10, 
+                             padding: 20, 
+                             fontSize: 20,
+                             borderRadius: 30
+                         }}>Brazo</button>
+                         <button onClick={() => cuerpoPosition()} style={{
+                             minWidth: 170, 
+                             margin: 10, 
+                             padding: 20, 
+                             fontSize: 20,
+                             borderRadius: 30
+                         }}>Cuerpo</button>
+                         <button onClick={() => orugaPosition()} style={{
+                             minWidth: 170, 
+                             margin: 10, 
+                             padding: 20, 
+                             fontSize: 20,
+                             borderRadius: 30
+                         }}>Oruga</button>
+     
+                     </div>
+                }
             
             </Box>
             

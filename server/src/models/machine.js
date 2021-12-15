@@ -3,28 +3,35 @@ import { model, Schema } from 'mongoose'
 
 /* Machine Schema */
 const MachineSchema = new Schema({
-    number: {
-        type: String,
+    equ: {
+        type: Schema.Types.String,
         required: true
     },
-    machinePrototype: {
-        type: Schema.Types.ObjectId,
-        ref: 'MachinePrototype',
+    equid: {
+        type: Schema.Types.String,
         required: true
     },
-    procedures: {
-        assignedMaintenances: [{
-            type: Schema.Types.ObjectId,
-            ref: 'AssignedMaintenance'
-        }],
-        assignedInspections: [{
-            type: Schema.Types.ObjectId,
-            ref: 'AssignedInspection'
-        }]
+    brand: {
+        type: Schema.Types.String,
+        required: true
     },
-    division: {
-        type: Schema.Types.ObjectId,
-        ref: 'Division'
+    model: {
+        type: Schema.Types.String,
+        required: true
+    },
+    enginesnr: {
+        type: Schema.Types.String,
+    },
+    idobra: {
+        type: Schema.Types.String,
+        required: true
+    },
+    hourMeter: {
+        type: Schema.Types.Number,
+    },
+    type: {
+        type: Schema.Types.String,
+        required: true
     }
 },
 {

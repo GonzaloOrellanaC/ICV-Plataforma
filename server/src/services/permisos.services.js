@@ -1,9 +1,9 @@
-import { Permisos, Users } from '../models'
+import { Permission, Users } from '../models'
 
 
 const getPermisos = async (req, res) => {
     try {
-        Permisos.find({}, (err, permisos) => {
+        Permission.find({}, (err, permisos) => {
             console.log('Roles: ', permisos)
             res.json(permisos)
         });

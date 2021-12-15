@@ -3,14 +3,19 @@ import { Network } from '../connections';
 
 export default {
     getMachines: () => {
-        return axios.get('/icv/fileMachines')
+        //return axios.get('/icv/fileMachines')
+        return axios.get('/machines/getMachinesOfProject')
     },
-    /* getmachinesFinal: (pIDOBRA) => {
+    getAllMachines: () => {
+        return axios.get('/machines/readAllMachines')
+    },
+    getAllMachinesByModel: (idobra, model) => {
         const requestBody = {
-            pIDOBRA
+            idobra: idobra,
+            model: model
         }
-        return axios.post('/icv/getMachines', requestBody)
-    }, */
+        return axios.post('/machines/getAllMachinesByModel', requestBody)
+    },
     getPMList: () => {
         return axios.get('/icv/petitionFiles')
     },

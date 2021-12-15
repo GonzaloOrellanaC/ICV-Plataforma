@@ -4,17 +4,13 @@ import { model, Schema } from 'mongoose'
 /* Site Schema */
 const SitesSchema = new Schema(
     {
-        name: {
-            type: String,
+        descripcion: {
+            type: Schema.Types.String,
             required: true
         },
-        image: {
-            type: String,
-            required: false
-        },
-        users: {
-            type: Array,
-            default: []
+        idobra: {
+            type: Schema.Types.String,
+            required: true
         }
     },
     {

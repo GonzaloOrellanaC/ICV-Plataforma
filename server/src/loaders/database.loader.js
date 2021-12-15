@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 import { environment } from '../config'
-import { PermissionRoles } from '../models'
 
 /**
  * Initialization of the Database, in this case MongoDB through the Mongoose ODM
@@ -14,11 +13,9 @@ export default async () => {
             useCreateIndex: true,
             useFindAndModify: false
         }).then(()=> {
+            console.log('Conectado!!!')
             /* .... */
 
-            /* const rol = await PermissionRoles.findOne({
-                name: ADMIN
-            }) */
         })
 
 

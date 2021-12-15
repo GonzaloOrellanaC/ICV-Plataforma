@@ -14,8 +14,9 @@ const SiteButton = ({ site }) => {
     };
 
     const seleccionarSitio = () => {
-        localStorage.setItem('sitio', site.descripcion);
-        setOpen(true);
+        localStorage.setItem('sitio', JSON.stringify(site));
+        /* setOpen(true) */
+        alert(site.descripcion+' seleccionado.')
     }
 
     return (
@@ -26,7 +27,7 @@ const SiteButton = ({ site }) => {
             <div style={{position: 'relative', right: 20, margin: 'auto', marginRight: 80, maxWidth: 50, textAlign: 'right'}}>
                 <Button onClick={seleccionarSitio} style={{borderStyle: 'solid', borderWidth: 2, backgroundColor: '#BE2E26', borderColor: '#BE2E26', color: '#FFF', borderRadius:20, padding: 20}}>Seleccionar</Button>
             </div>
-            <Snackbar
+            {/* <Snackbar
                 open={open}
                 autoHideDuration={2000}
                 onClose={handleClose}
@@ -46,7 +47,7 @@ const SiteButton = ({ site }) => {
                         </IconButton>
                     </React.StrictMode>
                 }
-                />
+                /> */}
         </Grid>
     )
 }

@@ -1,7 +1,7 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permisos, /* PermissionRoles, */ Roles } from '../models'
+import { Permisos, Permission, /* PermissionRoles, */ Roles } from '../models'
 
 const { error: errorMsg } = environment.messages.services.accessControl
 
@@ -23,20 +23,30 @@ const ac = new AccessControl()
 const initAccessControl = async () => {
     try {
         /* const findRole = await PermissionRoles.findOne({ name: environment.adminRole.name }) */
-        const findRoles = await Roles.find()//.findOne({ name: environment.roles[0].name })
+        //const findRoles = await Roles.findOne({ name: environment.roles[0].name })
         let adminResult = '';
-
-        console.log('Log!!!!!!', findRoles)
-        if (findRoles.length > 0) {
-            //await updateRole(findRole._id, environment.adminRole.resources)
-            //adminResult = 'Admin Role updated';
-            //createAdminDefault()
+        //console.log('Log!!!!!!', findRoles)
+        /*if (findRoles.length > 0) {
+            //await updateRole(findRoles._id, environment.adminRole.resources)
+            //adminResult = 'Admin Role updated'; 
+            //createAdminDefault() 
+             environment.permisos.forEach(async (permiso, i) => {
+                let permissionCreated = await createPermission(permiso.name, permiso.resources);
+                if(permissionCreated) {
+                    let result2 = `${permiso.name} created`;
+                    console.log(result2);
+                }
+                if(i == (environment.permisos.length - 1)) {
+                    createAdminDefault()
+                }
+            }) 
         } else {
             environment.roles.forEach(async (role, index) => {
                 let roleCreated = await createRole(role.name, role.dbName);
                 if(roleCreated) {
                     let result = `${role.name} created`;
                     console.log(result);
+                    
                 }
                 if(index == (environment.roles.length - 1)) {
                     environment.permisos.forEach(async (permiso, i) => {
@@ -51,15 +61,7 @@ const initAccessControl = async () => {
                     })
                 }
             })
-
-            //let roleCreated = await createRole(environment.adminRole.name, environment.adminRole.resources)
-            //adminResult = 'Admin Role created'
-            //console.log(roleCreated)
-            /* if(roleCreated) {
-                createAdminDefault()
-            } */
-        }
-        //console.info(`Initialized access control. ${adminResult}`)
+        }*/
     } catch (error) {
         console.error(error)
     }
@@ -76,11 +78,11 @@ const createAdminDefault = async () => {
     }
 }
 
-const updateAccessControl = async () => {
+/* const updateAccessControl = async () => {
     const roles = await PermissionRoles.find()
     const parsedRoles = {}
 
-    /*
+    
         Format should be:
         {
             <role._id>: {
@@ -89,14 +91,14 @@ const updateAccessControl = async () => {
                 }
             }
         }
-    */
+    
     roles?.forEach((role) => {
         parsedRoles[role._id] = role.resources
     })
 
     ac.setGrants(parsedRoles)
     return 'Access Control updated'
-}
+} */
 
 /**
  * Function to check permissions of a role against the Access Control.
@@ -152,7 +154,7 @@ const createRole = async (name, dbName) => {
 
 const createPermission = async (name, resources) => {
     try {
-        const newPermission = new Permisos({
+        const newPermission = new Permission({
             name,
             resources
         })
@@ -206,9 +208,9 @@ const updateRole = async (roleId, newResources) => {
  * Deletes a role using it's id.
  * Uses function updateAccessControl to update the Access Control after the successful deletion of the role
  * @param {*} roleId ID of the role to delete in DB
- * @returns PermissionRoles, the deleted permission role document
+ * //@returns PermissionRoles, the deleted permission role document
  */
-const deleteRole = async (roleId) => {
+/* const deleteRole = async (roleId) => {
     try {
         const deleted = await PermissionRoles.findByIdAndDelete(roleId)
         if (!deleted) {
@@ -220,14 +222,14 @@ const deleteRole = async (roleId) => {
         // Add error message to be sent
         throw new Error(error.message)
     }
-}
+} */
 
 export default {
     ac,
     check,
     initAccessControl,
     createRole,
-    deleteRole,
+    //deleteRole,
     updateRole,
-    updateAccessControl
+    //updateAccessControl
 }

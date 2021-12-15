@@ -8,7 +8,7 @@ import { PermissionRolesType } from './'
 const { generic: { error: errorMsg } } = environment.messages.schema
 
 export default {
-    selfPermission: {
+    /* selfPermission: {
         description: 'Allows to query the database for self **PermissionRole** information.',
         type: PermissionRolesType,
         async resolve (parent, args, { user: { permissionRole } }) {
@@ -26,5 +26,5 @@ export default {
             const findPermissions = await PermissionRoles.find({})
             return findPermissions
         }
-    }
+    } */
 }
