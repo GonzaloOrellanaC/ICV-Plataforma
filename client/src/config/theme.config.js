@@ -67,20 +67,21 @@ export const theme = createTheme({
 
 export const useStylesTheme = makeStyles(theme => ({
     pageRoot: {
-        height: '100%',
+        //height: '100%',
         fontFamily:'Raleway'
     },
     pageContainer: {
-        height: '100%',
+        //height: '100%',
         //maxHeight: 'calc(100vh - 90px)',
         [theme.breakpoints.down('sm')]: {
             padding: 10
         }
     },
     pageCard: {
-        marginLeft: 99,
-        height: '90vh',
+        //marginLeft: 99,
+        //height: '90vh',
         //backgroundColor: 'rgba(255,255,255, 0.8)',
+        fontFamily:'Raleway',
         borderRadius: 0,
         boxShadow: 'none',
         padding: 20,

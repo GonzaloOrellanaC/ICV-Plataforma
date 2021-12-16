@@ -44,7 +44,7 @@ const Login = () => {
     }
 
     return (
-        <Grid container style={{ padding: 10, height: '100%' }} alignItems='center' justifyContent='center'>
+        <Grid container style={{ padding: 10, height: '50%' }} alignItems='center' justifyContent='center'>
             <form onSubmit={handleSubmit}>
                 <Grid container item spacing={2}>
                     <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>

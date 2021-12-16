@@ -28,7 +28,7 @@ export const AuthProvider = (props) => {
     }, [error])
 
     useEffect(() => {
-        getSelf()
+        //getSelf()
     }, [])
 
     const provider = {
