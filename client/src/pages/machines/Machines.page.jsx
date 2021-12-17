@@ -89,7 +89,7 @@ const MachinesPage = ({ route }) => {
                                     </Toolbar>
                                 </div>
                             </div>
-                            <Grid container item spacing={5} justifyContent='flex-start' style={{textAlign: 'center'}}>
+                            <Grid container item spacing={5} justifyContent='flex-start' style={{textAlign: 'center', height: '75vh'}}>
                                 {
                                     machinesList.filter(a => a.toString()).map((machine) => {
                                         return (

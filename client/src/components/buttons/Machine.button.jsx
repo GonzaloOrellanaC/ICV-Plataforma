@@ -35,8 +35,9 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center'
     },
     image: {
-        width: '100%',
-        maxHeight: '100%'
+        width: '70%',
+        height: 190,
+        objectFit: 'cover'
     },
     textContainer: {
         padding: 5,
@@ -54,13 +55,14 @@ const MachineButton = ({ image, machine, route }) => {
     console.log(machine);
 
     return (
-        <Button className={classes.root} style={{borderRadius: 20}} component={Link} to={`/${route}/${JSON.stringify(machine)}`}>
-            <div className='overlay'></div>
-            <div className={classes.imageContainer}>
-                <img className={classes.image} src={image} alt={machine.model}/>
-            </div>
-            <div className={classes.textContainer}>
-                {`${machine.type} ${machine.brand} ${machine.model}`}
+        <Button className={classes.root} style={{borderRadius: 20, height: '50%', width: '100%'}} component={Link} to={`/${route}/${JSON.stringify(machine)}`}>
+            <div className='overlay'>
+                <div>
+                    <img className={classes.image} src={image} alt={machine.model}/>
+                </div>
+                <div /* className={classes.textContainer} */ style={{position: 'absolute', bottom: 5, width: '100%', textAlign: 'center'}}>
+                    {`${machine.type} ${machine.brand} ${machine.model}`}
+                </div>
             </div>
         </Button>
     )

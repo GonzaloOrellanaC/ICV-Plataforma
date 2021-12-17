@@ -2,7 +2,7 @@
     "login": {
         "emailField": "E-mail",
         "passwordField": "Contraseña",
-        "loginButton": "Entrar",
+        "loginButton": "Ingresar",
         "forgotPasswordText": "Olvidé mi contraseña.",
         "forgotPasswordLink": "Click aquí."
     },

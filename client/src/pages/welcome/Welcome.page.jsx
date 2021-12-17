@@ -279,7 +279,7 @@ const WelcomePage = () => {
 
                                     }
                                 }>
-                                <p style={{fontSize: '2vw', margin: 0}}>10 notificaciones nuevas</p>
+                                <p style={{fontSize: '1.7vw', margin: 0}}>10 notificaciones nuevas</p>
                             </div>
                             <div 
                                 style={
@@ -301,11 +301,20 @@ const WelcomePage = () => {
                                     <p style={{fontSize: '3vw', margin: 0}}> {hr} <strong>:</strong> {min} hs </p>
                             </div>
                         </Grid>
-                        <Grid item>
-                            <CardButton variant='inspection'/>
-                            <CardButton variant='maintenance'/>
-                            <CardButton variant='reports'/>
-                            <CardButton variant='administration'/>
+                        <Grid container spacing={2}>
+                                <CardButton variant='inspection'/>
+                                <CardButton variant='maintenance'/>
+                                <CardButton variant='reports'/>
+                                <CardButton variant='administration'/>
+                            {/* <Grid item>
+                                <CardButton variant='maintenance'/>
+                            </Grid>
+                            <Grid item>
+                                <CardButton variant='reports'/>
+                            </Grid>
+                            <Grid item>
+                                <CardButton variant='administration'/>
+                            </Grid> */}
                         </Grid>
                     </Card>
                 </Grid>
