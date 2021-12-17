@@ -7,10 +7,8 @@
         "server": "npm run start-dev --prefix server",
         "client": "npm run start --prefix client",
         "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
-        "install:server": "cd server && npm install",
-        "install:client": "cd client && npm install",
-        "postinstall": "npm run install:server && npm run install:client",
-        "prestart": "npm install && npm run build:client",
+        "install-server": "cd server && npm install",
+        "postinstall": "npm run install-server",
         "start": "npm run start --prefix server"
     },
     "author": "Javier Romero <javier.romero@kauel.com>",
