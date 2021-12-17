@@ -10,16 +10,13 @@ const startServer = async () => {
 
 
     /* Conexión a MongoDB  */
-
     await databaseLoader()
     
     /* Carga de recursos servidor */
     const app = await expressLoader();
 
-    
     /* Carga de recursos desde API ICV */
     await apiIcvLoader();
-
 
     /* Conexión a control de acceso a servidor */
     await AccessControlServices.initAccessControl();

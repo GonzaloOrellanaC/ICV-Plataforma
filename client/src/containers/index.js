@@ -4,7 +4,7 @@ import { Navbar } from './navbar'
 import { ResetPassword } from './reset-password'
 import { Inspects } from './inspect'
 import { Maitence } from './maitence'
-import { VRAvatar, VRAvatarPreview, MVAvatar} from './vr-avatar'
+import { MVAvatar} from './vr-avatar'
 import { PautaDetail } from './pauta-detail'
 import { UsersList } from './users-list'
 import { CreateUser, PermissionUser } from './create-user'
@@ -17,8 +17,8 @@ export {
     ResetPassword,
     Inspects,
     Maitence,
-    VRAvatar,
-    VRAvatarPreview,
+    //VRAvatar,
+    //VRAvatarPreview,
     MVAvatar,
     PautaDetail,
     UsersList,

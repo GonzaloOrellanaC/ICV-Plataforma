@@ -15,7 +15,7 @@ const LoginPage = () => {
             <Card className={clsx(classes.pageCard, classes.noNavBarMargin)}>
                 <div style={{textAlign: 'center', width: '100%', marginTop: 60}}>
                     <img src={logoICV} height={80} alt="" />
-                    <p style={{marginTop: 0, fontSize: 6.5, textDecoration: 'underline'}}>INGENIERÍA CIVIL VICENTE</p>
+                    <p style={{marginTop: 0, fontSize: 6.5, textDecoration: 'underline'}}> <strong>INGENIERÍA CIVIL VICENTE</strong> </p>
                     <p style={{fontSize: '2em'}}>Iniciar sesión</p>
                 </div>
                 <Login />
