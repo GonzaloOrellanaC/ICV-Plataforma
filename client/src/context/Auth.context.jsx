@@ -55,7 +55,7 @@ export const AuthProvider = (props) => {
                     }
                 })
                 .catch(error => {
-                    alert('Error de autenticación: '+error)
+                    alert('Error de autenticación: '+error);
                     console.log(error)
                     setIsAuthenticated(false);
                     localStorage.setItem('isauthenticated', false);
