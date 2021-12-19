@@ -40,6 +40,7 @@ export const AuthProvider = (props) => {
             return new Promise(resolve => {
                 authRoutes.login(email, password)
                 .then(response => {
+                    console.log(response);
                     if(response.data.enabled) {
                         setIsAuthenticated(true);
                         resolve({
