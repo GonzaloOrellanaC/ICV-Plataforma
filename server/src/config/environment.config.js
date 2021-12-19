@@ -137,7 +137,7 @@ const environment = {
         lastName: process.env.APELLIDO,
         email: process.env.EMAIL,
         password: process.env.PASSWORD,
-        permissionRole: 'superAdmin'
+        role: 'admin'
     },
     adminRole: {
         name: 'admin',

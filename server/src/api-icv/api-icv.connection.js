@@ -172,8 +172,8 @@ const createMachinesToSend = async (pIDOBRA) => {
             //console.log(machinesOnDb)
             let machines = [];
             machines = body.data;
-            console.log(machines)
-            console.log(machines.length)
+            //console.log(machines)
+            //console.log(machines.length)
             if(machinesOnDb.length === machines.length) {
                 console.log('No se requiere guardar.');
             }else{
