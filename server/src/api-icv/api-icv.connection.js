@@ -76,12 +76,13 @@ const createSiteToSend = () => {
             if( body ) {
                 const readSitesFromDb = await SiteController.readSites();
                 let sitios = [] = body.data;
-                console.log(sitios)
+                //console.log(sitios)
                 if(readSitesFromDb.length == sitios.length) {
+                    console.log(readSitesFromDb, sitios)
                     resolve(true)
                 }else{
                     sitios.forEach(async (site, i) => {
-                        console.log(site)
+                        //console.log(site)
                         readSitesFromDb.forEach(async (siteInspector, number) => {
                             console.log(site, siteInspector);
                             if(site.idobra === siteInspector.idobra) {
