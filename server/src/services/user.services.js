@@ -76,6 +76,19 @@ const getUser = async (userId) => {
     }
 }
 
+const getUserByRole = (role) => {
+    try{
+        return new Promise(resolve => {
+            Users.find({role: role}, (err, user) => {
+                resolve(user)
+            });
+        })
+        
+    }catch (err) {
+        console.log(err)
+    }
+}
+
 /**
  * Authentication middleware, uses req, res, next from the express request that applies it
  * to authenticate via local strategy of passport.
@@ -182,5 +195,6 @@ export default {
     changePassword,
     forgotPassword,
     resetPassword,
-    getUser
+    getUser,
+    getUserByRole
 }

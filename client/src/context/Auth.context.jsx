@@ -40,6 +40,7 @@ export const AuthProvider = (props) => {
             return new Promise(resolve => {
                 authRoutes.login(email, password)
                 .then(response => {
+                    console.log(response);
                     if(response.data.enabled) {
                         setIsAuthenticated(true);
                         resolve({
@@ -55,7 +56,8 @@ export const AuthProvider = (props) => {
                     }
                 })
                 .catch(error => {
-                    alert('Error de autenticación.')
+                    alert('Error de autenticación: '+error);
+                    console.log(error)
                     setIsAuthenticated(false);
                     localStorage.setItem('isauthenticated', false);
                 })

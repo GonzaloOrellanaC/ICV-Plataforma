@@ -22,9 +22,17 @@ const ac = new AccessControl()
  */
 const initAccessControl = async () => {
     try {
+        
         /* const findRole = await PermissionRoles.findOne({ name: environment.adminRole.name }) */
         //const findRoles = await Roles.findOne({ name: environment.roles[0].name })
-        let adminResult = '';
+        const adminResult = await getAdminExist();
+        console.log('Administrador existente: ', adminResult)
+        if(adminResult.length > 0) {
+
+            
+        }else{
+            createAdminDefault()
+        }
         //console.log('Log!!!!!!', findRoles)
         /*if (findRoles.length > 0) {
             //await updateRole(findRoles._id, environment.adminRole.resources)
@@ -71,10 +79,22 @@ const createAdminDefault = async () => {
     try {
         let newUser = await UserServices.createUser(environment.adminDefaultData, environment.adminDefaultData.password);
         if(newUser) {
+            console.log('Administrador creado.')
             console.log(newUser);
         }
     } catch(error) {
         console.log(error)
+    }
+}
+
+const getAdminExist = () => {
+    try{
+        return new Promise(async resolve => {
+            let adminExist = await UserServices.getUserByRole('admin');
+            resolve(adminExist);
+        })
+    } catch (err) {
+        console.log('error al ubicar admin: ', err)
     }
 }
 
