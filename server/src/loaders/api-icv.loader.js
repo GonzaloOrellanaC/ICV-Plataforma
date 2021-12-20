@@ -14,15 +14,19 @@ export default async () => {
             
             /* Leer todas las máquinas */
             ApiIcv.createMachinesToSend(site.idobra);
-        })
 
-        /* Se crean las guías, las que deberán ser guardadas como archivos JSON por falta de tiempo. */
-        machinesOfProject.forEach(async(e, i) => {
-            const guidesCreated = await ApiIcv.getAllGuidesHeaderAndStruct(e.pIDPM);
-            if(guidesCreated) {
-                console.log('Pautas de trabajo ICV creadas');
+            if(index == (sites.lenght - 1)) {
+                /* Se crean las guías, las que deberán ser guardadas como archivos JSON por falta de tiempo. */
+                /* machinesOfProject.forEach(async(e, i) => {
+                    const guidesCreated = await ApiIcv.getAllGuidesHeaderAndStruct(e.pIDPM);
+                    if(guidesCreated) {
+                        console.log('Pautas de trabajo ICV creadas');
+                    }
+                }) */
             }
         })
+
+        
     }
     
 }
