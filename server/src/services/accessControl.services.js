@@ -28,27 +28,27 @@ const initAccessControl = async () => {
         if(adminResult.length == 0) {
             console.log('Se deberá crear administrador ----->')
             createAdminDefault();
-            if (!findRoles) {
-                environment.roles.forEach(async (role, index) => {
-                    let roleCreated = await createRole(role.name, role.dbName);
-                    if(roleCreated) {
-                        let result = `${role.name} created`;
-                        console.log(result);
-                    }
-                    if(index == (environment.roles.length - 1)) {
-                        environment.permisos.forEach(async (permiso, i) => {
-                            let permissionCreated = await createPermission(permiso.name, permiso.resources);
-                            if(permissionCreated) {
-                                let result2 = `${permiso.name} created`;
-                                console.log(result2);
-                            }
-                            if(i == (environment.permisos.length - 1)) {
-                                createAdminDefault()
-                            }
-                        })
-                    }
-                })
-            }
+        }
+        if (!findRoles) {
+            environment.roles.forEach(async (role, index) => {
+                let roleCreated = await createRole(role.name, role.dbName);
+                if(roleCreated) {
+                    let result = `${role.name} created`;
+                    console.log(result);
+                }
+                if(index == (environment.roles.length - 1)) {
+                    environment.permisos.forEach(async (permiso, i) => {
+                        let permissionCreated = await createPermission(permiso.name, permiso.resources);
+                        if(permissionCreated) {
+                            let result2 = `${permiso.name} created`;
+                            console.log(result2);
+                        }
+                        if(i == (environment.permisos.length - 1)) {
+                            createAdminDefault()
+                        }
+                    })
+                }
+            })
         }
     } catch (error) {
         console.error(error)
