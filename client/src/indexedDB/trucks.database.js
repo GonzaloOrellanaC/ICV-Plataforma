@@ -22,13 +22,16 @@ const initDbMachines = () => {
             const coleccionObjetos = db.createObjectStore('Machines',{
                 keyPath: 'id'
             })
-            resolve(
-                {
-                    message: "Base de datos creada / actualizada",
-                    database: db,
-                    state: 'actualizada'
-                }
-            )
+            coleccionObjetos.transaction.oncomplete = (event) => {
+                resolve(
+                    {
+                        message: "Base de datos creada / actualizada",
+                        database: db,
+                        state: 'actualizada'
+                    }
+                )
+            }
+            
         }
     
         conexion.onerror = (error) =>{

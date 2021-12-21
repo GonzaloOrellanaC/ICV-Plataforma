@@ -27,7 +27,7 @@ const WelcomePage = () => {
 
     useEffect(() => {
         readData();
-        getTrucksList()
+        //getTrucksList()
     }, []);
 
     const readData = async () => {
@@ -38,7 +38,7 @@ const WelcomePage = () => {
         console.log(fileHandle) */
         const networkDetect = await Network.detectNetwork();
         if(networkDetect) {
-            let pms = [];
+            /* let pms = [];
             pms = await getPMlist();
             pmsDatabase.initDbPMs()
             .then(async db => {
@@ -51,21 +51,38 @@ const WelcomePage = () => {
                         let respuestaConsulta = await pmsDatabase.consultar(db.database);
                     }
                 });
-            })
+            }) */
             let sites = [];
             sites = await getSitesList();
-            sitesDatabase.initDbObras()
-            .then(async db => {
+            //createIndexedDbSites()
+            let db = await sitesDatabase.initDbObras();
+            console.log(db)
+            if(db) {
                 sites.forEach(async (fileName, index) => {
                     fileName.id = index;
-                    sitesDatabase.actualizar(fileName, db.database);
+                     const databaseSites = await sitesDatabase.actualizar(fileName, db.database, db.database.version);
+                    console.log(databaseSites)
                     if(index === (sites.length - 1)) {
                         let respuestaConsulta = await sitesDatabase.consultar(db.database);
-                    }
+                    } 
                 });
-            })
+            }
+            
         }
         
+    }
+
+    const createIndexedDbSites = () => {
+        try {
+            const indexedDb = window.indexedDB;
+            const conexion = indexedDb.open('Sites');
+            conexion.onupgradeneeded = (event) => {
+                let db = event.target.result;
+                console.log(db)
+            }
+        }catch (err) {
+
+        }
     }
 
     const transformFile3dToString = (brand, model, type) => {
@@ -139,10 +156,12 @@ const WelcomePage = () => {
         })
     }
 
+    //Obras o sitios desde la base de datos
     const getSitesList = () => {
         return new Promise(resolve => {
             apiIvcRoutes.getSites()
             .then(data => {
+                console.log(data.data)
                 resolve(data.data)
             })
             .catch(err => {

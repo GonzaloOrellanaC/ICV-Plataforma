@@ -8,6 +8,7 @@ const initDbObras = () => {
     return new Promise(resolve => {
         conexion.onsuccess = () =>{
             db = conexion.result
+            console.log('Se crea BD')
             resolve(
                 {
                     message: "Base de datos abierta",
@@ -18,17 +19,22 @@ const initDbObras = () => {
         }
     
         conexion.onupgradeneeded = (e) =>{
-            db = e.target.result
+            db = e.target.result;
+            console.log('Se actualiza')
             const coleccionObjetos = db.createObjectStore('Obras',{
                 keyPath: 'id'
             })
-            resolve(
-                {
-                    message: "Base de datos creada / actualizada",
-                    database: db,
-                    state: 'actualizada'
-                }
-            )
+
+            coleccionObjetos.transaction.oncomplete = (event) => {
+                resolve(
+                    {
+                        message: "Base de datos creada / actualizada",
+                        database: db,
+                        state: 'actualizada'
+                    }
+                )
+            }
+            
         }
     
         conexion.onerror = (error) =>{
@@ -55,13 +61,19 @@ const obtener = (clave, database) =>{
     
 }
 
-const actualizar = (data, database) =>{    
-    const trasaccion = database.transaction(['Obras'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('Obras')
-    const conexion = coleccionObjetos.put(data)
-    
-    conexion.onsuccess = () =>{
-        //consultar()
+const actualizar = (data, database, version) =>{    
+    try {
+        return new Promise(resolve => {
+            const trasaccion = database.transaction(['Obras'],'readwrite')
+            const coleccionObjetos = trasaccion.objectStore('Obras')
+            const conexion = coleccionObjetos.put(data)
+            
+            conexion.onsuccess = () =>{
+                resolve(true)
+            }
+        })
+    } catch (err) {
+        resolve(false)
     }
 }
 

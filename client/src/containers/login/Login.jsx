@@ -40,6 +40,7 @@ const Login = () => {
             localStorage.setItem('name', userDataToSave.name);
             localStorage.setItem('lastName', userDataToSave.lastName);
             localStorage.setItem('_id', userDataToSave._id);
+            localStorage.setItem('isauthenticated', true);
         }
     }
 

@@ -52,18 +52,23 @@ const UsersList = ({height}) => {
 
     const readAllUsers = () => {
         usersRoutes.getAllUsers().then(users=> {
-            setUsuarios(users.data)
+            setUsuarios(users.data);
+            console.log(users.data)
         })
     }
 
-    const deleteUser = (userId, userName, userLastName) => {
-        if(confirm(`Removerá al usuario ${userName} ${userLastName}. Confirme la acción.`)) {
-            usersRoutes.removeUser(userId).then(data=>{
-                if(data) {
-                    readAllUsers()
-                }
-            })
-        }else{}
+    const deleteUser = (userId, userName, userLastName, userRole) => {
+        if(userRole === 'admin') {
+            alert('No es posible eliminar un Administrador.')
+        }else{
+            if(confirm(`Removerá al usuario ${userName} ${userLastName}. Confirme la acción.`)) {
+                usersRoutes.removeUser(userId).then(data=>{
+                    if(data) {
+                        readAllUsers()
+                    }
+                })
+            }
+        }
     }
 
     const well = {
@@ -150,7 +155,7 @@ const UsersList = ({height}) => {
                                             <FontAwesomeIcon icon={faPen}/>
                                         </IconButton>
                                     </Link>
-                                    <IconButton onClick={()=>{deleteUser(e._id, e.name, e.lastName)}}>
+                                    <IconButton onClick={()=>{deleteUser(e._id, e.name, e.lastName, e.role)}}>
                                         <FontAwesomeIcon icon={faTrash}/>
                                     </IconButton>
                                 </ListItem>

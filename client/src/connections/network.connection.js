@@ -3,8 +3,9 @@
 const detectNetwork = () => {
     return new Promise(resolve => {
         try {
-            fetch('https://ztudy-prendoaprendo-backend.firebaseapp.com/api/timestamp', {method: 'GET', mode: "no-cors"})
+            fetch('https://api.publicapis.org/entries', {method: 'GET', mode: "no-cors"})
             .then(response => {
+                console.log(response)
                 resolve(true)
             }, errorData => {
                 resolve(false)
