@@ -44,7 +44,7 @@ const initAccessControl = async () => {
                             console.log(result2);
                         }
                         if(i == (environment.permisos.length - 1)) {
-                            createAdminDefault()
+                            
                         }
                     })
                 }
