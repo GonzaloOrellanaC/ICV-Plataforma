@@ -24,6 +24,15 @@ const initDbPMs = () => {
             const coleccionObjetos = db.createObjectStore('3dFilesList',{
                 keyPath: 'id'
             })
+            coleccionObjetos.transaction.oncomplete = (event) => {
+                resolve(
+                    {
+                        message: "Base de datos creada / actualizada",
+                        database: db,
+                        state: 'actualizada'
+                    }
+                )
+            }
             resolve(
                 {
                     message: "Base de datos creada / actualizada",
