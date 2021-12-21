@@ -1,6 +1,6 @@
 import express from "express";
 import path from "path";
-import { ApiIcv } from "./src/api-icv";
+//import { ApiIcv } from "./src/api-icv";
 
 import { environment } from "./src/config";
 import { databaseLoader, expressLoader, apiIcvLoader } from "./src/loaders";
@@ -8,14 +8,13 @@ import { AccessControlServices } from "./src/services";
 
 const startServer = async () => {
     /* Conexión a MongoDB  */
-
     await databaseLoader();
-
-    /* Carga de recursos servidor */
-    const app = await expressLoader();
 
     /* Carga de recursos desde API ICV */
     await apiIcvLoader();
+
+    /* Carga de recursos servidor */
+    const app = await expressLoader();
 
     /* Conexión a control de acceso a servidor */
     await AccessControlServices.initAccessControl();
@@ -33,7 +32,7 @@ const startServer = async () => {
         res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
     });
 
-    app.listen(environment.port, (err) => {
+    app.listen(environment.port, '0.0.0.0', (err) => {
         if (err) {
             console.error("Express startup error: ", err);
             throw err;

@@ -5,6 +5,7 @@ const { error: errorMsg, success: successMsg } = environment.messages.controller
 
 const login = async (req, res, next) => {
     const { body: { user } } = req;
+    console.log(user)
     if (!user.email || !user.password) {
         return res.status(400).end(errorMsg.credentialsRequired)
     }
