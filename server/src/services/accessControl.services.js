@@ -1,7 +1,9 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permisos, Permission, /* PermissionRoles, */ Roles } from '../models'
+import { Permisos, Permission, /* PermissionRoles, */ Roles, Site } from '../models';
+import { ApiIcv } from '../api-icv';
+//import { apiIcvLoader } from '../loaders'
 
 const { error: errorMsg } = environment.messages.services.accessControl
 
@@ -24,10 +26,19 @@ const initAccessControl = async () => {
     try {
         const findRoles = await Roles.findOne({ name: environment.roles[0].name });
         const adminResult = await getAdminExist();
+        const findSites = await getSites();
+        console.log('Sitios: ====>>>>', findSites)
         console.log('Administrador existente: ', adminResult)
+        if(findSites.length == 0) {
+            const sites = await ApiIcv.createSiteToSend();
+            console.log(sites)
+        }
         if(adminResult.length == 0) {
             console.log('Se deberá crear administrador ----->')
             createAdminDefault();
+        }
+        if(findSites.length == 0) {
+            //apiIcvLoader()
         }
         if (!findRoles) {
             environment.roles.forEach(async (role, index) => {
@@ -72,6 +83,19 @@ const getAdminExist = () => {
         return new Promise(async resolve => {
             let adminExist = await UserServices.getUserByRole('admin');
             resolve(adminExist);
+        })
+    } catch (err) {
+        console.log('error al ubicar admin: ', err)
+    }
+}
+
+const getSites = () => {
+    try{
+        return new Promise(resolve => {
+            Site.find({}, (err, sites) => {
+                resolve(sites)
+            });
+            
         })
     } catch (err) {
         console.log('error al ubicar admin: ', err)
