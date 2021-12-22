@@ -6,6 +6,8 @@ import {useEffect, useState} from 'react';
 
 import { environment } from '../../config';
 
+import { LoadingModal } from '../../modals';
+
 const loadSprite = () => {
     let state = true;
     let bee = document.getElementById('beeContent');
@@ -20,7 +22,8 @@ const loadSprite = () => {
 const MVAvatar = ({machine}) => {
 
     const [ modelViewer, setModelViewer ] = useState();
-    const [ disable, setDisableZoom ] = useState(true)
+    const [ disable, setDisableZoom ] = useState(true);
+    const [ openLoading, setOpenLoading ] = useState(true)
 
     let newMachine;
     console.log(machine);
@@ -39,6 +42,7 @@ const MVAvatar = ({machine}) => {
         let mv = document.querySelector("model-viewer#machine")
         mv.addEventListener('load', (e) => {
             console.log('cargado!!!');
+            setOpenLoading(false)
             //console.log(e)
             //console.log(mv)
             const changeColor = async (event) => {
@@ -237,9 +241,10 @@ const MVAvatar = ({machine}) => {
                         scale="0.001 0.001 0.001"
                         alt="A Material Picking Example"
                     >
-                    
 
                     </model-viewer>
+                    <LoadingModal open={openLoading} progress={null} loadingData={'Descargando modelo 3D...'} />
+
                 {
                      (machine.type === 'Pala') && <div style={{float: 'right' ,height: '100%', width: '20%', textAlign: 'center', backgroundColor: 'transparent', paddingTop: 70 }}>
                      <button onClick={() => terminar()}style={{

@@ -53,9 +53,16 @@ const MachineButton = ({ image, machine, route }) => {
     const classes = useStyles();
     console.log(route);
     console.log(machine);
+    let newMachine = {
+        brand: machine.brand,
+        id: machine.id,
+        model: machine.model,
+        pIDPM: machine.pIDPM,
+        type: machine.type,
+    }
 
     return (
-        <Button className={classes.root} style={{borderRadius: 20, height: '50%', width: '100%'}} component={Link} to={`/${route}/${JSON.stringify(machine)}`}>
+        <Button className={classes.root} style={{borderRadius: 20, height: '50%', width: '100%'}} component={Link} to={`/${route}/${JSON.stringify(newMachine)}`}>
             <div className='overlay'>
                 <div>
                     <img className={classes.image} src={`data:${machine.image}`} alt={machine.model}/>

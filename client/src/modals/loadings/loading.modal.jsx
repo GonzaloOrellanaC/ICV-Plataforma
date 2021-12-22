@@ -1,4 +1,4 @@
-import { /* useState, */ useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
     Box, 
     Modal,
@@ -12,12 +12,15 @@ import {
 import { styleModal } from '../../config';
 
 const LoadingModal = ({open, progress, loadingData}) => {
-    /* const [ operarios, setOperarios ] = useState([]);
-    const [ colorState, setColorState ] = useState();
-    const { reportType, idIndex, guide, state } = report; */
+    const [ withProgress, setWithProgress ] = useState(true)
+    
 
     useEffect(() => {
-          
+        if(progress) {
+            setWithProgress(true)
+        }else{
+            setWithProgress(false)
+        }
     }, [])
     
     return(
@@ -28,7 +31,14 @@ const LoadingModal = ({open, progress, loadingData}) => {
         >
             <Box sx={styleModal}>
                 <div style={{height: 300, textAlign: 'center'}}>
-                    <CircularProgress variant="determinate" size={200} value={progress}/>
+                    {
+                        withProgress &&
+                        <CircularProgress variant="determinate" size={200} value={progress}/>
+                    }
+                    {
+                        !withProgress &&
+                        <CircularProgress size={200} />
+                    }
                     <h1>{loadingData}</h1>
                 </div>
             </Box>

@@ -5,7 +5,7 @@ import { Close } from '@material-ui/icons'
 import { useHistory, useParams } from 'react-router-dom'
 import { useStylesTheme } from '../../config'
 import { ArrowBackIos } from '@material-ui/icons'
-import {  MVAvatar, PautaDetail } from '../../containers'
+import { MVAvatar, PautaDetail } from '../../containers'
 import { apiIvcRoutes } from '../../routes';
 
 const MachinesListPage = ({route}) => {  
