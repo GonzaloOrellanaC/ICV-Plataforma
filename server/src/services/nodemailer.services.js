@@ -6,7 +6,7 @@ import path from 'path';
 const fsPromises = fs.promises;
 
 
-const sendEmail = async (typeEmail, fullName, language, email) => {
+const sendEmail = async (typeEmail, fullName, language, email, password) => {
 
     const mailInfo = {
         host: "mail.tesso.cl",
@@ -25,10 +25,11 @@ const sendEmail = async (typeEmail, fullName, language, email) => {
     let data = {
         logoAlt: 'Logo',
         fullName: fullName,
-        platformURL: 'localhost:3000',
+        platformURL: 'https://icv-plataforma-mantencion.azurewebsites.net',
         platformName: 'ICV Platform',
         email: email,
         resetLink: 'https://tesso.cl',
+        password: password
     }
 
     let transporter = nodemailer.createTransport(mailInfo);

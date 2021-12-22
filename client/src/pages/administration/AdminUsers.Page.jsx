@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Box, Card, Grid, Toolbar, IconButton } from '@material-ui/core';
 import { ArrowBackIos } from '@material-ui/icons';
 import { useStylesTheme } from '../../config';
@@ -6,8 +6,19 @@ import { useHistory } from 'react-router-dom';
 import { UsersList } from '../../containers';
 
 const AdminUsersPage = ({route}) => {
+    const [ isConnected, setIsConnected ] = useState(false)
     const classes = useStylesTheme();
     const history = useHistory();
+
+    useEffect(() => {
+        if(navigator.onLine) {
+            setIsConnected(true)
+        }else{
+            setIsConnected(false)
+        }
+    }, [])
+
+
 
     console.log(route)
     return (
@@ -33,7 +44,7 @@ const AdminUsersPage = ({route}) => {
                         </Grid>
                         <Grid container alignItems='center' justifyContent='center'>
                             <div style={{width: '100%', textAlign: 'left', padding: 10, overflowY: 'scroll', height: '100vh'}}>
-                                <UsersList height={'100%'}/>
+                                <UsersList height={'100%'} hableButton={isConnected}/>
                             </div>
                         </Grid>
                     </Card>

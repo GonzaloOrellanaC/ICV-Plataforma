@@ -27,9 +27,19 @@ const WelcomePage = () => {
     const [ openLoader, setOpenLoader ] = useState(true)
     const [ progress, setProgress ] = useState(0)
     const [ loadingData, setLoadingData ] = useState('Descargando recursos...')
+    const [ disableButton, setDisableButtons ] = useState(true)
+
+    ////Notificaciones
+    const [ notificaciones1, setNotificaciones1 ] = useState('Sin notificaciones')
+    const [ notificaciones2, setNotificaciones2 ] = useState('Sin notificaciones')
 
     useEffect(() => {
         readData();
+        if(localStorage.getItem('sitio')) {
+            setDisableButtons(false)
+        }else{
+            setNotificaciones1('Para navegar en la aplicación debe seleccionar una obra')
+        }
         //getTrucksList()
     }, []);
 
@@ -324,7 +334,7 @@ const WelcomePage = () => {
                 <Grid className={classes.pageContainer} item xs={12}>
                     <Card className={classes.pageCard}>
                         <div style={{height: 70}}>
-                            <p style={{fontSize: 24}}>Hola Admin ¿Por dónde quieres comenzar hoy?</p>
+                            <p style={{fontSize: 24}}>Hola {localStorage.getItem('name')} ¿Por dónde quieres comenzar hoy?</p>
                         </div>
                         <Grid item style={{width: '100%', height: '14.5vh', margin: 'auto'}}>
                             <div 
@@ -342,7 +352,7 @@ const WelcomePage = () => {
 
                                     }
                                 }>
-                                <p style={{fontSize: '2vw', margin: 0}}>10 notificaciones nuevas</p>
+                                <p style={{fontSize: '2vw', margin: 0}}> {notificaciones1} </p>
                             </div>
                             <div 
                                 style={
@@ -359,7 +369,7 @@ const WelcomePage = () => {
 
                                     }
                                 }>
-                                <p style={{fontSize: '1.7vw', margin: 0}}>10 notificaciones nuevas</p>
+                                <p style={{fontSize: '1.7vw', margin: 0}}> {notificaciones2}</p>
                             </div>
                             <div 
                                 style={
@@ -382,8 +392,8 @@ const WelcomePage = () => {
                             </div>
                         </Grid>
                         <Grid container spacing={2}>
-                                <CardButton variant='inspection'/>
-                                <CardButton variant='maintenance'/>
+                                <CardButton variant='inspection' disableButton={disableButton}/>
+                                <CardButton variant='maintenance' disableButton={disableButton}/>
                                 <CardButton variant='reports'/>
                                 <CardButton variant='administration'/>
                             {/* <Grid item>

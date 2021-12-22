@@ -5,7 +5,7 @@ const createUser = async  (req, res, next) => {
     
     const { body: { userData, password } } = req
 
-    console.log('Respuestas: ',userData, password)
+    console.log('Respuestas: ',userData, 'Password: ', password)
 
     if (!userData.email || !password) {
         //return res.status(400).end(errorMsg.informationMissing)
@@ -14,7 +14,7 @@ const createUser = async  (req, res, next) => {
     try {
         const registerUser = await UserServices.createUser(userData, password)
         if(registerUser) {
-            EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email )
+            EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password )
         }
         return res.status(200).json({ user: registerUser.generateJWT() })
     } catch (error) {

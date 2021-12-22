@@ -76,12 +76,16 @@ const AdminNewUserPage = () => {
                         userData.confirmPassword = null;
                         if(routingData === 'Nuevo usuario') {
                             let userState = await usersRoutes.createUser(userData, userData.password);
+                            if(userState.status == 200) {
+                                openCloseModal()
+                            }
                         }else if(routingData === 'Editar usuario') {
                             let userState = await usersRoutes.editUser(userData);
+                            if(userState.status == 200) {
+                                openCloseModal()
+                            }
                         }
-                        if(userState.status == 200) {
-                            openCloseModal()
-                        }
+                        
                     }
                 })
             }

@@ -7,7 +7,7 @@ import { usersRoutes } from '../../routes';
 import { changeTypeUser } from '../../config';
 import { UserListDataModal } from '../../modals'
 
-const UsersList = ({height}) => {
+const UsersList = ({height, hableButton}) => {
     const [ usuarios, setUsuarios ] = useState([])
     const [ open, setOpen ] = useState(false);
     const [ userModal, setUserModal ] = useState({});
@@ -83,7 +83,7 @@ const UsersList = ({height}) => {
                 <Toolbar style={{width: '100%'}}>
                     <h1>Administrar usuarios</h1>
                     <Link to="/new-users">
-                        <button style={{position: 'absolute', right: 20, width: 171, height: 38, borderRadius: 23, fontSize: 16}}>
+                        <button disabled={!hableButton} style={{position: 'absolute', right: 20, width: 171, height: 38, borderRadius: 23, fontSize: 16}}>
                             <FontAwesomeIcon icon={faUser} style={{marginRight: 10}}/>
                             Crear usuario
                         </button>
@@ -112,7 +112,8 @@ const UsersList = ({height}) => {
                     </ListItem>
                 </div>
 
-                <div style={{overflowY: 'auto'}}>
+                {
+                    hableButton && <div style={{overflowY: 'auto'}}>
                     {
                         usuarios.map((e, n) => {
                             e.roleTranslated = changeTypeUser(e.role);
@@ -174,6 +175,13 @@ const UsersList = ({height}) => {
                             />
                     }
                 </div>
+                }
+                {
+                    !hableButton && 
+                    <div style={{textAlign: 'center', width: '100%', height: '50%', paddingTop: 50}}>
+                        <h1>Requiere conexión a internet para administración de usuarios</h1>
+                    </div>
+                }
             </div>
         </div>
     )

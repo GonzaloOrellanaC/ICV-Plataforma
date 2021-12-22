@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-const CardButton = ({ variant }) => {
+const CardButton = ({ variant, disableButton }) => {
     const { dictionary } = useLanguage()
     const classes = useStyles()
   
@@ -73,7 +73,7 @@ const CardButton = ({ variant }) => {
     return (
         <div className={classes.root} component={Link}>
             <Link to={`/${variant}`} style={{textDecoration: 'none'}} className={classes.buttonSelection}>
-                <Button variant="contained" className={classes.buttonSelection} >
+                <Button variant="contained" className={classes.buttonSelection} disabled={disableButton}>
                     <div className={classes.icon}>
                         {handleTypeIcon()}
                         <br />
