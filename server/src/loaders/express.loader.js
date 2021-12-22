@@ -69,6 +69,18 @@ export default async () => {
                 'blob:',
                 environment.storageApi.url
             ],
+            workerSrc: [
+                "'self'",
+                'data:',
+                'blob:',
+                environment.storageApi.url
+            ],
+            childSrc: [
+                "'self'",
+                'data:',
+                'blob:',
+                environment.storageApi.url
+            ],
             objectSrc: [
                 "'self'",
                 'blob:',
