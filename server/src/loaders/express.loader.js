@@ -47,7 +47,8 @@ export default async () => {
     app.use(helmet.contentSecurityPolicy({
         directives: {
             connectSrc: [
-                "'self'"
+                "'self'",
+                'icvmantencion.blob.core.windows.net'
             ],
             defaultSrc: [
                 "'self'",
