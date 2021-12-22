@@ -39,6 +39,7 @@ const ReportsPage = () => {
     const [ mantencionesCompletadas, setMantencionesCompletadas ] = useState(0);
     const [ reportList, setReportList ] = useState([])
     const [ reportType, setReportType ] = useState('')
+    const [ hableCreateReport, setHableCreateReport ] = useState(false)
     const classes = useStylesTheme()
     const { dictionary } = useLanguage();
     //const [ openAssignModal, setOpenAssignModal ] = useState(false)
@@ -86,6 +87,9 @@ const ReportsPage = () => {
                 setMantenciones(Mantenciones)
             }
         })
+        if(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive') {
+            setHableCreateReport(true);
+        }
     }, [])
     
 
@@ -207,13 +211,13 @@ const ReportsPage = () => {
                                 </div>
                             }
                         </div>
-                        <div style={{height: '10vh', width: '60%', position: 'absolute', bottom: 10, right: 10, textAlign: 'right'}}>
+                        {hableCreateReport && <div style={{height: '10vh', width: '60%', position: 'absolute', bottom: 10, right: 10, textAlign: 'right'}}>
                             <Link to={'/reports/create-report'}>
                                 <button style={{ fontSize: 20, color: '#BB2D2D', width: 210, height: 48, borderRadius: 23, borderWidth: 2, borderStyle: 'solid', borderColor: '#BB2D2D', backgroundColor: '#F9F9F9' }}>
                                     Crear Reporte
                                 </button>
                             </Link>
-                        </div>
+                        </div>}
                     </Card>
                 </Grid>
             </Grid>

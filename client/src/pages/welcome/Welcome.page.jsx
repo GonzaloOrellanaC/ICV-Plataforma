@@ -28,6 +28,7 @@ const WelcomePage = () => {
     const [ progress, setProgress ] = useState(0)
     const [ loadingData, setLoadingData ] = useState('Descargando recursos...')
     const [ disableButton, setDisableButtons ] = useState(true)
+    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true)
 
     ////Notificaciones
     const [ notificaciones1, setNotificaciones1 ] = useState('Sin notificaciones')
@@ -39,6 +40,11 @@ const WelcomePage = () => {
             setDisableButtons(false)
         }else{
             setNotificaciones1('Para navegar en la aplicación debe seleccionar una obra')
+        }
+        if(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive') {
+            setDisableButtonsNoSAP(false);
+        }else{
+            setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.')
         }
         //getTrucksList()
     }, []);
@@ -369,7 +375,7 @@ const WelcomePage = () => {
 
                                     }
                                 }>
-                                <p style={{fontSize: '1.7vw', margin: 0}}> {notificaciones2}</p>
+                                <p style={{fontSize: '1.4vw', margin: 0}}> {notificaciones2}</p>
                             </div>
                             <div 
                                 style={
@@ -395,7 +401,7 @@ const WelcomePage = () => {
                                 <CardButton variant='inspection' disableButton={disableButton}/>
                                 <CardButton variant='maintenance' disableButton={disableButton}/>
                                 <CardButton variant='reports'/>
-                                <CardButton variant='administration'/>
+                                <CardButton variant='administration' disableButton={disableButtonNoSAP}/>
                             {/* <Grid item>
                                 <CardButton variant='maintenance'/>
                             </Grid>
