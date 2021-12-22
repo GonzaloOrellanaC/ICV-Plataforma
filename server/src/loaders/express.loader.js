@@ -69,6 +69,12 @@ export default async () => {
                 'blob:',
                 environment.storageApi.url
             ],
+            objectSrc: [
+                "'self'",
+                'blob:',
+                'data:',
+                environment.storageApi.url
+            ],
             styleSrc: [
                 "'self'",
                 'blob:',
