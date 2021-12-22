@@ -27,6 +27,9 @@ const environment = {
     icvApi: {
         url: process.env.ICV_URL || 'http://apm.icv.cl/api/apm/'
     },
+    storageApi: {
+        url: process.env.STORAGE_URL || 'https://icvmantencion.blob.core.windows.net'
+    },
     mailApi: {
         key: process.env.MAIL_KEY || '1665980594623da5258dfa0dc73bfd57-c27bf672-0bbf16b8',
         domain: process.env.MAIL_DOMAIN || 'sandboxe24aef5e2a3f411d895e160239476418.mailgun.org',

@@ -48,11 +48,12 @@ export default async () => {
         directives: {
             connectSrc: [
                 "'self'",
-                'icvmantencion.blob.core.windows.net'
+                environment.storageApi.url
             ],
             defaultSrc: [
                 "'self'",
-                'data:'
+                'data:',
+                environment.storageApi.url
             ],
             fontSrc: [
                 "'self'",
@@ -61,14 +62,18 @@ export default async () => {
             ],
             imgSrc: [
                 "'self'",
-                'data:'
+                'data:',
+                environment.storageApi.url
             ],
             styleSrc: [
                 "'self'",
                 "'unsafe-inline'",
                 'fonts.googleapis.com'
             ],
-            scriptSrc: ["'self'"]
+            scriptSrc: [
+                "'self'",
+                environment.storageApi.url
+            ]
         }
     }))
 
