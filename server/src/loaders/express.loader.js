@@ -55,6 +55,10 @@ export default async () => {
                 "'self'",
                 'data:',
                 'blob:',
+                "'unsafe-inline'",
+                "'unsafe-eval'",
+                'content:',
+                'gap:',
                 environment.storageApi.url
             ],
             fontSrc: [
