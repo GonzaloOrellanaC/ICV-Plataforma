@@ -63,6 +63,7 @@ export default async () => {
             imgSrc: [
                 "'self'",
                 'data:',
+                'blob:',
                 environment.storageApi.url
             ],
             styleSrc: [
