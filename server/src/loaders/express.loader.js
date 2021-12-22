@@ -72,6 +72,8 @@ export default async () => {
             ],
             scriptSrc: [
                 "'self'",
+                "'unsafe-inline'",
+                "'unsafe-eval'",
                 environment.storageApi.url
             ]
         }
