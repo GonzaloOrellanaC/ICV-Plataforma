@@ -48,15 +48,18 @@ export default async () => {
         directives: {
             connectSrc: [
                 "'self'",
+                'blob:',
                 environment.storageApi.url
             ],
             defaultSrc: [
                 "'self'",
                 'data:',
+                'blob:',
                 environment.storageApi.url
             ],
             fontSrc: [
                 "'self'",
+                'blob:',
                 'fonts.gstatic.com',
                 'data:'
             ],
@@ -68,11 +71,13 @@ export default async () => {
             ],
             styleSrc: [
                 "'self'",
+                'blob:',
                 "'unsafe-inline'",
                 'fonts.googleapis.com'
             ],
             scriptSrc: [
                 "'self'",
+                'blob:',
                 "'unsafe-inline'",
                 "'unsafe-eval'",
                 environment.storageApi.url
