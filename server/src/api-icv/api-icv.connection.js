@@ -78,6 +78,7 @@ const createSiteToSend = () => {
                 let sitios = [] = body.data;
                 console.log('Sitios', sitios)
                 if(readSitesFromDb.length == sitios.length) {
+                    console.log(readSitesFromDb, sitios)
                     resolve(true)
                 }else{
                     sitios.forEach(async (site, i) => {
