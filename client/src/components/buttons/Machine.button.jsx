@@ -58,7 +58,7 @@ const MachineButton = ({ image, machine, route }) => {
         <Button className={classes.root} style={{borderRadius: 20, height: '50%', width: '100%'}} component={Link} to={`/${route}/${JSON.stringify(machine)}`}>
             <div className='overlay'>
                 <div>
-                    <img className={classes.image} src={image} alt={machine.model}/>
+                    <img className={classes.image} src={`data:${machine.image}`} alt={machine.model}/>
                 </div>
                 <div /* className={classes.textContainer} */ style={{position: 'absolute', bottom: 5, width: '100%', textAlign: 'center'}}>
                     {`${machine.type} ${machine.brand} ${machine.model}`}

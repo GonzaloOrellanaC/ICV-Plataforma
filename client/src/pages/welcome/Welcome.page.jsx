@@ -3,8 +3,8 @@ import { Box, Card, Grid, Typography, Modal, Button } from '@material-ui/core'
 import { useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes } from '../../routes'
-import { Network } from '../../connections'
 import { pmsDatabase, sitesDatabase, FilesToStringDatabase, trucksDatabase } from '../../indexedDB'
+import { LoadingModal } from '../../modals'
 
 
 const style = {
@@ -24,6 +24,9 @@ const WelcomePage = () => {
     const [ date, setDate ] = useState('')
     const [ hr, setHr ] = useState('')
     const [ min, setMin ] = useState('')
+    const [ openLoader, setOpenLoader ] = useState(true)
+    const [ progress, setProgress ] = useState(0)
+    const [ loadingData, setLoadingData ] = useState('Descargando recursos...')
 
     useEffect(() => {
         readData();
@@ -31,13 +34,10 @@ const WelcomePage = () => {
     }, []);
 
     const readData = async () => {
-        //window.
-        /* let fileHandle;
-        // Destructure the one-element array.
-        [fileHandle] = await Window.showOpenFilePicker();
-        console.log(fileHandle) */
-        const networkDetect = await Network.detectNetwork();
-        if(networkDetect) {
+        if(navigator.onLine) {
+            /* return(
+                
+            ) */
             /* let pms = [];
             pms = await getPMlist();
             pmsDatabase.initDbPMs()
@@ -52,37 +52,109 @@ const WelcomePage = () => {
                     }
                 });
             }) */
-            let sites = [];
+            /* let sites = [];
             sites = await getSitesList();
-            //createIndexedDbSites()
             let db = await sitesDatabase.initDbObras();
             console.log(db)
             if(db) {
                 sites.forEach(async (fileName, index) => {
                     fileName.id = index;
-                     const databaseSites = await sitesDatabase.actualizar(fileName, db.database, db.database.version);
-                    console.log(databaseSites)
+                    await sitesDatabase.actualizar(fileName, db.database, db.database.version);
                     if(index === (sites.length - 1)) {
-                        let respuestaConsulta = await sitesDatabase.consultar(db.database);
+                        await sitesDatabase.consultar(db.database);
                     } 
                 });
+            } */
+            const responseSites = await getSites();
+            if(responseSites) {
+                setProgress(30)
+                const responseTrucks = await getTrucksList();
+                if(responseTrucks) {
+                    setProgress(65);
+                    setTimeout(() => {
+                        setProgress(100);
+                        setLoadingData('Recursos descargados')
+                        setTimeout(() => {
+                            setOpenLoader(false)
+                        }, 1000);
+                    }, 1000);
+                }
             }
             
+        }else{
+            setOpenLoader(false)
         }
         
     }
 
-    const createIndexedDbSites = () => {
-        try {
-            const indexedDb = window.indexedDB;
-            const conexion = indexedDb.open('Sites');
-            conexion.onupgradeneeded = (event) => {
-                let db = event.target.result;
-                console.log(db)
+    const getSites = () => {
+        return new Promise(async resolve => {
+            let sites = [];
+            sites = await getSitesList();
+            let db = await sitesDatabase.initDbObras();
+            console.log(db)
+            if(db) {
+                sites.forEach(async (fileName, index) => {
+                    fileName.id = index;
+                    await sitesDatabase.actualizar(fileName, db.database, db.database.version);
+                    if(index === (sites.length - 1)) {
+                        const response = await sitesDatabase.consultar(db.database);
+                        if(response) {
+                            resolve(true)
+                        }
+                    } 
+                });
             }
-        }catch (err) {
+        })
+    }
 
-        }
+    const getTrucksList = () => {
+        return new Promise(async resolve => {
+            let machines = [];
+            machines = await getMachines();
+            let db = await trucksDatabase.initDbMachines();
+            console.log(db)
+            if(db) {
+                machines.forEach(async (fileName, index) => {
+                    console.log(fileName)
+                    fileName.id = index;
+                    var xhr = new XMLHttpRequest();
+                    xhr.onload = async () => {
+                        let reader = new FileReader();
+                        reader.onload = async () => {
+                            fileName.image = reader.result.replace("data:", "");
+                            console.log(fileName.image);
+                            if(fileName.image) {
+                                trucksDatabase.actualizar(fileName, db.database);
+                            }
+                        }
+                        reader.readAsDataURL(xhr.response);
+                        
+                        if(index === (machines.length - 1)) {
+                            let respuestaConsulta = await trucksDatabase.consultar(db.database);
+                            if(respuestaConsulta) {
+                                resolve(true)
+                            }
+                        }
+                    }
+                    xhr.open('GET', `/assets/${fileName.model}.png`);
+                    xhr.responseType = 'blob';
+                    xhr.send();
+                });
+            }
+        })
+    }
+
+    const getMachines = () => {
+        return new Promise(resolve => {
+            apiIvcRoutes.getMachines()
+            .then(data => {
+                resolve(data.data)
+            })
+            .catch(err => {
+                console.log('Error', err)
+            })
+        })
     }
 
     const transformFile3dToString = (brand, model, type) => {
@@ -114,17 +186,6 @@ const WelcomePage = () => {
 
     const removeAccents = (str) => {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    } 
-
-    const getTrucksList = () => {
-        return new Promise(resolve => {
-            trucksDatabase.initDbMachines()
-            .then(async db => {
-                let respuestaConsulta = await trucksDatabase.consultar(db.database)
-                let n = 0;
-                //console.log(respuestaConsulta.length)
-            })
-        })
     }
 
     const createElement3D = async (n, respuestaConsulta) => {
@@ -336,6 +397,7 @@ const WelcomePage = () => {
                             </Grid> */}
                         </Grid>
                     </Card>
+                    <LoadingModal open={openLoader} progress={progress} loadingData={loadingData}/>
                 </Grid>
             </Grid>            
         </Box>

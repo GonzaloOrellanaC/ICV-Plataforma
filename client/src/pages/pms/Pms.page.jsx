@@ -6,7 +6,6 @@ import { useState, useEffect, } from "react";
 import { pmsDatabase, trucksDatabase } from '../../indexedDB';
 import { useStylesTheme } from '../../config'
 import { useHistory } from "react-router";
-import { Network } from '../../connections';
 import { apiIvcRoutes } from '../../routes';
 import { faArrowRight, faChevronRight, faEye } from "@fortawesome/free-solid-svg-icons";
 
@@ -32,9 +31,7 @@ const PmsPage = () => {
 
     const readData = async () => {
         console.log('Hello!!!!')
-        const networkDetect = await Network.detectNetwork();
-        console.log(networkDetect);
-        if(networkDetect) {
+        if(navigator.onLine) {
             const machines = await getMachines();
             trucksDatabase.initDbMachines()
             .then(async db => {
@@ -47,8 +44,11 @@ const PmsPage = () => {
                 })
             })
         }else{
-            let respuestaConsulta = await trucksDatabase.consultar(db.database);
-            setMachineList(respuestaConsulta) 
+            trucksDatabase.initDbMachines()
+            .then(async db => {
+                let respuestaConsulta = await trucksDatabase.consultar(db.database);
+                setMachineList(respuestaConsulta) 
+            })
         }
     }
 

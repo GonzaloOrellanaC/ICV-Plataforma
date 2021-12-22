@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Network } from '../connections';
 
 export default {
     getMachines: () => {

@@ -8,7 +8,6 @@ import { useHistory } from 'react-router-dom'
 import { useLanguage } from '../../context'
 import { apiIvcRoutes } from '../../routes'
 import { trucksDatabase } from '../../indexedDB'
-import { Network } from '../../connections'
 const MachinesPage = ({ route }) => {
     const classes = useStylesTheme()
     const { dictionary } = useLanguage();
@@ -19,9 +18,16 @@ const MachinesPage = ({ route }) => {
     },[]);
 
     const readData = async () => {
-        const networkDetect = await Network.detectNetwork();
-        console.log(networkDetect);
-        if(networkDetect) {
+        trucksDatabase.initDbMachines()
+            .then(async db => {
+                let respuestaConsulta = await trucksDatabase.consultar(db.database);
+                console.log(respuestaConsulta)
+                setMachineList(respuestaConsulta) 
+            })
+
+        /* if(navigator.onLine) {
+            console.log(navigator.onLine)
+            console.log('Navegador online')
             const machines = await getMachines();
             console.log(machines)
             trucksDatabase.initDbMachines()
@@ -36,9 +42,16 @@ const MachinesPage = ({ route }) => {
                 })
             })
         }else{
-            let respuestaConsulta = await trucksDatabase.consultar(db.database);
-            setMachineList(respuestaConsulta) 
-        }
+            console.log(navigator.onLine)
+            console.log('Navegador offline')
+            trucksDatabase.initDbMachines()
+            .then(async db => {
+                let respuestaConsulta = await trucksDatabase.consultar(db.database);
+                console.log(respuestaConsulta)
+                setMachineList(respuestaConsulta) 
+            })
+            
+        } */
     }
 
     const getMachines = () => {
@@ -94,7 +107,7 @@ const MachinesPage = ({ route }) => {
                                     machinesList.filter(a => a.toString()).map((machine) => {
                                         return (
                                             <Grid item key={machine.id} style={{width: '30%'}}>
-                                                <MachineButton machine={machine} image={`/assets/${machine.model}.png`} route={route}/>
+                                                <MachineButton machine={machine} image={machine.image} route={route}/>
                                             </Grid>
                                         )
                                     })
