@@ -41,7 +41,8 @@ const WelcomePage = () => {
         }else{
             setNotificaciones1('Para navegar en la aplicación debe seleccionar una obra')
         }
-        if(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive') {
+        if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
+            //console.log(localStorage.getItem('role'))
             setDisableButtonsNoSAP(false);
         }else{
             setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.')
@@ -51,38 +52,9 @@ const WelcomePage = () => {
 
     const readData = async () => {
         if(navigator.onLine) {
-            /* return(
-                
-            ) */
-            /* let pms = [];
-            pms = await getPMlist();
-            pmsDatabase.initDbPMs()
-            .then(async db => {
-                pms.forEach(async (fileName, index) => {
-                    apiIvcRoutes.getFiles(fileName).then(data => {
-                        data.data.id = index
-                        pmsDatabase.actualizar(data.data, db.database);
-                    })
-                    if(index === (pms.length - 1)) {
-                        let respuestaConsulta = await pmsDatabase.consultar(db.database);
-                    }
-                });
-            }) */
-            /* let sites = [];
-            sites = await getSitesList();
-            let db = await sitesDatabase.initDbObras();
-            console.log(db)
-            if(db) {
-                sites.forEach(async (fileName, index) => {
-                    fileName.id = index;
-                    await sitesDatabase.actualizar(fileName, db.database, db.database.version);
-                    if(index === (sites.length - 1)) {
-                        await sitesDatabase.consultar(db.database);
-                    } 
-                });
-            } */
             const responseSites = await getSites();
             if(responseSites) {
+                console.log(responseSites)
                 setProgress(30)
                 const responseTrucks = await getTrucksList();
                 if(responseTrucks) {
@@ -96,7 +68,6 @@ const WelcomePage = () => {
                     }, 1000);
                 }
             }
-            
         }else{
             setOpenLoader(false)
         }
@@ -108,7 +79,7 @@ const WelcomePage = () => {
             let sites = [];
             sites = await getSitesList();
             let db = await sitesDatabase.initDbObras();
-            console.log(db)
+            //console.log(db)
             if(db) {
                 sites.forEach(async (fileName, index) => {
                     fileName.id = index;
@@ -139,7 +110,7 @@ const WelcomePage = () => {
                         let reader = new FileReader();
                         reader.onload = async () => {
                             fileName.image = reader.result.replace("data:", "");
-                            console.log(fileName.image);
+                            //console.log(fileName.image);
                             if(fileName.image) {
                                 trucksDatabase.actualizar(fileName, db.database);
                             }
@@ -238,7 +209,11 @@ const WelcomePage = () => {
         return new Promise(resolve => {
             apiIvcRoutes.getSites()
             .then(data => {
-                console.log(data.data)
+                console.log(data.data);
+                if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
+                    localStorage.setItem('sitio', JSON.stringify(data.data[0]));
+                    setDisableButtons(false)
+                }
                 resolve(data.data)
             })
             .catch(err => {
@@ -358,7 +333,7 @@ const WelcomePage = () => {
 
                                     }
                                 }>
-                                <p style={{fontSize: '2vw', margin: 0}}> {notificaciones1} </p>
+                                <p style={{fontSize: '1.4vw', margin: 0}}> {notificaciones1} </p>
                             </div>
                             <div 
                                 style={
@@ -394,7 +369,7 @@ const WelcomePage = () => {
                                     }
                                 }>
                                     <p style={{fontSize: '1vw', margin: 0}}> {date} </p>
-                                    <p style={{fontSize: '3vw', margin: 0}}> {hr} <strong>:</strong> {min} hs </p>
+                                    <p style={{fontSize: '2.7vw', margin: 0}}> {hr} <strong>:</strong> {min} hs </p>
                             </div>
                         </Grid>
                         <Grid container spacing={2}>

@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
         padding: 0,
         backgroundColor: 'rgba(255,255,255,0.5)',
         boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)',
-        '&:hover': {
+        /* '&:hover': {
             '& .overlay': {
                 width: 220,
                 height: 220,
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
                 backgroundColor: 'rgba(255,0,0,0.3)',
                 borderRadius: 4
             }
-        }
+        } */
     },
     card: {
         boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)',

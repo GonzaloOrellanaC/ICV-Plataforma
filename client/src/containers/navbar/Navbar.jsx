@@ -226,10 +226,6 @@ const Navbar = () => {
                                     </Link>
                                 </IconButton>
                             </div>
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={2} style={{ padding: navBarOpen ? 8 : '8px 0 0 0', position: 'absolute', bottom: 30, width: "100%", textAlign: 'center' }}>
-                        <Grid style={{width: "100%", textAlign: 'center'}}> 
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center',}}>
                                 <IconButton onClick={logout}>
                                     <div className={classes.sideButtons}>
@@ -239,6 +235,11 @@ const Navbar = () => {
                             </div>
                         </Grid>
                     </Grid>
+                    {/* <Grid container spacing={2} style={{ padding: navBarOpen ? 8 : '8px 0 0 0', position: 'absolute', bottom: 30, width: "100%", textAlign: 'center' }}>
+                        <Grid style={{width: "100%", textAlign: 'center'}}> 
+                            
+                        </Grid>
+                    </Grid> */}
                     
                     
                 </div>
