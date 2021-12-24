@@ -122,7 +122,7 @@ const UsersList = ({height, hableButton}) => {
                                     <div style={{width: '15%', marginLeft: 5 }}>
                                         {e.name} {e.lastName}    
                                     </div>
-                                    <div style={{width: '20%', marginLeft: 5 }}>
+                                    <div style={{width: '20%', marginLeft: 5, wordBreak: 'break-all' }}>
                                         {e.email}  
                                     </div>
                                     <div style={{width: '10%', marginLeft: 5 }}>

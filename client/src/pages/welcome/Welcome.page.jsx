@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Card, Grid, Typography, Modal, Button } from '@material-ui/core'
-import { useStylesTheme } from '../../config'
+import { environment, useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes } from '../../routes'
 import { pmsDatabase, sitesDatabase, FilesToStringDatabase, trucksDatabase } from '../../indexedDB'
-import { LoadingModal } from '../../modals'
-
+import { LoadingModal, VersionControlModal } from '../../modals'
+import hour from './hour'
+import fecha from './date'
 
 const style = {
     position: 'absolute',
@@ -22,9 +23,10 @@ const style = {
 const WelcomePage = () => {
     const classes = useStylesTheme();
     const [ date, setDate ] = useState('')
-    const [ hr, setHr ] = useState('')
-    const [ min, setMin ] = useState('')
-    const [ openLoader, setOpenLoader ] = useState(true)
+    const [ hora, setHora ] = useState('')
+    //const [ min, setMin ] = useState('')
+    const [ openLoader, setOpenLoader ] = useState(true);
+    const [ openVersion, setOpenVersion ] = useState(false);
     const [ progress, setProgress ] = useState(0)
     const [ loadingData, setLoadingData ] = useState('Descargando recursos...')
     const [ disableButton, setDisableButtons ] = useState(true)
@@ -42,11 +44,17 @@ const WelcomePage = () => {
             setNotificaciones1('Para navegar en la aplicación debe seleccionar una obra')
         }
         if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
-            //console.log(localStorage.getItem('role'))
+            ////console.log(localStorage.getItem('role'))
             setDisableButtonsNoSAP(false);
         }else{
             setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.')
         }
+
+        if(!localStorage.getItem('version') || (localStorage.getItem('version') != environment.version)) {
+            setOpenVersion(true)
+            localStorage.setItem('version', environment.version);
+        }
+        
         //getTrucksList()
     }, []);
 
@@ -67,26 +75,31 @@ const WelcomePage = () => {
                         }, 1000);
                     }, 1000);
                 }
+            }else{
+                setOpenLoader(false)
             }
         }else{
             setOpenLoader(false)
         }
-        
     }
 
     const getSites = () => {
         return new Promise(async resolve => {
             let sites = [];
             sites = await getSitesList();
+            //console.log(sites)
             let db = await sitesDatabase.initDbObras();
-            //console.log(db)
+            ////console.log(db)
             if(db) {
                 sites.forEach(async (fileName, index) => {
                     fileName.id = index;
                     await sitesDatabase.actualizar(fileName, db.database, db.database.version);
                     if(index === (sites.length - 1)) {
                         const response = await sitesDatabase.consultar(db.database);
-                        if(response) {
+                        //console.log(response)
+                        if(response.length === sites.length) {
+                            resolve(false)
+                        }else{
                             resolve(true)
                         }
                     } 
@@ -100,17 +113,17 @@ const WelcomePage = () => {
             let machines = [];
             machines = await getMachines();
             let db = await trucksDatabase.initDbMachines();
-            console.log(db)
+            //console.log(db)
             if(db) {
                 machines.forEach(async (fileName, index) => {
-                    console.log(fileName)
+                    //console.log(fileName)
                     fileName.id = index;
                     var xhr = new XMLHttpRequest();
                     xhr.onload = async () => {
                         let reader = new FileReader();
                         reader.onload = async () => {
                             fileName.image = reader.result.replace("data:", "");
-                            //console.log(fileName.image);
+                            ////console.log(fileName.image);
                             if(fileName.image) {
                                 trucksDatabase.actualizar(fileName, db.database);
                             }
@@ -139,57 +152,13 @@ const WelcomePage = () => {
                 resolve(data.data)
             })
             .catch(err => {
-                console.log('Error', err)
+                //console.log('Error', err)
             })
-        })
-    }
-
-    const transformFile3dToString = (brand, model, type) => {
-        return new Promise(async resolve => {
-            console.log(`../../assets/${type}/${brand}_${model}_Preview.gltf`)
-            let blob = await fetch(`../../assets/${type}/${brand}_${model}_Preview.gltf`).then(r => r.blob());
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onload = async () => {
-                console.log(reader.result);
-                let data = {
-                    id: 0,
-                    data: reader.result
-                }
-                FilesToStringDatabase.initDbPMs()
-                .then(async db => {
-                    let response = await FilesToStringDatabase.actualizar(data, db.database);
-                    console.log('response = ', response)
-                    if(response) {
-                        resolve(true)
-                    }else{
-                        resolve(false)
-                    }
-                })
-            };
-            reader.onerror = error => console.log(error);
         })
     }
 
     const removeAccents = (str) => {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    }
-
-    const createElement3D = async (n, respuestaConsulta) => {
-        console.log(n, respuestaConsulta)
-        if(n < respuestaConsulta.length) {
-            let type = removeAccents(respuestaConsulta[n].type).toLowerCase();
-            console.log(respuestaConsulta[n].brand, respuestaConsulta[n].model, type);
-            let getResponse = await transformFile3dToString(respuestaConsulta[n].brand, respuestaConsulta[n].model, type);
-            console.log(getResponse)
-            if(getResponse) {
-                n = n+1;
-                createElement3D(n, respuestaConsulta)
-            }
-        }
-        if(n == (respuestaConsulta.length)) {
-            console.log('terminado')
-        }
     }
 
     const getPMlist = () => {
@@ -199,9 +168,13 @@ const WelcomePage = () => {
                 resolve(data.data)
             })
             .catch(err => {
-                console.log('Error', err)
+                //console.log('Error', err)
             })
         })
+    }
+
+    const closeModal = () => {
+        setOpenVersion(false)
     }
 
     //Obras o sitios desde la base de datos
@@ -209,7 +182,7 @@ const WelcomePage = () => {
         return new Promise(resolve => {
             apiIvcRoutes.getSites()
             .then(data => {
-                console.log(data.data);
+                //console.log(data.data);
                 if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
                     localStorage.setItem('sitio', JSON.stringify(data.data[0]));
                     setDisableButtons(false)
@@ -217,96 +190,14 @@ const WelcomePage = () => {
                 resolve(data.data)
             })
             .catch(err => {
-                console.log('Error', err)
+                //console.log('Error', err)
             })
         })
     }
     
     useEffect(() =>{
-        let time = Date.now();
-        let minutes = new Date(time).getMinutes();
-        let hr = new Date(time).getHours();
-        let minString
-        if(minutes < 10) {
-            minString = '0'+minutes
-        }else{
-            minString = minutes
-        }
-        setMin(minString);
-        let hrString
-        if(hr < 10) {
-            hrString = '0'+hr
-        }else{
-            hrString = hr
-        }
-        setHr(hrString);
-        setInterval(() => {
-            let newTime = Date.now()
-            if(minutes != new Date(newTime).getMinutes()){
-                minutes = new Date(newTime).getMinutes()
-                if(minutes < 10) {
-                    minString = '0'+minutes
-                }else{
-                    minString = minutes
-                }
-                setMin(minString);
-            }
-            if(hr != new Date(newTime).getHours()){
-                hr = new Date(newTime).getHours()
-                if(hr < 10) {
-                    hrString = '0'+hr
-                }else{
-                    hrString = hr
-                }
-                setMin(minString);
-            }
-        }, 1000);
-        let day = new Date(time).getDay();
-        let dayName;
-        if(day == 1) {
-            dayName = 'Lunes'
-        }else if(day == 2) {
-            dayName = 'Martes'
-        }else if(day == 3) {
-            dayName = 'Miercoles'
-        }else if(day == 4) {
-            dayName = 'Jueves'
-        }else if(day == 5) {
-            dayName = 'Viernes'
-        }else if(day == 6) {
-            dayName = 'Sabado'
-        }else if(day == 0) {
-            dayName = 'Domingo'
-        }
-        let date = new Date(time).getDate()
-        let month = new Date(time).getMonth();
-        let monthName
-        if(month == 0) {
-            monthName = 'Enero'
-        }else if(month == 1) {
-            monthName = 'Febrero'
-        }else if(month == 2) {
-            monthName = 'Marzo'
-        }else if(month == 3) {
-            monthName = 'Abril'
-        }else if(month == 4) {
-            monthName = 'Mayo'
-        }else if(month == 5) {
-            monthName = 'Junio'
-        }else if(month == 6) {
-            monthName = 'Julio'
-        }else if(month == 7) {
-            monthName = 'Agosto'
-        }else if(month == 8) {
-            monthName = 'Septiembre'
-        }else if(month == 9) {
-            monthName = 'Octubre'
-        }else if(month == 10) {
-            monthName = 'Noviembre'
-        }else if(month == 11) {
-            monthName = 'Diciembre'
-        } 
-        setDate((dayName + ' ' + date + ' DE ' + monthName).toUpperCase())
+        setDate(fecha(Date.now()))
+        setHora(hour(Date.now()))
     }, [])
 
     return (
@@ -369,7 +260,7 @@ const WelcomePage = () => {
                                     }
                                 }>
                                     <p style={{fontSize: '1vw', margin: 0}}> {date} </p>
-                                    <p style={{fontSize: '2.7vw', margin: 0}}> {hr} <strong>:</strong> {min} hs </p>
+                                    <p style={{fontSize: '2.7vw', margin: 0}}> {hora} hs </p>
                             </div>
                         </Grid>
                         <Grid container spacing={2}>
@@ -377,18 +268,10 @@ const WelcomePage = () => {
                                 <CardButton variant='maintenance' disableButton={disableButton}/>
                                 <CardButton variant='reports'/>
                                 <CardButton variant='administration' disableButton={disableButtonNoSAP}/>
-                            {/* <Grid item>
-                                <CardButton variant='maintenance'/>
-                            </Grid>
-                            <Grid item>
-                                <CardButton variant='reports'/>
-                            </Grid>
-                            <Grid item>
-                                <CardButton variant='administration'/>
-                            </Grid> */}
                         </Grid>
                     </Card>
                     <LoadingModal open={openLoader} progress={progress} loadingData={loadingData}/>
+                    <VersionControlModal open={openVersion} closeModal={closeModal} />
                 </Grid>
             </Grid>            
         </Box>
