@@ -25,7 +25,7 @@ const WelcomePage = () => {
     const [ date, setDate ] = useState('')
     const [ hora, setHora ] = useState('')
     //const [ min, setMin ] = useState('')
-    const [ openLoader, setOpenLoader ] = useState(true);
+    const [ openLoader, setOpenLoader ] = useState(false);
     const [ openVersion, setOpenVersion ] = useState(false);
     const [ progress, setProgress ] = useState(0)
     const [ loadingData, setLoadingData ] = useState('Descargando recursos...')
@@ -58,14 +58,41 @@ const WelcomePage = () => {
         //getTrucksList()
     }, []);
 
+    const setIfNeedReadDataAgain = async () => {
+        return new Promise(async resolve => {
+            if(navigator.onLine) {
+                let sites = [];
+                sites = await getSitesList();
+                let db = await sitesDatabase.initDbObras();
+                ////console.log(db)
+                if(db) {
+                    const response = await sitesDatabase.consultar(db.database);
+                    if(response) {
+                        if(sites.length == response.length) {
+                            resolve(false)
+                        }else{
+                            resolve(true)
+                        }
+                    }
+                }
+            }else{
+                resolve(false)
+            }
+        })
+    }
+
     const readData = async () => {
-        if(navigator.onLine) {
+        const revisarData = await setIfNeedReadDataAgain();
+        console.log(revisarData)
+        if(revisarData) {
+            setOpenLoader(true)
             const responseSites = await getSites();
             if(responseSites) {
                 console.log(responseSites)
                 setProgress(30)
                 const responseTrucks = await getTrucksList();
                 if(responseTrucks) {
+                    console.log(responseTrucks)
                     setProgress(65);
                     setTimeout(() => {
                         setProgress(100);
@@ -96,10 +123,7 @@ const WelcomePage = () => {
                     await sitesDatabase.actualizar(fileName, db.database, db.database.version);
                     if(index === (sites.length - 1)) {
                         const response = await sitesDatabase.consultar(db.database);
-                        //console.log(response)
-                        if(response.length === sites.length) {
-                            resolve(false)
-                        }else{
+                        if(response) {
                             resolve(true)
                         }
                     } 

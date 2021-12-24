@@ -33,7 +33,7 @@ const Login = () => {
         event.preventDefault()
         let loginState = await login(email, password);
         if(loginState) {
-            let userDataToSave = loginState.response.data;
+            /* let userDataToSave = loginState.response.data;
             setUserData(userDataToSave);
             localStorage.setItem('email', userDataToSave.email);
             localStorage.setItem('fullName', userDataToSave.fullName);
@@ -41,7 +41,7 @@ const Login = () => {
             localStorage.setItem('lastName', userDataToSave.lastName);
             localStorage.setItem('_id', userDataToSave._id);
             localStorage.setItem('role', userDataToSave.role);
-            localStorage.setItem('isauthenticated', true);
+            localStorage.setItem('isauthenticated', true); */
         }
     }
 

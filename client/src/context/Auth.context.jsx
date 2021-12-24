@@ -41,7 +41,15 @@ export const AuthProvider = (props) => {
                 authRoutes.login(email, password)
                 .then(response => {
                     console.log(response);
+                    let userDataToSave = response.data;
                     if(response.data.enabled) {
+                        localStorage.setItem('email', userDataToSave.email);
+                        localStorage.setItem('fullName', userDataToSave.fullName);
+                        localStorage.setItem('name', userDataToSave.name);
+                        localStorage.setItem('lastName', userDataToSave.lastName);
+                        localStorage.setItem('_id', userDataToSave._id);
+                        localStorage.setItem('role', userDataToSave.role);
+                        //localStorage.setItem('isauthenticated', true);
                         setIsAuthenticated(true);
                         resolve({
                             state: true,
