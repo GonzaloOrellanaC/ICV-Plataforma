@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
     Box, 
     Modal,
-    CircularProgress
+    CircularProgress,
     /* 
     Toolbar,
     Fab, */
@@ -11,16 +11,16 @@ import {
 /* import { Close } from '@material-ui/icons'; */
 import { styleModal } from '../../config';
 
-const LoadingModal = ({open, progress, loadingData}) => {
-    const [ withProgress, setWithProgress ] = useState(true)
+const LoadingModal = ({open, progress, loadingData, withProgress}) => {
+    /* const [ withProgress, setWithProgress ] = useState(true) */
     
 
     useEffect(() => {
-        if(progress) {
+        /* if(progress) {
             setWithProgress(true)
         }else{
             setWithProgress(false)
-        }
+        } */
     }, [])
     
     return(
@@ -33,7 +33,7 @@ const LoadingModal = ({open, progress, loadingData}) => {
                 <div style={{height: 300, textAlign: 'center'}}>
                     {
                         withProgress &&
-                        <CircularProgress variant="determinate" size={200} value={progress}/>
+                        <CircularProgress variant="determinate" size={200} value={Number(progress)}/>
                     }
                     {
                         !withProgress &&

@@ -1,4 +1,4 @@
-import React, { } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Drawer, Grid, ListItem, IconButton, makeStyles } from '@material-ui/core'
@@ -105,6 +105,7 @@ const Navbar = () => {
     const classes = useStyles()
     const { navBarOpen, handleNavBar } = useNavigation()
     const { userData } = useAuth();
+    const [ useButon, setUseButton ] = useState()
 
     const logout = async () => {
         window.localStorage.clear();
@@ -117,11 +118,20 @@ const Navbar = () => {
         }
     }
 
-    let useButon = true;
-
-    if(!(localStorage.getItem('sitio'))) {
-        useButon = false
-    }
+    useEffect(() => {
+        setUseButton(true)
+        const timer = setInterval(() => {
+            
+            if(!(localStorage.getItem('sitio'))) {
+                setUseButton(false)
+                console.log('buscando obra')
+            }else{
+                setUseButton(true)
+                clearInterval(timer);
+                console.log('terminado')
+            }
+        }, 1000);
+    }, [])
 
 
     return (

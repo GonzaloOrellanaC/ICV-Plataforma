@@ -18,7 +18,7 @@ const WelcomePage = () => {
     const [ openLoader, setOpenLoader ] = useState(false);
     const [ openVersion, setOpenVersion ] = useState(false);
     const [ progress, setProgress ] = useState(0)
-    const [ loadingData, setLoadingData ] = useState('Descargando recursos...')
+    const [ loadingData, setLoadingData ] = useState('')
     const [ disableButton, setDisableButtons ] = useState(true)
     const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true)
 
@@ -74,25 +74,31 @@ const WelcomePage = () => {
         console.log(revisarData)
         if(revisarData) {
             setOpenLoader(true)
+            setLoadingData('Descargando datos de las obras.')
             const responseSites = await getSites();
-            if(responseSites) {
-                console.log(responseSites)
-                setProgress(30)
-                const responseTrucks = await getTrucksList();
-                if(responseTrucks) {
-                    console.log(responseTrucks)
-                    setProgress(65);
+            setTimeout(async () => {
+                if(responseSites) {
+                    console.log(responseSites)
+                    setLoadingData('Descargando datos de las máquinas.')
+                    setProgress(30)
+                    const responseTrucks = await getTrucksList();
                     setTimeout(() => {
-                        setProgress(100);
-                        setLoadingData('Recursos descargados')
-                        setTimeout(() => {
-                            setOpenLoader(false)
-                        }, 1000);
+                        if(responseTrucks) {
+                            console.log(responseTrucks)
+                            setProgress(65);
+                            setTimeout(() => {
+                                setProgress(100);
+                                setLoadingData('Recursos descargados')
+                                setTimeout(() => {
+                                    setOpenLoader(false)
+                                }, 1000);
+                            }, 1000);
+                        }
                     }, 1000);
+                }else{
+                    setOpenLoader(false)
                 }
-            }else{
-                setOpenLoader(false)
-            }
+            }, 1000);
         }else{
             setOpenLoader(false)
         }
@@ -197,7 +203,10 @@ const WelcomePage = () => {
                 //console.log(data.data);
                 if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
                     localStorage.setItem('sitio', JSON.stringify(data.data[0]));
-                    setDisableButtons(false)
+                    setTimeout(() => {
+                        setDisableButtons(false)
+                        setNotificaciones1('Sin notificaciones')
+                    }, 500);
                 }
                 resolve(data.data)
             })
@@ -236,7 +245,7 @@ const WelcomePage = () => {
                                 <CardButton variant='administration' disableButton={disableButtonNoSAP}/>
                         </Grid>
                     </Card>
-                    <LoadingModal open={openLoader} progress={progress} loadingData={loadingData}/>
+                    <LoadingModal open={openLoader} progress={progress} loadingData={loadingData} withProgress={true}/>
                     <VersionControlModal open={openVersion} closeModal={closeModal} />
                 </Grid>
             </Grid>            
