@@ -40,8 +40,14 @@ const UsersSchema = new Schema({
         type: Schema.Types.Number
     },
     role: {
-        //ref: 'PermissionRole',
         type: Schema.Types.String
+    },
+    hidden: {
+        type: Schema.Types.Boolean,
+        default: false
+    },
+    sites: {
+        type: Schema.Types.String,
     },
     permissionsReports:{
         type: Schema.Types.Array

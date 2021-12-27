@@ -7,24 +7,14 @@ import { pmsDatabase, sitesDatabase, FilesToStringDatabase, trucksDatabase } fro
 import { LoadingModal, VersionControlModal } from '../../modals'
 import hour from './hour'
 import fecha from './date'
+import style from './style'
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    //transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
+const styleWelcomePage = style;
 
 const WelcomePage = () => {
     const classes = useStylesTheme();
     const [ date, setDate ] = useState('')
     const [ hora, setHora ] = useState('')
-    //const [ min, setMin ] = useState('')
     const [ openLoader, setOpenLoader ] = useState(false);
     const [ openVersion, setOpenVersion ] = useState(false);
     const [ progress, setProgress ] = useState(0)
@@ -44,18 +34,16 @@ const WelcomePage = () => {
             setNotificaciones1('Para navegar en la aplicación debe seleccionar una obra')
         }
         if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
-            ////console.log(localStorage.getItem('role'))
             setDisableButtonsNoSAP(false);
         }else{
             setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.')
         }
-
         if(!localStorage.getItem('version') || (localStorage.getItem('version') != environment.version)) {
             setOpenVersion(true)
             localStorage.setItem('version', environment.version);
         }
-        
-        //getTrucksList()
+        setDate(fecha(Date.now()))
+        setHora(hour(Date.now()))
     }, []);
 
     const setIfNeedReadDataAgain = async () => {
@@ -218,11 +206,6 @@ const WelcomePage = () => {
             })
         })
     }
-    
-    useEffect(() =>{
-        setDate(fecha(Date.now()))
-        setHora(hour(Date.now()))
-    }, [])
 
     return (
         <Box height='100%' style={{fontFamily:'Raleway'}}>
@@ -233,56 +216,15 @@ const WelcomePage = () => {
                             <p style={{fontSize: 24}}>Hola {localStorage.getItem('name')} ¿Por dónde quieres comenzar hoy?</p>
                         </div>
                         <Grid item style={{width: '100%', height: '14.5vh', margin: 'auto'}}>
-                            <div 
-                                style={
-                                    {
-                                        float: 'left',
-                                        margin: 10,
-                                        height: '100%',
-                                        width: '35vw',
-                                        padding: 30, 
-                                        backgroundColor: '#F9F9F9', 
-                                        borderRadius: 20, 
-                                        textTransform: 'none',
-                                        verticalAlign: 'middle'
-
-                                    }
-                                }>
+                            <div style={styleWelcomePage.notificaciones1}>
                                 <p style={{fontSize: '1.4vw', margin: 0}}> {notificaciones1} </p>
                             </div>
                             <div 
-                                style={
-                                    {
-                                        float: 'left',
-                                        margin: 10,
-                                        height: '100%',
-                                        width: '20vw',
-                                        padding: 30, 
-                                        backgroundColor: '#F9F9F9', 
-                                        borderRadius: 20, 
-                                        textTransform: 'none',
-                                        verticalAlign: 'middle'
-
-                                    }
-                                }>
+                                style={styleWelcomePage.notificaciones2}>
                                 <p style={{fontSize: '1.4vw', margin: 0}}> {notificaciones2}</p>
                             </div>
                             <div 
-                                style={
-                                    {
-                                        float: 'left',
-                                        margin: 10,
-                                        height: '100%',
-                                        width: '25vw',
-                                        padding: 20, 
-                                        backgroundColor: '#F9F9F9', 
-                                        borderRadius: 20, 
-                                        textTransform: 'none',
-                                        verticalAlign: 'middle',
-                                        textAlign: 'center'
-
-                                    }
-                                }>
+                                style={styleWelcomePage.date}>
                                     <p style={{fontSize: '1vw', margin: 0}}> {date} </p>
                                     <p style={{fontSize: '2.7vw', margin: 0}}> {hora} hs </p>
                             </div>
