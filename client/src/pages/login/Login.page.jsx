@@ -24,6 +24,19 @@ const LoginPage = () => {
         )
     }
 
+    useEffect(() => {
+        removeDatabases()
+    }, [])
+
+    const removeDatabases = async () => {
+        let databases = await window.indexedDB.databases();
+        if(databases.length > 0) {
+            databases.forEach((database, index) => {
+                window.indexedDB.deleteDatabase(database.name)
+            })
+        }
+    }
+
     return (
             <div style={{height: '100%', display: 'block'}}>
                 <Hidden smDown>
