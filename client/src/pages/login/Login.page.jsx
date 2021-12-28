@@ -3,7 +3,7 @@ import { Box, Card, Grid, Hidden } from '@material-ui/core'
 import clsx from 'clsx'
 
 import { Login } from '../../containers'
-import { useStylesTheme } from '../../config'
+import { environment, useStylesTheme } from '../../config'
 import imageBackground from '../../assets/Iniciar sesión-1.png';
 import logoICV from '../../assets/logo_icv_gris.png'
 
@@ -16,7 +16,8 @@ const LoginPage = () => {
                 <div style={{textAlign: 'center', width: '100%', marginTop: 60}}>
                     <img src={logoICV} height={80} alt="" />
                     <p style={{marginTop: 0, fontSize: 6.5, textDecoration: 'underline'}}> <strong>INGENIERÍA CIVIL VICENTE</strong> </p>
-                    <p style={{fontSize: '2em'}}>Iniciar sesión</p>
+                    <p style={{fontSize: '2em', marginBottom: 0}}>Iniciar sesión</p>
+                    <p style={{fontSize: 10, marginTop: 0}}> {environment.version} </p>
                 </div>
                 <Login />
             </Card>
@@ -40,24 +41,6 @@ const LoginPage = () => {
                         {addCard()}
                     </div>
                 </Hidden>
-                
-                {/* <Grid container spacing={0}>
-                <Grid className={classes.pageContainer} item xs={12} md={6}>
-                    <Card className={clsx(classes.pageCard, classes.noNavBarMargin)}>
-                        <div style={{textAlign: 'center', width: '100%', marginTop: 60}}>
-                            <img src={logoICV} height={80} alt="" />
-                        </div>
-                        <Login />
-                    </Card>
-                </Grid>
-                
-                    <Grid item xs={12} md={6}>
-                    <div style={{display: 'block', width: '100%'}}>
-                        <img src={imageBackground} style={{objectFit: 'cover', width: '100%'}}/>
-                    </div>
-                    </Grid>
-                </Hidden>
-            </Grid> */}
             </div>
             
     )

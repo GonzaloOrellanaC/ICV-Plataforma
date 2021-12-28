@@ -110,7 +110,18 @@ const Navbar = () => {
     const logout = async () => {
         window.localStorage.clear();
         window.location.reload();
+        removeDatabases();
     }
+
+    const removeDatabases = async () => {
+        let databases = await window.indexedDB.databases();
+        if(databases) {
+            databases.forEach((database, index) => {
+                window.indexedDB.deleteDatabase(database.name)
+            })
+        }
+    }
+
 
     const closeSideBar = () => {
         if(navBarOpen) {

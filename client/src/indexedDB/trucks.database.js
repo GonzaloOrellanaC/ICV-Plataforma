@@ -80,16 +80,18 @@ const eliminar = (clave, database) =>{
     }
 }
 
-const consultar = (database) =>{
-    const trasaccion = database.transaction(['Machines'],'readonly')
-    const coleccionObjetos = trasaccion.objectStore('Machines')
-    const conexion = coleccionObjetos.openCursor()
-
+const consultar = (database) => {
     return new Promise(resolve => {
+        const trasaccion = database.transaction(['Machines'],'readonly')
+        const coleccionObjetos = trasaccion.objectStore('Machines')
+        const conexion = coleccionObjetos.openCursor()
+
+    
         conexion.onsuccess = (e) =>{
             const cursor = e.target.result;
             const allObject = coleccionObjetos.getAll()
             allObject.onsuccess = (ev) => {
+                //console.log(ev)
                 resolve(ev.target.result)
             }
         }

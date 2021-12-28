@@ -3,7 +3,7 @@ import { Box, Card, Grid, Typography, Modal, Button } from '@material-ui/core'
 import { environment, useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes } from '../../routes'
-import { pmsDatabase, sitesDatabase, FilesToStringDatabase, trucksDatabase } from '../../indexedDB'
+import { pmsDatabase, sitesDatabase, FilesToStringDatabase, trucksDatabase, } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import hour from './hour'
 import fecha from './date'
@@ -38,7 +38,13 @@ const WelcomePage = () => {
         }else{
             setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.')
         }
-        if(!localStorage.getItem('version') || (localStorage.getItem('version') != environment.version)) {
+        if(localStorage.getItem('version')) {
+            if((localStorage.getItem('version') != environment.version)) {
+                alert('Plataforma requiere actualización. Se cerrará sesión para actualizar el servicio.');
+                logout()
+            }
+        }
+        if(!localStorage.getItem('version')) {
             setOpenVersion(true)
             localStorage.setItem('version', environment.version);
         }
@@ -46,6 +52,22 @@ const WelcomePage = () => {
         setHora(hour(Date.now()))
     }, []);
 
+    const logout = async () => {
+        window.localStorage.clear();
+        window.location.reload();
+        removeDatabases();
+    }
+
+    const removeDatabases = async () => {
+        let databases = await window.indexedDB.databases();
+        if(databases) {
+            databases.forEach((database, index) => {
+                window.indexedDB.deleteDatabase(database.name)
+            })
+        }
+    }
+
+    
     const setIfNeedReadDataAgain = async () => {
         return new Promise(async resolve => {
             if(navigator.onLine) {
@@ -74,33 +96,88 @@ const WelcomePage = () => {
         console.log(revisarData)
         if(revisarData) {
             setOpenLoader(true)
-            setLoadingData('Descargando datos de las obras.')
+            setLoadingData('Descargando datos de las obras.');
+            setProgress(50)
             const responseSites = await getSites();
             setTimeout(async () => {
                 if(responseSites) {
                     console.log(responseSites)
                     setLoadingData('Descargando datos de las máquinas.')
-                    setProgress(30)
+                    setProgress(100)
                     const responseTrucks = await getTrucksList();
-                    setTimeout(() => {
-                        if(responseTrucks) {
-                            console.log(responseTrucks)
-                            setProgress(65);
-                            setTimeout(() => {
-                                setProgress(100);
-                                setLoadingData('Recursos descargados')
-                                setTimeout(() => {
-                                    setOpenLoader(false)
-                                }, 1000);
-                            }, 1000);
-                        }
-                    }, 1000);
+                    if(responseTrucks) {
+                        console.log(responseTrucks)
+                        setTimeout(async () => {
+                            let n = 0;
+                            await get3dElement(n, responseTrucks)
+                        }, 1000);
+                    }
                 }else{
                     setOpenLoader(false)
                 }
             }, 1000);
         }else{
             setOpenLoader(false)
+        }
+    }
+
+    const get3dElement = async (number, trucks) => {
+        if(number == (trucks.length)) {
+            setTimeout(async () => {
+                setProgress(100);
+                setLoadingData('Recursos descargados');
+                let db = await FilesToStringDatabase.initDb3DFiles();
+                if(db) {
+                    let databaseInfo = await FilesToStringDatabase.consultar(db.database);
+                    console.log(databaseInfo)
+                }
+                setTimeout(() => {
+                    setOpenLoader(false)
+                }, 1000);
+            }, 1000);
+        }else{
+            console.log(number, trucks)
+            console.log(number, trucks.length)
+            setLoadingData('Descargando Modelo 3D ' + (number + 1))
+            const url3dTruck = await get3dMachines(trucks[number]);
+            const { id, model, brand, type } = trucks[number];
+            console.log(url3dTruck);
+            let res = await fetch(url3dTruck);
+            const reader = res.body.getReader();
+            const contentLength = +res.headers.get('Content-Length');
+            let receivedLength = 0; // received that many bytes at the moment
+            let chunks = []; // array of received binary chunks (comprises the body)
+            setProgress(0);
+            setTimeout(async () => {
+                while (true) {
+                    const ele = await reader.read();
+                    if (ele.done) {
+                        let chunksAll = new Uint8Array(receivedLength); // (4.1)
+                        let position = 0;
+                        for(let chunk of chunks) {
+                        chunksAll.set(chunk, position); // (4.2)
+                        position += chunk.length;
+                        }
+    
+                        // Step 5: decode into a string
+                        let result = new TextDecoder("utf-8").decode(chunksAll);
+                        let db = await FilesToStringDatabase.initDb3DFiles();
+                        console.log('Se actualiza')
+                        if(db) {
+                            let actualizado = await FilesToStringDatabase.actualizar({id: id, info: {model: model, brand: brand, type: type}, data: result}, db.database);
+                            if(actualizado) {
+                                console.log('Actualizada máquina id:' + number );
+                                number = number + 1;
+                                get3dElement(number, trucks);
+                            }
+                        }
+                        break;
+                    }
+                    chunks.push(ele.value);
+                    receivedLength += ele.value.length;
+                    setProgress((100*receivedLength)/contentLength)                    
+                }
+            }, 1000);
         }
     }
 
@@ -141,7 +218,7 @@ const WelcomePage = () => {
                         let reader = new FileReader();
                         reader.onload = async () => {
                             fileName.image = reader.result.replace("data:", "");
-                            ////console.log(fileName.image);
+                            console.log(fileName);
                             if(fileName.image) {
                                 trucksDatabase.actualizar(fileName, db.database);
                             }
@@ -149,16 +226,33 @@ const WelcomePage = () => {
                         reader.readAsDataURL(xhr.response);
                         
                         if(index === (machines.length - 1)) {
-                            let respuestaConsulta = await trucksDatabase.consultar(db.database);
-                            if(respuestaConsulta) {
-                                resolve(true)
-                            }
+                            /* let database = await trucksDatabase.initDbMachines();
+                            let respuestaConsulta = await trucksDatabase.consultar(database.database);
+                            console.log(respuestaConsulta) */
+                            let respuestaConsulta = await consultTrucks(machines)
+                            resolve(respuestaConsulta)
                         }
                     }
                     xhr.open('GET', `/assets/${fileName.model}.png`);
                     xhr.responseType = 'blob';
                     xhr.send();
                 });
+            }
+        })
+    }
+
+    const consultTrucks = (machines) => {
+        return new Promise(async resolve=>{
+            let database = await trucksDatabase.initDbMachines();
+            //let respuestaConsulta = await trucksDatabase.consultar(database.database);
+            let respuestaConsulta;
+            do {
+                respuestaConsulta = await trucksDatabase.consultar(database.database);
+                console.log(respuestaConsulta)
+            }
+            while (respuestaConsulta.length < machines.length)
+            if(respuestaConsulta.length === machines.length) {
+                resolve(respuestaConsulta)
             }
         })
     }
@@ -213,6 +307,18 @@ const WelcomePage = () => {
             .catch(err => {
                 //console.log('Error', err)
             })
+        })
+    }
+
+    const get3dMachines = (machine) => {
+        let newMachine;
+        return new Promise(resolve => {
+            if(machine.type === 'Camión') {
+                newMachine = environment.storageURL + 'maquinas/camiones/' + machine.brand.toUpperCase() + '/' + machine.brand.toUpperCase() + '_' + machine.model + '_' + 'Preview.gltf'
+            }else if(machine.type === 'Pala') {
+                newMachine = environment.storageURL + 'maquinas/palas/' + machine.brand.toUpperCase() + '/' + machine.brand + '_' + machine.model + '_' + 'Preview.gltf'
+            }
+            resolve(newMachine)
         })
     }
 

@@ -1,4 +1,4 @@
-const initDbPMs = () => {
+const initDb3DFiles = () => {
     const indexedDb = window.indexedDB;
 
     const conexion = indexedDb.open('3Ds', 1)
@@ -19,7 +19,6 @@ const initDbPMs = () => {
         }
     
         conexion.onupgradeneeded = (e) =>{
-            console.log('actualizado')
             db = e.target.result
             const coleccionObjetos = db.createObjectStore('3dFilesList',{
                 keyPath: 'id'
@@ -33,13 +32,6 @@ const initDbPMs = () => {
                     }
                 )
             }
-            resolve(
-                {
-                    message: "Base de datos creada / actualizada",
-                    database: db,
-                    state: 'actualizada'
-                }
-            )
         }
     
         conexion.onerror = (error) =>{
@@ -82,25 +74,21 @@ const obtener = (clave, database) =>{
     
 }
 
-const actualizar = (data, database) =>{    
+const actualizar = (data, database) =>{   
     return new Promise(resolve => {
-        const trasaccion = database.transaction(['3dFilesList'],'readwrite')
-        const coleccionObjetos = trasaccion.objectStore('3dFilesList')
-        const conexion = coleccionObjetos.put(data)
-        
-        conexion.onsuccess = async () =>{
-            let consultarData = await consultar(database);
-            if(consultarData) {
-                console.log(consultarData);
+        try {
+            const trasaccion = database.transaction(['3dFilesList'],'readwrite')
+            const coleccionObjetos = trasaccion.objectStore('3dFilesList')
+            const conexion = coleccionObjetos.put(data)
+            
+            conexion.onsuccess = async () =>{
                 resolve(true)
-            }
-        }
-
-        conexion.onerror = () => {
+            } 
+        } catch (err) {
             resolve(false)
         }
-        
-    })
+    }) 
+    
 }
 
 const eliminar = (clave, database) =>{      
@@ -130,7 +118,7 @@ const consultar = (database) =>{
 }
 
 export default {
-    initDbPMs,
+    initDb3DFiles,
     agregar,
     obtener,
     actualizar,

@@ -1,69 +1,62 @@
 import '@google/model-viewer';
-import './domarrow'
-import { Box, List, ListItem } from '@material-ui/core';
-
-import {useEffect, useState} from 'react';
-
-import { environment } from '../../config';
-
+//import './domarrow'
+import { Box } from '@material-ui/core';
+import { useEffect, useState } from 'react';
 import { LoadingModal } from '../../modals';
-
-const loadSprite = () => {
-    let state = true;
-    let bee = document.getElementById('beeContent');
-    if(bee) {
-        if(state) {
-            state = false
-        }
-    }
-}
-
+import { FilesToStringDatabase } from '../../indexedDB';
 
 const MVAvatar = ({machine}) => {
 
     const [ modelViewer, setModelViewer ] = useState();
-    const [ disable, setDisableZoom ] = useState(true);
-    const [ openLoading, setOpenLoading ] = useState(true)
+    const [ newMachine, setNewMachine ] = useState();
+    const [ progress, setProgress ] = useState(0);
+    const [ openLoader, setOpenLoader ] = useState(false);
 
-    let newMachine;
-    console.log(machine);
-
-     if(machine.type === 'Camión') {
-        newMachine = environment.storageURL + 'maquinas/camiones/' + machine.brand.toUpperCase() + '/' + machine.brand.toUpperCase() + '_' + machine.model + '_' + 'Preview.gltf'
-    }else if(machine.type === 'Pala') {
-        newMachine = environment.storageURL + 'maquinas/palas/' + machine.brand.toUpperCase() + '/' + machine.brand + '_' + machine.model + '_' + 'Preview.gltf'
+    const readFileDatabase = async () => {
+        setOpenLoader(true)
+        const db = await FilesToStringDatabase.initDb3DFiles();
+        if(db) {
+            const files = await FilesToStringDatabase.consultar(db.database);
+            if(files) {
+                var json = files[machine.id].data;
+                var blob = new Blob([json]);
+                var url = URL.createObjectURL(blob);
+                setNewMachine(url);
+            }
+        }
     }
 
-    console.log(newMachine);
-    /* const modelViewer = ; */
-
-    useEffect(() => {
+    const initModelViewer = async () => {
+        readFileDatabase();
         setModelViewer(document.querySelector("model-viewer#machine"))
         let mv = document.querySelector("model-viewer#machine")
         mv.addEventListener('load', (e) => {
-            console.log('cargado!!!');
-            setOpenLoading(false)
-            //console.log(e)
-            //console.log(mv)
+            setOpenLoader(false)
             const changeColor = async (event) => {
-                //console.log(event)
                 let material = mv.materialFromPoint(event.clientX, event.clientY);
-                
                 if(material != null) {
-                    //console.log(event)
-                    //console.log(material)
-                  //material.pbrMetallicRoughness.setBaseColorFactor([0, 0, 0, 0.1]) //([Math.random(), Math.random(), Math.random(), 0.5])
+
                 }
-              }
-            
+            }
             mv.addEventListener("click", changeColor);
             setTimeout(() => {
                 mv.cameraControls = true;
             }, 2000);
         })
-    }, []);
+        mv.addEventListener('progress', (e) => {
+            setProgress(e.detail.totalProgress * 130)
+            if(e.detail.totalProgress == 1) {
+                setProgress(100)
+                setTimeout(() => {
+                    setOpenLoader(false)
+                }, 2000);
+            }
+        })
+    }
 
-    
+    useEffect(() => {
+        initModelViewer()
+    }, []);
 
     const terminar = () => {
         let previo = document.getElementById('letrero');
@@ -87,9 +80,7 @@ const MVAvatar = ({machine}) => {
         element.innerHTML = 'Cabina';
         element.id = 'letrero';
         let box = document.getElementById('box')
-        //console.log(box)
         let styleEdit = {
-            //2,
             position: 'absolute',
             top: '50%',
             left: '20%',
@@ -102,7 +93,6 @@ const MVAvatar = ({machine}) => {
 
         Object.assign(element.style, styleEdit)
         box.appendChild(element);
-        //console.log(element)
     }
 
     const palaPosition = () => {
@@ -117,9 +107,7 @@ const MVAvatar = ({machine}) => {
         element.innerHTML = 'Balde';
         element.id = 'letrero';
         let box = document.getElementById('box')
-        //console.log(box)
         let styleEdit = {
-            //2,
             position: 'absolute',
             top: '50%',
             left: '45%',
@@ -146,7 +134,6 @@ const MVAvatar = ({machine}) => {
         element.innerHTML = 'Brazo';
         element.id = 'letrero';
         let box = document.getElementById('box')
-        //console.log(box)
         let styleEdit = {
             //2,
             position: 'absolute',
@@ -176,7 +163,6 @@ const MVAvatar = ({machine}) => {
         element.innerHTML = 'Cuerpo';
         element.id = 'letrero';
         let box = document.getElementById('box')
-        //console.log(box)
         let styleEdit = {
             //2,
             position: 'absolute',
@@ -206,9 +192,7 @@ const MVAvatar = ({machine}) => {
         element.innerHTML = 'Orugas';
         element.id = 'letrero';
         let box = document.getElementById('box')
-        //console.log(box)
         let styleEdit = {
-            //2,
             position: 'absolute',
             top: '35%',
             left: '45%',
@@ -231,19 +215,14 @@ const MVAvatar = ({machine}) => {
                         id="machine"
                         src={newMachine}
                         style={{height: '100%', width: '80%', float: 'left'}}
-                        //camera-controls
-                        
-                        loading="eager"
                         camera-orbit="45deg 90deg 2.5m"
-                        //autoplay
-                        //ar 
-                        //ar-modes="webxr scene-viewer"
                         scale="0.001 0.001 0.001"
                         alt="A Material Picking Example"
                     >
 
                     </model-viewer>
-                    <LoadingModal open={openLoading} progress={null} loadingData={'Descargando modelo 3D...'} />
+                    <LoadingModal open={openLoader} progress={progress} loadingData={'Preparando vista 3D...'} withProgress={true}/>
+
 
                 {
                      (machine.type === 'Pala') && <div style={{float: 'right' ,height: '100%', width: '20%', textAlign: 'center', backgroundColor: 'transparent', paddingTop: 70 }}>

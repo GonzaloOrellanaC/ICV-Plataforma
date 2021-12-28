@@ -61,9 +61,9 @@ const obtener = (clave, database) =>{
     
 }
 
-const actualizar = (data, database, version) =>{    
-    try {
-        return new Promise(resolve => {
+const actualizar = (data, database) =>{  
+    return new Promise(resolve => {
+        try {
             const trasaccion = database.transaction(['Obras'],'readwrite')
             const coleccionObjetos = trasaccion.objectStore('Obras')
             const conexion = coleccionObjetos.put(data)
@@ -71,10 +71,11 @@ const actualizar = (data, database, version) =>{
             conexion.onsuccess = () =>{
                 resolve(true)
             }
-        })
-    } catch (err) {
-        resolve(false)
-    }
+        
+        } catch (err) {
+            resolve(false)
+        }
+    }) 
 }
 
 const eliminar = (clave, database) =>{      

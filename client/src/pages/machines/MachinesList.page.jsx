@@ -21,13 +21,9 @@ const MachinesListPage = ({route}) => {
     let { id } = useParams();
     const machine = JSON.parse(id);
     const openCloseModal = () => {
-        if(navigator.onLine) {
             setTimeout(() => {
                 setOpen(!open)
             }, 500);
-        }else{
-            alert('Verifique si cuenta con conexión a internet.')
-        }
     }
 
     const goToMachineDetail = (machineData) => {
