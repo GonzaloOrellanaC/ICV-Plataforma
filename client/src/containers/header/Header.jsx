@@ -79,14 +79,14 @@ const Header = () => {
                         <Fragment>
                             <div className={classes.locationText}>
                                 <Link to="/info">
-                                    <Button>
+                                    <Button title='Información'>
                                         {<FontAwesomeIcon icon={faInfoCircle} size='2x'/>}
                                     </Button>
                                 </Link>
                             </div>
                             <div className={classes.locationIcon}>
                                 <Link to="/alerts">
-                                    <Button>
+                                    <Button title='Alertas'>
                                         {<FontAwesomeIcon icon={faBell} size='2x'/>}
                                     </Button>
                                 </Link>

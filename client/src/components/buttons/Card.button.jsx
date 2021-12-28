@@ -4,7 +4,7 @@ import { Button, makeStyles } from '@material-ui/core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faClipboardList, faTools, faUserCog, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { useLanguage } from '../../context'
-import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -39,7 +39,8 @@ const useStyles = makeStyles(theme => ({
 
 const CardButton = ({ variant, disableButton }) => {
     const { dictionary } = useLanguage()
-    const classes = useStyles()
+    const classes = useStyles();
+    const history = useHistory();
   
     const handleTypeIcon = () => {
         switch (variant) {
@@ -71,16 +72,14 @@ const CardButton = ({ variant, disableButton }) => {
     }
 
     return (
-        <div className={classes.root} component={Link}>
-            <Link to={`/${variant}`} style={{textDecoration: 'none'}} className={classes.buttonSelection}>
-                <Button variant="contained" className={classes.buttonSelection} disabled={disableButton}>
-                    <div className={classes.icon}>
-                        {handleTypeIcon()}
-                        <br />
-                        <p style={{fontSize:'1.5vw', marginBottom: 0, fontWeight: 'bold'}}>{handleTypeText()}</p>
-                    </div>
-                </Button>
-            </Link>
+        <div className={classes.root}>
+            <Button onClick={() => {history.push(`/${variant}`)}} variant="contained" className={classes.buttonSelection} disabled={disableButton}>
+                <div className={classes.icon}>
+                    {handleTypeIcon()}
+                    <br />
+                    <p style={{fontSize:'1.5vw', marginBottom: 0, fontWeight: 'bold'}}>{handleTypeText()}</p>
+                </div>
+            </Button>
         </div>
     )
 }

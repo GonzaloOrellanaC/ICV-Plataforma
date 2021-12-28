@@ -1,18 +1,9 @@
-/* import React from 'react'
-import { Box, Card, Grid, Hidden } from '@material-ui/core'
-import { useStylesTheme } from '../../config'
-import clsx from 'clsx' */
 import React from 'react'
-import { Box, Card, Grid, Hidden } from '@material-ui/core'
+import { Card, Hidden } from '@material-ui/core'
 import clsx from 'clsx'
-
-import { Login } from '../../containers'
 import { useStylesTheme } from '../../config'
 import imageBackground from '../../assets/Iniciar sesión-1.png';
 import logoICV from '../../assets/logo_icv_gris.png'
-
-
-
 import { ResetPassword } from '../../containers'
 
 const ResetPasswordPage = () => {
@@ -32,16 +23,6 @@ const ResetPasswordPage = () => {
     return (
         
         <div style={{height: '100%', display: 'block'}}>
-            {/* <Box height='100%'>
-                <Grid className={classes.pageRoot} container spacing={0}>
-                    <Grid className={classes.pageContainer} item xs={12} md={6}>
-                        <Card className={clsx(classes.pageCard, classes.noNavBarMargin)}>
-                            <ResetPassword />
-                        </Card>
-                    </Grid>
-                    <Hidden smDown><Grid item xs={12} md={6}></Grid></Hidden>
-                </Grid>
-            </Box> */}
             <Hidden smDown>
                 <div style={{float: 'left', width: '50%', height: '100%'}}>
                     {addCard()}

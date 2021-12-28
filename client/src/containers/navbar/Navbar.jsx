@@ -132,14 +132,11 @@ const Navbar = () => {
     useEffect(() => {
         setUseButton(true)
         const timer = setInterval(() => {
-            
             if(!(localStorage.getItem('sitio'))) {
                 setUseButton(false)
-                console.log('buscando obra')
             }else{
                 setUseButton(true)
                 clearInterval(timer);
-                console.log('terminado')
             }
         }, 1000);
     }, [])
@@ -165,7 +162,7 @@ const Navbar = () => {
                     <Grid container spacing={2} style={{ padding: navBarOpen ? 8 : '8px 0 0 0' }}>
                         <Grid item xs={12} container>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'right' : 'center'}}>
-                                <IconButton onClick={handleNavBar} className={navBarOpen ? classes.sideButtonsOpenMenu : classes.sideButtonsCloseMenu} >
+                                <IconButton title={!navBarOpen ? 'Abrir Menú' : 'Cerrar Menú'} onClick={handleNavBar} className={navBarOpen ? classes.sideButtonsOpenMenu : classes.sideButtonsCloseMenu} >
                                     {navBarOpen ? <Close /> : <Menu />}
                                 </IconButton>
                             </div>
@@ -179,76 +176,76 @@ const Navbar = () => {
 
                             </div>
                             <div style={{width: '100%', marginTop: 40, textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}>
+                                <IconButton onClick={closeSideBar} title='Inicio'>
                                     <Link to='/' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faHome}/> {navBarOpen ?  ' Inicio' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}>
+                                <IconButton onClick={closeSideBar} title='Obras'>
                                     <Link to='/sites' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faMapMarkerAlt}/> {navBarOpen ?  ' Obras' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                {useButon && <IconButton onClick={closeSideBar}>
+                                {useButon && <IconButton onClick={closeSideBar} title='Inspección'>
                                     <Link to='/inspection' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faSearch}/> {navBarOpen ?  ' Inspección' : ''}
                                     </Link>
                                 </IconButton>}
-                                {!useButon && <IconButton disabled onClick={closeSideBar}>
+                                {!useButon && <IconButton disabled onClick={closeSideBar} title='Inspección'>
                                     <FontAwesomeIcon icon={faSearch}/> {navBarOpen ?  ' Inspección' : ''}
                                 </IconButton>}
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                {useButon && <IconButton onClick={closeSideBar}>
+                                {useButon && <IconButton onClick={closeSideBar} title='Mantención'>
                                     <Link to='/maintenance' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faTools}/> {navBarOpen ?  ' Mantención' : ''}
                                     </Link>
                                 </IconButton> }
-                                {!useButon && <IconButton disabled onClick={closeSideBar}>
+                                {!useButon && <IconButton disabled onClick={closeSideBar} title='Mantención'>
                                     <FontAwesomeIcon icon={faTools}/> {navBarOpen ?  ' Mantención' : ''}
                                 </IconButton>}
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}>
+                                <IconButton onClick={closeSideBar} title='Reportes'>
                                     <Link to='/reports' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faClipboardList}/> {navBarOpen ?  ' Reportes' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}>
+                                <IconButton onClick={closeSideBar} title='Administración'>
                                     <Link to='/administration' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faUserCog}/> {navBarOpen ?  ' Administración' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}>
+                                <IconButton onClick={closeSideBar} title='Listado Pautas'>
                                     <Link to='/pms' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faList}/> {navBarOpen ?  ' Listado Pautas' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}>
+                                <IconButton onClick={closeSideBar}  title='Configuración'>
                                     <Link to='/configuration' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faCog}/> {navBarOpen ?  ' Configuración' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}>
+                                <IconButton onClick={closeSideBar}  title='Información'>
                                     <Link to='/information' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faInfoCircle}/> {navBarOpen ?  ' Información' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center',}}>
-                                <IconButton onClick={logout}>
+                                <IconButton onClick={logout} title='Cerrar Sesión'>
                                     <div className={classes.sideButtons}>
                                         <FontAwesomeIcon icon={faSignOutAlt}/> {navBarOpen ?  ' Cerrar Sesión' : ''}
                                     </div>

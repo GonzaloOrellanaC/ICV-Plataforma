@@ -1,5 +1,5 @@
 /*  React */
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 /* GraphQL */
@@ -34,7 +34,8 @@ import {
     MachinesListPage,
     AdminUsersPage,
     AdminNewUserPage,
-    CreateReports
+    CreateReports,
+    NoPermissionPage
 } from './pages';
 
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
@@ -63,7 +64,14 @@ const client = new ApolloClient({
     
 
 const OnApp = () => {
-    const { isAuthenticated, loading } = useAuth();  
+    const { isAuthenticated, loading } = useAuth();
+    const [ admin, setAdmin ] = useState(false);
+
+    useEffect(() => {
+        if(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') {
+            setAdmin(true)
+        }
+    }, [])
 
     return (
         <Box height='100vh' display='flex' flexDirection='column' style={{fontFamily: 'Roboto'}}>
@@ -169,27 +177,48 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                <Route path={['/administration']}>
+                {admin && <Route path={['/administration']}>
                     <Switch>
                         <Route exact path='/administration'>
                             <AdminPage route={'administration'}/>
                         </Route>
                     </Switch>
-                </Route>
-                <Route path={['/users']}>
+                </Route>}
+                {!admin && <Route path={['/administration']}>
+                    <Switch>
+                        <Route exact path='/administration'>
+                            <NoPermissionPage route={'administration'}/>
+                        </Route>
+                    </Switch>
+                </Route>}
+                {admin && <Route path={['/users']}>
                     <Switch>
                         <Route exact path='/users'>
                             <AdminUsersPage route={'users'}/>
                         </Route>
                     </Switch>
-                </Route>
-                <Route path={['/new-users']}>
+                </Route>}
+                {!admin && <Route path={['/users']}>
+                    <Switch>
+                        <Route exact path='/users'>
+                            <NoPermissionPage route={'users'}/>
+                        </Route>
+                    </Switch>
+                </Route>}
+                {admin && <Route path={['/new-users']}>
                     <Switch>
                         <Route exact path='/new-users'>
                             <AdminNewUserPage route={'new-users'}/>
                         </Route>
                     </Switch>
-                </Route>
+                </Route>}
+                {!admin && <Route path={['/new-users']}>
+                    <Switch>
+                        <Route exact path='/new-users'>
+                            <NoPermissionPage route={'new-users'}/>
+                        </Route>
+                    </Switch>
+                </Route>}
                 <Route path={['/edit-user']}>
                     <Switch>
                         <Route exact path='/edit-user/:id'>

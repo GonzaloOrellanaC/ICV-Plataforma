@@ -13,6 +13,7 @@ import { SitesPage } from './sites'
 import { UserformPage, UserPage } from './user'
 import { AdminPage, AdminUsersPage, AdminNewUserPage } from './administration'
 import { PmsPage, PautaDetailPage } from './pms'
+import { NoPermissionPage } from './no-permission'
 
 export {
     AppliancePage,
@@ -37,5 +38,5 @@ export {
     MaintencePage,
     PmsPage,
     PautaDetailPage,
-    
+    NoPermissionPage
 }

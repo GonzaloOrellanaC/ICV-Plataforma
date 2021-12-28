@@ -56,7 +56,7 @@ const ResetPassword = () => {
         <Grid container style={{ padding: 20, height: '50%' }} alignItems='center' justifyContent='center'>
             <form onSubmit={handleSubmit}>
                 <Grid container item spacing={2}>
-                    <Grid item xs={12} container justifyContent='center'>
+                    <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
                         <TextField
                             type='email'
                             name='email'
@@ -68,13 +68,13 @@ const ResetPassword = () => {
 
                         />
                     </Grid>
-                    <Grid item xs={12} container justifyContent='center'>
+                    <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
                         <Button className={classes.button} type='submit' variant='contained' color='primary'>
                             {/* {dictionary.login.loginButton} */}
                             SOLICITAR
                         </Button>
                     </Grid>
-                    <Grid item xs={12} container justifyContent='center'>
+                    <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
                         <Button className={classes.button} variant='contained' color='primary' onClick={()=>{history.goBack()}}>
                             VOLVER
                         </Button>
