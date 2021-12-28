@@ -21,8 +21,16 @@ const VersionControlModal = ({open, closeModal}) => {
                         </p>
                         <p>
                                 <li>
-                                    Existirán servicios que no se podrán ver si no hay conexión a internet. La aplicación dará avisos
-                                    en los casos que los requiera.
+                                    Los usuarios pueden navegar sin conexión, de acuerdo a sus privilegios. 
+                                </li>
+                                <li>
+                                    Los usuarios que intenten acceder a una URL de la aplicación a la que no cuente con permisos, aparecerá un mensaje indicando que no tiene acceso. 
+                                </li>
+                                <li>
+                                    Se ejecuta lógica offline para máquinas 3D. 
+                                </li>
+                                <li>
+                                    Los administradores pueden asignar obra al crear o editar usuarios. 
                                 </li>
                         </p>
                 </div>
