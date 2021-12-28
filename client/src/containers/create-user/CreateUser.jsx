@@ -4,6 +4,7 @@ import { faEye, faEyeSlash, faPaperclip, faUserCog } from "@fortawesome/free-sol
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { rolesRoutes } from '../../routes';
 import { validate, clean, format, getCheckDigit } from 'rut.js';
+import { sitesDatabase } from "../../indexedDB";
 
 const useStyles = makeStyles(theme => ({
     inputsStyle: {
@@ -22,11 +23,13 @@ const CreateUser = ({height, typeDisplay}) => {
     const [ lastName, setLastName ] = useState('');
     const [ rut, setRut ] = useState('');
     const [ role, setUserType ] = useState('');
+    const [ userSite, setSiteToUser ] = useState('');
     const [ email, setEmail ] = useState('');
     const [ phone, setPhone ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ confirmPassword, setConfirmPassword ] = useState('');
     const [ usersTypes, setUserTypes ] = useState([]);
+    const [ sites, setSites ] = useState([]);
 
     const cambiarVistaPassword = () => {
         if(verPassword === 'password') {
@@ -44,6 +47,7 @@ const CreateUser = ({height, typeDisplay}) => {
         email: email,
         phone: phone,
         password: password,
+        sites: userSite,
         confirmPassword: confirmPassword,
         createdBy: localStorage.getItem('_id')
     }
@@ -68,6 +72,16 @@ const CreateUser = ({height, typeDisplay}) => {
         })
     }
 
+    const getSites = () => {
+        return new Promise(async resolve => {
+            const db = await sitesDatabase.initDbObras();
+            if(db) {
+                const sites = await sitesDatabase.consultar(db.database);
+                setSites(sites)
+            }
+        })
+    }
+
     const changeRut = (numero) => {
         if(numero==='') {
 
@@ -79,6 +93,7 @@ const CreateUser = ({height, typeDisplay}) => {
     const classes = useStyles()
         
     useEffect(() => {
+        getSites()
         setTimeout(() => {
             let userDataToContinue = localStorage.getItem('userDataToSave');
             if(userDataToContinue) {
@@ -102,6 +117,9 @@ const CreateUser = ({height, typeDisplay}) => {
                 if(data.role) {
                     setUserType(data.role)
                 }
+                if(data.sites) {
+                    setSiteToUser(data.sites)
+                }
                 if(data.password && (typeDisplay === 'Nuevo usuario')) {
                     setPassword(data.password)
                 }
@@ -121,7 +139,7 @@ const CreateUser = ({height, typeDisplay}) => {
                 <Grid style={{height: height, padding: 30, marginLeft: 100}}>
                     <div style={{float: 'left', marginRight: 10}}>
                         <p>Foto de perfil</p>
-                        <button style={{height: 224, width: 190, borderRadius: 8}}>
+                        <button style={{height: 224, width: 190, borderRadius: 8}} onClick={()=>{alert('No disponible.')}}>
                             <FontAwesomeIcon icon={faPaperclip} style={{fontSize: 18}}/>
                             <br />
                             <br />
@@ -148,7 +166,7 @@ const CreateUser = ({height, typeDisplay}) => {
                                         className={classes.inputsStyle} 
                                         name="userType" 
                                         id="userType" 
-                                        style={{width: 248, height: 44, borderRadius: 10, fontSize: 20}}
+                                        style={{width: 248, height: 44, borderRadius: 10, fontSize: 20, marginRight: 10}}
                                         onChange={(e)=> setUserType(e.target.value)}
                                         value={role} 
                                     >
@@ -157,6 +175,29 @@ const CreateUser = ({height, typeDisplay}) => {
                                             usersTypes.filter((item, i) => {if(i > 0) { return item }}).map((usuario, index) => {
                                                 return(
                                                     <option key={index} value={usuario.dbName}>{usuario.name}</option>
+                                                )
+                                            })
+                                        }
+                                    </select>
+                                </FormControl>
+                            </div>
+                            <div style={{float: 'left'}}>
+                                <FormControl fullWidth>
+                                    <p>Obra</p>
+                                    <select 
+                                        onBlur={()=>saveUserData()} 
+                                        className={classes.inputsStyle} 
+                                        name="userType" 
+                                        id="userType" 
+                                        style={{width: 548, height: 44, borderRadius: 10, fontSize: 20}}
+                                        onChange={(e)=> /* console.log(e.target.value) */  setSiteToUser(e.target.value)}
+                                        value={userSite} 
+                                    >
+                                        <option key={100} value={''}>Seleccione...</option>
+                                        {
+                                            sites./* filter((item, i) => {if(i > 0) { return item }}). */map((obra, index) => {
+                                                return(
+                                                    <option key={index} value={JSON.stringify(obra)}>{obra.descripcion}</option>
                                                 )
                                             })
                                         }

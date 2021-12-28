@@ -182,13 +182,13 @@ const Navbar = () => {
                                     </Link>
                                 </IconButton>
                             </div>
-                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                            {(localStorage.getItem('role')==='admin' || localStorage.getItem('role')==='sapExecutive') && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Obras'>
                                     <Link to='/sites' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faMapMarkerAlt}/> {navBarOpen ?  ' Obras' : ''}
                                     </Link>
                                 </IconButton>
-                            </div>
+                            </div>}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 {useButon && <IconButton onClick={closeSideBar} title='Inspección'>
                                     <Link to='/inspection' className={classes.sideButtons} style={{ textDecoration: 'none' }}>

@@ -49,6 +49,9 @@ export const AuthProvider = (props) => {
                         localStorage.setItem('lastName', userDataToSave.lastName);
                         localStorage.setItem('_id', userDataToSave._id);
                         localStorage.setItem('role', userDataToSave.role);
+                        if(userDataToSave.sites) {
+                            localStorage.setItem('sitio', userDataToSave.sites);
+                        }
                         localStorage.setItem('isauthenticated', true);
                         setIsAuthenticated(true);
                         resolve({

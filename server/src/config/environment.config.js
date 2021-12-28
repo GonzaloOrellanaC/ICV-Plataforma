@@ -19,21 +19,21 @@ const languageSelector = (select) => {
  * if they configured a certain language.
  */
 const environment = {
-    dbURL: process.env.DB_URL || 'mongodb://localhost:27017/test',
-    port: process.env.PORT || 5000,
+    dbURL: process.env.DB_URL,
+    port: process.env.PORT,
     env: process.env.NODE_ENV || 'development',
-    jwtKey: process.env.JWT_KEY || 'secret1',
-    resetKey: process.env.RESET_KEY || 'secret2',
+    jwtKey: process.env.JWT_KEY,
+    resetKey: process.env.RESET_KEY,
     icvApi: {
-        url: process.env.ICV_URL || 'http://apm.icv.cl/api/apm/'
+        url: process.env.ICV_URL
     },
     storageApi: {
-        url: process.env.STORAGE_URL || 'https://icvmantencion.blob.core.windows.net'
+        url: process.env.STORAGE_URL
     },
     mailApi: {
-        key: process.env.MAIL_KEY || '1665980594623da5258dfa0dc73bfd57-c27bf672-0bbf16b8',
-        domain: process.env.MAIL_DOMAIN || 'sandboxe24aef5e2a3f411d895e160239476418.mailgun.org',
-        baseSender: process.env.MAIL_SENDER || 'javier.romero@kauel.com'
+        key: process.env.MAIL_KEY,
+        domain: process.env.MAIL_DOMAIN,
+        baseSender: process.env.MAIL_SENDER
     },
     platform: {
         name: process.env.PLATFORM_BASE_URL || 'Plataforma de prueba',

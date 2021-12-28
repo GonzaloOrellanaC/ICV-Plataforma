@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-//import { ApiIcv } from "./src/api-icv";
 
 import { environment } from "./src/config";
 import { databaseLoader, expressLoader, apiIcvLoader } from "./src/loaders";

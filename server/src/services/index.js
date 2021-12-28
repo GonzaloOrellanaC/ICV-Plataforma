@@ -1,5 +1,6 @@
 import AccessControlServices from './accessControl.services'
 import EmailServices from './nodemailer.services'
+import EmailMailgunServices from './email.services'
 import EncryptionServices from './encryption.services'
 import UserServices from './user.services'
 import RolesServices from './roles.services'
@@ -13,5 +14,6 @@ export {
     UserServices,
     RolesServices,
     PermisosServices,
-    ReportsService
+    ReportsService,
+    EmailMailgunServices
 }

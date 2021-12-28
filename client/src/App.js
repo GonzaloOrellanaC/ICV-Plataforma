@@ -142,13 +142,20 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                <Route path={['/sites']}>
+                {admin &&<Route path={['/sites']}>
                     <Switch>
                         <Route exact path='/sites'>
                             <SitesPage route={'sites'}/>
                         </Route>
                     </Switch>
-                </Route>
+                </Route>}
+                {!admin &&<Route path={['/sites']}>
+                    <Switch>
+                        <Route exact path='/sites'>
+                            <NoPermissionPage route={'sites'}/>
+                        </Route>
+                    </Switch>
+                </Route>}
                 <Route path={['/maintance']}>
                     <Switch>
                         <Route exact path='/maintance'>

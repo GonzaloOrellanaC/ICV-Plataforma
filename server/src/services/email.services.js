@@ -14,10 +14,13 @@ const fsPromises = fs.promises
 /*
     Mailgun service initialization
 */
-const mailgun = (new Mailgun(formData)).client({
+const mailgun = new Mailgun(formData)
+
+const client = mailgun.client({
     username: 'api',
     key: environment.mailApi.key
 })
+
 
 /**
  * Function to send an email
@@ -27,19 +30,48 @@ const mailgun = (new Mailgun(formData)).client({
  * @param {*} html Content of the email in a string following an html format
  * @returns Result from the creation of the email
  */
-const sendEmail = (from, to, subject, html) => {
-    if (!from || !to || !subject || !html) {
-        throw new Error(errorMsg.sendEmail)
-    }
-    return mailgun.messages.create(
-        environment.mailApi.domain,
-        {
-            from,
-            to,
-            subject,
-            html
+const sendEmail = (typeEmail, fullName, language, email, password) => {
+    return new Promise(async resolve => {
+        let data = {
+            logoAlt: 'Logo',
+            fullName: fullName,
+            platformURL: 'https://icv-plataforma-mantencion.azurewebsites.net',
+            platformName: 'ICV Platform',
+            email: email,
+            //resetLink: 'https://tesso.cl',
+            password: password
         }
-    )
+        
+        //let transporter = nodemailer.createTransport(mailInfo);
+        let from = `No responder <${environment.mailApi.baseSender}>`
+        let to = email;
+        let subject = "Datos nuevo usuario"
+        let htmlFile = await fsPromises.readFile(path.join(`src/services/email.templates/${typeEmail}.${language}.html`));
+        let template = handlebars.compile(htmlFile.toString());
+        let html = template(data);
+
+        const messageData = {
+            from: from,
+            to: to,
+            subject: subject,
+            html: html
+        }
+    
+        if (!from || !to || !subject || !html) {
+            throw new Error(errorMsg.sendEmail)
+        }
+        client.messages.create(
+            environment.mailApi.domain,
+            messageData
+        ).then((res => {
+            console.log(res)
+            resolve(true)
+        })).catch(err => {
+            console.log(err);
+            resolve(false)
+        })
+        
+    })
 }
 
 /**

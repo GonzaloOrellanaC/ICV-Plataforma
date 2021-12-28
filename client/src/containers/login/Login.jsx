@@ -33,6 +33,7 @@ const Login = () => {
         event.preventDefault()
         let loginState = await login(email, password);
         if(loginState) {
+            console.log(loginState.response.data)
             /* let userDataToSave = loginState.response.data;
             setUserData(userDataToSave);
             localStorage.setItem('email', userDataToSave.email);

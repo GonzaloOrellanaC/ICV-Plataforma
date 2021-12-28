@@ -1,4 +1,4 @@
-import { EmailServices, UserServices } from '../services'
+import { EmailMailgunServices, EmailServices, UserServices } from '../services'
 import { Users } from '../models'
 
 const createUser = async  (req, res, next) => {
@@ -14,7 +14,9 @@ const createUser = async  (req, res, next) => {
     try {
         const registerUser = await UserServices.createUser(userData, password)
         if(registerUser) {
-            EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password )
+            //EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password )
+            const emailSenderState = await EmailMailgunServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password)
+            console.log(emailSenderState)
         }
         return res.status(200).json({ user: registerUser.generateJWT() })
     } catch (error) {
