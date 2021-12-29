@@ -1,9 +1,9 @@
 const style = {
     notificaciones1: {
-        float: 'left',
+        //float: 'left',
         margin: 10,
         height: '100%',
-        width: '35vw',
+        width: '100%',
         padding: 30, 
         backgroundColor: '#F9F9F9', 
         borderRadius: 20, 
@@ -11,10 +11,10 @@ const style = {
         verticalAlign: 'middle'
     },
     notificaciones2: {
-        float: 'left',
+        //float: 'left',
         margin: 10,
         height: '100%',
-        width: '20vw',
+        width: '100%',
         padding: 30, 
         backgroundColor: '#F9F9F9', 
         borderRadius: 20, 
@@ -22,10 +22,10 @@ const style = {
         verticalAlign: 'middle'
     },
     date: {
-        float: 'left',
+        //float: 'left',
         margin: 10,
         height: '100%',
-        width: '25vw',
+        width: '100%',
         padding: 20, 
         backgroundColor: '#F9F9F9', 
         borderRadius: 20, 

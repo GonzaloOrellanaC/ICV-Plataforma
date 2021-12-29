@@ -330,25 +330,45 @@ const WelcomePage = () => {
                         <div style={{height: 70}}>
                             <p style={{fontSize: 24}}>Hola {localStorage.getItem('name')} ¿Por dónde quieres comenzar hoy?</p>
                         </div>
-                        <Grid item style={{width: '100%', height: '14.5vh', margin: 'auto'}}>
-                            <div style={styleWelcomePage.notificaciones1}>
-                                <p style={{fontSize: '1.4vw', margin: 0}}> {notificaciones1} </p>
-                            </div>
-                            <div 
-                                style={styleWelcomePage.notificaciones2}>
-                                <p style={{fontSize: '1.4vw', margin: 0}}> {notificaciones2}</p>
-                            </div>
-                            <div 
-                                style={styleWelcomePage.date}>
-                                    <p style={{fontSize: '1vw', margin: 0}}> {date} </p>
-                                    <p style={{fontSize: '2.7vw', margin: 0}}> {hora} hs </p>
-                            </div>
+                        <Grid container spacing={5}>
+                            <Grid item xs={12} sm={12} md={6} lg={4}>
+                                <div style={styleWelcomePage.notificaciones1}>
+                                    <p style={{fontSize: '1.4vw', margin: 0}}> {notificaciones1} </p>
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={4}>
+                                <div style={styleWelcomePage.notificaciones2}>
+                                    <p style={{fontSize: '1.4vw', margin: 0}}> {notificaciones2}</p>
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={4}>
+                                <div style={styleWelcomePage.date}>
+                                        <p style={{fontSize: '1vw', margin: 0}}> {date} </p>
+                                        <p style={{fontSize: '2.7vw', margin: 0}}> {hora} hs </p>
+                                </div>
+                            </Grid>
                         </Grid>
-                        <Grid container spacing={2}>
-                                <CardButton variant='inspection' disableButton={disableButton}/>
-                                <CardButton variant='maintenance' disableButton={disableButton}/>
-                                <CardButton variant='reports'/>
-                                <CardButton variant='administration' disableButton={disableButtonNoSAP}/>
+
+                        <br />
+                        {/* <Grid item style={{width: '100%', height: '14.5vh', margin: 'auto'}}>
+                            
+                            
+                            
+                        </Grid> */}
+                        <Grid container spacing={5}>
+                                <Grid item xs={12} sm={12} md={6} lg={3}>
+                                    <CardButton variant='inspection' disableButton={disableButton}/>
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={6} lg={3}>
+                                    <CardButton variant='maintenance' disableButton={disableButton}/>
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={6} lg={3}>
+                                    <CardButton variant='reports'/>
+                                </Grid>
+                                <Grid item xs={12} sm={12} md={6} lg={3}>
+                                    <CardButton variant='administration' disableButton={disableButtonNoSAP}/>
+                                </Grid>
+                                
                         </Grid>
                     </Card>
                     <LoadingModal open={openLoader} progress={progress} loadingData={loadingData} withProgress={true}/>

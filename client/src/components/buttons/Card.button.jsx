@@ -30,7 +30,8 @@ const useStyles = makeStyles(theme => ({
         minHeight: 340,
         borderRadius: 20,
         fontFamily:'Raleway',
-        textTransform: 'none'
+        textTransform: 'none',
+        margin: 10
     },
     iconButton: {
         color: '#BE2E26',
@@ -70,9 +71,7 @@ const CardButton = ({ variant, disableButton }) => {
             return dictionary.admin.adminUsersButton
         }
     }
-
-    return (
-        <div className={classes.root}>
+    {/* <div className={classes.root}>
             <Button onClick={() => {history.push(`/${variant}`)}} variant="contained" className={classes.buttonSelection} disabled={disableButton}>
                 <div className={classes.icon}>
                     {handleTypeIcon()}
@@ -80,7 +79,16 @@ const CardButton = ({ variant, disableButton }) => {
                     <p style={{fontSize:'1.5vw', marginBottom: 0, fontWeight: 'bold'}}>{handleTypeText()}</p>
                 </div>
             </Button>
-        </div>
+        </div> */}
+
+    return (
+        <Button onClick={() => {history.push(`/${variant}`)}} variant="contained" className={classes.buttonSelection} disabled={disableButton}>
+            <div className={classes.icon}>
+                {handleTypeIcon()}
+                <br />
+                <p style={{fontSize:'1.5vw', marginBottom: 0, fontWeight: 'bold'}}>{handleTypeText()}</p>
+            </div>
+        </Button>
     )
 }
 
