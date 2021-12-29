@@ -150,7 +150,7 @@ const AdminNewUserPage = () => {
                             infoFaltante.push(await transformInfo(Object.keys(user)[index]))
                         }
                         console.log(index, (Object.values(user).length), Object.keys(user)[index])
-                        if(index == (Object.values(user).length - 2)) {
+                        if(index == (Object.values(user).length - 1)) {
                             console.log(habilitado)
                             if(!habilitado) {
                                 setTimeout(() => {
