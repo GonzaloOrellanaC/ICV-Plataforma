@@ -106,7 +106,7 @@ const MachinesPage = ({ route }) => {
                                 {
                                     machinesList.filter(a => a.toString()).map((machine) => {
                                         return (
-                                            <Grid item key={machine.id} style={{width: '30%'}}>
+                                            <Grid item key={machine.id} style={{minWidth: '25%', margin: 10}}>
                                                 <MachineButton machine={machine} image={machine.image} route={route}/>
                                             </Grid>
                                         )
