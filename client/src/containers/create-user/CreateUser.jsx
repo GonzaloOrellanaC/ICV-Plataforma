@@ -126,7 +126,6 @@ const CreateUser = ({height, typeDisplay}) => {
                 if(data.confirmPassword && (typeDisplay === 'Nuevo usuario')) {
                     setConfirmPassword(data.confirmPassword)
                 }
-                
             }
             setTiposUsuarios(usersTypes)
             getRoles()

@@ -1,86 +1,58 @@
 import nodemailer from "nodemailer";
+import mg from 'nodemailer-mailgun-transport'
 import fs from 'fs';
 import handlebars from 'handlebars';
 import path from 'path';
+import environment from "../config/environment.config";
 
 const fsPromises = fs.promises;
 
-const sendEmail = async (typeEmail, fullName, language, email, password) => {
+const sendEmail = (typeEmail, fullName, language, email, password) => {
 
-    const mailInfo = {
-        host: "smtp.mailgun.org",
-        port: 587,
-        secure: true,
-        auth: {
-            user: 'postmaster@sandboxe24aef5e2a3f411d895e160239476418.mailgun.org',
-            pass: '87de82e2474d9b622a127b2d202092db-6f4beb0a-760ed35a',
-        },
-        tls: {
-            // do not fail on invalid certs
-            rejectUnauthorized: true
+    return new Promise( async resolve => {
+        const auth = {
+            auth: {
+                api_key: environment.mailApi.key,
+                domain: environment.mailApi.domain
+            }
         }
 
-        /* host: "mail.tesso.cl",
-        port: 465,
-        secure: true, // true for 465, false for other ports
-        auth: {
-            user: 'pruebas@tesso.cl',
-            pass: 'T9i*L0n12%*9',
-        },
-        tls: {
-            // do not fail on invalid certs
-            rejectUnauthorized: true
-        } */
-    }
+        let subject;
 
-    let data = {
-        logoAlt: 'Logo',
-        fullName: fullName,
-        platformURL: 'https://icv-plataforma-mantencion.azurewebsites.net',
-        platformName: 'ICV Platform',
-        email: email,
-        resetLink: 'https://tesso.cl',
-        password: password
-    }
+        if(typeEmail === 'newUser') {
+            subject = "Datos nuevo usuario"
+        }
 
-    let transporter = nodemailer.createTransport(mailInfo);
-    let htmlFile = await fsPromises.readFile(path.join(`src/services/email.templates/${typeEmail}.${language}.html`));
-    let template = handlebars.compile(htmlFile.toString());
-    let html = template(data);
-    
-    const verification = () => {
-        return new Promise(resolve => {
-            transporter.verify((error, success) => {
-                if (error) {
-                    console.log('Se ha producido un error: ', error);
-                    resolve(false) 
-                } else {
-                    console.log("Server is ready to take our messages");
-                    resolve(true) 
-                }
-            })
-        })
-    }
+        let data = {
+            logoAlt: 'Logo',
+            fullName: fullName,
+            platformURL: 'https://icv-plataforma-mantencion.azurewebsites.net',
+            platformName: 'ICV Platform',
+            email: email,
+            resetLink: 'https://tesso.cl',
+            password: password
+        }
 
-    let isVerification = await verification()
-
-    if(isVerification) {
+        let transporter = nodemailer.createTransport(mg(auth));
+        let htmlFile = await fsPromises.readFile(path.join(`src/services/email.templates/${typeEmail}.${language}.html`));
+        let template = handlebars.compile(htmlFile.toString());
+        let html = template(data);
+        
         transporter.sendMail({
-            from: 'ICV No Reply <pruebas@tesso.cl>', // sender address
-            to: email, // list of receivers
-            //bcc: 'teratec.solutions@gmail.com',
-            subject: "Datos nuevo Administrador", // Subject line
-            //text: "", // plain text body
+            from: `No Responder --Plataforma mantención ICV <${environment.mailApi.baseSender}>`,
+            to: email,
+            subject: subject,
             html: html
-          })
-          .then(()=> {
+        })
+        .then(()=> {
             console.log('Mensaje enviado');
-          })
-          .catch(e=>{
+            resolve(true)
+        })
+        .catch(e=>{
             console.log('Error en el envio de correos: ', e);
-            return false;
-          })
-    }
+            resolve(false)
+        })
+    })
 }
 
 export default {

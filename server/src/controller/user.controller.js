@@ -14,11 +14,17 @@ const createUser = async  (req, res, next) => {
     try {
         const registerUser = await UserServices.createUser(userData, password)
         if(registerUser) {
+            console.log('Se envía email')
+            const emailSenderState = await EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password)
             //EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password )
-            const emailSenderState = await EmailMailgunServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password)
-            console.log(emailSenderState)
+            //const emailSenderState = await EmailMailgunServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password)
+            if(emailSenderState) {
+                res.status(200).json({ user: registerUser })
+            }
+        }else{
+            return res.status(400).end({message: 'Error al guardar usuario'})
         }
-        return res.status(200).json({ user: registerUser.generateJWT() })
+        //return res.status(200).json({ user: registerUser.generateJWT() })
     } catch (error) {
         console.log(error)
         return res.status(400).end(error.message)

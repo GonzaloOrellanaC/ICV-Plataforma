@@ -15,24 +15,30 @@ const { error: errorMsg, success: successMsg } = environment.messages.services.u
  * @param {*} password User password, can not be falsy
  * @returns Users, newly created user document
  */
-const createUser = async (user, password) => {
-    console.log(user, password)
-    if (!user || !password) {
-        throw new Error(errorMsg.missingParameters)
-    }
-    const registerUser = new Users(user)
-    registerUser.setPassword(password)
-    try {
-        await registerUser.save()
-        return registerUser
-    } catch (error) {
-        if (error.code === 11000) {
-            throw new Error(errorMsg.userExists)
-        } else {
-            // throw error
+const createUser =  (user, password) => {
+    //console.log(user, password)
+    return new Promise(async resolve => {
+        if (!user || !password) {
+            resolve(false)
             throw new Error(errorMsg.missingParameters)
         }
-    }
+        const registerUser = new Users(user)
+        registerUser.setPassword(password)
+        try {
+            console.log('Se guarda usuario')
+            await registerUser.save()
+            resolve(true)
+        } catch (error) {
+            if (error.code === 11000) {
+                resolve(false)
+                throw new Error(errorMsg.userExists)
+            } else {
+                resolve(false)
+                // throw error
+                throw new Error(errorMsg.missingParameters)
+            }
+        }
+    })
 }
 
 const editUser = async (user) => {

@@ -8,6 +8,8 @@ import { useHistory, useParams } from 'react-router-dom'
 import { useLanguage } from '../../context'
 import { usersRoutes } from '../../routes'
 import { validate, clean, format, getCheckDigit } from 'rut.js';
+import { LoadingModal } from '../../modals';
+import transformInfo from './transform-info'
 
 const styleModal = {
     position: 'absolute',
@@ -26,6 +28,8 @@ const AdminNewUserPage = () => {
     const classes = useStylesTheme();
     const history = useHistory();
     const [ open, setOpen ] = useState(false);
+    const [ openLoader, setOpenLoader ] = useState(false);
+    const [ loadingData, setLoadingData ] = useState('');
     const [ routingData, setRoutingData ] = useState('');
     const [ usageModule, setUsageModule ] = useState(0);
 
@@ -74,14 +78,19 @@ const AdminNewUserPage = () => {
                         userData.permissionsReports = permisosReportes;
                         userData.permissionsUsers = permisosUsuarios;
                         userData.confirmPassword = null;
+                        setOpenLoader(true);
                         if(routingData === 'Nuevo usuario') {
+                            setLoadingData('Inscribiendo nuevo usuario');
                             let userState = await usersRoutes.createUser(userData, userData.password);
                             if(userState.status == 200) {
+                                setOpenLoader(false);
                                 openCloseModal()
                             }
                         }else if(routingData === 'Editar usuario') {
+                            setLoadingData('Editando usuario');
                             let userState = await usersRoutes.editUser(userData);
                             if(userState.status == 200) {
+                                setOpenLoader(false);
                                 openCloseModal()
                             }
                         }
@@ -128,35 +137,49 @@ const AdminNewUserPage = () => {
         let user = JSON.parse(localStorage.getItem('userDataToSave'));
         let habilitado = true;
         if(user) {
-            if(validate(user.rut)) {
-                Object.values(user).map((value, index) => {
-                    if(!value) {
-                        if(!id) {
-                            habilitado = false
+            if(user.rut) {
+                if(validate(user.rut)) {
+                    console.log(user);
+                    let infoFaltante = []
+                    Object.values(user).map(async (value, index) => {
+                        if(!value) {
+                            if(!id) {
+                                habilitado = false
+                            }
+                            console.log(Object.keys(user)[index], value)
+                            infoFaltante.push(await transformInfo(Object.keys(user)[index]))
                         }
-                    }
-                    if(index == (Object.values(user).length - 1)) {
-                        if(!habilitado) {
-                            alert('Faltan datos')
-                        }else{
-                            if(id) {
-                                setUsageModule(usageModule + 1)
+                        console.log(index, (Object.values(user).length), Object.keys(user)[index])
+                        if(index == (Object.values(user).length - 2)) {
+                            console.log(habilitado)
+                            if(!habilitado) {
+                                setTimeout(() => {
+                                    console.log(JSON.stringify(infoFaltante))
+                                alert('Faltan datos: ' + JSON.stringify(infoFaltante))
+                                }, 100);
                             }else{
-                                if(user.password === user.confirmPassword) {
+                                if(id) {
                                     setUsageModule(usageModule + 1)
                                 }else{
-                                    alert('Contraseñas no coinciden')
+                                    if(user.password === user.confirmPassword) {
+                                        setUsageModule(usageModule + 1)
+                                    }else{
+                                        alert('Contraseñas no coinciden')
+                                    }
                                 }
                             }
                         }
-                    }
-                })
+                    })
+                }else{
+                    alert('Rut inválido. Revise los datos.')
+                }
             }else{
-                alert('Rut inválido. Revise los datos.')
+                alert('Falta RUT')
             }
         }else{
-            alert('Faltan datos')
+            alert('Sin datos')
         }
+        
     }
 
     return (
@@ -244,6 +267,7 @@ const AdminNewUserPage = () => {
                                     </Fab>
                                 </Box>
                             </Modal>
+                            <LoadingModal open={openLoader} loadingData={loadingData} withProgress={false}/>
                         </div>
                     </Card>
                 </Grid>
