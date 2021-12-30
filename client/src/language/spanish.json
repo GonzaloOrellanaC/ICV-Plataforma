@@ -6,6 +6,12 @@
         "forgotPasswordText": "Olvidé mi contraseña.",
         "forgotPasswordLink": "Click aquí."
     },
+    "restorePassword": {
+        "passwordField": "Ingrese Contraseña",
+        "confirmPasswordField": "Confirme Contraseña",
+        "button": "Cambiar contraseña",
+        "cancel": "Cancelar"
+    },
     "welcome": {
         "inspectionButton": "Inspección",
         "maintenanceButton": "Mantención",

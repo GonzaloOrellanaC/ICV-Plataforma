@@ -45,7 +45,7 @@ const LoginPage = () => {
                     </div>
                 </Hidden>
                 <Hidden smDown>
-                    <div style={{float: 'left', width: '50%', height: '100%', display: 'block'}}>
+                    <div style={{float: 'left', width: '50%', height: '100vh', display: 'block'}}>
                         <img src={imageBackground} style={{objectFit: 'cover', width: '100%', height: '100%'}}/>
                     </div>
                 </Hidden>

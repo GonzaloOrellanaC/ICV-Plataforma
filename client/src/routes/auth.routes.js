@@ -26,6 +26,13 @@ export default {
 
         return axios.post('/auth/forgotpassword', requestBody)
     },
+    restorePassword: (password, token) => {
+        const requestBody = {
+            password
+        }
+
+        return axios.post(`/auth/resetpassword/${token}`, requestBody)
+    },
     logout: (userData) => {
         const requestBody = {
             userData

@@ -73,6 +73,19 @@ const readUser = (req, res, next) => {
     }
 }
 
+/* const getUaserId = (req, res, next) => {
+    const { body } = req;
+    //console.log(body)
+    try{
+        Users.findById(body.email, (err, user) => {
+            //console.log('Usuario: ', user)
+            res.json(user)
+        });
+    }catch (err) {
+        console.log(err)
+    }
+} */
+
 const deleteUser = (req, res, next) => {
     const { body } = req;
     try{

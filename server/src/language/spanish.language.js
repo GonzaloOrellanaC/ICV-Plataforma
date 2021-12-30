@@ -46,7 +46,7 @@ export default {
                 userNotFound: 'Usuario no encontrado'
             },
             success: {
-                resetPassword: 'Contraseña reiniciada correctamente',
+                resetPassword: 'Contraseña cambiada exitosamente',
                 resetPasswordEmail: 'Correo de reinicio de contraseña enviado',
                 savedPassword: 'Contraseña guardada correctamente'
             }
@@ -57,7 +57,7 @@ export default {
                 sendEmail: 'Parámetros no completados correctamente.'
             },
             success: {
-                resetPasswordEmail: 'Email de reinicio de contraseña enviado.'
+                resetPasswordEmail: 'Email de reinicio de contraseña enviado. Revise la bandeja de entrada de su correo electrónico. Si no lo ve, revise en los spams.'
             },
             data: {
                 forgotPasswordSubject: (platformName) => `Reiniciar Contraseña - ${platformName}`

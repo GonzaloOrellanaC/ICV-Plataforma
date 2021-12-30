@@ -32,24 +32,21 @@ const ResetPassword = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-        //console.log(email);
         let forgotPasswordState = await requestNewPassword();
-        //console.log(forgotPasswordState)
+        alert(forgotPasswordState.data.message);
+        history.replace('/')
     }
 
     const requestNewPassword = () => {
-        alert('Servicio no disponible.')
-        /* return new Promise(resolve=>{
+        return new Promise(resolve=>{
             authRoutes.forgotPassword(email)
             .then(data=>{
-                //console.log(data);
                 resolve(data)
             })
             .catch(err=>{
-                //console.log(err)
                 resolve(err)
             })
-        }) */
+        })
     }
 
     return (
@@ -70,7 +67,6 @@ const ResetPassword = () => {
                     </Grid>
                     <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
                         <Button className={classes.button} type='submit' variant='contained' color='primary'>
-                            {/* {dictionary.login.loginButton} */}
                             SOLICITAR
                         </Button>
                     </Grid>

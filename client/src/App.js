@@ -35,7 +35,8 @@ import {
     AdminUsersPage,
     AdminNewUserPage,
     CreateReports,
-    NoPermissionPage
+    NoPermissionPage,
+    RestorePasswordPage
 } from './pages';
 
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
@@ -80,6 +81,7 @@ const OnApp = () => {
                 </Route>}
             <Switch>
                 {!isAuthenticated && <Route exact path={['/reset-password']} render={() => (<ResetPasswordPage />)}/>}
+                {!isAuthenticated && <Route exact path={['/restore-password/:id']} render={() => (<RestorePasswordPage />)}/>}
                 {!isAuthenticated && <Route path={['/']} render={() => (<LoginPage />)}/>}
                 {loading && <Route path={['/']} render={() => (<LoadingPage />)}/>}
                 <Route exact path={['/', '/welcome']} render={() => (

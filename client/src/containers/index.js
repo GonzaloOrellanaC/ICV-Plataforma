@@ -1,7 +1,7 @@
 import { Header } from './header'
 import { Login } from './login'
 import { Navbar } from './navbar'
-import { ResetPassword } from './reset-password'
+import { ResetPassword, RestorePassword } from './reset-password'
 import { Inspects } from './inspect'
 import { Maitence } from './maitence'
 import { MVAvatar} from './vr-avatar'
@@ -15,6 +15,7 @@ export {
     Login,
     Navbar,
     ResetPassword,
+    RestorePassword,
     Inspects,
     Maitence,
     //VRAvatar,

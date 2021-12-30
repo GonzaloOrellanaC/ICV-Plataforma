@@ -41,7 +41,9 @@ const sendEmail = (typeEmail, fullName, language, email, password) => {
             platformName: 'ICV Platform',
             email: email,
             resetLink: 'https://tesso.cl',
-            password: password
+            password: password,
+            logoRoute: environment.platform.logoRoute,
+            logoAlt: environment.platform.logoAlt,
         }
 
         let transporter = nodemailer.createTransport(mg(auth));
@@ -86,6 +88,7 @@ const send = (from, to, subject, html) => {
 
 const forgotPasswordEmail = async (fullName, token, language, email) => {
     console.log(fullName, language, email);
+    console.log(environment.platform.baseUrl, environment.platform.routes.resetPassword)
 
     return new Promise (async resolve => {
         const htmlFile = await fsPromises.readFile(path.join(`src/services/email.templates/forgotPass.${language}.html`))

@@ -2,7 +2,7 @@ import { AppliancePage, MachinesPage, MachinesListPage } from './machines'
 import { LoadingPage } from './loading'
 import { LoginPage } from './login'
 import { WelcomePage } from './welcome'
-import { ResetPasswordPage } from './reset-password'
+import { ResetPasswordPage, RestorePasswordPage } from './reset-password'
 import { MaintencePage } from './maintence'
 import { DivisionsPage } from './divisions'
 import { ReportsPage, CreateReports } from './reports'
@@ -23,6 +23,7 @@ export {
     LoginPage,
     WelcomePage,
     ResetPasswordPage,
+    RestorePasswordPage,
     DivisionsPage,
     ReportsPage,
     CreateReports,
