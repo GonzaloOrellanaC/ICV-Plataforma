@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/static/css/main.07746957.chunk.css",
-    "main.js": "/static/js/main.dba96ab2.chunk.js",
-    "main.js.map": "/static/js/main.dba96ab2.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.43debd97.js",
-    "runtime-main.js.map": "/static/js/runtime-main.43debd97.js.map",
+    "main.css": "/static/css/main.e54a06e5.chunk.css",
+    "main.js": "/static/js/main.5d6d6542.chunk.js",
+    "main.js.map": "/static/js/main.5d6d6542.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.7bb567ba.js",
+    "runtime-main.js.map": "/static/js/runtime-main.7bb567ba.js.map",
     "static/css/2.546277b0.chunk.css": "/static/css/2.546277b0.chunk.css",
-    "static/js/2.cdc5d181.chunk.js": "/static/js/2.cdc5d181.chunk.js",
-    "static/js/2.cdc5d181.chunk.js.map": "/static/js/2.cdc5d181.chunk.js.map",
-    "static/js/3.b2565600.chunk.js": "/static/js/3.b2565600.chunk.js",
-    "static/js/3.b2565600.chunk.js.map": "/static/js/3.b2565600.chunk.js.map",
+    "static/js/2.892302b4.chunk.js": "/static/js/2.892302b4.chunk.js",
+    "static/js/2.892302b4.chunk.js.map": "/static/js/2.892302b4.chunk.js.map",
+    "static/js/3.7238e504.chunk.js": "/static/js/3.7238e504.chunk.js",
+    "static/js/3.7238e504.chunk.js.map": "/static/js/3.7238e504.chunk.js.map",
     "index.html": "/index.html",
     "service-worker.js": "/service-worker.js",
     "service-worker.js.map": "/service-worker.js.map",
     "static/css/2.546277b0.chunk.css.map": "/static/css/2.546277b0.chunk.css.map",
-    "static/css/main.07746957.chunk.css.map": "/static/css/main.07746957.chunk.css.map",
-    "static/js/2.cdc5d181.chunk.js.LICENSE.txt": "/static/js/2.cdc5d181.chunk.js.LICENSE.txt",
+    "static/css/main.e54a06e5.chunk.css.map": "/static/css/main.e54a06e5.chunk.css.map",
+    "static/js/2.892302b4.chunk.js.LICENSE.txt": "/static/js/2.892302b4.chunk.js.LICENSE.txt",
     "static/media/Iniciar sesión-1.0c206597.png": "/static/media/Iniciar sesión-1.0c206597.png",
     "static/media/Logologo_icv_1.054cafd3.svg": "/static/media/Logologo_icv_1.054cafd3.svg",
     "static/media/App.css": "/static/media/Raleway-Regular.9ade142e.ttf",
@@ -23,10 +23,10 @@
     "static/media/slider_home_01.0b665994.jpg": "/static/media/slider_home_01.0b665994.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.43debd97.js",
+    "static/js/runtime-main.7bb567ba.js",
     "static/css/2.546277b0.chunk.css",
-    "static/js/2.cdc5d181.chunk.js",
-    "static/css/main.07746957.chunk.css",
-    "static/js/main.dba96ab2.chunk.js"
+    "static/js/2.892302b4.chunk.js",
+    "static/css/main.e54a06e5.chunk.css",
+    "static/js/main.5d6d6542.chunk.js"
   ]
 }
