@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import { Login } from '../../containers'
 import { environment, useStylesTheme } from '../../config'
 import imageBackground from '../../assets/Iniciar sesión-1.png';
-import logoICV from '../../assets/logo_icv_gris.png'
+import logoICV from '../../assets/ICV-transparent.png'
 
 const LoginPage = () => {
     const classes = useStylesTheme();
@@ -14,7 +14,7 @@ const LoginPage = () => {
         return (
             <Card className={clsx(classes.pageCard, classes.noNavBarMargin)}>
                 <div style={{textAlign: 'center', width: '100%', marginTop: 60}}>
-                    <img src={logoICV} height={80} alt="" />
+                    <img src={logoICV} height={100} alt="" />
                     <p style={{marginTop: 0, fontSize: 6.5, textDecoration: 'underline'}}> <strong>INGENIERÍA CIVIL VICENTE</strong> </p>
                     <p style={{fontSize: '2em', marginBottom: 0}}>Iniciar sesión</p>
                     <p style={{fontSize: 10, marginTop: 0}}> {environment.version} </p>
