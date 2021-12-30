@@ -1,0 +1,39 @@
+<style>
+    button:hover {
+        cursor: pointer;
+    }
+</style>
+<div style="max-width: 700px; background-color: white; padding: 1rem; margin: 0.5rem; margin-left: auto; margin-right: auto; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif; -webkit-font-smoothing: antialiased; border-radius: 0.25rem;">
+    <div style="width: 100%; text-align: center;">
+            <img style="width: 50%; min-width: 250px; margin-left: auto; margin-right: auto; display: block; margin-bottom: 30px;" src={{logoRoute}} alt={{logoAlt}}/>
+<!--         <img height="200" width="100" style="width: 50%; min-width: 200px; margin-left: auto; margin-right: auto; display: block;" src='https://icv.cl/wp-content/themes/ICV/assets/image/logo_icv.png' alt={{logoAlt}}/> -->
+    </div>
+    <div style="background-color: white; border-radius: 12px; padding: 2rem; text-align: center; width: 100%;">
+        <h2 style="text-align: center">
+            Restauración de contraseña
+        </h2>
+        <p style="text-align: center;">
+            Estimad@ {{fullName}}, usted está recibiendo este mail porque se inició un proceso de reinicio de contraseña en
+            <a href={{platformURL}} target="_blank">{{platformName}}</a> para la cuenta con email: <b>{{email}}</b>. Para continuar presione el botón de abajo. 
+            
+        </p>
+        <div style="text-align: center; margin-top: 7%;">
+            <a href={{resetLink}} target="_blank">
+                <button style="background-color: #3383ee; color: white; font-weight: bold; padding: 15px 30px; outline: none; border: none; border-radius: 30px; text-transform: uppercase; font-size: 1.5rem;">
+                    Reiniciar Contraseña
+                </button>
+            </a>
+        </div>
+        
+        <p style="margin-top: 7%; text-align: center; font-size: 12px;">
+            Nota:
+        </p>
+        <p style="margin-top: 5%; text-align: center; font-size: 12px;">
+            Si usted no hizo inicio este proceso, puede ignorar este email. Por seguridad el link para reinicio de contraseña expirará 1 hora después de generado.
+            
+        </p>
+        <p style="text-align: center;">
+            ICV&copy; Ingeniería Civil Vicente&reg; Todos los derechos reservados 2021.
+        </p>
+    </div>
+</div>

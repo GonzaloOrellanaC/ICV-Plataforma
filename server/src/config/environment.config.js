@@ -36,12 +36,12 @@ const environment = {
         baseSender: process.env.MAIL_SENDER
     },
     platform: {
-        name: process.env.PLATFORM_BASE_URL || 'Plataforma de prueba',
-        logoRoute: process.env.PLATFORM_LOGO_ROUTE || 'http://localhost:3000/logo.png',
-        logoAlt: process.env.PLATFORM_LOGO_ALT || 'LOGO',
-        baseUrl: process.env.PLATFORM_BASE_URL || 'http://localhost:3000/',
+        name: process.env.PLATFORM_NAME,
+        logoRoute: process.env.PLATFORM_LOGO_ROUTE,
+        logoAlt: process.env.PLATFORM_LOGO_ALT,
+        baseUrl: process.env.PLATFORM_BASE_URL,
         routes: {
-            resetPassword: process.env.ROUTE_RESET_PASS || 'resetpassword/'
+            resetPassword: process.env.ROUTE_RESET_PASS
         }
     },
     messages: languageSelector(process.env.DEFAULT_LANGUAGE), // Cambiar por funcion para sacar mensaje en caso de múltiples lenguajes

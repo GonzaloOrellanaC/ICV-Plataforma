@@ -54,7 +54,8 @@ const register = async (req, res, next) => {
 }
 
 const forgotPassword = async (req, res, next) => {
-    const { body: { email } } = req
+    console.log(req)
+    const { query: { email } } = req
 
     if (!email) {
         return res.status(400).end(errorMsg.missingEmail)
@@ -64,7 +65,7 @@ const forgotPassword = async (req, res, next) => {
         const { token, fullName, email: sendEmail } = await UserServices.forgotPassword(email);
         console.log(token, fullName, email)
         
-        const message = await EmailServices.sendEmail(fullName, token, 'es', sendEmail)
+        const message = await EmailServices.forgotPasswordEmail(fullName, token, 'es', sendEmail)
         res.status(200).json({ message })
     } catch (error) {
         console.log(error.message)

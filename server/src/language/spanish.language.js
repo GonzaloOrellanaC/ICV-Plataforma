@@ -57,7 +57,7 @@ export default {
                 sendEmail: 'Parámetros no completados correctamente.'
             },
             success: {
-                resetPasswordEmail: 'No se puedo enviar email de reinicio contraseña'
+                resetPasswordEmail: 'Email de reinicio de contraseña enviado.'
             },
             data: {
                 forgotPasswordSubject: (platformName) => `Reiniciar Contraseña - ${platformName}`
