@@ -1,0 +1,75 @@
+.titulo {
+    font-size: 24px;
+    padding: 22px;
+}
+
+.container {
+    margin-left: 99px;
+    /* background-color: rgb(250, 250, 250); */
+    font-family:'Raleway';
+    border-radius: 0px;
+    box-shadow: none;
+    padding: 20px;
+    padding-top: 100px;
+    overflow-y: auto
+}
+
+.notificaciones {
+    margin: 10px;
+    min-height: 120px;
+    height: 100%;
+    width: 100%;
+    padding: 10px; 
+    background-color: #F9F9F9; 
+    border-radius: 20px; 
+    text-transform: none;
+}
+
+.notificaciones-texto{
+    font-size: 1.4vw;
+    margin: 0px;
+}
+
+.reloj-fecha {
+    font-size: 1vw;
+    margin: 0px;
+}
+
+.reloj-hora {
+    font-size: 2.7vw;
+    margin: 0px;
+}
+
+.reloj {
+    text-align: center;
+}
+
+.alertas {
+    text-align: justify;
+}
+
+@media screen and (max-width: 660px) {
+    .titulo {
+        font-size: 20px;
+    }
+    .container {
+        margin-left: 15vw;
+    }
+}
+
+
+@media screen and (max-width: 895px) {
+    
+    .notificaciones-texto{
+        font-size: 20px;
+        margin: 0
+    }
+
+    .reloj-fecha {
+        font-size: 25px;
+    }
+
+    .reloj-hora {
+        font-size: 35px;
+    }
+}

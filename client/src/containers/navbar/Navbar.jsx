@@ -28,7 +28,8 @@ const useStyles = makeStyles(theme => ({
         overflow: 'hidden'
     },
     drawerClose: {
-        width: 99,
+        width: '15vw',
+        maxWidth: 99,
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen
@@ -44,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     },
     drawerContainer: {
         position: 'relative',
-        height: '100%',
+        //height: '100%',
     },
     drawerBottom: {
         position: 'absolute',
@@ -59,8 +60,9 @@ const useStyles = makeStyles(theme => ({
         width: 54
     },
     sideButtons: {
-        width: 26,
-        height: 26,
+        width: '5vh',
+        maxWidth: 26,
+        height: '2.5vh',
         color: '#FFFFFF',
     },
     sideButtonsCloseMenu: {

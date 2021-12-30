@@ -7,9 +7,10 @@ import { pmsDatabase, sitesDatabase, FilesToStringDatabase, trucksDatabase, } fr
 import { LoadingModal, VersionControlModal } from '../../modals'
 import hour from './hour'
 import fecha from './date'
-import style from './style'
+//import style from './style'
+import './style.css'
 
-const styleWelcomePage = style;
+//const styleWelcomePage = style;
 
 const WelcomePage = () => {
     const classes = useStylesTheme();
@@ -323,59 +324,52 @@ const WelcomePage = () => {
     }
 
     return (
-        <Box height='100%' style={{fontFamily:'Raleway'}}>
-            <Grid className={classes.pageRoot} container spacing={0}>
-                <Grid className={classes.pageContainer} item xs={12}>
-                    <Card className={classes.pageCard}>
-                        <div style={{height: 70}}>
-                            <p style={{fontSize: 24}}>Hola {localStorage.getItem('name')} ¿Por dónde quieres comenzar hoy?</p>
-                        </div>
-                        <Grid container spacing={5}>
-                            <Grid item xs={12} sm={12} md={6} lg={4}>
-                                <div style={styleWelcomePage.notificaciones1}>
-                                    <p style={{fontSize: '1.4vw', margin: 0}}> {notificaciones1} </p>
-                                </div>
-                            </Grid>
-                            <Grid item xs={12} sm={12} md={6} lg={4}>
-                                <div style={styleWelcomePage.notificaciones2}>
-                                    <p style={{fontSize: '1.4vw', margin: 0}}> {notificaciones2}</p>
-                                </div>
-                            </Grid>
-                            <Grid item xs={12} sm={12} md={6} lg={4}>
-                                <div style={styleWelcomePage.date}>
-                                        <p style={{fontSize: '1vw', margin: 0}}> {date} </p>
-                                        <p style={{fontSize: '2.7vw', margin: 0}}> {hora} hs </p>
-                                </div>
-                            </Grid>
-                        </Grid>
-
-                        <br />
-                        {/* <Grid item style={{width: '100%', height: '14.5vh', margin: 'auto'}}>
-                            
-                            
-                            
-                        </Grid> */}
-                        <Grid container spacing={5}>
-                                <Grid item xs={12} sm={12} md={6} lg={3}>
-                                    <CardButton variant='inspection' disableButton={disableButton}/>
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={6} lg={3}>
-                                    <CardButton variant='maintenance' disableButton={disableButton}/>
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={6} lg={3}>
-                                    <CardButton variant='reports'/>
-                                </Grid>
-                                <Grid item xs={12} sm={12} md={6} lg={3}>
-                                    <CardButton variant='administration' disableButton={disableButtonNoSAP}/>
-                                </Grid>
-                                
-                        </Grid>
-                    </Card>
-                    <LoadingModal open={openLoader} progress={progress} loadingData={loadingData} withProgress={true}/>
-                    <VersionControlModal open={openVersion} closeModal={closeModal} />
+        <div /* className={classes.pageContainer} */>
+            <div className='container' /* className={classes.pageCard} */>
+                <Grid container spacing={5}>
+                    <div>
+                        <p className='titulo'>Hola {localStorage.getItem('name')} ¿Por dónde quieres comenzar hoy?</p>
+                    </div>
                 </Grid>
-            </Grid>            
-        </Box>
+                <Grid container spacing={5}>
+                    <Grid item xs={12} sm={12} md={6} lg={4}>
+                        <div className='notificaciones reloj'>
+                            <p className='reloj-fecha'> {date} </p>
+                            <p className='reloj-hora'> {hora} hs </p>
+                        </div>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4}>
+                        <div className='notificaciones alertas'>
+                            <p className='notificaciones-texto'> {notificaciones1} </p>
+                        </div>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4}>
+                        <div className='notificaciones alertas'>
+                            <p className='notificaciones-texto'> {notificaciones2}</p>
+                        </div>
+                    </Grid>
+                </Grid>
+                <br />
+                <Grid container spacing={5}>
+                        <Grid item xs={12} sm={12} md={6} lg={3}>
+                            <CardButton variant='inspection' disableButton={disableButton}/>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={3}>
+                            <CardButton variant='maintenance' disableButton={disableButton}/>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={3}>
+                            <CardButton variant='reports'/>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={3}>
+                            <CardButton variant='administration' disableButton={disableButtonNoSAP}/>
+                        </Grid>
+                        
+                </Grid>
+            </div>
+            <LoadingModal open={openLoader} progress={progress} loadingData={loadingData} withProgress={true}/>
+            {/* <LoadingModal open={true} loadingData={'prueba de funcionamiento'} withProgress={false}/> */}
+            <VersionControlModal open={openVersion} closeModal={closeModal} />
+        </div>
     )
 }
 

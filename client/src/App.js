@@ -74,7 +74,7 @@ const OnApp = () => {
     }, [])
 
     return (
-        <Box height='100vh' display='flex' flexDirection='column' style={{fontFamily: 'Roboto'}}>
+        <div style={{fontFamily: 'Roboto'}}>
             {isAuthenticated && <Route path={['/']}>
                     {isAuthenticated && !loading && <Navbar/>} {isAuthenticated && !loading && <Header />}
                 </Route>}
@@ -234,7 +234,7 @@ const OnApp = () => {
                     </Switch>
                 </Route>
             </Switch>
-        </Box>
+        </div>
     )
 }
 

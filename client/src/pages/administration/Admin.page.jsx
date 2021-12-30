@@ -32,9 +32,12 @@ const AdminPage = () => {
                             </div>
                         </Grid>
                         <Grid container alignItems='center' justifyContent='center'>
-                            <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
+                            <Grid item xs={12} sm={12} md={6} lg={3}>
                                 <CardButton variant='users'/>
-                            </div>        
+                            </Grid>
+                            {/* <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
+                                
+                            </div>   */}      
                         </Grid>
                     </Card>
                 </Grid>

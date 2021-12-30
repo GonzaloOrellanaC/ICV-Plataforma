@@ -15,11 +15,21 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{textAlign: 'left', width: '100%'}}>
                     <h2>Versión {environment.version}</h2>
                 </div>
-                <div style={{width: '100%', height: '25vh'}}>
+                <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>
                             Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.
                         </p>
                         <p>
+                            v.2.5
+                                <li>
+                                    Se actualiza para responsividad smartphone, excepto control de usuarios usando admin o Ejecutivo SAP y reportes.
+                                </li>
+                                <li>
+                                    Se corrige error de redacción de correo electrónico. 
+                                </li>
+                        </p>
+                        <p>
+                            v.2.2
                                 <li>
                                     Los usuarios pueden navegar sin conexión, de acuerdo a sus privilegios. 
                                 </li>

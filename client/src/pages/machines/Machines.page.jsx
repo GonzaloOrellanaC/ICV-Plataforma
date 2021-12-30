@@ -66,12 +66,13 @@ const MachinesPage = ({ route }) => {
         })
     }
 
-    let site = JSON.parse(localStorage.getItem('sitio')).descripcion;
-
+    let site
     const history = useHistory();
 
-    if(!site) {
-        history.goBack()
+    if(localStorage.getItem('sitio')) {
+        site = JSON.parse(localStorage.getItem('sitio')).descripcion;
+    }else{
+        history.replace('/')
     }
 
     let routeData;
@@ -83,10 +84,10 @@ const MachinesPage = ({ route }) => {
     }
 
     return (
-        <Box height='100%'>
+        <Box height='90%'>
             <Grid className={classes.pageRoot} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
-                    <Card className={classes.pageCard}>
+                    <div className={classes.pageCard}>
                         <Grid container alignItems='flex-start' justifyContent='flex-start'>
                             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
@@ -102,7 +103,7 @@ const MachinesPage = ({ route }) => {
                                     </Toolbar>
                                 </div>
                             </div>
-                            <Grid container item spacing={5} justifyContent='flex-start' style={{textAlign: 'center', height: '75vh'}}>
+                            <Grid container spacing={5} justifyContent='flex-start' style={{textAlign: 'center', height: '75vh', overflowY: 'auto'}}>
                                 {
                                     machinesList.filter(a => a.toString()).map((machine) => {
                                         return (
@@ -114,7 +115,7 @@ const MachinesPage = ({ route }) => {
                                 }
                             </Grid>
                         </Grid>
-                    </Card>
+                    </div>
                 </Grid>
             </Grid>
         </Box>

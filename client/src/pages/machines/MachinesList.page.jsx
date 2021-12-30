@@ -115,11 +115,7 @@ const MachinesListPage = ({route}) => {
                                     </Toolbar>
                                 </div>
                             </div>
-                            <List style={{width: '100vw', marginRight: 11, overflowY: 'scroll', maxHeight: '70vh', paddingLeft: 20, paddingRight: 20}}>
-                            {
-                                machinesList.map((machine, i) => {
-                                    return(
-                                        <ListItem alignItems="flex-start" key={i} style={{minHeight: 148, marginBottom: 20, padding: 20, borderStyle: 'solid', borderWidth: 2, borderColor: '#CCC', borderRadius: 20}}>
+                            {/* <ListItem alignItems="flex-start" key={i} style={{minHeight: 148, marginBottom: 20, padding: 20, borderStyle: 'solid', borderWidth: 2, borderColor: '#CCC', borderRadius: 20}}>
                                             <div>
                                                 <img src="../assets/no-image.png" style={{height: 120, width: '20vw', objectFit: 'cover'}} />
                                             </div>
@@ -138,20 +134,61 @@ const MachinesListPage = ({route}) => {
                                                 <div style={{float: 'left', minWidth: 200 }}>
                                                     <p style={{marginTop: 5, marginBottom: 5}}>Obra: {site}</p>
                                                     {/* <p style={{marginTop: 5, marginBottom: 5}}>Sector: C</p>
-                                                    <p style={{marginTop: 5, marginBottom: 5}}>Región: Lorem Ipsum</p> */}
+                                                    <p style={{marginTop: 5, marginBottom: 5}}>Región: Lorem Ipsum</p> 
                                                 </div>
                                                 <div style={{float: 'right', minWidth: 200, height: 80}}>
                                                     <div style={{position: 'absolute', bottom: 25}}>
                                                         <button style={{width: 100, height: 30, borderRadius: 20}} onClick={openCloseModal}>
                                                             <strong>Ver 3D</strong>
                                                         </button>
-                                                        <button style={{width: 100, height: 30, borderRadius: 20, marginLeft: 6}} onClick={() => goToMachineDetail(machine)} /* component={Link} to={`/${route}/${JSON.stringify(machine)}` */>
+                                                        <button style={{width: 100, height: 30, borderRadius: 20, marginLeft: 6}} onClick={() => goToMachineDetail(machine)} /* component={Link} to={`/${route}/${JSON.stringify(machine)}` >
                                                             <strong>Ver más</strong>
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </ListItem>
+                                        </ListItem> */}
+                            <List style={{width: '100vw', marginRight: 11, overflowY: 'scroll', maxHeight: '70vh', paddingLeft: 20, paddingRight: 20}}>
+                            {
+                                machinesList.map((machine, i) => {
+                                    return(
+                                        
+                                            <Grid key={i} container style={{minHeight: 148, marginBottom: 20, padding: 20, borderStyle: 'solid', borderWidth: 2, borderColor: '#CCC', borderRadius: 20}}>
+                                                <Grid item xs={12} sm={12} md={3} lg={2}>
+                                                    <img src="../assets/no-image.png" style={{height: 120, width: '100%', objectFit: 'cover'}} />
+                                                </Grid>
+                                                <Grid item xs={12} sm={12} md={3} lg={2}>
+                                                    <div style={{padding: 10}}>
+                                                    <h1 style={{margin: 0}}> <strong>{machine.type} {machine.equ}</strong> </h1>
+                                                    </div>
+                                                </Grid>
+                                                <Grid item xs={12} sm={12} md={3} lg={3}>
+                                                    <div style={{padding: 10}}>
+                                                        <p style={{marginTop: 5, marginBottom: 5}}>Marca: {machine.brand.toUpperCase()}</p>
+                                                        <p style={{marginTop: 5, marginBottom: 5}}>Modelo: {machine.model}</p>
+                                                        <p style={{marginTop: 5, marginBottom: 5}}>Código: {machine.equid}</p>
+                                                    </div>
+                                                </Grid>
+                                                <Grid item xs={12} sm={12} md={3} lg={3}>
+                                                    <div style={{padding: 10}}>
+                                                    <p style={{marginTop: 5, marginBottom: 5}}>Horómetro Actual: {machine.hourMeter}</p>
+                                                    <p style={{marginTop: 5, marginBottom: 5}}>Número Interno: {machine.equ}</p>
+                                                    <p style={{marginTop: 5, marginBottom: 5}}>Serie motor: {machine.enginesnr}</p>
+                                                    </div>
+                                                </Grid>
+                                                <Grid item xs={12} sm={12} md={12} lg={2}>
+                                                    <div style={{width: '100%', textAlign: 'center'}} >
+                                                        <button style={{width: 100, height: 30, borderRadius: 20}} onClick={openCloseModal}>
+                                                            <strong>Ver 3D</strong>
+                                                        </button>
+                                                        <button style={{width: 100, height: 30, borderRadius: 20, marginLeft: 6}} onClick={() => goToMachineDetail(machine)}  /* component={Link} to={`/${route}/${JSON.stringify(machine)}` */ >
+                                                            <strong>Ver más</strong>
+                                                        </button>
+                                                    </div>
+                                                </Grid>
+                                            </Grid>
+                                            
+                                        
                                     )
                                 })
                             }

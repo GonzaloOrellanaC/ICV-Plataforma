@@ -1,27 +1,14 @@
-import { useState, useEffect } from 'react';
 import { 
     Box, 
     Modal,
-    CircularProgress,
-    /* 
-    Toolbar,
-    Fab, */
+    CircularProgress
 
 } from '@material-ui/core';
-/* import { Close } from '@material-ui/icons'; */
 import { styleModal } from '../../config';
 
 const LoadingModal = ({open, progress, loadingData, withProgress}) => {
-    /* const [ withProgress, setWithProgress ] = useState(true) */
-    
 
-    useEffect(() => {
-        /* if(progress) {
-            setWithProgress(true)
-        }else{
-            setWithProgress(false)
-        } */
-    }, [])
+    
     
     return(
         <Modal
@@ -39,7 +26,7 @@ const LoadingModal = ({open, progress, loadingData, withProgress}) => {
                         !withProgress &&
                         <CircularProgress size={200} />
                     }
-                    <h1>{loadingData}</h1>
+                    <h2>{loadingData}</h2>
                 </div>
             </Box>
         </Modal>

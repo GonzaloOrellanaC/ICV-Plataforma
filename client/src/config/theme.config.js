@@ -53,8 +53,8 @@ export const theme = createTheme({
         },
         MuiButton: {
             root: {
-                paddingLeft: 30,
-                paddingRight: 30
+                //paddingLeft: 30,
+                //paddingRight: 30
             }
         },
         MuiListItemIcon: {
@@ -65,20 +65,29 @@ export const theme = createTheme({
     }
 }, esES)
 
+let marginLeftPageCard
+
+if (window.matchMedia("(min-width: 660px)").matches) {
+    marginLeftPageCard = 99
+} else {
+    marginLeftPageCard = '15vw'
+}
+
 export const useStylesTheme = makeStyles(theme => ({
     pageRoot: {
-        //height: '100%',
-        fontFamily:'Raleway'
+        height: '90%',
+        fontFamily:'Raleway',
+        marginTop: 70
     },
     pageContainer: {
         //height: '100%',
         //maxHeight: 'calc(100vh - 90px)',
         [theme.breakpoints.down('sm')]: {
-            padding: 10
+            padding: 0
         }
     },
     pageCard: {
-        marginLeft: 99,
+        marginLeft: marginLeftPageCard,
         //height: '90vh',
         //backgroundColor: 'rgba(255,255,255, 0.8)',
         fontFamily:'Raleway',
@@ -105,12 +114,19 @@ export const useStylesTheme = makeStyles(theme => ({
     }
 }))
 
+let width;
+if(window.screen.width < 500) {
+    width = '80%'
+}else{
+    width = '30%'
+}
+
 export const styleModal = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '50%',
+    width: width,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     borderRadius: 20,

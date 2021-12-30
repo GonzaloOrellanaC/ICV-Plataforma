@@ -71,22 +71,13 @@ const CardButton = ({ variant, disableButton }) => {
             return dictionary.admin.adminUsersButton
         }
     }
-    {/* <div className={classes.root}>
-            <Button onClick={() => {history.push(`/${variant}`)}} variant="contained" className={classes.buttonSelection} disabled={disableButton}>
-                <div className={classes.icon}>
-                    {handleTypeIcon()}
-                    <br />
-                    <p style={{fontSize:'1.5vw', marginBottom: 0, fontWeight: 'bold'}}>{handleTypeText()}</p>
-                </div>
-            </Button>
-        </div> */}
 
     return (
         <Button onClick={() => {history.push(`/${variant}`)}} variant="contained" className={classes.buttonSelection} disabled={disableButton}>
             <div className={classes.icon}>
                 {handleTypeIcon()}
                 <br />
-                <p style={{fontSize:'1.5vw', marginBottom: 0, fontWeight: 'bold'}}>{handleTypeText()}</p>
+                <p className='button-font-size'>{handleTypeText()}</p>
             </div>
         </Button>
     )

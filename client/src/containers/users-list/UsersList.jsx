@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Toolbar, ListItem, IconButton } from "@material-ui/core";
+import { Toolbar, ListItem, IconButton, Grid } from "@material-ui/core";
 import { faInfoCircle, faPen, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, useHistory } from 'react-router-dom';
@@ -80,7 +80,7 @@ const UsersList = ({height, hableButton}) => {
     return (
         <div style={{height: height}}>
             <div style={{height: height}}>
-                <Toolbar style={{width: '100%'}}>
+                {/* <Toolbar style={{width: '100%'}}>
                     <h1>Administrar usuarios</h1>
                     <Link to="/new-users">
                         <button disabled={!hableButton} style={{position: 'absolute', right: 20, width: 171, height: 38, borderRadius: 23, fontSize: 16}}>
@@ -88,7 +88,24 @@ const UsersList = ({height, hableButton}) => {
                             Crear usuario
                         </button>
                     </Link>
-                </Toolbar>
+                </Toolbar> */}
+                <Grid container spacing={5}>
+                    <Grid item xs={12} sm={12} md={8} lg={8}>
+                        <Toolbar style={{width: '100%'}}>
+                            <h1>Administrar usuarios</h1>
+                        </Toolbar>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={4} lg={4}>
+                        <Toolbar style={{width: '100%', textAlign: 'right'}}>
+                            <Link to="/new-users">
+                                <button disabled={!hableButton} style={{/* position: 'absolute', right: 20,  */width: 171, height: 38, borderRadius: 23, fontSize: 16}}>
+                                    <FontAwesomeIcon icon={faUser} style={{marginRight: 10}}/>
+                                    Crear usuario
+                                </button>
+                            </Link>
+                        </Toolbar>
+                    </Grid>
+                </Grid>
                 <div>
                     <ListItem>
                         <div style={{width: '15%', marginLeft: 5}}>
