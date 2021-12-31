@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 import { Drawer, Grid, ListItem, IconButton, makeStyles } from '@material-ui/core'
 import { Menu, Close, List } from '@material-ui/icons'
@@ -11,6 +11,13 @@ import logo from '../../assets/Logologo_icv_1.svg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCog, faHome, faInfoCircle, faSignOutAlt, faTools, faSearch, faClipboardList, faMapMarkerAlt, faList, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { useAuth, useNavigation } from '../../context'
+
+
+
+
+//let color;
+
+
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -108,6 +115,9 @@ const Navbar = () => {
     const { navBarOpen, handleNavBar } = useNavigation()
     const { userData } = useAuth();
     const [ useButon, setUseButton ] = useState()
+    const [ path, setPath ] = useState('')
+    const history = useHistory();
+
 
     const logout = async () => {
         window.localStorage.clear();
@@ -132,6 +142,10 @@ const Navbar = () => {
     }
 
     useEffect(() => {
+        setPath(history.location.pathname)
+        if(history.listen(data => {
+            setPath(data.pathname)
+        }))
         setUseButton(true)
         const timer = setInterval(() => {
             if(!(localStorage.getItem('sitio'))) {
@@ -179,21 +193,21 @@ const Navbar = () => {
                             </div>
                             <div style={{width: '100%', marginTop: 40, textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Inicio'>
-                                    <Link to='/' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                    <Link to='/' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path === '/') ? '#BE2E26' : '#FFFFFF' }}>
                                         <FontAwesomeIcon icon={faHome}/> {navBarOpen ?  ' Inicio' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             {(localStorage.getItem('role')==='admin' || localStorage.getItem('role')==='sapExecutive') && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Obras'>
-                                    <Link to='/sites' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                    <Link to='/sites' className={classes.sideButtons} style={{ color: (path === '/sites') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faMapMarkerAlt}/> {navBarOpen ?  ' Obras' : ''}
                                     </Link>
                                 </IconButton>
                             </div>}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 {useButon && <IconButton onClick={closeSideBar} title='Inspección'>
-                                    <Link to='/inspection' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                    <Link to='/inspection' className={classes.sideButtons} style={{ color: (path.includes('/inspection')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faSearch}/> {navBarOpen ?  ' Inspección' : ''}
                                     </Link>
                                 </IconButton>}
@@ -203,7 +217,7 @@ const Navbar = () => {
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 {useButon && <IconButton onClick={closeSideBar} title='Mantención'>
-                                    <Link to='/maintenance' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                    <Link to='/maintenance' className={classes.sideButtons} style={{ color: (path.includes('/maintenance')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faTools}/> {navBarOpen ?  ' Mantención' : ''}
                                     </Link>
                                 </IconButton> }
@@ -213,35 +227,35 @@ const Navbar = () => {
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Reportes'>
-                                    <Link to='/reports' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                    <Link to='/reports' className={classes.sideButtons} style={{ color: (path.includes('/reports')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faClipboardList}/> {navBarOpen ?  ' Reportes' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Administración'>
-                                    <Link to='/administration' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                    <Link to='/administration' className={classes.sideButtons} style={{ color: (path.includes('/administration')||path.includes('/users')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faUserCog}/> {navBarOpen ?  ' Administración' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Listado Pautas'>
-                                    <Link to='/pms' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                    <Link to='/pms' className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faList}/> {navBarOpen ?  ' Listado Pautas' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar}  title='Configuración'>
-                                    <Link to='/configuration' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                    <Link to='/configuration' className={classes.sideButtons} style={{ color: (path === '/configuration') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faCog}/> {navBarOpen ?  ' Configuración' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar}  title='Información'>
-                                    <Link to='/information' className={classes.sideButtons} style={{ textDecoration: 'none' }}>
+                                    <Link to='/information' className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faInfoCircle}/> {navBarOpen ?  ' Información' : ''}
                                     </Link>
                                 </IconButton>

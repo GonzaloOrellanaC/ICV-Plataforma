@@ -7,11 +7,13 @@ const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
     const defaultAuthenticated  = Boolean(window.localStorage.getItem('isauthenticated'));
+    const defaultAdmin = Boolean(window.localStorage.getItem('isAdmin'));
     const [isAuthenticated, setIsAuthenticated] = useState(defaultAuthenticated || false)
     const [getSelf, { loading, error, data }] = useLazyQuery(UsersGraphQL.query.GET_SELF)
-    const [userData, setUserData] = useState({})
+    const [userData, setUserData] = useState({});
+    const [ admin, setAdmin ] = useState(defaultAdmin || false)
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (data?.self) {
             setUserData(data.self)
         }
@@ -29,13 +31,14 @@ export const AuthProvider = (props) => {
 
     useEffect(() => {
         getSelf()
-    }, [])
+    }, []) */
 
     const provider = {
         userData,
         isAuthenticated,
         loading,
         error,
+        admin,
         login: (email, password) => {
             return new Promise(resolve => {
                 authRoutes.login(email, password)
@@ -49,6 +52,13 @@ export const AuthProvider = (props) => {
                         localStorage.setItem('lastName', userDataToSave.lastName);
                         localStorage.setItem('_id', userDataToSave._id);
                         localStorage.setItem('role', userDataToSave.role);
+                        if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
+                            localStorage.setItem('isAdmin', true);
+                            setAdmin(true)
+                        }else{
+                            localStorage.setItem('isAdmin', false);
+                            setAdmin(false)
+                        }
                         if(userDataToSave.sites) {
                             localStorage.setItem('sitio', userDataToSave.sites);
                         }

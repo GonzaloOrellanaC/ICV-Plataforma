@@ -20,6 +20,15 @@ const VersionControlModal = ({open, closeModal}) => {
                         Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.
                     </p>
                     <p>
+                        <strong>v.2.9.1</strong>
+                        <li>
+                            Se habilita color burdeo en navegación por barra lateral.
+                        </li>
+                        <li>
+                            Se corrige problemas de acceso a áreas no permitidas, a pesar de contar con privilegios.
+                        </li>
+                    </p>
+                    <p>
                         <strong>v.2.9</strong>
                         <li>
                             Se habilita restablecimiento de contraseña.
