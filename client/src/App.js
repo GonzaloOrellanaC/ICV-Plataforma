@@ -43,6 +43,8 @@ const errorLink = onError(({ graphQLErrors, networkError, response }) => {
     if (networkError?.statusCode === 401) {
         console.log(networkError)
         console.log(`[Network error]: ${networkError.statusCode}`)
+        console.log(graphQLErrors)
+        console.log(response)
     }else{
 
     }
@@ -66,14 +68,7 @@ const client = new ApolloClient({
 
 const OnApp = () => {
     const { isAuthenticated, loading, admin } = useAuth();
-    //const [ admin, setAdmin ] = useState(false);
     console.log(isAuthenticated, loading, admin)
-
-    /* useEffect(() => {
-        if(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') {
-            setAdmin(true)
-        }
-    }, []) */
 
     return (
         <div style={{fontFamily: 'Roboto'}}>

@@ -8,14 +8,15 @@ const AuthContext = createContext()
 export const AuthProvider = (props) => {
     const defaultAuthenticated  = Boolean(window.localStorage.getItem('isauthenticated'));
     const defaultAdmin = Boolean(window.localStorage.getItem('isAdmin'));
-    const [isAuthenticated, setIsAuthenticated] = useState(defaultAuthenticated || false)
-    const [getSelf, { loading, error, data }] = useLazyQuery(UsersGraphQL.query.GET_SELF)
-    const [userData, setUserData] = useState({});
+    const [ isAuthenticated, setIsAuthenticated ] = useState(defaultAuthenticated || false)
+    const [ getSelf, { loading, error, data } ] = useLazyQuery(UsersGraphQL.query.GET_SELF)
+    const [ userData, setUserData ] = useState({});
     const [ admin, setAdmin ] = useState(defaultAdmin || false)
 
-    /* useEffect(() => {
+     useEffect(() => {
         if (data?.self) {
             setUserData(data.self)
+            console.log(data?.self)
         }
         if(!data) {
 
@@ -24,14 +25,14 @@ export const AuthProvider = (props) => {
 
     useEffect(() => {
         if (error) {
-            setIsAuthenticated(false)
-            window.localStorage.setItem('isauthenticated', false)
+            /* setIsAuthenticated(false)
+            window.localStorage.setItem('isauthenticated', false) */
         }
     }, [error])
 
     useEffect(() => {
         getSelf()
-    }, []) */
+    }, []) 
 
     const provider = {
         userData,
@@ -52,7 +53,7 @@ export const AuthProvider = (props) => {
                         localStorage.setItem('lastName', userDataToSave.lastName);
                         localStorage.setItem('_id', userDataToSave._id);
                         localStorage.setItem('role', userDataToSave.role);
-                        if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
+                        if(userDataToSave.role === 'admin' || userDataToSave.role === 'sapExecutive') {
                             localStorage.setItem('isAdmin', true);
                             setAdmin(true)
                         }else{
