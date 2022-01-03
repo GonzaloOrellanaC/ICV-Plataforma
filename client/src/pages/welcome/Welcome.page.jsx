@@ -50,7 +50,9 @@ const WelcomePage = () => {
             localStorage.setItem('version', environment.version);
         }
         setDate(fecha(Date.now()))
-        setHora(hour(Date.now()))
+        setInterval(() => {
+            setHora(hour(Date.now()))
+        }, 100);
     }, []);
 
     const logout = async () => {
