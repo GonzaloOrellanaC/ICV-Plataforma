@@ -20,6 +20,12 @@ const VersionControlModal = ({open, closeModal}) => {
                         Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.
                     </p>
                     <p>
+                        <strong>v.2.9.4</strong>
+                        <li>
+                            Reparaciones en servicio de reset de contraseña.
+                        </li>
+                    </p>
+                    <p>
                         <strong>v.2.9.3</strong>
                         <li>
                             Formulario de creación de usuarios con modificaciones. Se generan alertas y bordes rojos en inputs para identificar el estado del formulario.

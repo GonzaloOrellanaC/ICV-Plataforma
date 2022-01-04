@@ -31,10 +31,21 @@ const ResetPassword = () => {
     }
 
     const handleSubmit = async (event) => {
-        event.preventDefault()
-        let forgotPasswordState = await requestNewPassword();
-        alert(forgotPasswordState.data.message);
-        history.replace('/')
+        try{
+            event.preventDefault()
+            let forgotPasswordState = await requestNewPassword();
+            console.log(forgotPasswordState)
+            if(forgotPasswordState.data.status) {
+                if(forgotPasswordState.data.status === 'no-email') {
+                    alert(forgotPasswordState.data.message);
+                }
+            }else{
+                alert(forgotPasswordState.data.message);
+                history.replace('/')
+            }
+        }catch (err) {
+            console.log('No se pudo obtener el reset')
+        }
     }
 
     const requestNewPassword = () => {

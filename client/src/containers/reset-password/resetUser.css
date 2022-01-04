@@ -1,0 +1,39 @@
+.isInvalid {
+    border: 2px solid #ff0000;
+}
+
+.isValid {
+    border: /* 2px solid */ #27a008;
+}
+
+progress {
+    -webkit-appearance: none;
+}
+progress::-webkit-progress-bar-value {
+-webkit-appearance: none;
+/* background: rgb(0, 255, 13); */
+}
+
+/* .nivelBajo {
+    background-color: #ff0000;
+}
+
+.nivelBajo::-webkit-progress-bar {
+    background: red;
+  }
+
+.nivelMedioBajo::-moz-progress-bar {
+    color: #ff7b00;
+}
+
+.nivelMedio::-webkit-progress-bar {
+    color: #ffe600;
+}
+
+.nivelMedioAlto::-webkit-progress-bar {
+    color: #9dff00;
+}
+
+.nivelAlto::-webkit-progress-bar {
+    color: #00ff2a;
+} */

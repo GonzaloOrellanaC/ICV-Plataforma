@@ -160,11 +160,18 @@ const changePassword = async (userId, password) => {
  */
 const forgotPassword = async (email) => {
     const findUser = await Users.findOneAndUpdate({ email }, { updatedAt: new Date() }, { new: true, timestamps: false })
-    try {
-        const token = findUser.generateResetToken()
-        return { token, fullName: findUser.fullName, email: findUser.email }
-    } catch (error) {
-        throw new Error(errorMsg.resetToken)
+    console.log(findUser);
+    if(!findUser) {
+        return { token: null, fullName: null, email: null }
+    }
+    else{
+        try {
+            const token = findUser.generateResetToken()
+            return { token, fullName: findUser.fullName, email: findUser.email }
+        } catch (error) {
+            console.log(errorMsg.resetToken)
+            throw new Error(errorMsg.resetToken)
+        }
     }
 }
 
