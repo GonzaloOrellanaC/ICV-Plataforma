@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
-
-import { Drawer, Grid, ListItem, IconButton, makeStyles } from '@material-ui/core'
-import { Menu, Close, List } from '@material-ui/icons'
-
-import clsx from 'clsx'
-
-import logo from '../../assets/Logologo_icv_1.svg'
-//import logo from '../../assets/logo_icv.png'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCog, faHome, faInfoCircle, faSignOutAlt, faTools, faSearch, faClipboardList, faMapMarkerAlt, faList, faUserCog } from '@fortawesome/free-solid-svg-icons'
-import { useAuth, useNavigation } from '../../context'
-
-
-
-
-//let color;
-
-
+import React, { useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { Drawer, Grid, IconButton, makeStyles } from '@material-ui/core';
+import { Menu, Close } from '@material-ui/icons';
+import clsx from 'clsx';
+import logo from '../../assets/Logologo_icv_1.svg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+    faCog, 
+    faHome, 
+    faInfoCircle, 
+    faSignOutAlt, 
+    faTools, 
+    faSearch, 
+    faClipboardList, 
+    faMapMarkerAlt, 
+    faList, 
+    faUserCog } from '@fortawesome/free-solid-svg-icons';
+import { useAuth, useNavigation } from '../../context';
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -134,7 +133,6 @@ const Navbar = () => {
         }
     }
 
-
     const closeSideBar = () => {
         if(navBarOpen) {
             handleNavBar()
@@ -156,7 +154,6 @@ const Navbar = () => {
             }
         }, 1000);
     }, [])
-
 
     return (
         <div>
@@ -269,13 +266,6 @@ const Navbar = () => {
                             </div>
                         </Grid>
                     </Grid>
-                    {/* <Grid container spacing={2} style={{ padding: navBarOpen ? 8 : '8px 0 0 0', position: 'absolute', bottom: 30, width: "100%", textAlign: 'center' }}>
-                        <Grid style={{width: "100%", textAlign: 'center'}}> 
-                            
-                        </Grid>
-                    </Grid> */}
-                    
-                    
                 </div>
             </Drawer>
         </div>

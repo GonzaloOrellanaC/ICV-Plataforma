@@ -50,7 +50,7 @@ const readMachinesByModel = ( req, res ) => {
             res.status(502).json({message: 'Error de lectura en Base de Datos'})
             throw err
         }
-        //console.log(sites)
+        console.log(sites)
         res.status(200).json(sites)
     })
 }

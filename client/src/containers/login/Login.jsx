@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import { Button, Grid, Link, makeStyles, TextField } from '@material-ui/core'
 import { useAuth, useLanguage } from '../../context'
@@ -19,6 +20,7 @@ const Login = () => {
     const [ password, setPassword ] = useState('')
     const classes = useStyles()
     const [ userData, setUserData ] = useState({})
+    const history = useHistory();
 
     const handleChange = (event) => {
         switch (event?.target?.name) {
@@ -29,20 +31,17 @@ const Login = () => {
         }
     }
 
+    useEffect(() => {
+        if(history.location.pathname.length > 1) {
+            history.replace('/')
+        }
+    }, [])
+
     const handleSubmit = async (event) => {
         event.preventDefault()
         let loginState = await login(email, password);
         if(loginState) {
             console.log(loginState.response.data)
-            /* let userDataToSave = loginState.response.data;
-            setUserData(userDataToSave);
-            localStorage.setItem('email', userDataToSave.email);
-            localStorage.setItem('fullName', userDataToSave.fullName);
-            localStorage.setItem('name', userDataToSave.name);
-            localStorage.setItem('lastName', userDataToSave.lastName);
-            localStorage.setItem('_id', userDataToSave._id);
-            localStorage.setItem('role', userDataToSave.role);
-            localStorage.setItem('isauthenticated', true); */
         }
     }
 

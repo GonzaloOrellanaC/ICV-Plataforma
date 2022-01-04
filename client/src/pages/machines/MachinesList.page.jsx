@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Card, Grid, Toolbar, IconButton, List, ListItem, ImageListItem, Modal, Button, Fab } from '@material-ui/core';
-import { Close } from '@material-ui/icons'
-
-import { useHistory, useParams } from 'react-router-dom'
-import { useStylesTheme } from '../../config'
-import { ArrowBackIos } from '@material-ui/icons'
-import { MVAvatar, PautaDetail } from '../../containers'
-import { apiIvcRoutes } from '../../routes';
+import React, { useEffect, useState } from 'react';
+import { Box, Card, Grid, Toolbar, IconButton, List, Modal, Fab } from '@material-ui/core';
+import { Close } from '@material-ui/icons';
+import { useHistory, useParams } from 'react-router-dom';
+import { useStylesTheme } from '../../config';
+import { ArrowBackIos } from '@material-ui/icons';
+import { MVAvatar } from '../../containers';
+import { machinesDatabase } from '../../indexedDB';
 
 const MachinesListPage = ({route}) => {  
     const [ routeData, setRouteData ] = useState('');
@@ -38,52 +37,25 @@ const MachinesListPage = ({route}) => {
         history.replace(`machine-detail/${JSON.stringify(newMachine)}`)
     }
 
-    const machines = [
-        {
-            id: 0,
-            internalNumber: 342,
-            hourmeter: 33345,
-            mSerial: 123456,
-        },
-        {
-            id: 1,
-            internalNumber: 343,
-            hourmeter: 33345,
-            mSerial: 123456,
-        },
-        {
-            id: 2,
-            internalNumber: 345,
-            hourmeter: 33345,
-            mSerial: 123456,
-        },
-        {
-            id: 3,
-            internalNumber: 350,
-            hourmeter: 33345,
-            mSerial: 123456,
+    const readAllMachinesFromIndexedDB = async (model) => {
+        let db = await machinesDatabase.initDbMachines();
+        if(db) {
+            let readAllMachines = [] = await machinesDatabase.consultar(db.database);
+            console.log(readAllMachines);
+            setMachinesList(
+                readAllMachines
+                .filter(machine => {if(machine.model === model) { return machine}})
+                .sort((a, b) => {return a.equ - b.equ})
+            )
+            
         }
-    ]
-
-    const readAllMachines = () => {
-        apiIvcRoutes.getAllMachines().then(machines => {
-            console.log(machines.data)
-        })
-    }
-
-    const readMachinesByModel = (model) => {
-        apiIvcRoutes.getAllMachinesByModel(idobra, model).then(machines => {
-            console.log(machines.data)
-            setMachinesList(machines.data)
-        })
     }
 
 
     useEffect(() => {
-        //readAllMachines()
         console.log(route)
         console.log(JSON.parse(id));
-        readMachinesByModel(JSON.parse(id).model)
+        readAllMachinesFromIndexedDB(JSON.parse(id).model);
         if(!site) {
             history.goBack()
         }

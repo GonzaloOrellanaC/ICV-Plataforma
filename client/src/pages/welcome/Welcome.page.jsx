@@ -3,7 +3,7 @@ import { Box, Card, Grid, Typography, Modal, Button } from '@material-ui/core'
 import { environment, useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes } from '../../routes'
-import { pmsDatabase, sitesDatabase, FilesToStringDatabase, trucksDatabase, } from '../../indexedDB'
+import { pmsDatabase, sitesDatabase, FilesToStringDatabase, trucksDatabase, machinesDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import hour from './hour'
 import fecha from './date'
@@ -77,7 +77,6 @@ const WelcomePage = () => {
                 let sites = [];
                 sites = await getSitesList();
                 let db = await sitesDatabase.initDbObras();
-                ////console.log(db)
                 if(db) {
                     const response = await sitesDatabase.consultar(db.database);
                     if(response) {
@@ -100,21 +99,30 @@ const WelcomePage = () => {
         if(revisarData) {
             setOpenLoader(true)
             setLoadingData('Descargando datos de las obras.');
-            setProgress(50)
+            setProgress(30)
             const responseSites = await getSites();
             setTimeout(async () => {
                 if(responseSites) {
                     console.log(responseSites)
                     setLoadingData('Descargando datos de las máquinas.')
-                    setProgress(100)
+                    setProgress(65)
                     const responseTrucks = await getTrucksList();
-                    if(responseTrucks) {
-                        console.log(responseTrucks)
-                        setTimeout(async () => {
-                            let n = 0;
-                            await get3dElement(n, responseTrucks)
-                        }, 1000);
-                    }
+                    setTimeout(async() => {
+                        if(responseTrucks) {
+                            setLoadingData('Descargando lista de las máquinas de las obras.')
+                            setProgress(100)
+                            console.log(responseTrucks)
+                            const getMachines = await getMachinesList();
+                            if(getMachines) {
+                                setTimeout(async () => {
+                                    let n = 0;
+                                    await get3dElement(n, responseTrucks)
+                                }, 1000);
+                            }
+                        }else{
+                            setOpenLoader(false)
+                        }
+                    }, 1000);
                 }else{
                     setOpenLoader(false)
                 }
@@ -158,11 +166,9 @@ const WelcomePage = () => {
                         let chunksAll = new Uint8Array(receivedLength); // (4.1)
                         let position = 0;
                         for(let chunk of chunks) {
-                        chunksAll.set(chunk, position); // (4.2)
-                        position += chunk.length;
+                            chunksAll.set(chunk, position); // (4.2)
+                            position += chunk.length;
                         }
-    
-                        // Step 5: decode into a string
                         let result = new TextDecoder("utf-8").decode(chunksAll);
                         let db = await FilesToStringDatabase.initDb3DFiles();
                         console.log('Se actualiza')
@@ -188,9 +194,7 @@ const WelcomePage = () => {
         return new Promise(async resolve => {
             let sites = [];
             sites = await getSitesList();
-            //console.log(sites)
             let db = await sitesDatabase.initDbObras();
-            ////console.log(db)
             if(db) {
                 sites.forEach(async (fileName, index) => {
                     fileName.id = index;
@@ -206,15 +210,33 @@ const WelcomePage = () => {
         })
     }
 
+    const getMachinesList = () => {
+        return new Promise(async resolve => {
+            let machines = [];
+            machines = await getAllMachines();
+            let db = await machinesDatabase.initDbMachines();
+            if(db) {
+                machines.forEach(async (machine, index) => {
+                    machine.id = index;
+                    await machinesDatabase.actualizar(machine, db.database);
+                    if(index === (machines.length - 1)) {
+                        const response = await machinesDatabase.consultar(db.database);
+                        if(response) {
+                            resolve(true)
+                        }
+                    } 
+                });
+            }
+        })
+    }
+
     const getTrucksList = () => {
         return new Promise(async resolve => {
             let machines = [];
             machines = await getMachines();
             let db = await trucksDatabase.initDbMachines();
-            //console.log(db)
             if(db) {
                 machines.forEach(async (fileName, index) => {
-                    //console.log(fileName)
                     fileName.id = index;
                     var xhr = new XMLHttpRequest();
                     xhr.onload = async () => {
@@ -229,9 +251,6 @@ const WelcomePage = () => {
                         reader.readAsDataURL(xhr.response);
                         
                         if(index === (machines.length - 1)) {
-                            /* let database = await trucksDatabase.initDbMachines();
-                            let respuestaConsulta = await trucksDatabase.consultar(database.database);
-                            console.log(respuestaConsulta) */
                             let respuestaConsulta = await consultTrucks(machines)
                             resolve(respuestaConsulta)
                         }
@@ -247,7 +266,6 @@ const WelcomePage = () => {
     const consultTrucks = (machines) => {
         return new Promise(async resolve=>{
             let database = await trucksDatabase.initDbMachines();
-            //let respuestaConsulta = await trucksDatabase.consultar(database.database);
             let respuestaConsulta;
             do {
                 respuestaConsulta = await trucksDatabase.consultar(database.database);
@@ -260,6 +278,8 @@ const WelcomePage = () => {
         })
     }
 
+    
+
     const getMachines = () => {
         return new Promise(resolve => {
             apiIvcRoutes.getMachines()
@@ -268,6 +288,16 @@ const WelcomePage = () => {
             })
             .catch(err => {
                 //console.log('Error', err)
+            })
+        })
+    }
+
+    const getAllMachines = () => {
+        return new Promise(resolve => {
+            apiIvcRoutes.getAllMachines()
+            .then(data => {
+                console.log(data.data)
+                resolve(data.data)
             })
         })
     }
@@ -297,7 +327,6 @@ const WelcomePage = () => {
         return new Promise(resolve => {
             apiIvcRoutes.getSites()
             .then(data => {
-                //console.log(data.data);
                 if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
                     localStorage.setItem('sitio', JSON.stringify(data.data[0]));
                     setTimeout(() => {
@@ -326,8 +355,8 @@ const WelcomePage = () => {
     }
 
     return (
-        <div /* className={classes.pageContainer} */>
-            <div className='container' /* className={classes.pageCard} */>
+        <div>
+            <div className='container'>
                 <Grid container spacing={5}>
                     <div>
                         <p className='titulo'>Hola {localStorage.getItem('name')} ¿Por dónde quieres comenzar hoy?</p>
@@ -369,7 +398,6 @@ const WelcomePage = () => {
                 </Grid>
             </div>
             <LoadingModal open={openLoader} progress={progress} loadingData={loadingData} withProgress={true}/>
-            {/* <LoadingModal open={true} loadingData={'prueba de funcionamiento'} withProgress={false}/> */}
             <VersionControlModal open={openVersion} closeModal={closeModal} />
         </div>
     )
