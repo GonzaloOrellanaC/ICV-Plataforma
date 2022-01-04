@@ -139,37 +139,41 @@ const AdminNewUserPage = () => {
         if(user) {
             if(user.rut) {
                 if(validate(user.rut)) {
-                    console.log(user);
-                    let infoFaltante = []
-                    Object.values(user).map(async (value, index) => {
-                        if(!value) {
-                            if(!id) {
-                                habilitado = false
+                    if(user.phone.length >= 9) {
+                        console.log(user);
+                        let infoFaltante = []
+                        Object.values(user).map(async (value, index) => {
+                            if(!value) {
+                                if(!id) {
+                                    habilitado = false
+                                }
+                                console.log(Object.keys(user)[index], value)
+                                infoFaltante.push(await transformInfo(Object.keys(user)[index]))
                             }
-                            console.log(Object.keys(user)[index], value)
-                            infoFaltante.push(await transformInfo(Object.keys(user)[index]))
-                        }
-                        console.log(index, (Object.values(user).length), Object.keys(user)[index])
-                        if(index == (Object.values(user).length - 1)) {
-                            console.log(habilitado)
-                            if(!habilitado) {
-                                setTimeout(() => {
-                                    console.log(JSON.stringify(infoFaltante))
-                                alert('Faltan datos: ' + JSON.stringify(infoFaltante))
-                                }, 100);
-                            }else{
-                                if(id) {
-                                    setUsageModule(usageModule + 1)
+                            console.log(index, (Object.values(user).length), Object.keys(user)[index])
+                            if(index == (Object.values(user).length - 1)) {
+                                console.log(habilitado)
+                                if(!habilitado) {
+                                    setTimeout(() => {
+                                        console.log(JSON.stringify(infoFaltante))
+                                    alert('Faltan datos: ' + JSON.stringify(infoFaltante))
+                                    }, 100);
                                 }else{
-                                    if(user.password === user.confirmPassword) {
+                                    if(id) {
                                         setUsageModule(usageModule + 1)
                                     }else{
-                                        alert('Contraseñas no coinciden')
+                                        if(user.password === user.confirmPassword) {
+                                            setUsageModule(usageModule + 1)
+                                        }else{
+                                            alert('Contraseñas no coinciden')
+                                        }
                                     }
                                 }
                             }
-                        }
-                    })
+                        })
+                    }else{
+                        alert('Teléfono debe contar con al menos 9 carácteres')
+                    }
                 }else{
                     alert('Rut inválido. Revise los datos.')
                 }
