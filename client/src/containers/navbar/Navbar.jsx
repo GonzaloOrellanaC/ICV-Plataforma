@@ -116,6 +116,7 @@ const Navbar = () => {
     const [ useButon, setUseButton ] = useState()
     const [ path, setPath ] = useState('')
     const history = useHistory();
+    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true)
 
 
     const logout = async () => {
@@ -140,6 +141,9 @@ const Navbar = () => {
     }
 
     useEffect(() => {
+        if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive')) {
+            setDisableButtonsNoSAP(false);
+        }
         setPath(history.location.pathname)
         if(history.listen(data => {
             setPath(data.pathname)
@@ -222,20 +226,20 @@ const Navbar = () => {
                                     <FontAwesomeIcon icon={faTools}/> {navBarOpen ?  ' Mantención' : ''}
                                 </IconButton>}
                             </div>
-                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                            {!disableButtonNoSAP && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Reportes'>
                                     <Link to='/reports' className={classes.sideButtons} style={{ color: (path.includes('/reports')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faClipboardList}/> {navBarOpen ?  ' Reportes' : ''}
                                     </Link>
                                 </IconButton>
-                            </div>
-                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                            </div>}
+                            {!disableButtonNoSAP && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Administración'>
                                     <Link to='/administration' className={classes.sideButtons} style={{ color: (path.includes('/administration')||path.includes('/users')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faUserCog}/> {navBarOpen ?  ' Administración' : ''}
                                     </Link>
                                 </IconButton>
-                            </div>
+                            </div>}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Listado Pautas'>
                                     <Link to='/pms' className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>

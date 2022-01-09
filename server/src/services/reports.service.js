@@ -108,6 +108,27 @@ const getReportByState = (req, res) => {
     }
 }
 
+const getReportsByUser = (req, res) => {
+    const { body } = req;
+    console.log(body);
+    let reportList = new Array()
+    try {
+        Reports.find({}, (err, reports) => {
+            reports.forEach((report, i) => {
+                if(report.usersAssigned[0] === body.userId ) {
+                    reportList.push(report)
+                }
+                if(i == (reports.length - 1)) {
+                    res.json(reportList)
+                }
+            })
+            
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 const countTotalReports = () => {
     return new Promise(resolve => {
         Reports.find({}, (err, reports) => {
@@ -124,5 +145,6 @@ export default {
     getReportByIndex,
     getReportByGuide,
     getReportByType,
-    getReportByState
+    getReportByState,
+    getReportsByUser
 }

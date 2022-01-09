@@ -3,11 +3,11 @@ import { Box, Card, Grid, Typography, Modal, Button } from '@material-ui/core'
 import { environment, useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes } from '../../routes'
-import { /* pmsDatabase */ sitesDatabase, FilesToStringDatabase, trucksDatabase, machinesDatabase, pautasDatabase } from '../../indexedDB'
+import { /* pmsDatabase */ sitesDatabase, FilesToStringDatabase, trucksDatabase, machinesDatabase, pautasDatabase, reportsDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import hour from './hour'
 import fecha from './date'
-//import style from './style'
+import getMyReports from './getMyReports'
 import './style.css'
 
 //const styleWelcomePage = style;
@@ -95,6 +95,24 @@ const WelcomePage = () => {
 
     const readData = async () => {
         const revisarData = await setIfNeedReadDataAgain();
+        const userRole = localStorage.getItem('role');
+        if(userRole==='admin'||userRole==='superAdmin'||userRole==='sapExecutive') {
+            
+        }else{
+            const reports = await getMyReports(localStorage.getItem('_id'));
+            console.log(reports);
+            let db = await reportsDatabase.initDbReports();
+            if(db) {
+                reports.forEach((report, i) => {
+                    report.idDatabase = i;
+                    reportsDatabase.actualizar(report, db.database);
+                    if(i == (reports.length - 1)) {
+                        console.log('Reportes guardados')
+                    }
+                })
+                
+            }
+        }
         if(revisarData) {
             setOpenLoader(true)
             setLoadingData('Descargando pautas de mantenimiento e inspección.');
@@ -476,7 +494,7 @@ const WelcomePage = () => {
                             <CardButton variant='maintenance' disableButton={disableButton}/>
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={3}>
-                            <CardButton variant='reports'/>
+                            <CardButton variant='reports' disableButton={disableButtonNoSAP}/>
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={3}>
                             <CardButton variant='administration' disableButton={disableButtonNoSAP}/>

@@ -10,5 +10,6 @@ router.post('/getReportByIndex', ReportsService.getReportByIndex)
 router.post('/getReportByGuide', ReportsService.getReportByGuide)
 router.post('/getReportByType', ReportsService.getReportByType)
 router.post('/getReportByState', ReportsService.getReportByState)
+router.post('/getReportsByUser', ReportsService.getReportsByUser)
 
 export default router
