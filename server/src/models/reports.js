@@ -11,12 +11,15 @@ const ReportShema = new Schema({
     },
     enabled: {
         type: Schema.Types.Boolean,
-        default: false
+        default: true
     },
     usersAssigned: {
         type: Schema.Types.Array
     },
     state: {
+        type: Schema.Types.String
+    },
+    site: {
         type: Schema.Types.String
     },
     reportType: {

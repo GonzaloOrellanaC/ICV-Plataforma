@@ -1,0 +1,26 @@
+.container-width {
+    padding-top: 90px;
+    padding-left: 100px;
+    width: 100%;
+    font-family: 'Raleway';
+}
+
+.menu-card {
+    background-color: #F9F9F9;
+    padding: 10px;
+    margin-left: 10px;
+    border-radius: 30px;
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 560px) {
+    .container-width {
+        padding-left: 80px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .container-width {
+        padding-left: 60px;
+    }
+}

@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 
 import { environment } from "./src/config";
-import { databaseLoader, expressLoader, apiIcvLoader } from "./src/loaders";
+import { databaseLoader, expressLoader } from "./src/loaders";
 import { AccessControlServices } from "./src/services";
 
 const startServer = async () => {
@@ -10,7 +10,7 @@ const startServer = async () => {
     await databaseLoader();
 
     /* Carga de recursos desde API ICV */
-    await apiIcvLoader();
+    //await apiIcvLoader();
 
     /* Carga de recursos servidor */
     const app = await expressLoader();

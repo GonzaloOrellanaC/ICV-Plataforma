@@ -98,6 +98,9 @@ const OnApp = () => {
                         <Route exact path='/reports/create-report'>
                             <CreateReports route='reports'/>
                         </Route>
+                        <Route exact path='/reports/edit-report/:id'>
+                            <CreateReports route='reports'/>
+                        </Route>
                     </Switch>
                 </Route>
                 <Route path={['/alerts']}>

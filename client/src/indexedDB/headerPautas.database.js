@@ -1,7 +1,7 @@
-const initDbMachines = () => {
+const initDbPMs = () => {
     const indexedDb = window.indexedDB;
 
-    const conexion = indexedDb.open('Machines',1)
+    const conexion = indexedDb.open('PMs',1)
 
     let db
 
@@ -19,7 +19,7 @@ const initDbMachines = () => {
     
         conexion.onupgradeneeded = (e) =>{
             db = e.target.result
-            const coleccionObjetos = db.createObjectStore('Equips',{
+            const coleccionObjetos = db.createObjectStore('headers',{
                 keyPath: 'id'
             })
             coleccionObjetos.transaction.oncomplete = (event) => {
@@ -41,31 +41,30 @@ const initDbMachines = () => {
 }
 
 const agregar = (data, database) => {
-    const trasaccion = database.transaction(['Equips'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('Equips')
+    const trasaccion = database.transaction(['headers'],'readwrite')
+    const coleccionObjetos = trasaccion.objectStore('headers')
     const conexion = coleccionObjetos.add(data)
-    conexion.onsuccess = () =>{
-        //consultar()
-    }
+    //consultar()
 }
 
 const obtener = (clave, database) =>{
-    const trasaccion = database.transaction(['Equips'],'readonly')
-    const coleccionObjetos = trasaccion.objectStore('Equips')
-    const conexion = coleccionObjetos.get(clave)
-
+    return new Promise(result => {
+    const trasaccion = database.transaction(['headers'],'readonly')
+    const coleccionObjetos = trasaccion.objectStore('headers')
+    const conexion = coleccionObjetos.get(Number(clave))
     conexion.onsuccess = (e) =>{
-        
+        result(e.target.result)
     }
+    })
+    
     
 }
 
-const actualizar = (data, database) =>{    
-    
+const actualizar = (data, database) =>{
     return new Promise(resolve => {
         try {
-            const trasaccion = database.transaction(['Equips'],'readwrite')
-            const coleccionObjetos = trasaccion.objectStore('Equips')
+            const trasaccion = database.transaction(['headers'],'readwrite')
+            const coleccionObjetos = trasaccion.objectStore('headers')
             const conexion = coleccionObjetos.put(data)
             
             conexion.onsuccess = () =>{
@@ -75,12 +74,12 @@ const actualizar = (data, database) =>{
         } catch (err) {
             resolve(false)
         }
-    }) 
+    })
 }
 
 const eliminar = (clave, database) =>{      
-    const trasaccion = database.transaction(['Equips'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('Equips')
+    const trasaccion = database.transaction(['headers'],'readwrite')
+    const coleccionObjetos = trasaccion.objectStore('headers')
     const conexion = coleccionObjetos.delete(clave)
 
     conexion.onsuccess = () =>{
@@ -88,27 +87,24 @@ const eliminar = (clave, database) =>{
     }
 }
 
-const consultar = (database) => {
-    return new Promise(resolve => {
-        const trasaccion = database.transaction(['Equips'],'readonly')
-        const coleccionObjetos = trasaccion.objectStore('Equips')
-        const conexion = coleccionObjetos.openCursor()
-
+const consultar = (database) =>{
+    const trasaccion = database.transaction(['headers'],'readonly')
+    const coleccionObjetos = trasaccion.objectStore('headers')
+    const conexion = coleccionObjetos.openCursor()
     
+    return new Promise(resolve => {
         conexion.onsuccess = (e) =>{
             const cursor = e.target.result;
             const allObject = coleccionObjetos.getAll()
             allObject.onsuccess = (ev) => {
-                let result = new Array()
-                result = ev.target.result
-                resolve(result)
+                resolve(ev.target.result)
             }
         }
     })
 }
 
 export default {
-    initDbMachines,
+    initDbPMs,
     agregar,
     obtener,
     actualizar,

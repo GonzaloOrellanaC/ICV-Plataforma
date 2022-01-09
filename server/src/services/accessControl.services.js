@@ -1,7 +1,7 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permisos, Permission, /* PermissionRoles, */ Roles, Site } from '../models';
+import { Permission,Roles, Site, Machine } from '../models';
 import { ApiIcv } from '../api-icv';
 //import { apiIcvLoader } from '../loaders'
 
@@ -37,9 +37,6 @@ const initAccessControl = async () => {
             console.log('Se deberá crear administrador ----->')
             createAdminDefault();
         }
-        if(findSites.length == 0) {
-            //apiIcvLoader()
-        }
         if (!findRoles) {
             environment.roles.forEach(async (role, index) => {
                 let roleCreated = await createRole(role.name, role.dbName);
@@ -61,6 +58,17 @@ const initAccessControl = async () => {
                 }
             })
         }
+        setInterval(async () => {
+            const findMachines = await Machine.find();
+            if(findMachines) {
+                if(findMachines.length > 0) {
+                    findSites.forEach(({idobra}, index) => {
+                        ApiIcv.editMachineToSend(idobra)
+                    })
+                }
+            }
+        }, (86400000 / 2));
+        
     } catch (error) {
         console.error(error)
     }
@@ -101,28 +109,6 @@ const getSites = () => {
         console.log('error al ubicar admin: ', err)
     }
 }
-
-/* const updateAccessControl = async () => {
-    const roles = await PermissionRoles.find()
-    const parsedRoles = {}
-
-    
-        Format should be:
-        {
-            <role._id>: {
-                <resource_name>: {
-                    <premission_type>: [<accesses>]
-                }
-            }
-        }
-    
-    roles?.forEach((role) => {
-        parsedRoles[role._id] = role.resources
-    })
-
-    ac.setGrants(parsedRoles)
-    return 'Access Control updated'
-} */
 
 /**
  * Function to check permissions of a role against the Access Control.

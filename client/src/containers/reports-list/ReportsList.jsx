@@ -1,137 +1,123 @@
 import { useState, useEffect } from "react";
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
-import { Toolbar, ListItem, Checkbox, Modal, Box } from "@material-ui/core";
-import { changeTypeUser } from '../../config'
+import {Box, Grid, Card, makeStyles, Toolbar, IconButton, ListItem, ListItemIcon, ListItemText, Checkbox, Chip} from '@material-ui/core';
+import { machinesRoutes } from '../../routes';
 import { AssignReportModal } from '../../modals'
+import { useHistory } from "react-router-dom";
+import { useStylesTheme } from '../../config';
 
-const styleModal = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '50%',
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    borderRadius: 20,
-    boxShadow: 24,
-    p: 4,
-};
 
-const ReportsList = ({height, reportsList, reportType}) => {
-
+const ReportsList = ({list}) => {
+    const classes = useStylesTheme();
     const [ reportData, setReportData ] = useState(null);
-    const [ openModalState, setOpenModalState ] = useState(false)
+    const [ openModalState, setOpenModalState ] = useState(false);
+    const history = useHistory();
 
     const openModal = (report) => {
+        console.log(report)
         setReportData(report);
         setOpenModalState(true);
     }
 
     const closeModal = () => {
-        setOpenModalState(false)
+        setOpenModalState(false);
     }
 
-    useEffect(() => {
-        
-    }, []);
+    list.forEach(item => {
+        item.date = item.datePrev.replace('T00:00:00.000Z', '');
+        machinesRoutes.getMachineByEquid(item.machine).then(data => {
+            item.hourMeter = (Number(data.data[0].hourMeter)/3600000);
+        })
+    });
 
+    const lista = list.reverse()
 
-    const well = {
-        height: 70,
-        borderRadius: 10,
-        boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)'
-    }
-
-    return (
-        <div style={{height: height}}>
-            <div style={{height: height}}>
-                <Toolbar style={{width: '100%'}}>
-                    <h1> {reportType} </h1>
-                </Toolbar>
-                <div>
-                    <ListItem>
-                        <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
-                            <Checkbox defaultChecked />
+    return(
+        <div style={{width: '100%'}} className={classes.pageRoot}>
+            <Grid container style={{width: '100%'}}>
+                {/* <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                    <Checkbox defaultChecked />
+                </Grid> */}
+                <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                    <p > <strong>Fecha <br /> Prevista</strong> </p>
+                </Grid>
+                <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                    <p > <strong>Fecha <br /> Inicio</strong> </p>
+                </Grid>
+                <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                    <p > <strong>Fecha <br /> Término</strong> </p>
+                </Grid>
+                <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                    <p > <strong>Horómetro</strong> </p>
+                </Grid>
+                <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                    <p > <strong>ID#</strong> </p>
+                </Grid>
+                <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
+                    <p > <strong>Responsable</strong> </p>
+                </Grid>
+                <Grid item style={{textAlign: 'center', width: '20%', marginLeft: 5}}>
+                    <p > <strong>Obra</strong> </p>
+                </Grid>
+                {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                    <p > <strong>Descargar</strong> </p>
+                </Grid> */}
+                <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                    <p > <strong>Ver</strong> </p>
+                </Grid>
+            </Grid>
+            {
+                (lista.length == 0) && <Grid container>
+                        <div style={{width: '100%', textAlign: 'center', height: '50vh'}}>
+                        <img style={{margin: 0, /* position: 'absolute',  */top: '50%', left: 'calc(100%/1.53)', /* msTransform: 'translateY(-50%)', transform: 'translateY(-50%)' */}} src="../../assets/icons/Arrow.svg" alt="" />
+                        <div style={{width: '100%', textAlign: 'center', /* position: 'absolute',  */top: '55%', /* left: 'calc(100%/1.6)' */}}>
+                            <p>Selecciona otra opción <br /> El detalle no cuenta con lista de reportes.</p>
                         </div>
-                        <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                            <p style={{margin: 0}}> <strong>Fecha <br /> Prevista</strong> </p>
-                        </div>
-                        <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                            <p style={{margin: 0}}> <strong>Fecha <br /> Inicio</strong> </p>
-                        </div>
-                        <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                            <p style={{margin: 0}}> <strong>Fecha <br /> Término</strong> </p>
-                        </div>
-                        <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                            <p style={{margin: 0}}> <strong>Horómetro</strong> </p>
-                        </div>
-                        <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
-                            <p style={{margin: 0}}> <strong>ID#</strong> </p>
-                        </div>
-                        <div style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
-                            <p style={{margin: 0}}> <strong>Responsable</strong> </p>
-                        </div>
-                        <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
-                            <p style={{margin: 0}}> <strong>Ver</strong> </p>
-                        </div>
-                        <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                            <p style={{margin: 0}}> <strong>Descargar</strong> </p>
-                        </div>
-                        <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                            <p style={{margin: 0}}> <strong>Estado</strong> </p>
-                        </div>
-                    </ListItem>
-                </div>
-
-                <div style={{overflowY: 'auto'}}>
-                    {
-                        (reportsList.length > 0) && reportsList.map((e, n) => {
-                            e.roleTranslated = changeTypeUser(e.role);
-                            console.log(e)
-                            return(
-                                <ListItem key={n} style={well}>
-                                    <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
-                                        <Checkbox defaultChecked />
-                                    </div>
-                                    <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}> <strong>{new Date(e.datePrev).getDate() + 1}/{new Date(e.datePrev).getMonth() + 1}/{new Date(e.datePrev).getFullYear()}</strong> </p>
-                                    </div>
-                                    <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}> <strong></strong> </p>
-                                    </div>
-                                    <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}> <strong></strong> </p>
-                                    </div>
-                                    <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}> <strong></strong> </p>
-                                    </div>
-                                    <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}> <strong>{e.idIndex}</strong> </p>
-                                    </div>
-                                    <div style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}> <button onClick={()=>openModal(e)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
-                                    </div>
-                                    <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}> Link </p>
-                                    </div>
-                                    <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}>  </p>
-                                    </div>
-                                    <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}>  </p>
-                                    </div>
-                                </ListItem>
-                            )
-                        })
-                    }
-                    {
-                        
-                        reportData && <AssignReportModal open={openModalState} report={reportData} closeModal={closeModal}/>
-                        
-                    }
-                </div>
-            </div>
+                    </div>
+                </Grid>
+            }
+            {
+                lista.map((item, i) => {
+                    return(
+                        <Grid container key={i} style={{width: '100%'}}>
+                            {/* <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                                <Checkbox defaultChecked />
+                            </Grid> */}
+                            <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                <p> {item.date} </p>
+                            </Grid>
+                            <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                <p>  </p>
+                            </Grid>
+                            <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                <p>  </p>
+                            </Grid>
+                            <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                <p> {item.hourMeter} </p>
+                            </Grid>
+                            <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                                <p> {item.idIndex} </p>
+                            </Grid>
+                            <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
+                                <p> <button onClick={()=>openModal(item)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
+                            </Grid>
+                            <Grid item style={{textAlign: 'center', width: '20%', marginLeft: 5}}>
+                                <p> {item.siteName} </p>
+                            </Grid>
+                            {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                <p>  </p>
+                            </Grid> */}
+                            <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                <p> <button onClick={()=>{history.push(`/reports/edit-report/${JSON.stringify(item)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
+                            </Grid>
+                        </Grid>
+                    )
+                })
+            }
+            {
+                
+                reportData && <AssignReportModal open={openModalState} report={reportData} closeModal={closeModal}/>
+                
+            }
         </div>
     )
 }

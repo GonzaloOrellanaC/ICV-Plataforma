@@ -5,7 +5,8 @@ import { Close, ArrowBackIos } from '@material-ui/icons'
 import { useParams } from "react-router-dom";
 import { useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
-import { pmsDatabase } from "../../indexedDB"
+import { pautasDatabase } from '../../indexedDB';
+//import { pmsDatabase } from "../../indexedDB"
 
 import { MVAvatar, PautaDetail } from '../../containers'
 
@@ -36,14 +37,22 @@ const AppliancePage = ({ route }) => {
     }
 
     useEffect( () => {
-        pmsDatabase.initDbPMs().then(async database => {
+        pautasDatabase.initDbPMs().then(async database => {
+            console.log(database)
+            let data = await pautasDatabase.obtener(machine.id, database.database)
+            if(data) {
+                setPauta(data);
+                console.log(data)
+            }
+        })
+        /* pmsDatabase.initDbPMs().then(async database => {
             console.log(database)
             let data = await pmsDatabase.obtener(machine.id, database.database)
             if(data) {
                 setPauta(data);
                 console.log(data)
             }
-        })
+        }) */
     }, [])
 
     let site = JSON.parse(localStorage.getItem('sitio')).descripcion;

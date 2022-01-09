@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useHistory } from "react-router";
 import { Box, Grid, IconButton, Card, Toolbar } from "@material-ui/core";
 import { ArrowBackIos } from '@material-ui/icons'
-import { pmsDatabase } from "../../indexedDB"
+import { pautasDatabase } from "../../indexedDB"
 import { PautaDetail } from '../../containers'
 import { useStylesTheme } from '../../config'
 
@@ -16,9 +16,9 @@ const PautaDetailPage = () => {
 
     useEffect( () => {
 
-        pmsDatabase.initDbPMs().then(async database => {
+        pautasDatabase.initDbPMs().then(async database => {
             console.log(database)
-            let data = await pmsDatabase.obtener(id, database.database)
+            let data = await pautasDatabase.obtener(id, database.database)
             if(data) {
                 setPauta(data);
                 console.log(pauta)
@@ -44,7 +44,7 @@ const PautaDetailPage = () => {
                                                 </IconButton> 
                                                 <h1 style={{marginTop: 0, marginBottom: 0, fontSize: 16, }}> 
                                                 {
-                                                    pauta && `Listado Pautas / ${pauta.data.typepm}`
+                                                    pauta && `Listado Pautas / ${pauta.typepm}`
                                                 }
                                                 </h1>
                                             </Toolbar>

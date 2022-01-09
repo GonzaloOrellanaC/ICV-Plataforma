@@ -21,7 +21,7 @@ const Inspecciones = [
     },
     {
         color: '#DE4343',
-        name: 'Por asignar',
+        name: 'Asignar',
         button: 'Detalle',
         number: null
     },
@@ -49,7 +49,7 @@ const Mantenciones = [
     },
     {
         color: '#DE4343',
-        name: 'Por asignar',
+        name: 'Asignar',
         button: 'Detalle',
         number: null
     },

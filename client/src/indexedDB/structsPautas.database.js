@@ -19,7 +19,7 @@ const initDbPMs = () => {
     
         conexion.onupgradeneeded = (e) =>{
             db = e.target.result
-            const coleccionObjetos = db.createObjectStore('ItemList',{
+            const coleccionObjetos = db.createObjectStore('structs',{
                 keyPath: 'id'
             })
             coleccionObjetos.transaction.oncomplete = (event) => {
@@ -41,16 +41,16 @@ const initDbPMs = () => {
 }
 
 const agregar = (data, database) => {
-    const trasaccion = database.transaction(['ItemList'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('ItemList')
+    const trasaccion = database.transaction(['structs'],'readwrite')
+    const coleccionObjetos = trasaccion.objectStore('structs')
     const conexion = coleccionObjetos.add(data)
     //consultar()
 }
 
 const obtener = (clave, database) =>{
     return new Promise(result => {
-    const trasaccion = database.transaction(['ItemList'],'readonly')
-    const coleccionObjetos = trasaccion.objectStore('ItemList')
+    const trasaccion = database.transaction(['structs'],'readonly')
+    const coleccionObjetos = trasaccion.objectStore('structs')
     const conexion = coleccionObjetos.get(Number(clave))
     conexion.onsuccess = (e) =>{
         result(e.target.result)
@@ -60,19 +60,26 @@ const obtener = (clave, database) =>{
     
 }
 
-const actualizar = (data, database) =>{    
-    const trasaccion = database.transaction(['ItemList'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('ItemList')
-    const conexion = coleccionObjetos.put(data)
-    
-    conexion.onsuccess = () =>{
-        //consultar()
-    }
+const actualizar = (data, database) =>{
+    return new Promise(resolve => {
+        try {
+            const trasaccion = database.transaction(['structs'],'readwrite')
+            const coleccionObjetos = trasaccion.objectStore('structs')
+            const conexion = coleccionObjetos.put(data)
+            
+            conexion.onsuccess = () =>{
+                resolve(true)
+            }
+        
+        } catch (err) {
+            resolve(false)
+        }
+    })
 }
 
 const eliminar = (clave, database) =>{      
-    const trasaccion = database.transaction(['ItemList'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('ItemList')
+    const trasaccion = database.transaction(['structs'],'readwrite')
+    const coleccionObjetos = trasaccion.objectStore('structs')
     const conexion = coleccionObjetos.delete(clave)
 
     conexion.onsuccess = () =>{
@@ -81,8 +88,8 @@ const eliminar = (clave, database) =>{
 }
 
 const consultar = (database) =>{
-    const trasaccion = database.transaction(['ItemList'],'readonly')
-    const coleccionObjetos = trasaccion.objectStore('ItemList')
+    const trasaccion = database.transaction(['structs'],'readonly')
+    const coleccionObjetos = trasaccion.objectStore('structs')
     const conexion = coleccionObjetos.openCursor()
     
     return new Promise(resolve => {

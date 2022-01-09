@@ -3,7 +3,7 @@ import { ArrowBackIos } from '@material-ui/icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from 'react-router-dom';
 import { useState, useEffect, } from "react";
-import { pmsDatabase, trucksDatabase } from '../../indexedDB';
+import { pautasDatabase, trucksDatabase } from '../../indexedDB';
 import { useStylesTheme } from '../../config'
 import { useHistory } from "react-router";
 import { apiIvcRoutes } from '../../routes';
@@ -65,8 +65,8 @@ const PmsPage = () => {
         })
     }
     useEffect(() => {
-        pmsDatabase.initDbPMs().then(db => {
-            pmsDatabase.consultar(db.database).then(data => {
+        pautasDatabase.initDbPMs().then(db => {
+            pautasDatabase.consultar(db.database).then(data => {
                 console.log(data)
                 setPmList(data);
             })
@@ -144,7 +144,7 @@ const PmsPage = () => {
                                 {
                                     pmList.filter(a => {
                                         a.toString();
-                                        if(a.data.typepm.includes('PI') ) {
+                                        if(a.typepm.includes('PI') ) {
                                             return a
                                         }
                                     }).map((pm) => {
@@ -152,10 +152,10 @@ const PmsPage = () => {
                                             <ListItem key={pm.id} style={{width: '100%'}}>
                                                 <div style={{width: '100%'}}>
                                                     <div>
-                                                        <h3 style={{margin: 0}}>{pm.data.typepm} {pm.header[2].typeDataDesc} {pm.header[3].typeDataDesc}</h3>
+                                                        <h3 style={{margin: 0}}>{pm.typepm} {pm.header[2].typeDataDesc} {pm.header[3].typeDataDesc}</h3>
                                                     </div>
                                                     <div>
-                                                        <h4 style={{margin: 0}}>{pm.header[1].typeData}: {pm.header[1].typeDataDesc} {pm.data.idpm} {pm.header[4].typeData}: {pm.header[4].typeDataDesc}</h4>
+                                                        <h4 style={{margin: 0}}>{pm.header[1].typeData}: {pm.header[1].typeDataDesc} {pm.idpm} {pm.header[4].typeData}: {pm.header[4].typeDataDesc}</h4>
                                                     </div>
                                                 </div>
                                                 <IconButton edge="end" component={Link} to={`/pauta-detail/${JSON.stringify(pm.id)}`} /* onClick={() => getIdProgram(pm.id)} */>
@@ -169,7 +169,7 @@ const PmsPage = () => {
                                 {
                                     pmList.filter(a => {
                                         a.toString();
-                                        if(a.data.typepm.includes('PM') ) {
+                                        if(a.typepm.includes('PM') ) {
                                             return a
                                         }
                                     }).map((pm) => {
@@ -177,10 +177,10 @@ const PmsPage = () => {
                                             <ListItem key={pm.id} style={{width: '100%'}}>
                                                 <div style={{width: '100%'}}>
                                                     <div>
-                                                        <h3 style={{margin: 0}}>{pm.data.typepm} {pm.header[2].typeDataDesc} {pm.header[3].typeDataDesc}</h3>
+                                                        <h3 style={{margin: 0}}>{pm.typepm} {pm.header[2].typeDataDesc} {pm.header[3].typeDataDesc}</h3>
                                                     </div>
                                                     <div>
-                                                        <h4 style={{margin: 0}}>{pm.header[1].typeData}: {pm.header[1].typeDataDesc} {pm.data.idpm} {pm.header[4].typeData}: {pm.header[4].typeDataDesc}</h4>
+                                                        <h4 style={{margin: 0}}>{pm.header[1].typeData}: {pm.header[1].typeDataDesc} {pm.idpm} {pm.header[4].typeData}: {pm.header[4].typeDataDesc}</h4>
                                                     </div>
                                                 </div>
                                                 <IconButton edge="end" component={Link} to={`/pauta-detail/${JSON.stringify(pm.id)}`}>

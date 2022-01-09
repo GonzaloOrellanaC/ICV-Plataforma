@@ -15,6 +15,12 @@ export default {
         }
         return axios.post('/machines/getAllMachinesByModel', requestBody)
     },
+    getMachineByEquid: (equid) => {
+        const requestBody = {
+            equid: equid,
+        }
+        return axios.post('/machines/readMachineByEquid', requestBody)
+    },
     getPMList: () => {
         return axios.get('/icv/petitionFiles')
     },
@@ -27,16 +33,19 @@ export default {
     getSites: () => {
         return axios.get('icv/getSites')
     },
-    getPMs: (fileName) => {
-        const requestBody = {
-            fileName: fileName
-        }
-        return axios.post('/data/readPMHeader', requestBody)
+    getPautas: () => {
+        return axios.get('icv/getPautas')
     },
-    getFile: (fileName) => {
+    getHeaderPauta: ({idpm, typepm}) => {
         const requestBody = {
-            fileName: fileName
+            idpm, typepm
         }
-        return axios.post('data/getFile', requestBody)
+        return axios.post('icv/getHeaderPauta', requestBody)
+    },
+    getStructsPauta: ({idpm, typepm}) => {
+        const requestBody = {
+            idpm, typepm
+        }
+        return axios.post('icv/getStructsPauta', requestBody)
     }
 }

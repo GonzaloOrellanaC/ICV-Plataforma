@@ -3,7 +3,7 @@ import { Box, Card, Grid, Typography, Modal, Button } from '@material-ui/core'
 import { environment, useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes } from '../../routes'
-import { pmsDatabase, sitesDatabase, FilesToStringDatabase, trucksDatabase, machinesDatabase } from '../../indexedDB'
+import { /* pmsDatabase */ sitesDatabase, FilesToStringDatabase, trucksDatabase, machinesDatabase, pautasDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import hour from './hour'
 import fecha from './date'
@@ -95,41 +95,94 @@ const WelcomePage = () => {
 
     const readData = async () => {
         const revisarData = await setIfNeedReadDataAgain();
-        console.log(revisarData)
         if(revisarData) {
             setOpenLoader(true)
-            setLoadingData('Descargando datos de las obras.');
-            setProgress(30)
-            const responseSites = await getSites();
-            setTimeout(async () => {
-                if(responseSites) {
-                    console.log(responseSites)
-                    setLoadingData('Descargando datos de las máquinas.')
-                    setProgress(65)
-                    const responseTrucks = await getTrucksList();
-                    setTimeout(async() => {
-                        if(responseTrucks) {
-                            setLoadingData('Descargando lista de las máquinas de las obras.')
-                            setProgress(100)
-                            console.log(responseTrucks)
-                            const getMachines = await getMachinesList();
-                            if(getMachines) {
-                                setTimeout(async () => {
-                                    let n = 0;
-                                    await get3dElement(n, responseTrucks)
-                                }, 1000);
-                            }
+            setLoadingData('Descargando pautas de mantenimiento e inspección.');
+            const estadoDescargaPautas = await descargarPautas();
+            if(estadoDescargaPautas.state) {
+                setProgress(100)
+                setTimeout( async () => {
+                    setProgress(0)
+                    setLoadingData('Descargando datos de las obras.');
+                    setProgress(30)
+                    const responseSites = await getSites();
+                    setTimeout(async () => {
+                        if(responseSites) {
+                            console.log(responseSites)
+                            setLoadingData('Descargando datos de las máquinas.')
+                            setProgress(65)
+                            const responseTrucks = await getTrucksList();
+                            setTimeout(async() => {
+                                if(responseTrucks) {
+                                    setLoadingData('Descargando lista de las máquinas de las obras.')
+                                    setProgress(100)
+                                    console.log(responseTrucks)
+                                    const getMachines = await getMachinesList();
+                                    if(getMachines) {
+                                        setTimeout(async () => {
+                                            let n = 0;
+                                            await get3dElement(n, responseTrucks)
+                                        }, 1000);
+                                    }
+                                }else{
+                                    setOpenLoader(false)
+                                }
+                            }, 1000);
                         }else{
                             setOpenLoader(false)
                         }
                     }, 1000);
-                }else{
-                    setOpenLoader(false)
-                }
-            }, 1000);
+                }, 1000);
+            }
         }else{
             setOpenLoader(false)
         }
+        
+    }
+
+    const descargarPautas = () => {
+        return new Promise(async resolve => {
+            const pautas = await getPautas();
+            if(pautas) {
+                console.log(pautas.length)
+                pautas.forEach(async (pauta, number ) => {
+                    setProgress(30);
+                    const response = await getHeader(pauta);
+                    pauta.header = response;
+                    pauta.id = number;
+                    if(number == (pautas.length - 1)) {
+                        let numberProgress1 = progress
+                        pautas.forEach(async (pa, n) => {
+                            setProgress(65)
+                            console.log(progress)
+                            const res = await getStructs(pa)
+                            pa.struct = res;
+                            //console.log(pa);
+                            if(n == (pautas.length - 1)) {
+                                let numberProgress2 = progress
+                                const db = await pautasDatabase.initDbPMs();
+                                if(db) {
+                                    pautas.forEach(async (p, i) => {
+                                        setProgress(78)
+                                        console.log(progress)
+                                        await pautasDatabase.actualizar(p, db.database);
+                                        if(i == (pautas.length - 1)) {
+
+                                            resolve({
+                                                progress: progress,
+                                                state: true
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                        })
+    
+                    }
+                })
+                
+            }
+        })
     }
 
     const get3dElement = async (number, trucks) => {
@@ -277,8 +330,30 @@ const WelcomePage = () => {
             }
         })
     }
-
     
+    const getHeader = (pauta) => {
+        return new Promise(resolve => {
+            apiIvcRoutes.getHeaderPauta(pauta)
+            .then(data => {
+                resolve(data.data)
+            })
+            .catch(err => {
+                //console.log('Error', err)
+            })
+        })
+    }
+
+    const getStructs = (pauta) => {
+        return new Promise(resolve => {
+            apiIvcRoutes.getStructsPauta(pauta)
+            .then(data => {
+                resolve(data.data)
+            })
+            .catch(err => {
+                //console.log('Error', err)
+            })
+        })
+    }
 
     const getMachines = () => {
         return new Promise(resolve => {
@@ -309,6 +384,18 @@ const WelcomePage = () => {
     const getPMlist = () => {
         return new Promise(resolve => {
             apiIvcRoutes.getPMList()
+            .then(data => {
+                resolve(data.data)
+            })
+            .catch(err => {
+                //console.log('Error', err)
+            })
+        })
+    }
+
+    const getPautas = () => {
+        return new Promise(resolve => {
+            apiIvcRoutes.getPautas()
             .then(data => {
                 resolve(data.data)
             })

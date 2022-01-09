@@ -4,7 +4,48 @@ import { environment } from '../config';
 import { SiteController } from '../controller';
 import { Site, Machine } from '../models';
 import { machinesOfProject } from '../files'
+/* import { ApiIcv } from '.'; */
 
+/* Leer pautas */
+
+const leerPautas = (req, res) => {
+    let pautas = []
+    machinesOfProject.forEach(async ({pIDPM}, i) => {
+        const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`);
+        const listaPMs =  await response.json();
+        console.log('lista pautas:', listaPMs.data)
+        listaPMs.data.forEach((pauta, index) => {
+            pautas.push(pauta);
+        })
+        if(i == (machinesOfProject.length - 1)) {
+            console.log(pautas)
+            res.send(pautas);
+        }
+        
+    }) 
+}
+
+const getHeaderPauta = async (req, res) => {
+    const {body} = req;
+    //console.log(body.idpm, body.typepm);
+    const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${body.idpm}&pTypePm=${body.typepm}`);
+    const headers = await response2.json();
+    if(headers) {
+        //console.log(headers)
+        res.send(headers)
+    }
+}
+
+const getStructsPauta = async (req, res) => {
+    const {body} = req;
+    //console.log(body.idpm, body.typepm);
+    const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${body.idpm}&pTypePm=${body.typepm}`);
+    const headers = await response3.json();
+    if(headers) {
+        //console.log(headers)
+        res.send(headers)
+    }
+}
 
 /* Leer sitios GET - POST */
 const readSites = ( req, res ) => {
@@ -41,6 +82,21 @@ const readAllMachinesFromDb = ( req, res ) => {
 }
 
 /* Leer máquinas por modelo GET - POST */
+const readMachinesByEquid = ( req, res ) => {
+    //console.log(req)
+    const { body } = req;
+    console.log(body)
+    Machine.find({ equid: body.equid }, (err, machine) => {
+        if(err) {
+            res.status(502).json({message: 'Error de lectura en Base de Datos'})
+            throw err
+        }
+        //console.log(machine)
+        res.status(200).json(machine)
+    })
+}
+
+/* Leer máquinas por modelo GET - POST */
 const readMachinesByModel = ( req, res ) => {
     //console.log(req)
     const { body } = req;
@@ -53,6 +109,11 @@ const readMachinesByModel = ( req, res ) => {
         console.log(sites)
         res.status(200).json(sites)
     })
+}
+
+const getMachineByEquid = ( req, res ) => {
+    const {body} = req;
+    console.log(body)
 }
 
 /* Leer máquinas */
@@ -82,7 +143,8 @@ const createSiteToSend = () => {
                     resolve(true)
                 }else{
                     sitios.forEach(async (site, i) => {
-                        //console.log(site)
+                        console.log('Sitio nro '+(i+1), site)
+                        await createMachinesToSend(site.idobra);
                         await SiteController.createSite(site);
                         /* readSitesFromDb.forEach(async (siteInspector, number) => {
                             console.log(site, siteInspector);
@@ -165,17 +227,13 @@ const leerArchivo = (type) => {
 
 /* Descargar máquinas por obra desde API ICV y guardar en base de datos*/
 const createMachinesToSend = async (pIDOBRA) => {
-    //console.log(pIDOBRA)
     const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`);
     if( machines ) {
         const body = await machines.json();
         if( body ) {
             const machinesOnDb = await readMachinesFromDb();
-            //console.log(machinesOnDb)
             let machines = [];
             machines = body.data;
-            //console.log(machines)
-            //console.log(machines.length)
             if(machinesOnDb.length === machines.length) {
                 console.log('No se requiere guardar.');
             }else{
@@ -201,8 +259,46 @@ const createMachinesToSend = async (pIDOBRA) => {
     }
 }
 
+const editMachineToSend = async (pIDOBRA) => {
+    const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`);
+    if( machines ) {
+        const body = await machines.json();
+        if( body ) {
+            console.log(body)
+            let machines = [];
+            machines = body.data;
+            machines.forEach(async (machine, index) => {
+                /* if(machine.modelo.includes('793-F')){
+                    machine.modelo='793-F';
+                    machine.type = 'Camión'
+                }else if(machine.modelo.includes('pc5500')||machine.modelo.includes('PC5500')) {
+                    machine.modelo='PC5500';
+                    machine.type = 'Pala'
+                }
+                machine.brand = machine.marca;
+                machine.model = machine.modelo; */
+                machine.hourMeter = machine.horometro;
+                console.log(machine)
+                let machineEdit = await Machine.findOneAndUpdate({equid: machine.equid},{hourMeter: machine.hourMeter}, { new: true, timestamps: false })
+                console.log(machineEdit)
+                if( machineEdit ) {
+                    console.log('Maquina editada')
+                }
+                /* let newMachine = await new Machine(machine);
+                newMachine.save(); */
+                if(index == (machines.length - 1)) {
+                    console.log('Máquinas guardadas!');
+                }
+            })
+            
+        }
+    }
+}
+
+/* Obtener SPMs */
+
 /* Descargar pautas desde API ICV y guardar en archivos*/
-const createPMsToSend = async ({idpm, typepm}) => {
+/* const createPMsToSend = async ({idpm, typepm}) => {
     const response1 = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${idpm}`);
     const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${idpm}&pTypePm=${typepm}`);
     const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${idpm}&pTypePm=${typepm}`);
@@ -221,7 +317,7 @@ const createPMsToSend = async ({idpm, typepm}) => {
             }; 
         });
     }
-}
+} */
 
 //Enviar listado de máquinas
 const sendFileOfMachines = ( req, res ) => {
@@ -279,17 +375,24 @@ const getAllGuidesHeaderAndStruct = (pIDPM) => {
 }
 
 export default {
+    /* Leer sitios */
     readSites,
     readSitesInServer,
     readAllMachinesFromDb,
     readMachinesByModel,
+    readMachinesByEquid,
+    getMachineByEquid,
     sendFileOfMachines,
     filesPetition,
     filePetition,
     readMachinesOfProject,
-    createPMsToSend,
+    //createPMsToSend,
     getAllGuidesHeaderAndStruct,
     createSiteToSend,
     leerArchivo,
-    createMachinesToSend
+    createMachinesToSend,
+    editMachineToSend,
+    leerPautas,
+    getHeaderPauta,
+    getStructsPauta
 }

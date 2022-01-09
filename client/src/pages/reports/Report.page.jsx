@@ -9,6 +9,7 @@ import {
     ListItem, 
     ListItemIcon,
     ListItemText,
+    Checkbox,
     Chip} from '@material-ui/core';
 import { ArrowBackIos } from '@material-ui/icons';
 import { Link, useHistory } from 'react-router-dom';
@@ -44,6 +45,7 @@ const ReportsPage = () => {
     const { dictionary } = useLanguage();
     //const [ openAssignModal, setOpenAssignModal ] = useState(false)
     const history = useHistory();
+    const [ reports, setReports ] = useState([])
 
     
 
@@ -57,24 +59,39 @@ const ReportsPage = () => {
         })
     }
 
-    const getReportesPorTipo = (type) => {
+    /* const getReportesPorTipo = (type) => {
         reportsRoutes.getReportByType(type).then(reports => {
             console.log(reports)
         })
-    }
+    } */
 
-    const getReportesPorEstado = (state, reportType) => {
+    const getReportesPorEstado = async (state, reportType) => {
+        try{
+            const res = await reportsRoutes.getReportByState(state, reportType);
+            let arr = res.data;
+            setReports(arr);
+            /* setReportType(reportType)
+            setTimeout(() => {
+                setVista(false)
+            }, 1000);; */
+        } catch (err) {
+            console.log(err);
+
+        }/* 
+        
+
         reportsRoutes.getReportByState(state, reportType).then(reports => {
-            setReportList(reports.data);
-            setVista(false);
-            setReportType(reportType)
-        })
+            let arr = [];
+            arr = reports.data
+            
+        }) */
     }
     
 
     useEffect(() => {
         Inspecciones.forEach(async (e, i) => {
             let response = await reportsRoutes.getReportByState(e.name, 'Inspección');
+            //console.log(response)
             e.number = response.data.length;
             if(i == (Inspecciones.length - 1)) {
                 setInspecciones(Inspecciones)
@@ -114,11 +131,9 @@ const ReportsPage = () => {
                                 </div>
                             </div>
                         </Grid>
-                        <div /* id="containerData" */ style={{display: 'block', float: 'left', width: '30%'}}>
+                        <div style={{display: 'block', float: 'left', width: '30%'}}>
                             <Grid style={{margin: 0, height: '70vh'}} container spacing={1}  >
                                 <div style={{
-                                    /* width: 'calc(100%/3.5)', 
-                                    height: 'calc(100%)',  */
                                     backgroundColor: '#F9F9F9', 
                                     marginLeft: 10,
                                     borderRadius: 20
@@ -200,15 +215,110 @@ const ReportsPage = () => {
                         </div>
                         <div style={{height: 'calc(100%/1.2)', width: '68%', float: 'right'}}>
                             {
-                                !vista && <ReportsList height={'100%'} reportsList={reportList} reportType={reportType}/>
-                            }
+                                
+                                <div style={{height: '100%'}}>
+                                    <div style={{height: '100%'}}>
+                                        <Toolbar style={{width: '100%'}}>
+                                            <h1> {reportType} </h1>
+                                        </Toolbar>
+                                        <div>
+                                            <ListItem>
+                                                <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                                                    <Checkbox defaultChecked />
+                                                </div>
+                                                <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                    <p style={{margin: 0}}> <strong>Fecha <br /> Prevista</strong> </p>
+                                                </div>
+                                                <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                    <p style={{margin: 0}}> <strong>Fecha <br /> Inicio</strong> </p>
+                                                </div>
+                                                <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                    <p style={{margin: 0}}> <strong>Fecha <br /> Término</strong> </p>
+                                                </div>
+                                                <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                    <p style={{margin: 0}}> <strong>Horómetro</strong> </p>
+                                                </div>
+                                                <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                                                    <p style={{margin: 0}}> <strong>ID#</strong> </p>
+                                                </div>
+                                                <div style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
+                                                    <p style={{margin: 0}}> <strong>Responsable</strong> </p>
+                                                </div>
+                                                <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                                                    <p style={{margin: 0}}> <strong>Ver</strong> </p>
+                                                </div>
+                                                <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                    <p style={{margin: 0}}> <strong>Descargar</strong> </p>
+                                                </div>
+                                                <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                    <p style={{margin: 0}}> <strong>Ver</strong> </p>
+                                                </div>
+                                            </ListItem>
+                                        </div>
+
+                                        <div style={{overflowY: 'auto'}}>
+                                            {
+                                                (reports.length > 0) && reports.map(async (e, n) => {
+                                                    e.roleTranslated = changeTypeUser(e.role);
+                                                    console.log(e)
+                                                    return(
+                                                        <ListItem key={n} style={well}>
+                                                            <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                                                                <Checkbox defaultChecked />
+                                                            </div>
+                                                            <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                                <p style={{margin: 0}}> <strong>{new Date(e.datePrev).getDate() + 1}/{new Date(e.datePrev).getMonth() + 1}/{new Date(e.datePrev).getFullYear()}</strong> </p>
+                                                            </div>
+                                                            <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                                <p style={{margin: 0}}> <strong></strong> </p>
+                                                            </div>
+                                                            <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                                <p style={{margin: 0}}> <strong></strong> </p>
+                                                            </div>
+                                                            <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                                <p style={{margin: 0}}> 
+                                                                    <strong>
+                                                                        {
+                                                                            e.hourMeter
+                                                                        }
+                                                                    </strong>  
+                                                                </p>
+                                                            </div>
+                                                            <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                                                                <p style={{margin: 0}}> <strong>{e.idIndex}</strong> </p>
+                                                            </div>
+                                                            <div style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
+                                                                <p style={{margin: 0}}> <button onClick={()=>openModal(e)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
+                                                            </div>
+                                                            <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                                                                <p style={{margin: 0}}> Link </p>
+                                                            </div>
+                                                            <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                                <p style={{margin: 0}}>  </p>
+                                                            </div>
+                                                            <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                                                <p style={{margin: 0}}> <button onClick={()=>{console.log(e); history.push(`/reports/edit-report/${JSON.stringify(e)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
+                                                            </div>
+                                                        </ListItem>
+                                                    )
+                                                })
+                                                }
+                                                {
+                                                    
+                                                    /* reportData && <AssignReportModal open={openModalState} report={reportData} closeModal={closeModal}/> */
+                                                    
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
                             {
-                                vista && <div>
+                                /* vista && <div>
                                     <img style={{margin: 0, position: 'absolute', top: '50%', left: 'calc(100%/1.53)', msTransform: 'translateY(-50%)', transform: 'translateY(-50%)'}} src="../../assets/icons/Arrow.svg" alt="" />
                                     <div style={{textAlign: 'center', position: 'absolute', top: '55%', left: 'calc(100%/1.6)'}}>
                                         <p>Selecciona una opción <br /> para ver el detalle</p>
                                     </div>
-                                </div>
+                                </div> */
                             }
                         </div>
                         {hableCreateReport && <div style={{height: '10vh', width: '60%', position: 'absolute', bottom: 10, right: 10, textAlign: 'right'}}>
