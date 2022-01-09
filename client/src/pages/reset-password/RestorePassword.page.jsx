@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import { Card, Hidden } from '@material-ui/core'
 import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
@@ -10,9 +10,6 @@ import { RestorePassword } from '../../containers';
 const RestorePasswordPage = () => {
     let { id } = useParams();
     const classes = useStylesTheme()
-    useEffect(() => {
-        //console.log(id)
-    }, [])
     const addCard = () => {
         return (
             <Card className={clsx(classes.pageCard, classes.noNavBarMargin)}>

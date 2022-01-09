@@ -27,6 +27,12 @@ const PmsPage = () => {
 
     useEffect(() => {
         readData();
+        pautasDatabase.initDbPMs().then(db => {
+            pautasDatabase.consultar(db.database).then(data => {
+                console.log(data)
+                setPmList(data);
+            })
+        })
     },[])
 
     const readData = async () => {
@@ -64,15 +70,6 @@ const PmsPage = () => {
             })
         })
     }
-    useEffect(() => {
-        pautasDatabase.initDbPMs().then(db => {
-            pautasDatabase.consultar(db.database).then(data => {
-                console.log(data)
-                setPmList(data);
-            })
-        })
-        
-    }, []);
 
     return (
         <Box>

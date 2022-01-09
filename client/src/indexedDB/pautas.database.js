@@ -49,12 +49,12 @@ const agregar = (data, database) => {
 
 const obtener = (clave, database) =>{
     return new Promise(result => {
-    const trasaccion = database.transaction(['pautas'],'readonly')
-    const coleccionObjetos = trasaccion.objectStore('pautas')
-    const conexion = coleccionObjetos.get(Number(clave))
-    conexion.onsuccess = (e) =>{
-        result(e.target.result)
-    }
+        const trasaccion = database.transaction(['pautas'],'readonly')
+        const coleccionObjetos = trasaccion.objectStore('pautas')
+        const conexion = coleccionObjetos.get(Number(clave))
+        conexion.onsuccess = (e) =>{
+            result(e.target.result)
+        }
     })
     
     

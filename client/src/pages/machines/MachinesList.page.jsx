@@ -34,27 +34,25 @@ const MachinesListPage = ({route}) => {
             type: machine.type,
             machineData: JSON.stringify(machineData)
         }
-        history.replace(`machine-detail/${JSON.stringify(newMachine)}`)
+        history.push(`machine-detail/${JSON.stringify(newMachine)}`)
     }
 
     const readAllMachinesFromIndexedDB = async (model) => {
         let db = await machinesDatabase.initDbMachines();
         if(db) {
             let readAllMachines = [] = await machinesDatabase.consultar(db.database);
-            console.log(readAllMachines);
+            /* console.log(readAllMachines); */
             setMachinesList(
                 readAllMachines
                 .filter(machine => {if(machine.model === model) { return machine}})
                 .sort((a, b) => {return a.equ - b.equ})
             )
-            
         }
     }
 
-
     useEffect(() => {
-        console.log(route)
-        console.log(JSON.parse(id));
+        /* console.log(route)
+        console.log(JSON.parse(id)); */
         readAllMachinesFromIndexedDB(JSON.parse(id).model);
         if(!site) {
             history.goBack()
@@ -64,7 +62,6 @@ const MachinesListPage = ({route}) => {
         }else if(route === 'maintenance') {
             setRouteData('Mantención')
         }
-        
     }, [])
 
     return(

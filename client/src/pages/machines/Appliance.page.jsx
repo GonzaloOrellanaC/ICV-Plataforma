@@ -5,21 +5,34 @@ import { Close, ArrowBackIos } from '@material-ui/icons'
 import { useParams } from "react-router-dom";
 import { useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
-import { pautasDatabase } from '../../indexedDB';
-//import { pmsDatabase } from "../../indexedDB"
-
-import { MVAvatar, PautaDetail } from '../../containers'
+import { pautasDatabase, reportsDatabase } from '../../indexedDB';
+import { MVAvatar, PautaDetail } from '../../containers';
 
 const AppliancePage = ({ route }) => {
-    const classes = useStylesTheme()
+    const classes = useStylesTheme();
     const [open, setOpen] = useState(false);
     const [ pauta, setPauta ] = useState();
-    //const [ machineData, setMachineDate ] = useState({})
-
-    console.log(route)
     let { id } = useParams();
     const machine = JSON.parse(id);
     const machineData = JSON.parse(machine.machineData);
+    console.log(route);
+    let r = new String();
+    r = route.toString();
+    let pautaType = new String();
+    if(r.includes('inspection')) {
+        pautaType = 'PI'
+    }else if(r.includes('maintenance')) {
+        pautaType = 'PM'
+    }
+    if(!machineData.info) {
+        machineData.info = 'Sin información.'
+    }
+    if(!machineData.lastMant) {
+        machineData.lastMant = 'Sin información'
+    }
+    if(!machineData.lastOper) {
+        machineData.lastOper = 'Sin información'
+    }
     const machineTo3D = {
         id: machine.id, 
         brand: machine.brand, 
@@ -27,32 +40,37 @@ const AppliancePage = ({ route }) => {
         pIDPM: machine.pIDPM, 
         type: machine.type
     }
-    console.log(machine);
-    console.log(JSON.parse(machine.machineData))
 
     const openCloseModal = () => {
         setTimeout(() => {
-            setOpen(!open)
+            setOpen(!open);
         }, 500);
     }
 
     useEffect( () => {
-        pautasDatabase.initDbPMs().then(async database => {
-            console.log(database)
-            let data = await pautasDatabase.obtener(machine.id, database.database)
-            if(data) {
-                setPauta(data);
-                console.log(data)
-            }
+        reportsDatabase.initDbReports().then(async db => {
+            let reports = new Array();
+            reports = await reportsDatabase.consultar(db.database);
+            pautasDatabase.initDbPMs().then(async database => {
+                let pautas = new Array();
+                pautas = await pautasDatabase.consultar(database.database);
+                console.log(reports)
+                console.log(pautas)
+                reports.forEach((report, i) => {
+                    if(machineData.equid === report.machine) {
+                        console.log(report);
+                        pautas.forEach((pauta, n) => {
+                            if(pauta.typepm === report.guide) {
+                                if(pauta.typepm.includes(pautaType)) {
+                                    setPauta(pauta)
+                                }
+                            }
+                        })
+                    }
+                })
+            })
         })
-        /* pmsDatabase.initDbPMs().then(async database => {
-            console.log(database)
-            let data = await pmsDatabase.obtener(machine.id, database.database)
-            if(data) {
-                setPauta(data);
-                console.log(data)
-            }
-        }) */
+        
     }, [])
 
     let site = JSON.parse(localStorage.getItem('sitio')).descripcion;
@@ -87,87 +105,76 @@ const AppliancePage = ({ route }) => {
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 
                                         <p style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
-                                            {routeData}/{site}/{machine.type} {machine.brand} {machine.model}/{machineData.internalNumber}
+                                            {routeData}/{site}/{machine.type} {machine.brand} {machine.model}/Número interno: <b>{machineData.equ}</b>
                                         </p>
                                     </Toolbar>
                                 </div>
                             </div>
                             <Grid container>
-                                <div style={{width: '30%', textAlign: 'left', padding: 10}}>
-                                    <div style={{padding: 15, borderTopLeftRadius: 20, borderEndStartRadius: 20, backgroundColor: '#F9F9F9', borderRadius: 10, minHeight: 400}}>
-                                        <h3 style={{marginTop: 5, marginBottom: 5}}>{machine.type}</h3>
-                                        <div style={{position: 'relative', zIndex: '1', width: '100%', height: 180, backgroundColor: 'transparent', textAlign: 'center'}}>
-                                            <img src={`/assets/${machine.model}.png`} height={'100%'} />
-                                            {/* <VRAvatarPreview machine={machine}/> */}                                        
-                                        </div>
-                                        
-                                        {/* <Button onClick={openCloseModal} style={{marginTop: -260, position: 'relative', zIndex:'100', width: '100%', height: 250, backgroundColor: 'transparent'}}>
-                                                
-                                        </Button> */}
-                                            
-                                        <div style={{width: '100%'}}>
-                                            <p style={{marginTop: 5, marginBottom: 5}}><b>Marca: </b> {machine.brand} </p>
-                                        </div>
-                                        <div style={{width: '100%'}}>
-                                            <p style={{marginTop: 5, marginBottom: 5}}><b>Modelo: </b> {machine.model} </p>
-                                        </div>
-                                        <div style={{width: '100%'}}>
-                                            <p style={{marginTop: 5, marginBottom: 5}}><b>Código: </b> {machineData.id} </p>
-                                        </div>
-                                        <div style={{width: '100%'}}>
-                                            <p style={{marginTop: 5, marginBottom: 5}}><b>Horómetro Actual: </b> 325,9 Km </p>
-                                        </div>
-                                        <div style={{width: '100%'}}>
-                                            <p style={{marginTop: 5, marginBottom: 5}}><b>Número Interno: </b> {machineData.internalNumber} </p>
-                                        </div>
-                                        <div style={{width: '100%'}}>
-                                            <p style={{marginTop: 5, marginBottom: 5}}><b>Información: </b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua </p>
-                                        </div>
-                                        <div style={{width: '100%'}}>
-                                            <p style={{marginTop: 5, marginBottom: 5}}><b>Última Mantención: </b> 12/10/2021 </p>
-                                        </div>
-                                        <div style={{width: '100%'}}>
-                                            <p style={{marginTop: 5, marginBottom: 5}}><b>Último Inspector: </b> Juan Pérez </p>
+                                <Grid item lg={4}>
+                                    <div style={{width: '100%', textAlign: 'left', padding: 10}}>
+                                        <div style={{padding: 15, borderTopLeftRadius: 20, borderEndStartRadius: 20, backgroundColor: '#F9F9F9', borderRadius: 10, minHeight: 400}}>
+                                            <h3 style={{marginTop: 5, marginBottom: 5}}>{machine.type}</h3>
+                                            <div style={{position: 'relative', zIndex: '1', width: '100%', height: 180, backgroundColor: 'transparent', textAlign: 'center'}}>
+                                                <img src={`/assets/${machine.model}.png`} height={'100%'} />
+                                            </div>
+                                            <div style={{width: '100%'}}>
+                                                <p style={{marginTop: 5, marginBottom: 5}}><b>Marca: </b> {machine.brand} </p>
+                                            </div>
+                                            <div style={{width: '100%'}}>
+                                                <p style={{marginTop: 5, marginBottom: 5}}><b>Modelo: </b> {machine.model} </p>
+                                            </div>
+                                            <div style={{width: '100%'}}>
+                                                <p style={{marginTop: 5, marginBottom: 5}}><b>Código: </b> {machineData.id} </p>
+                                            </div>
+                                            <div style={{width: '100%'}}>
+                                                <p style={{marginTop: 5, marginBottom: 5}}><b>Horómetro Actual: </b> {(((machineData.hourMeter)/3600000).toFixed(2)).toString().replace('.', ',')} hrs </p>
+                                            </div>
+                                            <div style={{width: '100%'}}>
+                                                <p style={{marginTop: 5, marginBottom: 5}}><b>Número Interno: </b> {machineData.equ} </p>
+                                            </div>
+                                            <div style={{width: '100%'}}>
+                                                <p style={{marginTop: 5, marginBottom: 5}}><b>Información: </b> {machineData.info} </p>
+                                            </div>
+                                            <div style={{width: '100%'}}>
+                                                <p style={{marginTop: 5, marginBottom: 5}}><b>Última Mantención: </b> {machineData.lastMant} </p>
+                                            </div>
+                                            <div style={{width: '100%'}}>
+                                                <p style={{marginTop: 5, marginBottom: 5}}><b>Último Inspector: </b> {machineData.lastOper} </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div style={{width: '70%', padding: 5}}>
-                                    <div style={{height: 480, padding: 5, borderEndEndRadius: 20, borderTopRightRadius: 20, backgroundColor: '#fff'}}>
-                                        {
-                                            pauta && <PautaDetail height={300} pauta={pauta}/>
-                                        }
-                                    </div>
-                                    <div style={{position: 'relative', bottom: 20, width: '100%'}}>
-                                        <div style={{float: 'left', width: '50%', textAlign: 'left'}}>
-                                            <button onClick={openCloseModal} style={{color: '#BB2D2D', borderColor: '#BB2D2D', height: 48, width: 160, borderRadius: 23, borderWidth: 2, fontSize: 20}}>
-                                                <strong>Ver 3D</strong>
-                                            </button>
+                                </Grid>
+                                <Grid item lg={8}>
+                                    <div style={{width: '100%', padding: 5}}>
+                                        <div style={{height: 480, padding: 5, borderEndEndRadius: 20, borderTopRightRadius: 20, backgroundColor: '#fff'}}>
+                                            {
+                                                pauta && <PautaDetail height={300} pauta={pauta}/>
+                                            }
                                         </div>
-                                        <div style={{float: 'left', width: '50%', textAlign: 'right'}}>
-                                            <button style={{borderColor: '#BB2D2D', backgroundColor: '#BB2D2D', color: '#fff', height: 48, width: 210, borderRadius: 23, borderWidth: 2, fontSize: 20}}>
-                                                Finalizar Jornada
-                                            </button>
+                                        <div style={{position: 'relative', bottom: 20, width: '100%'}}>
+                                            <div style={{float: 'left', width: '50%', textAlign: 'left'}}>
+                                                <button onClick={openCloseModal} style={{color: '#BB2D2D', borderColor: '#BB2D2D', height: 48, width: 160, borderRadius: 23, borderWidth: 2, fontSize: 20}}>
+                                                    <strong>Ver 3D</strong>
+                                                </button>
+                                            </div>
+                                            <div style={{float: 'left', width: '50%', textAlign: 'right'}}>
+                                                <button style={{borderColor: '#BB2D2D', backgroundColor: '#BB2D2D', color: '#fff', height: 48, width: 210, borderRadius: 23, borderWidth: 2, fontSize: 20}}>
+                                                    Finalizar Jornada
+                                                </button>
+                                            </div>
                                         </div>
-                                        
-                                        
                                     </div>
-                                </div>
-                                
-                            
-                                
-                                
+                                </Grid>
                                 <div>
                                     <Modal
                                         open={open}
                                         close={!open}
-                                        //onClose={handleClose}
                                         aria-labelledby="modal-modal-title"
                                         aria-describedby="modal-modal-description"
                                     >
                                         <div style={{height: '100%', width: '100%', backgroundColor: '#333'}}>
-                                            {/* <VRAvatar machine={machine}/> */} 
                                             <MVAvatar machine={machineTo3D}/>
-                                            {/* <Test /> */}
                                             <Fab onClick={openCloseModal} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>
                                                 <Close style={{color: '#ccc'}} />
                                             </Fab>
@@ -186,7 +193,6 @@ const AppliancePage = ({ route }) => {
 }
 
 AppliancePage.propTypes = {
-    //route: PropTypes.oneOf(['inspection', 'maintenance'])
     route: PropTypes.oneOf(['inspection/machine-detail', 'maintenance/machine-detail'])
 }
 
