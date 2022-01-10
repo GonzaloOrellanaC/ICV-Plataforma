@@ -61,6 +61,7 @@ const AdminNewUserPage = () => {
                 //localStorage.setItem('userDataToSave', JSON.stringify(u.data))
             })
         }else{
+            setUsageModule(0)
             setRoutingData('Nuevo usuario');
         }
     }, [])
