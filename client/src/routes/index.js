@@ -5,7 +5,6 @@ import permisosRoutes from './permisos.routes';
 import usersRoutes from './users.routes';
 import reportsRoutes from './reports.routes';
 import machinesRoutes from './machines.routes';
-import blobRoutes from './blob.routes';
 
 export {
     authRoutes,
@@ -15,5 +14,4 @@ export {
     usersRoutes,
     reportsRoutes,
     machinesRoutes,
-    blobRoutes
 }

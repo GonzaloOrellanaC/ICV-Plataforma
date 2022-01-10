@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { makeStyles, Grid, Box, FormControl, IconButton } from "@material-ui/core";
 import { faEye, faEyeSlash, faPaperclip, faUserCog } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { blobRoutes, rolesRoutes } from '../../routes';
+import { rolesRoutes } from '../../routes';
 import { validate, clean, format, getCheckDigit } from 'rut.js';
 import { sitesDatabase } from "../../indexedDB";
 import './CreateUser.css'
@@ -146,17 +146,7 @@ const CreateUser = ({height, typeDisplay, uData}) => {
     const classes = useStyles();
 
     const uploadImageProfile = (file) => {
-        /* console.log(file);
-        blobRoutes.uploadImageProfile(file, localStorage.getItem('_id'), file.type ) */
-        /* var reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-            //console.log(reader.result);
-            blobRoutes.uploadImageProfile(reader.result, localStorage.getItem('_id'), file.type )
-        };
-        reader.onerror = function (error) {
-            console.log('Error: ', error);
-        };  */
+        
         
     }
 
