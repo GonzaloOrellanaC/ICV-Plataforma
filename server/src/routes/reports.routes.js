@@ -12,4 +12,5 @@ router.post('/getReportByType', ReportsService.getReportByType)
 router.post('/getReportByState', ReportsService.getReportByState)
 router.post('/getReportsByUser', ReportsService.getReportsByUser)
 
+
 export default router

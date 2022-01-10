@@ -31,7 +31,8 @@ const AdminNewUserPage = () => {
     const [ openLoader, setOpenLoader ] = useState(false);
     const [ loadingData, setLoadingData ] = useState('');
     const [ routingData, setRoutingData ] = useState('');
-    const [ usageModule, setUsageModule ] = useState(0);
+    const [ usageModule, setUsageModule ] = useState();
+    const [ userData, setUserData ] = useState({})
 
     let { id } = useParams();
 
@@ -54,7 +55,10 @@ const AdminNewUserPage = () => {
             setRoutingData('Editar usuario');
             let uData = usersRoutes.getUser(id);
             uData.then(u => {
-                localStorage.setItem('userDataToSave', JSON.stringify(u.data))
+                console.log(u.data)
+                setUserData(u.data);
+                setUsageModule(0)
+                //localStorage.setItem('userDataToSave', JSON.stringify(u.data))
             })
         }else{
             setRoutingData('Nuevo usuario');
@@ -105,6 +109,7 @@ const AdminNewUserPage = () => {
         let userData = JSON.parse(localStorage.getItem('userDataToSave'));
         let permisosReportes = JSON.parse(localStorage.getItem('listaPermisosReportes'));
         let permisosUsuarios = JSON.parse(localStorage.getItem('listaPermisosUsuarios'));
+        console.log(permisosUsuarios)
         permisosReportes.forEach( (permisoReporte, index) => {
             if(!permisoReporte.isChecked) {
                 permisoReporte.isChecked = false
@@ -117,7 +122,7 @@ const AdminNewUserPage = () => {
                     if(i == (permisosUsuarios.length - 1)) {
                         userData.permissionsReports = permisosReportes;
                         userData.permissionsUsers = permisosUsuarios;
-                        let userState = await usersRoutes.editUser(userData);
+                        let userState = await usersRoutes.editUser(userData, id);
                         if(userState) {
                             openCloseModal()
                         }
@@ -136,10 +141,14 @@ const AdminNewUserPage = () => {
     const getUserInfo = () => {
         let user = JSON.parse(localStorage.getItem('userDataToSave'));
         let habilitado = true;
+        console.log(user)
         if(user) {
             if(user.rut) {
                 if(validate(user.rut)) {
-                    if(user.phone.length >= 9) {
+                    let phone = new String()
+                    phone = user.phone;
+                    console.log(phone.length)
+                    if(user.phone) {
                         console.log(user);
                         let infoFaltante = []
                         Object.values(user).map(async (value, index) => {
@@ -151,7 +160,7 @@ const AdminNewUserPage = () => {
                                 infoFaltante.push(await transformInfo(Object.keys(user)[index]))
                             }
                             console.log(index, (Object.values(user).length), Object.keys(user)[index])
-                            if(index == (Object.values(user).length - 1)) {
+                            if(index == (Object.values(user).length - 2)) {
                                 console.log(habilitado)
                                 if(!habilitado) {
                                     setTimeout(() => {
@@ -212,7 +221,7 @@ const AdminNewUserPage = () => {
                             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                                 {
                                     (usageModule === 0) &&
-                                        <CreateUser height={100} typeDisplay={routingData} />
+                                        <CreateUser height={100} typeDisplay={routingData} uData={userData} />
                                 }
                                 {   (usageModule === 1) &&
                                         <PermissionUser height={100} typeDisplay={routingData} id={id} />

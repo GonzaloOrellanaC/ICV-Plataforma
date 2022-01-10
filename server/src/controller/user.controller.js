@@ -33,12 +33,13 @@ const createUser = async  (req, res, next) => {
 
 const editUser = async  (req, res, next) => {
     
-    const { body: { userData } } = req
+    const { body: { userData, id } } = req
 
-    console.log('Respuestas: ',userData)
+    //console.log('Respuestas: ',userData)
 
     try {
-        const editingUser = await UserServices.editUser(userData);
+        const editingUser = await UserServices.editUser(userData, id);
+        console.log(editingUser)
 
         res.json(editingUser)
         

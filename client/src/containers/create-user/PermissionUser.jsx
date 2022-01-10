@@ -31,8 +31,8 @@ const PermissionUser = ({height, typeDisplay, id}) => {
     /* SELECCION DE CHECKBOX */
     
     const handleChange = (checked, i, list, nameList) => {
-        /* console.log(checked)
-        console.log(nameList) */
+        /* console.log(checked)*/
+        console.log(list) 
         list[i].isChecked = checked;
         setPermisosReportes([]);
         setPermisosUsuarios([]);

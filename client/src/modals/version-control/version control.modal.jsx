@@ -20,6 +20,26 @@ const VersionControlModal = ({open, closeModal}) => {
                         Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.
                     </p>
                     <p>
+                        <strong>v.3.2</strong>
+                        <li>
+                            Se habilitan reportes. Se realizan para pruebas:
+                            <ul>
+                                <li>
+                                    Creación
+                                </li>
+                                <li>
+                                    Edición
+                                </li>
+                                <li>
+                                    Asignación por usuario Operario de Inspección y Operario de Mantención
+                                </li>
+                                <li>
+                                    Pautas solo se pueden ver para pruebas. No se ha habilitado para ser ejecutadas y guardadas.
+                                </li>
+                            </ul>
+                        </li>
+                    </p>
+                    <p>
                         <strong>v.2.9.4</strong>
                         <li>
                             Reparaciones en servicio de reset de contraseña.

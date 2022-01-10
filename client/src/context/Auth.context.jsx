@@ -11,7 +11,7 @@ export const AuthProvider = (props) => {
     const [ isAuthenticated, setIsAuthenticated ] = useState(defaultAuthenticated || false)
     const [ getSelf, { loading, error, data } ] = useLazyQuery(UsersGraphQL.query.GET_SELF)
     const [ userData, setUserData ] = useState({});
-    const [ admin, setAdmin ] = useState(defaultAdmin || false)
+    const [ admin, setAdmin ] = useState(defaultAdmin || false);
 
      useEffect(() => {
         if (data?.self) {
@@ -58,7 +58,8 @@ export const AuthProvider = (props) => {
                             setAdmin(true)
                         }else{
                             localStorage.setItem('isAdmin', false);
-                            setAdmin(false)
+                            setAdmin(false);
+                            
                         }
                         if(userDataToSave.sites) {
                             localStorage.setItem('sitio', userDataToSave.sites);

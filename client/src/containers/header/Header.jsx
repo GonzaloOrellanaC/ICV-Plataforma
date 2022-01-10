@@ -10,6 +10,7 @@ import { faBell, faHome, faInfoCircle, faTools, faUserCog } from '@fortawesome/f
 //import logo from '../../assets/logo.webp'
 import logo from '../../assets/logo_icv_gris.png'
 import { useAuth, useLanguage, useNavigation } from '../../context'
+import { changeTypeUser } from '../../config'
 
 const useStyles = makeStyles((theme) => ({
     appbar: {
@@ -60,6 +61,9 @@ const Header = () => {
 
     userData.name = window.localStorage.getItem('name');
     userData.lastName = window.localStorage.getItem('lastName');
+    if(window.localStorage.getItem('role')) {
+        userData.role = changeTypeUser(window.localStorage.getItem('role'))
+    }
     
     if(isAuthenticated) {
         
@@ -72,7 +76,8 @@ const Header = () => {
                     {isAuthenticated && <Fragment>
                             <dl>
                                 <dt style={{margin: 0}}>{isAuthenticated && <div> <p className='nombre'> { userData.name } { userData.lastName } </p> </div>}</dt>
-                                <dt>{window.localStorage.getItem('name') === 'ADMINISTRADOR' && <div> <p className='rol'> Administrador </p> </div>}</dt>
+                                {/* <dt>{window.localStorage.getItem('name') === 'ADMINISTRADOR' && <div> <p className='rol'> Administrador </p> </div>}</dt> */}
+                                <dt> {userData.role} </dt>
                             </dl>
                         </Fragment>}
                 </Toolbar>

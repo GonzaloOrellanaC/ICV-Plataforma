@@ -28,7 +28,11 @@ const environment = {
         url: process.env.ICV_URL
     },
     storageApi: {
-        url: process.env.STORAGE_URL
+        account: process.env.AZURE_ACCOUNT,
+        accountKey: process.env.TOKEN_SAS_BLOB,
+        url: process.env.STORAGE_URL,
+        urlWithKey: process.env.URL_SAS_BLOB,
+        accessKeys: process.env.ACCESS_KEYS
     },
     mailApi: {
         key: process.env.MAIL_KEY,

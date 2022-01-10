@@ -37,6 +37,9 @@ const ReportsList = ({list}) => {
                 {/* <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
                     <Checkbox defaultChecked />
                 </Grid> */}
+                <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                    <p > <strong>Pauta</strong> </p>
+                </Grid>
                 <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                     <p > <strong>Fecha <br /> Prevista</strong> </p>
                 </Grid>
@@ -82,6 +85,9 @@ const ReportsList = ({list}) => {
                             {/* <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
                                 <Checkbox defaultChecked />
                             </Grid> */}
+                            <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                                <p> {item.guide} </p>
+                            </Grid>
                             <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                                 <p> {item.date} </p>
                             </Grid>
@@ -115,7 +121,7 @@ const ReportsList = ({list}) => {
             }
             {
                 
-                reportData && <AssignReportModal open={openModalState} report={reportData} closeModal={closeModal}/>
+                reportData && <AssignReportModal open={openModalState} report={reportData} reportType={reportData.reportType} closeModal={closeModal}/>
                 
             }
         </div>

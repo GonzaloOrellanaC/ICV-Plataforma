@@ -9,6 +9,7 @@ import PermissionRoutes from './permisos.routes'
 import UserRoutes from './user.routes'
 import ReportsRoutes from './reports.routes'
 import MachinesRoutes from './machines.routes'
+import BlobRoutes from './blob.routes'
 
 const router = new Router()
 
@@ -20,5 +21,6 @@ router.use('/permisos', PermissionRoutes)
 router.use('/users', UserRoutes)
 router.use('/reports', ReportsRoutes)
 router.use('/machines', MachinesRoutes)
+router.use('/blob', BlobRoutes)
 
 export default router

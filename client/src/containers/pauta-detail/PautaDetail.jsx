@@ -6,12 +6,15 @@ import { Button, ListItem, IconButton, Checkbox } from "@material-ui/core";
 import CircleCheckedFilled from '@material-ui/icons/CheckCircle';
 import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked';
 import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ReadActivityModal } from '../../modals'
 
 const PautaDetail = ({height, pauta}) => {
     const [ gruposObservaciones, setGrupoObservaciones ] = useState([]);
     const [ gruposKeys, setGruposKeys ] = useState([]);
-    const [ contentData, setContentData ] = useState([])
+    const [ contentData, setContentData ] = useState([]);
+    const [ openReadActivity, setOpenReadActivity ] = useState(false);
+    const [ activity, setActivity ] = useState({})
     
     useEffect(() => {
         let group = pauta.struct.reduce((r, a) => {
@@ -50,13 +53,17 @@ const PautaDetail = ({height, pauta}) => {
         
     }
 
+    const closeModal = () => {
+        setOpenReadActivity(false)
+    }
+
     const well = {
         height: 70,
         borderRadius: 10,
         boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)'
     }
       
-    function SampleArrow(props) {
+    const SampleArrow = (props) => {
         const { className, style, onClick } = props;
         return (
             <div
@@ -123,6 +130,7 @@ const PautaDetail = ({height, pauta}) => {
                 {contentData && <div style={{height: height, overflowY: 'scroll'}}>
                     {
                         contentData.map((e, n) => {
+                            
                             if(!e.obs01) {
                                 e.obs01 = 'Sin Observaciones'
                             }
@@ -137,18 +145,19 @@ const PautaDetail = ({height, pauta}) => {
                                     <div style={{width: '40%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {e.obs01}  
                                     </div>
-                                    <IconButton>
+                                    <IconButton onClick={()=>{setOpenReadActivity(true); setActivity(e)}}>
                                         <FontAwesomeIcon icon={faEye}/>
                                     </IconButton>
                                     <IconButton>
                                         <FontAwesomeIcon icon={faPen}/>
                                     </IconButton>
-                                    <Checkbox style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: '#27AE60'}} />} />
+                                    <Checkbox checked={e.isChecked} disabled style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: '#27AE60'}} />} />
                                 </ListItem>
                             )
                         })
                     }   
                 </div>}
+                <ReadActivityModal open={openReadActivity} closeModal={closeModal} activity={activity}/>
             </div>
         </div>
     )

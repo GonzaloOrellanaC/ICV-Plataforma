@@ -8,9 +8,10 @@ export default {
         }
         return axios.post('/users/createUser', requestBody)
     },
-    editUser: (userData) => {
+    editUser: (userData, id) => {
         const requestBody = {
-            userData
+            userData,
+            id
         }
         return axios.post('/users/editUser', requestBody)
     },

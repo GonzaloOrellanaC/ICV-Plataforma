@@ -120,9 +120,12 @@ const Navbar = () => {
 
 
     const logout = async () => {
-        window.localStorage.clear();
-        window.location.reload();
-        removeDatabases();
+        if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
+            window.localStorage.clear();
+            window.location.reload();
+            removeDatabases();
+        }
+        
     }
 
     const removeDatabases = async () => {

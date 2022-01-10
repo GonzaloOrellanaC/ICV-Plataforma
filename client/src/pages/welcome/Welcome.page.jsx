@@ -21,7 +21,9 @@ const WelcomePage = () => {
     const [ progress, setProgress ] = useState(0)
     const [ loadingData, setLoadingData ] = useState('')
     const [ disableButton, setDisableButtons ] = useState(true)
-    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true)
+    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true);
+    const [ disableIfNoMaintenance, setDisableIfNoMaintenance ] = useState(false);
+    const [ disableIfNoInspection, setDisableIfNoInspection ] = useState(false);
 
     ////Notificaciones
     const [ notificaciones1, setNotificaciones1 ] = useState('Sin notificaciones')
@@ -37,7 +39,17 @@ const WelcomePage = () => {
         if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
             setDisableButtonsNoSAP(false);
         }else{
-            setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.')
+            setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.');
+            if(localStorage.getItem('role') === 'maintenceOperator') {
+                setDisableIfNoMaintenance(false)
+            }else{
+                setDisableIfNoMaintenance(true)
+            };
+            if(localStorage.getItem('role') === 'inspectionWorker') {
+                setDisableIfNoInspection(false)
+            }else{
+                setDisableIfNoInspection(true)
+            };
         }
         if(localStorage.getItem('version')) {
             if((localStorage.getItem('version') != environment.version)) {
@@ -488,10 +500,10 @@ const WelcomePage = () => {
                 <br />
                 <Grid container spacing={5}>
                         <Grid item xs={12} sm={12} md={6} lg={3}>
-                            <CardButton variant='inspection' disableButton={disableButton}/>
+                            <CardButton variant='inspection' disableButton={disableButton || disableIfNoInspection}/>
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={3}>
-                            <CardButton variant='maintenance' disableButton={disableButton}/>
+                            <CardButton variant='maintenance' disableButton={disableButton || disableIfNoMaintenance}/>
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={3}>
                             <CardButton variant='reports' disableButton={disableButtonNoSAP}/>

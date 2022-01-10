@@ -10,10 +10,10 @@ import { Close } from '@material-ui/icons';
 import { styleModalReport } from '../../config';
 import { reportsRoutes, usersRoutes } from '../../routes';
 
-const AssignReportModal = ({open, report, closeModal}) => {
+const AssignReportModal = ({open, report, closeModal, reportType}) => {
     const [ operarios, setOperarios ] = useState([]);
     const [ colorState, setColorState ] = useState();
-    const { reportType, idIndex, guide, state, siteName, usersAssigned } = report;
+    const { idIndex, guide, state, siteName, usersAssigned } = report;
     const [ stateAssignment , setStateAssignment ] = useState(false);
     const [ data, setData ] = useState('')
 
@@ -46,6 +46,14 @@ const AssignReportModal = ({open, report, closeModal}) => {
     }
 
     const getUsers = () => {
+        let hableUser;
+        console.log(reportType)
+        if(reportType === 'Inspección') {
+            hableUser === 'inspectionWorker'
+        }else if(reportType === 'Mantención') {
+            hableUser === 'maintenceOperator'
+        }
+        console.log(hableUser)
         usersRoutes.getAllUsers().then(response => {
             console.log(response.data);
             let userList = new Array();
@@ -56,6 +64,7 @@ const AssignReportModal = ({open, report, closeModal}) => {
                 let permissionsReports = new Array();
                 permissionsReports = user.permissionsReports
                 if(permissionsReports.length > 0) {
+                    console.log(user.role, hableUser)
                     if(permissionsReports[1].isChecked) {
                         users.push(user);
                     }
@@ -70,7 +79,7 @@ const AssignReportModal = ({open, report, closeModal}) => {
 
     useEffect(() => {
         getUsers();
-        console.log(report)
+        //console.log(report)
         if(state === 'Por asignar') {
             setColorState('#E99797');
         }else if(state === 'En proceso') {
@@ -127,7 +136,18 @@ const AssignReportModal = ({open, report, closeModal}) => {
                 <select value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value)}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
                     <option value={""}>Seleccionar operario</option>
                     {
-                        operarios.map((user, i) => {
+                        operarios.filter(user => {
+                            if(reportType ==='Inspección') {
+                                if(user.role==='inspectionWorker') {
+                                    return user
+                                }
+                            }else if(reportType === 'Mantención') {
+                                if(user.role==='maintenceOperator') {
+                                    return user
+                                }
+                            }
+                        }).map((user, i) => {
+                            //console.log(user)
                             return(
                                 <option key={i} value={user._id}>{`${user.name} ${user.lastName}`}</option>
                             )

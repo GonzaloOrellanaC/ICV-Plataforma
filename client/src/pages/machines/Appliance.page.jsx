@@ -58,14 +58,17 @@ const AppliancePage = ({ route }) => {
                 console.log(pautas)
                 reports.forEach((report, i) => {
                     if(machineData.equid === report.machine) {
-                        console.log(report);
-                        pautas.forEach((pauta, n) => {
-                            if(pauta.typepm === report.guide) {
-                                if(pauta.typepm.includes(pautaType)) {
-                                    setPauta(pauta)
+                        //console.log(report);
+                        if(pautas.length > 0) {
+                            pautas.forEach((pauta, n) => {
+                                if(pauta.typepm === report.guide) {
+                                    if(pauta.typepm.includes(pautaType)) {
+                                        console.log(pauta)
+                                        setPauta(pauta)
+                                    }
                                 }
-                            }
-                        })
+                            })
+                        }
                     }
                 })
             })
@@ -111,7 +114,7 @@ const AppliancePage = ({ route }) => {
                                 </div>
                             </div>
                             <Grid container>
-                                <Grid item lg={4}>
+                                <Grid item xl={2} lg={4}>
                                     <div style={{width: '100%', textAlign: 'left', padding: 10}}>
                                         <div style={{padding: 15, borderTopLeftRadius: 20, borderEndStartRadius: 20, backgroundColor: '#F9F9F9', borderRadius: 10, minHeight: 400}}>
                                             <h3 style={{marginTop: 5, marginBottom: 5}}>{machine.type}</h3>
@@ -145,11 +148,13 @@ const AppliancePage = ({ route }) => {
                                         </div>
                                     </div>
                                 </Grid>
-                                <Grid item lg={8}>
-                                    <div style={{width: '100%', padding: 5}}>
-                                        <div style={{height: 480, padding: 5, borderEndEndRadius: 20, borderTopRightRadius: 20, backgroundColor: '#fff'}}>
+                                <Grid item xl={10} lg={8} style={{height: 'calc(100vh - 200px)', display: 'block'}}>
+                                    <div style={{height: 'calc(100vh - 210px)', width: '100%', padding: 5}}>
+                                        <div style={{height: '100%', padding: 5, borderEndEndRadius: 20, borderTopRightRadius: 20, backgroundColor: '#fff'}}>
+                                            {pauta && <h2>Pauta de {(pautaType==='PM') && 'Mantención'} {(pautaType==='PI') && 'Inspección'} {pauta.typepm}</h2>}
+                                            {!pauta && <h2>Sin asignación.</h2>}
                                             {
-                                                pauta && <PautaDetail height={300} pauta={pauta}/>
+                                                pauta && <PautaDetail height={'calc(100vh - 420px)'} pauta={pauta}/>
                                             }
                                         </div>
                                         <div style={{position: 'relative', bottom: 20, width: '100%'}}>
@@ -159,7 +164,7 @@ const AppliancePage = ({ route }) => {
                                                 </button>
                                             </div>
                                             <div style={{float: 'left', width: '50%', textAlign: 'right'}}>
-                                                <button style={{borderColor: '#BB2D2D', backgroundColor: '#BB2D2D', color: '#fff', height: 48, width: 210, borderRadius: 23, borderWidth: 2, fontSize: 20}}>
+                                                <button onClick={()=>{alert('En desarrollo')}} style={{borderColor: '#BB2D2D', backgroundColor: '#BB2D2D', color: '#fff', height: 48, width: 210, borderRadius: 23, borderWidth: 2, fontSize: 20}}>
                                                     Finalizar Jornada
                                                 </button>
                                             </div>

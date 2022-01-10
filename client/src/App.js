@@ -68,7 +68,7 @@ const client = new ApolloClient({
 
 const OnApp = () => {
     const { isAuthenticated, loading, admin } = useAuth();
-    console.log(isAuthenticated, loading, admin)
+    console.log(admin);
 
     return (
         <div style={{fontFamily: 'Roboto'}}>
@@ -117,7 +117,8 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                <Route path={['/inspection']}>
+                {((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === ('admin' ||  'sapExecutive' || ''))
+                ) && <Route path={['/inspection']}>
                     <Switch>
                         <Route exact path='/inspection'>
                             <MachinesPage route={'inspection'}/>
@@ -129,8 +130,16 @@ const OnApp = () => {
                             <AppliancePage route={'inspection/machine-detail'}/>
                         </Route>
                     </Switch>
-                </Route>
-                <Route path={['/maintenance']}>
+                </Route>}
+                { !(localStorage.getItem('role') === 'inspectionWorker') && <Route path={['/inspection']}>
+                    <Switch>
+                        <Route exact path='/inspection'>
+                            <NoPermissionPage route={'inspection'}/>
+                        </Route>
+                    </Switch>
+                </Route>}
+                {((localStorage.getItem('role') === 'maintenceOperator') ||(localStorage.getItem('role') === ('admin' ||  'sapExecutive' || '')))
+                 && <Route path={['/maintenance']}>
                     <Switch>
                         <Route exact path='/maintenance'>
                             <MachinesPage route={'maintenance'}/>
@@ -142,15 +151,22 @@ const OnApp = () => {
                             <AppliancePage route={'maintenance/machine-detail'}/>
                         </Route>
                     </Switch>
-                </Route>
-                {admin &&<Route path={['/sites']}>
+                </Route>}
+                {!(localStorage.getItem('role') === 'maintenceOperator') && <Route path={['/maintenance']}>
+                    <Switch>
+                        <Route exact path='/maintenance'>
+                            <NoPermissionPage route={'maintenance'}/>
+                        </Route>
+                    </Switch>
+                </Route>}
+                {(localStorage.getItem('role') === ('admin' ||  'sapExecutive' || '')) &&<Route path={['/sites']}>
                     <Switch>
                         <Route exact path='/sites'>
                             <SitesPage route={'sites'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {!admin &&<Route path={['/sites']}>
+                {!(localStorage.getItem('role') === ('admin' ||  'sapExecutive' || '')) &&<Route path={['/sites']}>
                     <Switch>
                         <Route exact path='/sites'>
                             <NoPermissionPage route={'sites'}/>
@@ -185,42 +201,42 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                {admin && <Route path={['/administration']}>
+                {(localStorage.getItem('role') === ('admin' ||  'sapExecutive' || '')) && <Route path={['/administration']}>
                     <Switch>
                         <Route exact path='/administration'>
                             <AdminPage route={'administration'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {!admin && <Route path={['/administration']}>
+                {!(localStorage.getItem('role') === ('admin' ||  'sapExecutive' || '')) && <Route path={['/administration']}>
                     <Switch>
                         <Route exact path='/administration'>
                             <NoPermissionPage route={'administration'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {admin && <Route path={['/users']}>
+                {(localStorage.getItem('role') === ('admin' ||  'sapExecutive' || '')) && <Route path={['/users']}>
                     <Switch>
                         <Route exact path='/users'>
                             <AdminUsersPage route={'users'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {!admin && <Route path={['/users']}>
+                {!(localStorage.getItem('role') === ('admin' ||  'sapExecutive' || '')) && <Route path={['/users']}>
                     <Switch>
                         <Route exact path='/users'>
                             <NoPermissionPage route={'users'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {admin && <Route path={['/new-users']}>
+                {(localStorage.getItem('role') === ('admin' ||  'sapExecutive' || '')) && <Route path={['/new-users']}>
                     <Switch>
                         <Route exact path='/new-users'>
                             <AdminNewUserPage route={'new-users'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {!admin && <Route path={['/new-users']}>
+                {!(localStorage.getItem('role') === ('admin' ||  'sapExecutive' || '')) && <Route path={['/new-users']}>
                     <Switch>
                         <Route exact path='/new-users'>
                             <NoPermissionPage route={'new-users'}/>

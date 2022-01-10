@@ -4,7 +4,8 @@ import rolesRoutes from './roles.routes';
 import permisosRoutes from './permisos.routes';
 import usersRoutes from './users.routes';
 import reportsRoutes from './reports.routes';
-import machinesRoutes from './machines.routes'
+import machinesRoutes from './machines.routes';
+import blobRoutes from './blob.routes';
 
 export {
     authRoutes,
@@ -13,5 +14,6 @@ export {
     permisosRoutes,
     usersRoutes,
     reportsRoutes,
-    machinesRoutes
+    machinesRoutes,
+    blobRoutes
 }

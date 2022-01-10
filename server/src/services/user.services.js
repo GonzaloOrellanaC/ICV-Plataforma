@@ -41,9 +41,10 @@ const createUser =  (user, password) => {
     })
 }
 
-const editUser = async (user) => {
+const editUser = async (user, id) => {
+    console.log('Usuario es: ', user)
     try {
-        Users.findByIdAndUpdate(user._id, user, (err, user) => {
+        Users.findByIdAndUpdate(id, user, (err, user) => {
             console.log('Usuario editado: ', user);
             if(user) {
                 return user

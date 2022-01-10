@@ -1,5 +1,5 @@
 export const changeTypeUser = (userType) => {
-    if(userType === 'superAdmin') {
+    if(userType === 'superAdmin' || userType === 'admin' || userType === '') {
         return 'Super Administrador'
     }else if(userType === 'sapExecutive') {
         return 'Ejecutivo SAP'

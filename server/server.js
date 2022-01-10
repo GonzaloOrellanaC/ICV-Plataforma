@@ -2,12 +2,15 @@ import express from "express";
 import path from "path";
 
 import { environment } from "./src/config";
+import { BlobController } from "./src/controller";
 import { databaseLoader, expressLoader } from "./src/loaders";
 import { AccessControlServices } from "./src/services";
 
 const startServer = async () => {
     /* Conexión a MongoDB  */
     await databaseLoader();
+
+    BlobController.listContainers();
 
     /* Carga de recursos desde API ICV */
     //await apiIcvLoader();

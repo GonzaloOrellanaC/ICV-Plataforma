@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { makeStyles, Grid, Box, FormControl, IconButton } from "@material-ui/core";
 import { faEye, faEyeSlash, faPaperclip, faUserCog } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { rolesRoutes } from '../../routes';
+import { blobRoutes, rolesRoutes } from '../../routes';
 import { validate, clean, format, getCheckDigit } from 'rut.js';
 import { sitesDatabase } from "../../indexedDB";
 import './CreateUser.css'
 import ValidatorEmail from './emailValidator'
+import { LoadingModal } from '../../modals'
 
 const useStyles = makeStyles(theme => ({
     inputsStyle: {
@@ -14,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const CreateUser = ({height, typeDisplay}) => {
+const CreateUser = ({height, typeDisplay, uData}) => {
 
     const [ tiposUsuarios, setTiposUsuarios ] = useState([]);
     const [ verPassword, setVerPassword ] = useState('password');
@@ -33,6 +34,7 @@ const CreateUser = ({height, typeDisplay}) => {
     const [ usersTypes, setUserTypes ] = useState([]);
     const [ sites, setSites ] = useState([]);
     const [ passwordNoIguales, setPasswordNoIguales ] = useState(false)
+    const [ open, setOpen ] = useState(false)
 
     const cambiarVistaPassword = () => {
         if(verPassword === 'password') {
@@ -85,14 +87,16 @@ const CreateUser = ({height, typeDisplay}) => {
                 setLastName(`${upperCase}${userData.lastName}`)
             }
         }
-        if(userData.password === userData.confirmPassword) {
-            setPasswordNoIguales(false);
-            document.getElementById('passw').className = 'isValid';
-            document.getElementById('c_passw').className = 'isValid';
-        }else{
-            setPasswordNoIguales(true)
-            document.getElementById('passw').className = 'isInvalid';
-            document.getElementById('c_passw').className = 'isInvalid';
+        if(typeDisplay === 'Nuevo usuario') {
+            if(userData.password === userData.confirmPassword) {
+                setPasswordNoIguales(false);
+                document.getElementById('passw').className = 'isValid';
+                document.getElementById('c_passw').className = 'isValid';
+            }else{
+                setPasswordNoIguales(true)
+                document.getElementById('passw').className = 'isInvalid';
+                document.getElementById('c_passw').className = 'isInvalid';
+            }
         }
         if(userData.phone.length > 0) {
             if(userData.phone.length == 9) {
@@ -139,15 +143,36 @@ const CreateUser = ({height, typeDisplay}) => {
         }
     }
 
-    const classes = useStyles()
+    const classes = useStyles();
+
+    const uploadImageProfile = (file) => {
+        /* console.log(file);
+        blobRoutes.uploadImageProfile(file, localStorage.getItem('_id'), file.type ) */
+        /* var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            //console.log(reader.result);
+            blobRoutes.uploadImageProfile(reader.result, localStorage.getItem('_id'), file.type )
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };  */
+        
+    }
+
+    const openFile = () => {
+        alert('En desarrollo')
+        /* document.getElementById('profileImage').click() */
+    }
         
     useEffect(() => {
         getSites()
-        setTimeout(() => {
             let userDataToContinue = localStorage.getItem('userDataToSave');
-            if(userDataToContinue) {
-                //console.log(JSON.parse(userDataToContinue));
-                let data = JSON.parse(userDataToContinue);
+            console.log(userDataToContinue);
+            if(uData) {
+                setOpen(true)
+                console.log(uData);
+                let data = uData;
                 if(data.rut) {
                     setRut(data.rut)
                 }
@@ -163,7 +188,7 @@ const CreateUser = ({height, typeDisplay}) => {
                 if(data.phone) {
                     setPhone(data.phone);
                     if(data.phone.length > 0) {
-                        if(userData.phone.length == 9) {
+                        if(uData.phone.length == 9) {
                             document.getElementById('phone').className = 'isValid';
                         }else {
                             document.getElementById('phone').className = 'isInvalid';
@@ -182,10 +207,56 @@ const CreateUser = ({height, typeDisplay}) => {
                 if(data.confirmPassword && (typeDisplay === 'Nuevo usuario')) {
                     setConfirmPassword(data.confirmPassword)
                 }
+                setTimeout(() => {
+                    localStorage.setItem('userDataToSave', JSON.stringify(uData));
+                    console.log(JSON.parse(localStorage.getItem('userDataToSave')));
+                    setOpen(false)
+                }, 1000);
+            }
+            if(userDataToContinue) {
+                //console.log(JSON.parse(userDataToContinue));
+                setTimeout(() => {
+                    let data = JSON.parse(userDataToContinue);
+                    if(data.rut) {
+                        setRut(data.rut)
+                    }
+                    if(data.name) {
+                        setName(data.name)
+                    }
+                    if(data.lastName) {
+                        setLastName(data.lastName)
+                    }
+                    if(data.email) {
+                        setEmail(data.email)
+                    }
+                    if(data.phone) {
+                        setPhone(data.phone);
+                        if(data.phone.length > 0) {
+                            if(userData.phone.length == 9) {
+                                document.getElementById('phone').className = 'isValid';
+                            }else {
+                                document.getElementById('phone').className = 'isInvalid';
+                            }
+                        }
+                    }
+                    if(data.role) {
+                        setUserType(data.role)
+                    }
+                    if(data.sites) {
+                        setSiteToUser(data.sites)
+                    }
+                    if(data.password && (typeDisplay === 'Nuevo usuario')) {
+                        setPassword(data.password)
+                    }
+                    if(data.confirmPassword && (typeDisplay === 'Nuevo usuario')) {
+                        setConfirmPassword(data.confirmPassword)
+                    }
+                }, 500);
+                
             };
             setTiposUsuarios(usersTypes)
-            getRoles()
-        }, 500);
+            getRoles();
+            
     }, []);
 
     return (
@@ -199,7 +270,7 @@ const CreateUser = ({height, typeDisplay}) => {
                 <Grid style={{height: height, padding: 30, marginLeft: 100}}>
                     <div style={{float: 'left', marginRight: 10}}>
                         <p>Foto de perfil</p>
-                        <button style={{height: 224, width: 190, borderRadius: 8}} onClick={()=>{alert('No disponible.')}}>
+                        <button style={{height: 224, width: 190, borderRadius: 8}} onClick={()=>{ openFile();/* alert('No disponible.') */}}>
                             <FontAwesomeIcon icon={faPaperclip} style={{fontSize: 18}}/>
                             <br />
                             <br />
@@ -208,6 +279,7 @@ const CreateUser = ({height, typeDisplay}) => {
                             FOTO
                             
                         </button>
+                        <input type="file" id="profileImage" onChange={(e)=>{uploadImageProfile(e.target.files[0])}} hidden />
                     </div>
                     <div style={{float: 'left', width:"75%", marginRight: 10, marginTop: 0}}>
                         <div style={{width: '70vw', height: '12vh'}}>
@@ -339,7 +411,8 @@ const CreateUser = ({height, typeDisplay}) => {
                             passwordNoIguales && <div style={{width: '100%', textAlign: 'center'}}>
                                 <h3 style={{color: 'red'}}>Contraseñas no coinciden</h3>
                             </div>
-                        }            
+                        }
+                        <LoadingModal open={open} withProgress={false} loadingData={'Espere...'} />         
                     </div>
                 </Grid>
             </div>
