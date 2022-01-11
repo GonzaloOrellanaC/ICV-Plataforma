@@ -16,7 +16,7 @@ export const AuthProvider = (props) => {
      useEffect(() => {
         if (data?.self) {
             setUserData(data.self)
-            console.log(data?.self)
+            //console.log(data?.self)
         }
         if(!data) {
 
@@ -44,7 +44,6 @@ export const AuthProvider = (props) => {
             return new Promise(resolve => {
                 authRoutes.login(email, password)
                 .then(response => {
-                    console.log(response);
                     let userDataToSave = response.data;
                     if(response.data.enabled) {
                         localStorage.setItem('email', userDataToSave.email);

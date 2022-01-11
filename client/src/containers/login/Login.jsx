@@ -41,7 +41,7 @@ const Login = () => {
         event.preventDefault()
         let loginState = await login(email, password);
         if(loginState) {
-            console.log(loginState.response.data)
+
         }
     }
 

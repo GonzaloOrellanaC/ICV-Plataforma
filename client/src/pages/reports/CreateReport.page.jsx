@@ -118,7 +118,6 @@ const CreateReports = () => {
             machine: JSON.parse(machineSelected).equid,
             site: JSON.parse(localStorage.getItem('sitio')).idobra
         }
-        console.log(report)
         if(!report.machine || (!report.guide || report.guide === "Selección no cuenta con pautas.") || (!report.reportType || report.reportType === 'Seleccione...')) {
             alert('Falta información')
         }else{
@@ -190,7 +189,6 @@ const CreateReports = () => {
             let pIndex = settingTypePautaWithReturn(report.reportType);
             setPautaIndex(pIndex)
             setIdIndex(report.idIndex);
-            console.log(report.datePrev)
             const newDate = report.datePrev.toString().replace('T00:00:00.000Z', '')
             setDate(newDate)
             setReportType(report.reportType);

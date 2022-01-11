@@ -20,6 +20,15 @@ const VersionControlModal = ({open, closeModal}) => {
                         Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.
                     </p>
                     <p>
+                        <strong>v.3.3</strong>
+                        <li>
+                            Se habilita nuevo botón en navegador lateral "Listado Asignaciones" para operarios
+                        </li>
+                        <li>
+                            Indicador de conexión a internet en Header, Parte superior, dereha. Tiempo máximo de espera de aviso una vez desconactado de la red: 10 segundos.
+                        </li>
+                    </p>
+                    <p>
                         <strong>v.3.2</strong>
                         <li>
                             Se habilitan reportes. Se realizan para pruebas:

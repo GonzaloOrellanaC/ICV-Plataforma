@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Box, Card, Grid, Typography, Modal, Button } from '@material-ui/core'
 import { environment, useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
-import { apiIvcRoutes } from '../../routes'
+import { apiIvcRoutes, reportsRoutes } from '../../routes'
 import { /* pmsDatabase */ sitesDatabase, FilesToStringDatabase, trucksDatabase, machinesDatabase, pautasDatabase, reportsDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import hour from './hour'
@@ -106,20 +106,19 @@ const WelcomePage = () => {
     }
 
     const readData = async () => {
+        getAssignments();
         const revisarData = await setIfNeedReadDataAgain();
         const userRole = localStorage.getItem('role');
         if(userRole==='admin'||userRole==='superAdmin'||userRole==='sapExecutive') {
             
         }else{
             const reports = await getMyReports(localStorage.getItem('_id'));
-            console.log(reports);
             let db = await reportsDatabase.initDbReports();
             if(db) {
                 reports.forEach((report, i) => {
                     report.idDatabase = i;
                     reportsDatabase.actualizar(report, db.database);
                     if(i == (reports.length - 1)) {
-                        console.log('Reportes guardados')
                     }
                 })
                 
@@ -138,7 +137,6 @@ const WelcomePage = () => {
                     const responseSites = await getSites();
                     setTimeout(async () => {
                         if(responseSites) {
-                            console.log(responseSites)
                             setLoadingData('Descargando datos de las máquinas.')
                             setProgress(65)
                             const responseTrucks = await getTrucksList();
@@ -146,7 +144,6 @@ const WelcomePage = () => {
                                 if(responseTrucks) {
                                     setLoadingData('Descargando lista de las máquinas de las obras.')
                                     setProgress(100)
-                                    console.log(responseTrucks)
                                     const getMachines = await getMachinesList();
                                     if(getMachines) {
                                         setTimeout(async () => {
@@ -174,7 +171,6 @@ const WelcomePage = () => {
         return new Promise(async resolve => {
             const pautas = await getPautas();
             if(pautas) {
-                console.log(pautas.length)
                 pautas.forEach(async (pauta, number ) => {
                     setProgress(30);
                     const response = await getHeader(pauta);
@@ -184,7 +180,6 @@ const WelcomePage = () => {
                         let numberProgress1 = progress
                         pautas.forEach(async (pa, n) => {
                             setProgress(65)
-                            console.log(progress)
                             const res = await getStructs(pa)
                             pa.struct = res;
                             //console.log(pa);
@@ -194,7 +189,6 @@ const WelcomePage = () => {
                                 if(db) {
                                     pautas.forEach(async (p, i) => {
                                         setProgress(78)
-                                        console.log(progress)
                                         await pautasDatabase.actualizar(p, db.database);
                                         if(i == (pautas.length - 1)) {
 
@@ -223,19 +217,15 @@ const WelcomePage = () => {
                 let db = await FilesToStringDatabase.initDb3DFiles();
                 if(db) {
                     let databaseInfo = await FilesToStringDatabase.consultar(db.database);
-                    console.log(databaseInfo)
                 }
                 setTimeout(() => {
                     setOpenLoader(false)
                 }, 1000);
             }, 1000);
         }else{
-            console.log(number, trucks)
-            console.log(number, trucks.length)
             setLoadingData('Descargando Modelo 3D ' + (number + 1))
             const url3dTruck = await get3dMachines(trucks[number]);
             const { id, model, brand, type } = trucks[number];
-            console.log(url3dTruck);
             let res = await fetch(url3dTruck);
             const reader = res.body.getReader();
             const contentLength = +res.headers.get('Content-Length');
@@ -254,11 +244,9 @@ const WelcomePage = () => {
                         }
                         let result = new TextDecoder("utf-8").decode(chunksAll);
                         let db = await FilesToStringDatabase.initDb3DFiles();
-                        console.log('Se actualiza')
                         if(db) {
                             let actualizado = await FilesToStringDatabase.actualizar({id: id, info: {model: model, brand: brand, type: type}, data: result}, db.database);
                             if(actualizado) {
-                                console.log('Actualizada máquina id:' + number );
                                 number = number + 1;
                                 get3dElement(number, trucks);
                             }
@@ -326,7 +314,6 @@ const WelcomePage = () => {
                         let reader = new FileReader();
                         reader.onload = async () => {
                             fileName.image = reader.result.replace("data:", "");
-                            console.log(fileName);
                             if(fileName.image) {
                                 trucksDatabase.actualizar(fileName, db.database);
                             }
@@ -352,7 +339,6 @@ const WelcomePage = () => {
             let respuestaConsulta;
             do {
                 respuestaConsulta = await trucksDatabase.consultar(database.database);
-                console.log(respuestaConsulta)
             }
             while (respuestaConsulta.length < machines.length)
             if(respuestaConsulta.length === machines.length) {
@@ -401,7 +387,6 @@ const WelcomePage = () => {
         return new Promise(resolve => {
             apiIvcRoutes.getAllMachines()
             .then(data => {
-                console.log(data.data)
                 resolve(data.data)
             })
         })
@@ -468,6 +453,12 @@ const WelcomePage = () => {
                 newMachine = environment.storageURL + 'maquinas/palas/' + machine.brand.toUpperCase() + '/' + machine.brand + '_' + machine.model + '_' + 'Preview.gltf'
             }
             resolve(newMachine)
+        })
+    }
+
+    const getAssignments = () => {
+        reportsRoutes.findMyAssignations(localStorage.getItem('_id')).then(data => {
+            console.log(data.data)
         })
     }
 

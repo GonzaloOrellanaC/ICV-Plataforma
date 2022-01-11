@@ -6,8 +6,6 @@ import './Machine.button.css'
 
 
 const MachineButton = ({ image, machine, route }) => {
-    console.log(route);
-    console.log(machine);
     const history = useHistory()
     let newMachine = {
         brand: machine.brand,

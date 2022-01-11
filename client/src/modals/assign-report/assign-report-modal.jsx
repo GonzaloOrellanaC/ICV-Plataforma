@@ -47,24 +47,19 @@ const AssignReportModal = ({open, report, closeModal, reportType}) => {
 
     const getUsers = () => {
         let hableUser;
-        console.log(reportType)
         if(reportType === 'Inspección') {
             hableUser === 'inspectionWorker'
         }else if(reportType === 'Mantención') {
             hableUser === 'maintenceOperator'
         }
-        console.log(hableUser)
         usersRoutes.getAllUsers().then(response => {
-            console.log(response.data);
             let userList = new Array();
             let users = new Array();
             userList = response.data;
             userList.forEach((user, index) => {
-                console.log(user);
                 let permissionsReports = new Array();
                 permissionsReports = user.permissionsReports
                 if(permissionsReports.length > 0) {
-                    console.log(user.role, hableUser)
                     if(permissionsReports[1].isChecked) {
                         users.push(user);
                     }

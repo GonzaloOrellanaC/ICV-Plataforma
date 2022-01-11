@@ -12,16 +12,13 @@ const PautaDetailPage = () => {
     const [ pauta, setPauta ] = useState()
     const history = useHistory();
     let { id } = useParams();
-    console.log( id );
 
     useEffect( () => {
 
         pautasDatabase.initDbPMs().then(async database => {
-            console.log(database)
             let data = await pautasDatabase.obtener(id, database.database)
             if(data) {
                 setPauta(data);
-                console.log(pauta)
             }
         })
     }, [])

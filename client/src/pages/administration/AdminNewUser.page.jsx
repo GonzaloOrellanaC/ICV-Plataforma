@@ -55,7 +55,6 @@ const AdminNewUserPage = () => {
             setRoutingData('Editar usuario');
             let uData = usersRoutes.getUser(id);
             uData.then(u => {
-                console.log(u.data)
                 setUserData(u.data);
                 setUsageModule(0)
                 //localStorage.setItem('userDataToSave', JSON.stringify(u.data))
@@ -110,7 +109,6 @@ const AdminNewUserPage = () => {
         let userData = JSON.parse(localStorage.getItem('userDataToSave'));
         let permisosReportes = JSON.parse(localStorage.getItem('listaPermisosReportes'));
         let permisosUsuarios = JSON.parse(localStorage.getItem('listaPermisosUsuarios'));
-        console.log(permisosUsuarios)
         permisosReportes.forEach( (permisoReporte, index) => {
             if(!permisoReporte.isChecked) {
                 permisoReporte.isChecked = false
@@ -142,31 +140,24 @@ const AdminNewUserPage = () => {
     const getUserInfo = () => {
         let user = JSON.parse(localStorage.getItem('userDataToSave'));
         let habilitado = true;
-        console.log(user)
         if(user) {
             if(user.rut) {
                 if(validate(user.rut)) {
                     let phone = new String()
                     phone = user.phone;
-                    console.log(phone.length)
                     if(user.phone) {
-                        console.log(user);
                         let infoFaltante = []
                         Object.values(user).map(async (value, index) => {
                             if(!value) {
                                 if(!id) {
                                     habilitado = false
                                 }
-                                console.log(Object.keys(user)[index], value)
                                 infoFaltante.push(await transformInfo(Object.keys(user)[index]))
                             }
-                            console.log(index, (Object.values(user).length), Object.keys(user)[index])
                             if(index == (Object.values(user).length - 2)) {
-                                console.log(habilitado)
                                 if(!habilitado) {
                                     setTimeout(() => {
-                                        console.log(JSON.stringify(infoFaltante))
-                                    alert('Faltan datos: ' + JSON.stringify(infoFaltante))
+                                        alert('Faltan datos: ' + JSON.stringify(infoFaltante))
                                     }, 100);
                                 }else{
                                     if(id) {

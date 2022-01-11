@@ -34,7 +34,6 @@ const RestorePassword = ({id}) => {
     const handleChange = (event) => {
         switch (event?.target?.name) {
             case 'password':
-                console.log(checkpassword(event.target.value))
                 return setPassword(event.target.value)
             case 'confirmPassword':
                 return setConfirmPassword(event.target.value)
@@ -57,8 +56,6 @@ const RestorePassword = ({id}) => {
     }
 
     const detectPass = (event) => {
-        console.log(event);
-        console.log(event.target.value);
         if(password === confirmPassword) {
             setAlert(false)
         }else{

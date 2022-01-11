@@ -6,7 +6,6 @@ const readMachines = () => {
     return new Promise(resolve => {
         openDB.onsuccess = (ev) => {
             const db = openDB.result;
-            console.log(db)
             const tx = db.transaction("Machines", "readwrite");
             var store = tx.objectStore("Machines");
             var alldata =  store.getAll()//store.getAll();
@@ -17,7 +16,7 @@ const readMachines = () => {
             }
         }
         openDB.onerror = () => {
-            //console.log('Error!!!')
+
         }
     })
 }

@@ -47,5 +47,11 @@ export default {
             userId
         }
         return axios.post('/reports/getReportsByUser', requestBody);
+    },
+    findMyAssignations: (userId) => {
+        const requestBody = {
+            userId
+        };
+        return axios.post('/reports/findMyAssignations', requestBody);
     }
 }

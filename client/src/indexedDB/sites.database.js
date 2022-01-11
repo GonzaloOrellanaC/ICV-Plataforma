@@ -8,7 +8,6 @@ const initDbObras = () => {
     return new Promise(resolve => {
         conexion.onsuccess = () =>{
             db = conexion.result
-            console.log('Se crea BD')
             resolve(
                 {
                     message: "Base de datos abierta",
@@ -20,7 +19,6 @@ const initDbObras = () => {
     
         conexion.onupgradeneeded = (e) =>{
             db = e.target.result;
-            console.log('Se actualiza')
             const coleccionObjetos = db.createObjectStore('Obras',{
                 keyPath: 'id'
             })

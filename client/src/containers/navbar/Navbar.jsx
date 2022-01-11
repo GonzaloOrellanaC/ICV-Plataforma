@@ -15,8 +15,10 @@ import {
     faClipboardList, 
     faMapMarkerAlt, 
     faList, 
-    faUserCog } from '@fortawesome/free-solid-svg-icons';
+    faUserCog, 
+    faListAlt} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation } from '../../context';
+import { VersionControlModal } from '../../modals'
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -116,7 +118,8 @@ const Navbar = () => {
     const [ useButon, setUseButton ] = useState()
     const [ path, setPath ] = useState('')
     const history = useHistory();
-    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true)
+    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true);
+    const [ openVersionModal, setOpenVersionModal ] = useState(false);
 
 
     const logout = async () => {
@@ -142,6 +145,15 @@ const Navbar = () => {
             handleNavBar()
         }
     }
+
+    const toOpenVersionModal = () => {
+        setOpenVersionModal(true)
+    }
+    const closeModal = () => {
+        setOpenVersionModal(false)
+    }
+
+
 
     useEffect(() => {
         if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive')) {
@@ -243,6 +255,13 @@ const Navbar = () => {
                                     </Link>
                                 </IconButton>
                             </div>}
+                            {disableButtonNoSAP && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar} title='Listado Asignaciones'>
+                                    <Link to='/activities' className={classes.sideButtons} style={{ color: (path.includes('/activities')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faListAlt}/> {navBarOpen ?  ' Listado Asignaciones' : ''}
+                                    </Link>
+                                </IconButton>
+                            </div>}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Listado Pautas'>
                                     <Link to='/pms' className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
@@ -258,8 +277,8 @@ const Navbar = () => {
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}  title='Información'>
-                                    <Link to='/information' className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                <IconButton onClick={closeSideBar}  title='Información' onClickCapture={()=>{toOpenVersionModal()}}>
+                                    <Link className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faInfoCircle}/> {navBarOpen ?  ' Información' : ''}
                                     </Link>
                                 </IconButton>
@@ -273,6 +292,7 @@ const Navbar = () => {
                             </div>
                         </Grid>
                     </Grid>
+                    <VersionControlModal open={openVersionModal} closeModal={closeModal} />
                 </div>
             </Drawer>
         </div>

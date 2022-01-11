@@ -9,7 +9,7 @@ import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ReadActivityModal } from '../../modals'
 
-const PautaDetail = ({height, pauta}) => {
+const PautaDetail = ({height, pauta, setReportLocation}) => {
     const [ gruposObservaciones, setGrupoObservaciones ] = useState([]);
     const [ gruposKeys, setGruposKeys ] = useState([]);
     const [ contentData, setContentData ] = useState([]);
@@ -37,15 +37,18 @@ const PautaDetail = ({height, pauta}) => {
                 if(index == (groupData.length - 1)) {
                     setGruposKeys(newGroupData);
                     setContentData(group[newGroupData[0].data]);
+                    setReportLocation(newGroupData[0].data)
                 }
             })
         }
     }, []);
 
     const handleContent = (gruposKeys, element) => {
+        setReportLocation(element.data)
         gruposKeys.forEach((tab, index) => {
             tab.state = false;
             if(index == (gruposKeys.length - 1)) {
+                
                 setContentData(gruposObservaciones[element.data]);
                 element.state = true
             }
@@ -91,6 +94,7 @@ const PautaDetail = ({height, pauta}) => {
                 <Slider {...settings}>
                     {
                         gruposKeys && gruposKeys.map((element, index) => {
+                            
                             return (
                                 <div 
                                     key={index} 

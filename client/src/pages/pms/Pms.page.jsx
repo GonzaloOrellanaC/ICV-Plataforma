@@ -29,14 +29,12 @@ const PmsPage = () => {
         readData();
         pautasDatabase.initDbPMs().then(db => {
             pautasDatabase.consultar(db.database).then(data => {
-                console.log(data)
                 setPmList(data);
             })
         })
     },[])
 
     const readData = async () => {
-        console.log('Hello!!!!')
         if(navigator.onLine) {
             const machines = await getMachines();
             trucksDatabase.initDbMachines()
@@ -62,7 +60,6 @@ const PmsPage = () => {
         return new Promise(resolve => {
             apiIvcRoutes.getMachines()
             .then(data => {
-                console.log(data.data)
                 resolve(data.data)
             })
             .catch(err => {
@@ -106,7 +103,6 @@ const PmsPage = () => {
                                         >
                                             {
                                                 machinesList.map((item, number) => {
-                                                    console.log(item)
                                                     return(
                                                         <MenuItem key={number} value={10}>
                                                             {item.type} {item.brand} {item.model}

@@ -13,7 +13,6 @@ const ReportsList = ({list}) => {
     const history = useHistory();
 
     const openModal = (report) => {
-        console.log(report)
         setReportData(report);
         setOpenModalState(true);
     }
@@ -21,6 +20,8 @@ const ReportsList = ({list}) => {
     const closeModal = () => {
         setOpenModalState(false);
     }
+    
+    
 
     list.forEach(item => {
         item.date = item.datePrev.replace('T00:00:00.000Z', '');

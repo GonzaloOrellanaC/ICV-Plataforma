@@ -106,7 +106,6 @@ const CreateUser = ({height, typeDisplay, uData}) => {
             }
         }
         localStorage.setItem('userDataToSave', JSON.stringify(userData));
-        console.log(JSON.parse(localStorage.getItem('userDataToSave')));
     }
 
     const cambiarVistaConfirmarPassword = () => {
@@ -120,7 +119,6 @@ const CreateUser = ({height, typeDisplay, uData}) => {
     const getRoles = () => {
         return new Promise(async resolve => {
             const responseRoles = await rolesRoutes.getRoles();
-            console.log(responseRoles.data)
             setUserTypes(responseRoles.data);
         })
     }
@@ -158,10 +156,8 @@ const CreateUser = ({height, typeDisplay, uData}) => {
     useEffect(() => {
         getSites()
             let userDataToContinue = localStorage.getItem('userDataToSave');
-            console.log(userDataToContinue);
             if(uData) {
                 setOpen(true)
-                console.log(uData);
                 let data = uData;
                 if(data.rut) {
                     setRut(data.rut)
@@ -199,12 +195,10 @@ const CreateUser = ({height, typeDisplay, uData}) => {
                 }
                 setTimeout(() => {
                     localStorage.setItem('userDataToSave', JSON.stringify(uData));
-                    console.log(JSON.parse(localStorage.getItem('userDataToSave')));
                     setOpen(false)
                 }, 1000);
             }
             if(userDataToContinue) {
-                //console.log(JSON.parse(userDataToContinue));
                 setTimeout(() => {
                     let data = JSON.parse(userDataToContinue);
                     if(data.rut) {

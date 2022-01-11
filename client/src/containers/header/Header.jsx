@@ -1,8 +1,8 @@
-import React, { Fragment, useMemo } from 'react'
+import React, { Fragment, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 import { alpha, AppBar, makeStyles, /* MenuItem, Select, */ Toolbar, Button } from '@material-ui/core'
-
+import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faHome, faInfoCircle, faTools, faUserCog } from '@fortawesome/free-solid-svg-icons'
 //import { faChartBar, faClipboard } from '@fortawesome/free-regular-svg-icons'
@@ -11,6 +11,7 @@ import { faBell, faHome, faInfoCircle, faTools, faUserCog } from '@fortawesome/f
 import logo from '../../assets/logo_icv_gris.png'
 import { useAuth, useLanguage, useNavigation } from '../../context'
 import { changeTypeUser } from '../../config'
+import { useState } from 'react'
 
 const useStyles = makeStyles((theme) => ({
     appbar: {
@@ -57,6 +58,7 @@ const Header = () => {
     const { navBarOpen, locationData } = useNavigation()
     const { isAuthenticated } = useAuth()
     const { dictionary/* , languageOptions, userLanguage, userLanguageChange */ } = useLanguage();
+    const [ network, setIfHavNetwork ] = useState(true);
     let userData = {}
 
     userData.name = window.localStorage.getItem('name');
@@ -64,6 +66,20 @@ const Header = () => {
     if(window.localStorage.getItem('role')) {
         userData.role = changeTypeUser(window.localStorage.getItem('role'))
     }
+
+    useEffect(() => {
+        console.log('Initially ' + (window.navigator.onLine ? 'on' : 'off') + 'line');
+        window.addEventListener('online', () => console.log('Became online'));
+        window.addEventListener('offline', () => console.log('Became offline'));
+    }, [])
+
+    setInterval(() => {
+        if(window.navigator.onLine) {
+            setIfHavNetwork(true)
+        }else{
+            setIfHavNetwork(false)
+        }
+    }, 10000);
     
     if(isAuthenticated) {
         
@@ -80,6 +96,11 @@ const Header = () => {
                                 <dt> {userData.role} </dt>
                             </dl>
                         </Fragment>}
+                        <div style={{position: 'absolute', right: 10}}>
+                            <p><FontAwesomeIcon icon={faCircle} color={network ? '#2FB83F' : '#B62800'} /> {network ? 'Online' : 'Offline'}</p>
+                             {!network && <p>Sin red</p>}
+                            {/*{!network && <p>Offline</p>} */}
+                        </div>
                 </Toolbar>
                 </div>
                 {/* <Toolbar className={classes.toolbar}>

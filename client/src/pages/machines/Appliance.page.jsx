@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Box, Card, Grid, makeStyles, Modal, Button, IconButton, Fab, Toolbar } from '@material-ui/core'
+import { Box, Card, Grid, makeStyles, Modal, Button, IconButton, Fab, Toolbar, LinearProgress } from '@material-ui/core'
 import { Close, ArrowBackIos } from '@material-ui/icons'
 import { useParams } from "react-router-dom";
 import { useStylesTheme } from '../../config'
@@ -12,10 +12,11 @@ const AppliancePage = ({ route }) => {
     const classes = useStylesTheme();
     const [open, setOpen] = useState(false);
     const [ pauta, setPauta ] = useState();
+    const [ reportLocatioToPublish, setReportLocatioToPublish ] = useState('');
+    const [ progress, setProgress ] = useState(0)
     let { id } = useParams();
     const machine = JSON.parse(id);
     const machineData = JSON.parse(machine.machineData);
-    console.log(route);
     let r = new String();
     r = route.toString();
     let pautaType = new String();
@@ -54,16 +55,12 @@ const AppliancePage = ({ route }) => {
             pautasDatabase.initDbPMs().then(async database => {
                 let pautas = new Array();
                 pautas = await pautasDatabase.consultar(database.database);
-                console.log(reports)
-                console.log(pautas)
                 reports.forEach((report, i) => {
                     if(machineData.equid === report.machine) {
-                        //console.log(report);
                         if(pautas.length > 0) {
                             pautas.forEach((pauta, n) => {
                                 if(pauta.typepm === report.guide) {
                                     if(pauta.typepm.includes(pautaType)) {
-                                        console.log(pauta)
                                         setPauta(pauta)
                                     }
                                 }
@@ -90,6 +87,10 @@ const AppliancePage = ({ route }) => {
         routeData = 'Inspección'
     }else if(route === 'maintenance/machine-detail') {
         routeData = 'Mantención'
+    }
+
+    const setReportLocation = (location) => {
+        setReportLocatioToPublish(location)
     }
 
     
@@ -151,10 +152,25 @@ const AppliancePage = ({ route }) => {
                                 <Grid item xl={10} lg={8} style={{height: 'calc(100vh - 200px)', display: 'block'}}>
                                     <div style={{height: 'calc(100vh - 210px)', width: '100%', padding: 5}}>
                                         <div style={{height: '100%', padding: 5, borderEndEndRadius: 20, borderTopRightRadius: 20, backgroundColor: '#fff'}}>
-                                            {pauta && <h2>Pauta de {(pautaType==='PM') && 'Mantención'} {(pautaType==='PI') && 'Inspección'} {pauta.typepm}</h2>}
-                                            {!pauta && <h2>Sin asignación.</h2>}
+                                            <Grid container>
+                                                <Grid item lg={6} md={6}>
+                                                    {pauta && <h2>Pauta de {(pautaType==='PM') && 'Mantención'} {(pautaType==='PI') && 'Inspección'} {pauta.typepm}</h2>}
+                                                    {!pauta && <h2>Sin asignación.</h2>}
+                                                </Grid>
+                                                <Grid item lg={6} md={6}>
+                                                    <div style={{float: 'left', width: '50%', textAlign: 'right'}}>
+                                                        <p>{reportLocatioToPublish}</p>
+                                                    </div>
+                                                    <div style={{float: 'left', width: '30%', padding: 10}}>
+                                                        <p><LinearProgress variant="determinate" value={progress} style={{width: '100%'}}/></p>
+                                                    </div>
+                                                    <div style={{float: 'left', width: '20%', padding: 5}}>
+                                                        <p>{progress}%</p>
+                                                    </div>
+                                                </Grid>
+                                            </Grid>
                                             {
-                                                pauta && <PautaDetail height={'calc(100vh - 420px)'} pauta={pauta}/>
+                                                pauta && <PautaDetail height={'calc(100vh - 420px)'} pauta={pauta} setReportLocation={setReportLocation} />
                                             }
                                         </div>
                                         <div style={{position: 'relative', bottom: 20, width: '100%'}}>

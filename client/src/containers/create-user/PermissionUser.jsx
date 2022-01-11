@@ -31,8 +31,6 @@ const PermissionUser = ({height, typeDisplay, id}) => {
     /* SELECCION DE CHECKBOX */
     
     const handleChange = (checked, i, list, nameList) => {
-        /* console.log(checked)*/
-        console.log(list) 
         list[i].isChecked = checked;
         setPermisosReportes([]);
         setPermisosUsuarios([]);
@@ -70,7 +68,6 @@ const PermissionUser = ({height, typeDisplay, id}) => {
             })
         }else if(typeDisplay === 'Editar usuario') {
             const responseData = await permisosRoutes.getPermisosByUser(id);
-            console.log(Object.keys(responseData.data));
             return new Promise(resolve => {
                 Object.keys(responseData.data).map((e, i) => {
                     if(e === 'permissionsReports') {

@@ -2,7 +2,6 @@ const authProvider = {
     login: ( email, password ) =>  {
             authRoutes.login(email, password)
             .then(response => {
-                console.log(response)
                 setUserData(response.data.userInfo);
                 sessionStorage.setItem('email', response.data.userInfo.email);
                 sessionStorage.setItem('fullName', response.data.userInfo.fullName);
@@ -12,7 +11,6 @@ const authProvider = {
                 setTimeout(() => {
                     setIsAuthenticated(true)
                     window.localStorage.setItem('isauthenticated', true)
-                    console.log(userData)
                 }, 500);
                 
             })

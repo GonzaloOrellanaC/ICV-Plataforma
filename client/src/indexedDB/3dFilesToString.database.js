@@ -7,7 +7,6 @@ const initDb3DFiles = () => {
 
     return new Promise(resolve => {
         conexion.onsuccess = () =>{
-            console.log('conectado')
             db = conexion.result
             resolve(
                 {
@@ -48,7 +47,6 @@ const agregar = (data, database) => {
         conexion.onsuccess = async () =>{
             let consultarData = await consultar(database);
             if(consultarData) {
-                console.log(consultarData);
                 resolve(true)
             }
         }

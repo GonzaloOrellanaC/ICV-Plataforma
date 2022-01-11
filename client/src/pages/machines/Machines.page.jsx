@@ -21,7 +21,6 @@ const MachinesPage = ({ route }) => {
         trucksDatabase.initDbMachines()
             .then(async db => {
                 let respuestaConsulta = await trucksDatabase.consultar(db.database);
-                console.log(respuestaConsulta)
                 setMachineList(respuestaConsulta) 
             })
 

@@ -53,7 +53,6 @@ const UsersList = ({height, hableButton}) => {
     const readAllUsers = () => {
         usersRoutes.getAllUsers().then(users=> {
             setUsuarios(users.data);
-            console.log(users.data)
         })
     }
 

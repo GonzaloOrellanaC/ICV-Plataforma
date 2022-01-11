@@ -39,7 +39,6 @@ const ReportsPage = () => {
                         item.hourMeter = (Number(data.data[0].hourMeter)/3600000);
                     })
                     if(i == (response.data.length - 1)) {
-                        console.log(response.data)
                         e.lista = response.data.reverse();
                         e.number = response.data.length;
                     }
@@ -83,7 +82,6 @@ const ReportsPage = () => {
             sitesDatabase.initDbObras().then(db => {
                 sitesDatabase.consultar(db.database).then(sites => {
                     sites.forEach((site) => {
-                        console.log(site.idobra, itemSite)
                         if(site.idobra === itemSite) {
                             resolve(site.descripcion)
                         }

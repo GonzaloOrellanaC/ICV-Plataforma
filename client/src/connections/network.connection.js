@@ -5,7 +5,6 @@ const detectNetwork = () => {
         try {
             fetch('https://api.publicapis.org/entries', {method: 'GET', mode: "no-cors"})
             .then(response => {
-                console.log(response)
                 resolve(true)
             }, errorData => {
                 resolve(false)

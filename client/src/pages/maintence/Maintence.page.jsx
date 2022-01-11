@@ -10,7 +10,6 @@ const MaintencePage = () => {
 
     useEffect(() => {
         apiIvcRoutes.getMachines().then(data => {
-            console.log(data.data);
             if(data.data) {
                 setMachineList(data.data)
             }
@@ -33,7 +32,6 @@ const MaintencePage = () => {
     }, [])
 
     const readingData = () => {
-        console.log('leyendo archivos')
         /* apiIvcRoutes.getFiles().then(data => {
             setFileList(data.data);
             if(data.data) {

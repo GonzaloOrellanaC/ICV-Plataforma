@@ -55,7 +55,7 @@ const ReportsPage = () => {
 
     const getReportesPorGuia = (guide) => {
         reportsRoutes.getReportByGuide(guide).then(reports => {
-            console.log(reports)
+
         })
     }
 
@@ -260,7 +260,6 @@ const ReportsPage = () => {
                                             {
                                                 (reports.length > 0) && reports.map(async (e, n) => {
                                                     e.roleTranslated = changeTypeUser(e.role);
-                                                    console.log(e)
                                                     return(
                                                         <ListItem key={n} style={well}>
                                                             <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
@@ -297,7 +296,7 @@ const ReportsPage = () => {
                                                                 <p style={{margin: 0}}>  </p>
                                                             </div>
                                                             <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                                                <p style={{margin: 0}}> <button onClick={()=>{console.log(e); history.push(`/reports/edit-report/${JSON.stringify(e)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
+                                                                <p style={{margin: 0}}> <button onClick={()=>{history.push(`/reports/edit-report/${JSON.stringify(e)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
                                                             </div>
                                                         </ListItem>
                                                     )

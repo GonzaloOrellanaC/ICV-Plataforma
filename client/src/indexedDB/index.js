@@ -6,6 +6,7 @@ import sitesDatabase from './sites.database'
 import FilesToStringDatabase from './3dFilesToString.database'
 import machinesDatabase from './machines.database'
 import reportsDatabase from './reports.database'
+import activitiesDatabase from './activities.database'
 
 export {
     trucksDatabase,
@@ -15,5 +16,6 @@ export {
     sitesDatabase,
     FilesToStringDatabase,
     machinesDatabase,
-    reportsDatabase
+    reportsDatabase,
+    activitiesDatabase
 }

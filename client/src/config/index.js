@@ -1,6 +1,7 @@
 import { theme, useStylesTheme, styleModal, styleModalActivity, styleModalReport } from './theme.config';
 import { changeTypeUser, returnTypeUser } from './changeTypeUser.config';
 import environment from './environment.config';
+import date from './date'
 
 export {
     theme,
@@ -10,5 +11,6 @@ export {
     styleModal,
     styleModalActivity,
     styleModalReport,
-    environment
+    environment,
+    date
 }

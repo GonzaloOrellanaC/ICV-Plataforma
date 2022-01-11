@@ -23,7 +23,6 @@ const styleModal = {
 const ReportsList = ({height, reportType, repsList}) => {
     let reportesList = new Array();
     reportesList = repsList
-    console.log(reportesList, reportType)
 
     const [ reportData, setReportData ] = useState(null);
     const [ openModalState, setOpenModalState ] = useState(false);
@@ -46,9 +45,7 @@ const ReportsList = ({height, reportType, repsList}) => {
     const readingDataReports = () => {
             reportesList.forEach((report, index) => {
                 machinesRoutes.getMachineByEquid(report.machine).then(data => {
-                    console.log(data.data[0]);
                     report.hourMeter = (Number(data.data[0].hourMeter)/3600000);
-                    
                 })
                 if(index == (reportesList.length - 1)) {
                     setReports(reportesList)
@@ -110,7 +107,6 @@ const ReportsList = ({height, reportType, repsList}) => {
                     {
                         (reports.length > 0) && reports.map(async (e, n) => {
                             e.roleTranslated = changeTypeUser(e.role);
-                            console.log(e)
                             return(
                                 <ListItem key={n} style={well}>
                                     <div style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
@@ -147,7 +143,7 @@ const ReportsList = ({height, reportType, repsList}) => {
                                         <p style={{margin: 0}}>  </p>
                                     </div>
                                     <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}> <button onClick={()=>{console.log(e); history.push(`/reports/edit-report/${JSON.stringify(e)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
+                                        <p style={{margin: 0}}> <button onClick={()=>{history.push(`/reports/edit-report/${JSON.stringify(e)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
                                     </div>
                                 </ListItem>
                             )
