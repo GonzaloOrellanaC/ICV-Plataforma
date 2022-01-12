@@ -1,7 +1,7 @@
-const initDbPMs = () => {
+const initDbMachinesImages = () => {
     const indexedDb = window.indexedDB;
 
-    const conexion = indexedDb.open('Pautas',1)
+    const conexion = indexedDb.open('MachinesImages',1)
 
     let db
 
@@ -19,7 +19,7 @@ const initDbPMs = () => {
     
         conexion.onupgradeneeded = (e) =>{
             db = e.target.result
-            const coleccionObjetos = db.createObjectStore('pautas',{
+            const coleccionObjetos = db.createObjectStore('EquipsImages',{
                 keyPath: 'id'
             })
             coleccionObjetos.transaction.oncomplete = (event) => {
@@ -41,39 +41,33 @@ const initDbPMs = () => {
 }
 
 const agregar = (data, database) => {
-    const trasaccion = database.transaction(['pautas'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('pautas')
+    const trasaccion = database.transaction(['EquipsImages'],'readwrite')
+    const coleccionObjetos = trasaccion.objectStore('EquipsImages')
     const conexion = coleccionObjetos.add(data)
-    //consultar()
+    conexion.onsuccess = () =>{
+        //consultar()
+    }
 }
 
 const obtener = (clave, database) =>{
-    return new Promise(result => {
-        const trasaccion = database.transaction(['pautas'],'readonly')
-        const coleccionObjetos = trasaccion.objectStore('pautas')
-        const conexion = coleccionObjetos.get(Number(clave))
+    return new Promise(resolve => {
+        const trasaccion = database.transaction(['EquipsImages'],'readonly')
+        const coleccionObjetos = trasaccion.objectStore('EquipsImages')
+        const conexion = coleccionObjetos.get(clave)
+
         conexion.onsuccess = (e) =>{
-            result(e.target.result)
+            resolve(e.target.result);
         }
     })
+    
 }
 
-const consultarPorDato = (dato, database) =>{
-    return new Promise(result => {
-        const trasaccion = database.transaction(['pautas'],'readonly')
-        const coleccionObjetos = trasaccion.objectStore('pautas')
-        const conexion = coleccionObjetos.openCursor()
-        conexion.onsuccess = (e) =>{
-            console.log(e.target.result.value)
-        }
-    })
-}
-
-const actualizar = (data, database) =>{
+const actualizar = (data, database) =>{    
+    
     return new Promise(resolve => {
         try {
-            const trasaccion = database.transaction(['pautas'],'readwrite')
-            const coleccionObjetos = trasaccion.objectStore('pautas')
+            const trasaccion = database.transaction(['EquipsImages'],'readwrite')
+            const coleccionObjetos = trasaccion.objectStore('EquipsImages')
             const conexion = coleccionObjetos.put(data)
             
             conexion.onsuccess = () =>{
@@ -83,12 +77,12 @@ const actualizar = (data, database) =>{
         } catch (err) {
             resolve(false)
         }
-    })
+    }) 
 }
 
 const eliminar = (clave, database) =>{      
-    const trasaccion = database.transaction(['pautas'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('pautas')
+    const trasaccion = database.transaction(['EquipsImages'],'readwrite')
+    const coleccionObjetos = trasaccion.objectStore('EquipsImages')
     const conexion = coleccionObjetos.delete(clave)
 
     conexion.onsuccess = () =>{
@@ -96,28 +90,30 @@ const eliminar = (clave, database) =>{
     }
 }
 
-const consultar = (database) =>{
-    const trasaccion = database.transaction(['pautas'],'readonly')
-    const coleccionObjetos = trasaccion.objectStore('pautas')
-    const conexion = coleccionObjetos.openCursor()
-    
+const consultar = (database) => {
     return new Promise(resolve => {
+        const trasaccion = database.transaction(['EquipsImages'],'readonly')
+        const coleccionObjetos = trasaccion.objectStore('EquipsImages')
+        const conexion = coleccionObjetos.openCursor()
+
+    
         conexion.onsuccess = (e) =>{
             const cursor = e.target.result;
             const allObject = coleccionObjetos.getAll()
             allObject.onsuccess = (ev) => {
-                resolve(ev.target.result)
+                let result = new Array()
+                result = ev.target.result
+                resolve(result)
             }
         }
     })
 }
 
 export default {
-    initDbPMs,
+    initDbMachinesImages,
     agregar,
     obtener,
     actualizar,
     eliminar,
-    consultar,
-    consultarPorDato
+    consultar
 }

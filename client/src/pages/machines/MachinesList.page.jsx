@@ -41,7 +41,7 @@ const MachinesListPage = ({route}) => {
         let db = await machinesDatabase.initDbMachines();
         if(db) {
             let readAllMachines = [] = await machinesDatabase.consultar(db.database);
-            /* console.log(readAllMachines); */
+            console.log(readAllMachines);
             setMachinesList(
                 readAllMachines
                 .filter(machine => {if(machine.model === model) { return machine}})

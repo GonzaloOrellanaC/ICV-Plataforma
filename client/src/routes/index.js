@@ -5,6 +5,7 @@ import permisosRoutes from './permisos.routes';
 import usersRoutes from './users.routes';
 import reportsRoutes from './reports.routes';
 import machinesRoutes from './machines.routes';
+import executionReportsRoutes from './executionReports.routes'
 
 export {
     authRoutes,
@@ -14,4 +15,5 @@ export {
     usersRoutes,
     reportsRoutes,
     machinesRoutes,
+    executionReportsRoutes
 }

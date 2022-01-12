@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Box, Card, Grid, Typography, Modal, Button } from '@material-ui/core'
 import { environment, useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
-import { apiIvcRoutes, reportsRoutes } from '../../routes'
-import { /* pmsDatabase */ sitesDatabase, FilesToStringDatabase, trucksDatabase, machinesDatabase, pautasDatabase, reportsDatabase } from '../../indexedDB'
+import { apiIvcRoutes, executionReportsRoutes, reportsRoutes } from '../../routes'
+import { /* pmsDatabase */ sitesDatabase, FilesToStringDatabase, trucksDatabase, machinesDatabase, pautasDatabase, reportsDatabase, machinesImagesDatabase, executionReportsDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import hour from './hour'
 import fecha from './date'
@@ -106,7 +106,7 @@ const WelcomePage = () => {
     }
 
     const readData = async () => {
-        getAssignments();
+        /* getAssignments(); */
         const revisarData = await setIfNeedReadDataAgain();
         const userRole = localStorage.getItem('role');
         if(userRole==='admin'||userRole==='superAdmin'||userRole==='sapExecutive') {
@@ -118,7 +118,9 @@ const WelcomePage = () => {
                 reports.forEach((report, i) => {
                     report.idDatabase = i;
                     reportsDatabase.actualizar(report, db.database);
+                    getReportExecutionFromId(report._id)
                     if(i == (reports.length - 1)) {
+
                     }
                 })
                 
@@ -164,7 +166,21 @@ const WelcomePage = () => {
         }else{
             setOpenLoader(false)
         }
-        
+    }
+
+    const getReportExecutionFromId = (reportId) => {
+        return new Promise(async resolve => {
+            let reportData = {
+                reportId: reportId,
+                createdBy: localStorage.getItem('_id')
+            };
+            let res = await executionReportsRoutes.getExecutionReportById(reportData);
+            console.log('Ejecución de reporte es: ', res.data[0]);
+            let db = await executionReportsDatabase.initDb();
+            if(db) {
+                await executionReportsDatabase.actualizar(res.data[0], db.database);
+            }
+        })
     }
 
     const descargarPautas = () => {
@@ -313,10 +329,20 @@ const WelcomePage = () => {
                     xhr.onload = async () => {
                         let reader = new FileReader();
                         reader.onload = async () => {
-                            fileName.image = reader.result.replace("data:", "");
-                            if(fileName.image) {
-                                trucksDatabase.actualizar(fileName, db.database);
+                            let dbToImages = await machinesImagesDatabase.initDbMachinesImages();
+                            if(dbToImages) {
+                                let image = {
+                                    id: index,
+                                    data: reader.result.replace("data:", "")
+                                }
+                                machinesImagesDatabase.actualizar(image, dbToImages.database)
                             }
+                            trucksDatabase.actualizar(fileName, db.database);
+                            /* fileName.image = reader.result.replace("data:", "");
+                            if(fileName.image) {
+                                
+                                
+                            } */
                         }
                         reader.readAsDataURL(xhr.response);
                         
@@ -454,13 +480,13 @@ const WelcomePage = () => {
             }
             resolve(newMachine)
         })
-    }
+    }/* 
 
     const getAssignments = () => {
         reportsRoutes.findMyAssignations(localStorage.getItem('_id')).then(data => {
             console.log(data.data)
         })
-    }
+    } */
 
     return (
         <div>

@@ -6,6 +6,8 @@ import { useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
 import { useHistory, useParams } from 'react-router-dom'
 import { useLanguage } from '../../context'
+import { pautasDatabase } from '../../indexedDB'
+import { PautaDetail } from '../../containers'
 
 const ActivitiesDetailPage = () => {
     const classes = useStylesTheme();
@@ -13,11 +15,35 @@ const ActivitiesDetailPage = () => {
 
     const {id} = useParams();
 
+    const [ pauta, setPauta ] = useState()
+
     useEffect(() => {
         console.log(JSON.parse(id))
+        getPauta()
     }, [])
+
+    const getPauta = async () => {
+        let db = await pautasDatabase.initDbPMs();
+        if(db) {
+            let pautaIdpm = getIdpm(JSON.parse(id).getMachine.model);
+            let pautas = await pautasDatabase.consultar(db.database);
+            if(pautas) {
+                let pautaFiltered = pautas.filter((info) => {if((info.typepm === JSON.parse(id).guide)&&(pautaIdpm===info.idpm)) {return info}});
+                setPauta(pautaFiltered[0]);
+            }
+        }
+    }
+
+    const getIdpm = (model) => {
+        if(model === '793-F') {
+            return 'SPM000787';
+        }else if(model === 'PC5500') {
+            return 'SPM000445'
+        }
+    }
+
     return (
-        <Box height='100%'>
+        <Box height='80vh'>
             <Grid className={classes.pageRoot} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
                     <Card className={classes.pageCard}>
@@ -35,6 +61,11 @@ const ActivitiesDetailPage = () => {
                                         </h1>
                                     </Toolbar>
                                 </div>
+                            </div>
+                            <div style={{width: '98%'}}>
+                                {
+                                    pauta && <PautaDetail height={'calc(100vh - 300px)'} pauta={pauta} />
+                                }
                             </div>
                         </Grid>
                     </Card>

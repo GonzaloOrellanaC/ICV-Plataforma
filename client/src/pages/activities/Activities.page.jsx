@@ -22,11 +22,9 @@ const ActivitiesPage = () => {
         let db = await reportsDatabase.initDbReports();
         if(db) {
             const reports = await reportsDatabase.consultar(db.database);
-            console.log(reports)
             if(reports) {
                 reports.forEach(async (report, i) => {
                     report.getMachine = await getMachineTypeByEquid(report.machine);
-                    console.log(report.getMachine)
                     if(report.getMachine.model === 'PC5500') {
                         report.machineType = 'Pala'
                     }else if(report.getMachine.model === '793-F') {
@@ -52,7 +50,6 @@ const ActivitiesPage = () => {
                 const machines = await machinesDatabase.consultar(db.database);
                 if(machines) {
                     let machineFiltered = machines.filter(m => { if(machine === m.equid) {return m}});
-                    console.log(machineFiltered)
                     resolve({
                         number: machineFiltered[0].equ,
                         model: machineFiltered[0].model
@@ -96,7 +93,7 @@ const ActivitiesPage = () => {
                                         }
                                     }>
                                         <Grid container>
-                                            <Grid item lg={2}>
+                                            <Grid item lg={1}>
                                                 <div style={{width: '100%', textAlign: 'center'}}>
                                                 <h2>Guía</h2>
                                                 </div>
@@ -110,8 +107,13 @@ const ActivitiesPage = () => {
                                             <Grid item lg={3}>
                                                 <h2>Máquina</h2>
                                             </Grid>
+                                            <Grid item lg={2}>
+                                                
+                                            </Grid>
                                             <Grid item lg={3}>
-                                                <h2>Acción</h2>
+                                                <div style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
+                                                    <h2>Acción</h2>
+                                                </div>
                                             </Grid>
                                         </Grid>
                                     </div>
@@ -125,6 +127,7 @@ const ActivitiesPage = () => {
                                 >
                                     {assignments.map((element, i) => {
                                         element.dateFormat = date(element.datePrev);
+                                        console.log(element)
                                         //element.machineType = await getMachineTypeByEquid(element.machine)
                                         return(
                                             <div key={i} style={
@@ -138,7 +141,7 @@ const ActivitiesPage = () => {
                                                 }
                                             }>
                                                 <Grid container>
-                                                    <Grid item lg={2}>
+                                                    <Grid item lg={1}>
                                                         <div style={{width: '100%', textAlign: 'center'}}>
                                                         <h2>{element.guide}</h2>
                                                         </div>
@@ -152,8 +155,13 @@ const ActivitiesPage = () => {
                                                     <Grid item lg={3}>
                                                         <h4> {element.machineType} {element.getMachine.model} Número interno: {element.getMachine.number} </h4>
                                                     </Grid>
+                                                    <Grid item lg={2}>
+                                                        
+                                                    </Grid>
                                                     <Grid item lg={3}>
-                                                        <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
+                                                        <div style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
+                                                            <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
+                                                        </div>
                                                     </Grid>
                                                 </Grid>
                                             </div>

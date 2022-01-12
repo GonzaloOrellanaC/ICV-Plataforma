@@ -18,8 +18,8 @@ const createReport = async (req, res) => {
             res.json(err);
         } 
     }
-    
 }
+
 const editReport = async (req, res) => {
     const { body } = req
     console.log(body)

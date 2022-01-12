@@ -5,8 +5,10 @@ import structPautasDatabase from './structsPautas.database'
 import sitesDatabase from './sites.database'
 import FilesToStringDatabase from './3dFilesToString.database'
 import machinesDatabase from './machines.database'
+import machinesImagesDatabase from './machinesImages.database'
 import reportsDatabase from './reports.database'
 import activitiesDatabase from './activities.database'
+import executionReportsDatabase from './executionReports.database'
 
 export {
     trucksDatabase,
@@ -16,6 +18,8 @@ export {
     sitesDatabase,
     FilesToStringDatabase,
     machinesDatabase,
+    machinesImagesDatabase,
     reportsDatabase,
-    activitiesDatabase
+    activitiesDatabase,
+    executionReportsDatabase
 }

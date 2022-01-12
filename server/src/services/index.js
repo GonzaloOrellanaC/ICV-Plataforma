@@ -6,6 +6,7 @@ import UserServices from './user.services'
 import RolesServices from './roles.services'
 import PermisosServices from './permisos.services'
 import ReportsService from './reports.service'
+import ExecutionReportsServices from './executionReports.services'
 
 export {
     AccessControlServices,
@@ -15,5 +16,6 @@ export {
     RolesServices,
     PermisosServices,
     ReportsService,
-    EmailMailgunServices
+    EmailMailgunServices,
+    ExecutionReportsServices
 }

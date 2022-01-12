@@ -17,6 +17,7 @@ const PautaDetail = ({height, pauta, setReportLocation}) => {
     const [ activity, setActivity ] = useState({})
     
     useEffect(() => {
+        console.log(pauta)
         let group = pauta.struct.reduce((r, a) => {
             r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
             return r;
@@ -37,14 +38,14 @@ const PautaDetail = ({height, pauta, setReportLocation}) => {
                 if(index == (groupData.length - 1)) {
                     setGruposKeys(newGroupData);
                     setContentData(group[newGroupData[0].data]);
-                    setReportLocation(newGroupData[0].data)
+                    //setReportLocation(newGroupData[0].data)
                 }
             })
         }
     }, []);
 
     const handleContent = (gruposKeys, element) => {
-        setReportLocation(element.data)
+        //setReportLocation(element.data)
         gruposKeys.forEach((tab, index) => {
             tab.state = false;
             if(index == (gruposKeys.length - 1)) {
@@ -89,7 +90,7 @@ const PautaDetail = ({height, pauta, setReportLocation}) => {
 
 
     return (
-        <div style={{height: height}}>
+        <div /* style={{height: height}} */>
             <div style={{height: 70, borderColor: '#ccc', borderWidth: 2, borderStyle: 'solid', borderRadius: 10}}>
                 <Slider {...settings}>
                     {
@@ -116,7 +117,7 @@ const PautaDetail = ({height, pauta, setReportLocation}) => {
                     }
                 </Slider>
             </div>
-            <div style={{height: height}}>
+            <div /* style={{height: height}} */>
                 <ListItem>
                     <div style={{width: '15%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Personal Necesario</strong> </p>

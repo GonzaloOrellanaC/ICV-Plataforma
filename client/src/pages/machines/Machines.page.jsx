@@ -7,7 +7,7 @@ import { MachineButton } from '../../components/buttons'
 import { useHistory } from 'react-router-dom'
 import { useLanguage } from '../../context'
 import { apiIvcRoutes } from '../../routes'
-import { trucksDatabase } from '../../indexedDB'
+import { machinesImagesDatabase, trucksDatabase } from '../../indexedDB'
 const MachinesPage = ({ route }) => {
     const classes = useStylesTheme()
     const { dictionary } = useLanguage();
@@ -18,39 +18,23 @@ const MachinesPage = ({ route }) => {
     },[]);
 
     const readData = async () => {
+        let dbMachinesImages = await machinesImagesDatabase.initDbMachinesImages();
         trucksDatabase.initDbMachines()
-            .then(async db => {
-                let respuestaConsulta = await trucksDatabase.consultar(db.database);
-                setMachineList(respuestaConsulta) 
-            })
-
-        /* if(navigator.onLine) {
-            console.log(navigator.onLine)
-            console.log('Navegador online')
-            const machines = await getMachines();
-            console.log(machines)
-            trucksDatabase.initDbMachines()
-            .then(async db => {
-                machines.forEach(async (machine, index) => {
-                    trucksDatabase.actualizar(machine, db.database);
-                    if(index === (machines.length - 1)) {
-                        let respuestaConsulta = await trucksDatabase.consultar(db.database);
-                        setMachineList(respuestaConsulta);
-                        console.log(respuestaConsulta)
+        .then(async db => {
+            const respuestaConsulta = await trucksDatabase.consultar(db.database);
+            if(respuestaConsulta) {
+                for(let i = 0; i < respuestaConsulta.length; i++ ) {
+                    let res = await machinesImagesDatabase.obtener(i, dbMachinesImages.database);
+                    if(res) {
+                        respuestaConsulta[i].image = res.data;
                     }
-                })
-            })
-        }else{
-            console.log(navigator.onLine)
-            console.log('Navegador offline')
-            trucksDatabase.initDbMachines()
-            .then(async db => {
-                let respuestaConsulta = await trucksDatabase.consultar(db.database);
-                console.log(respuestaConsulta)
-                setMachineList(respuestaConsulta) 
-            })
-            
-        } */
+                    if(i == (respuestaConsulta.length - 1)) { 
+                        console.log(respuestaConsulta)
+                        setMachineList(respuestaConsulta)
+                    }
+                }
+            }
+        })
     }
 
     const getMachines = () => {
@@ -104,7 +88,8 @@ const MachinesPage = ({ route }) => {
                             </div>
                             <Grid container spacing={5} justifyContent='flex-start' style={{textAlign: 'center', height: '75vh', overflowY: 'auto'}}>
                                 {
-                                    machinesList.filter(a => a.toString()).map((machine) => {
+                                    machinesList/* .filter(a => a.toString()) */.map((machine) => {
+                                        console.log(machine)
                                         return (
                                             <Grid item key={machine.id} style={{minWidth: '25%', margin: 10}}>
                                                 <MachineButton machine={machine} image={machine.image} route={route}/>
