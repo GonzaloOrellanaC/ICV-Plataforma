@@ -10,7 +10,7 @@ import { styleModalActivity } from '../../config';
 import { useEffect } from 'react'
 
 
-const ReadActivityModal = ({open, closeModal, activity, comm}) => {
+const WriteActivityModal = ({open, closeWriteModal, activity, comm}) => {
 
     const [ commit, addCommit ] = useState('');
     const [ commits, setCommits ] = useState([]);
@@ -37,7 +37,7 @@ const ReadActivityModal = ({open, closeModal, activity, comm}) => {
             arr.push(obj)
             setCommits(arr)
             setTimeout(() => {
-                activity.readCommits = commits
+                activity.writeCommits = commits
                 addCommit('');
                 document.getElementById('commits').scrollTop = document.getElementById('commits').scrollHeight
             }, 500);
@@ -49,8 +49,17 @@ const ReadActivityModal = ({open, closeModal, activity, comm}) => {
             let arr = new Array();
             arr = commits;
             let newArr = arr.filter((item) => {if(item.id !== id) {return item}});
-            activity.readCommits = newArr
+            activity.writeCommits = newArr;
             setCommits(newArr);
+        }
+    }
+
+    const saveSate = () => {
+        if(commits.length > 0) {
+            if(confirm('Guardar avance')) {
+                activity.isChecked = true;
+                closeWriteModal()
+            }
         }
     }
 
@@ -135,8 +144,13 @@ const ReadActivityModal = ({open, closeModal, activity, comm}) => {
                             </Button>
                         </div>
                     </div>
+                    <div style={{width: '100%', paddingTop: 10, display: 'inline-block', textAlign: 'center'}}>
+                        <Button variant="contained" color={'primary'} style={{ borderRadius: 50 }} onClick={()=>{saveSate()}}>
+                            Indicar tarea terminada
+                        </Button>
+                    </div>
                 </div>
-                <Fab onClick={() => {closeModal(activity)}} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>
+                <Fab onClick={() => {closeWriteModal()}} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>
                     <Close style={{color: '#ccc'}} />
                 </Fab>
             </Box>  
@@ -144,4 +158,4 @@ const ReadActivityModal = ({open, closeModal, activity, comm}) => {
     )
 }
 
-export default ReadActivityModal
+export default WriteActivityModal

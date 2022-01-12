@@ -7,24 +7,35 @@ import CircleCheckedFilled from '@material-ui/icons/CheckCircle';
 import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked';
 import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ReadActivityModal } from '../../modals'
+import { ReadActivityModal, WriteActivityModal } from '../../modals'
+import { executionReportsDatabase } from "../../indexedDB";
+import { executionReportsRoutes } from "../../routes";
 
-const PautaDetail = ({height, pauta, setReportLocation}) => {
+const PautaDetail = ({height, pauta, setReportLocation, executionReport}) => {
     const [ gruposObservaciones, setGrupoObservaciones ] = useState([]);
     const [ gruposKeys, setGruposKeys ] = useState([]);
     const [ contentData, setContentData ] = useState([]);
     const [ openReadActivity, setOpenReadActivity ] = useState(false);
+    const [ openWriteActivity, setOpenWriteActivity ] = useState(false);
     const [ activity, setActivity ] = useState({})
+    const [ indexActivity, setIndexActivity ] = useState();
     
     useEffect(() => {
-        console.log(pauta)
+        readData();
+    }, []);
+
+    const readData = () => {
         let group = pauta.struct.reduce((r, a) => {
             r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
             return r;
         }, {});
         if(group) {
-            setGrupoObservaciones(group);
-            let groupData = Object.keys(group);
+            //
+            if(!executionReport.group) {
+                executionReport.group = group;
+            }
+            setGrupoObservaciones(executionReport.group);
+            let groupData = Object.keys(executionReport.group);
             let newGroupData = [];
             groupData.forEach((data, index) => {
                 let tab = {
@@ -37,28 +48,52 @@ const PautaDetail = ({height, pauta, setReportLocation}) => {
                 newGroupData.push(tab);
                 if(index == (groupData.length - 1)) {
                     setGruposKeys(newGroupData);
-                    setContentData(group[newGroupData[0].data]);
-                    //setReportLocation(newGroupData[0].data)
+                    setContentData(executionReport.group[newGroupData[0].data]);
                 }
             })
         }
-    }, []);
+    }
 
     const handleContent = (gruposKeys, element) => {
-        //setReportLocation(element.data)
         gruposKeys.forEach((tab, index) => {
             tab.state = false;
             if(index == (gruposKeys.length - 1)) {
-                
                 setContentData(gruposObservaciones[element.data]);
                 element.state = true
             }
         })
-        
     }
 
-    const closeModal = () => {
-        setOpenReadActivity(false)
+    const closeModal = async () => {
+        executionReport.updatedBy = localStorage.getItem('_id');
+        executionReport.offLineGuard = Date.now();
+        let db = await executionReportsDatabase.initDb();
+        if( db ) {
+            let res = await executionReportsDatabase.actualizar(executionReport, db.database);
+            if( res ) {
+                if(navigator.onLine) {
+                    executionReportsRoutes.saveExecutionReport(executionReport)
+                }
+                setOpenReadActivity(false)
+            }
+        }
+    }
+
+    const closeWriteModal = async () => {
+        executionReport.updatedBy = localStorage.getItem('_id');
+        executionReport.offLineGuard = Date.now();
+        let db = await executionReportsDatabase.initDb();
+        if( db ) {
+            let res = await executionReportsDatabase.actualizar(executionReport, db.database);
+            if( res ) {
+                if(navigator.onLine) {
+                    executionReportsRoutes.saveExecutionReport(executionReport)
+                }
+                setOpenWriteActivity(false);
+                gruposKeys[indexActivity] = activity
+                setGruposKeys(gruposKeys);
+            }
+        }
     }
 
     const well = {
@@ -83,19 +118,17 @@ const PautaDetail = ({height, pauta, setReportLocation}) => {
         speed: 500,
         slidesToShow: 7,
         slidesToScroll: 7,
-        //className: 'menuPautaDetail',
         nextArrow: <SampleArrow />,
         prevArrow: <SampleArrow />
     }
 
 
     return (
-        <div /* style={{height: height}} */>
+        <div>
             <div style={{height: 70, borderColor: '#ccc', borderWidth: 2, borderStyle: 'solid', borderRadius: 10}}>
                 <Slider {...settings}>
                     {
-                        gruposKeys && gruposKeys.map((element, index) => {
-                            
+                        gruposKeys.map((element, index) => {
                             return (
                                 <div 
                                     key={index} 
@@ -117,7 +150,7 @@ const PautaDetail = ({height, pauta, setReportLocation}) => {
                     }
                 </Slider>
             </div>
-            <div /* style={{height: height}} */>
+            <div>
                 <ListItem>
                     <div style={{width: '15%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Personal Necesario</strong> </p>
@@ -135,7 +168,9 @@ const PautaDetail = ({height, pauta, setReportLocation}) => {
                 {contentData && <div style={{height: height, overflowY: 'scroll'}}>
                     {
                         contentData.map((e, n) => {
-                            
+                            if(!e.isChecked) {
+                                e.isChecked = false;
+                            }
                             if(!e.obs01) {
                                 e.obs01 = 'Sin Observaciones'
                             }
@@ -150,10 +185,10 @@ const PautaDetail = ({height, pauta, setReportLocation}) => {
                                     <div style={{width: '40%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {e.obs01}  
                                     </div>
-                                    <IconButton onClick={()=>{setOpenReadActivity(true); setActivity(e)}}>
+                                    <IconButton onClick={()=>{setOpenReadActivity(true); setActivity(e); setIndexActivity(n)}}>
                                         <FontAwesomeIcon icon={faEye}/>
                                     </IconButton>
-                                    <IconButton>
+                                    <IconButton onClick={()=>{setOpenWriteActivity(true); setActivity(e)}}>
                                         <FontAwesomeIcon icon={faPen}/>
                                     </IconButton>
                                     <Checkbox checked={e.isChecked} disabled style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: '#27AE60'}} />} />
@@ -162,7 +197,12 @@ const PautaDetail = ({height, pauta, setReportLocation}) => {
                         })
                     }   
                 </div>}
-                <ReadActivityModal open={openReadActivity} closeModal={closeModal} activity={activity}/>
+                {
+                    openReadActivity && <ReadActivityModal open={openReadActivity} closeModal={closeModal} activity={activity} comm={activity.readCommits}/>
+                }
+                {
+                    openWriteActivity && <WriteActivityModal open={openWriteActivity} closeWriteModal={closeWriteModal} activity={activity} comm={activity.writeCommits}/>
+                }
             </div>
         </div>
     )

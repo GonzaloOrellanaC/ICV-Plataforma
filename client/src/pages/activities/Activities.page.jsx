@@ -127,8 +127,6 @@ const ActivitiesPage = () => {
                                 >
                                     {assignments.map((element, i) => {
                                         element.dateFormat = date(element.datePrev);
-                                        console.log(element)
-                                        //element.machineType = await getMachineTypeByEquid(element.machine)
                                         return(
                                             <div key={i} style={
                                                 {

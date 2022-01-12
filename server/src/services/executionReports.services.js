@@ -25,14 +25,10 @@ const getExecutionReportById = (req, res) => {
                 console.log('Existe_:', doc)
                 res.json(doc)
             }
-            
-            
-            
         })
     }catch(err) {
         res.json(err);
     }
-    
 }
 
 const createNewExecutionReport = async (executionReport) => {
@@ -47,6 +43,18 @@ const createNewExecutionReport = async (executionReport) => {
     })
 }
 
+const saveExecutionReport = async (req, res) => {
+    const { body } = req
+    console.log(body);
+    try{
+        const updated = await ExecutionReport.findByIdAndUpdate(body.reportData._id, body.reportData, { new: true })
+        res.json(updated)
+    }catch(err) {
+        res.json(err);
+    }
+}
+
 export default {
     getExecutionReportById,
+    saveExecutionReport
 }

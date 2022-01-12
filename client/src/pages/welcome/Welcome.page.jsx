@@ -61,10 +61,11 @@ const WelcomePage = () => {
             setOpenVersion(true)
             localStorage.setItem('version', environment.version);
         }
-        setDate(fecha(Date.now()))
-        setInterval(() => {
+        setDate(fecha(Date.now()));
+        const interval = setInterval(() => {
             setHora(hour(Date.now()))
         }, 100);
+        return () => clearInterval(interval);
     }, []);
 
     const logout = async () => {
@@ -175,7 +176,6 @@ const WelcomePage = () => {
                 createdBy: localStorage.getItem('_id')
             };
             let res = await executionReportsRoutes.getExecutionReportById(reportData);
-            console.log('Ejecución de reporte es: ', res.data[0]);
             let db = await executionReportsDatabase.initDb();
             if(db) {
                 await executionReportsDatabase.actualizar(res.data[0], db.database);

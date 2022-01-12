@@ -1,24 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
-import { Box, Card, Grid, Toolbar, IconButton, Button } from '@material-ui/core'
+import { Box, Card, Grid, Toolbar, IconButton } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { useStylesTheme } from '../../config'
-import { CardButton } from '../../components/buttons'
 import { useHistory, useParams } from 'react-router-dom'
-import { useLanguage } from '../../context'
-import { pautasDatabase } from '../../indexedDB'
+import { pautasDatabase, executionReportsDatabase } from '../../indexedDB'
 import { PautaDetail } from '../../containers'
 
 const ActivitiesDetailPage = () => {
     const classes = useStylesTheme();
     const history = useHistory();
-
     const {id} = useParams();
-
-    const [ pauta, setPauta ] = useState()
+    const [ pauta, setPauta ] = useState();
+    const [ executionReport, setExecutionReport ] = useState()
 
     useEffect(() => {
-        console.log(JSON.parse(id))
         getPauta()
     }, [])
 
@@ -29,6 +24,14 @@ const ActivitiesDetailPage = () => {
             let pautas = await pautasDatabase.consultar(db.database);
             if(pautas) {
                 let pautaFiltered = pautas.filter((info) => {if((info.typepm === JSON.parse(id).guide)&&(pautaIdpm===info.idpm)) {return info}});
+                let exDb = await executionReportsDatabase.initDb();
+                if( exDb ) {
+                    let responseDatabase = await executionReportsDatabase.consultar(exDb.database);
+                    if( responseDatabase ) {
+                        let executionReportResponse = responseDatabase.filter((res) => { if(JSON.parse(id)._id === res.reportId) {return res}})
+                        setExecutionReport(executionReportResponse[0])
+                    }
+                }
                 setPauta(pautaFiltered[0]);
             }
         }
@@ -64,7 +67,7 @@ const ActivitiesDetailPage = () => {
                             </div>
                             <div style={{width: '98%'}}>
                                 {
-                                    pauta && <PautaDetail height={'calc(100vh - 300px)'} pauta={pauta} />
+                                    pauta && <PautaDetail height={'calc(100vh - 300px)'} pauta={pauta} executionReport={executionReport} />
                                 }
                             </div>
                         </Grid>
