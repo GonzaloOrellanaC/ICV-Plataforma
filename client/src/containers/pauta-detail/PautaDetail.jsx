@@ -11,9 +11,10 @@ import { ReadActivityModal, WriteActivityModal } from '../../modals'
 import { executionReportsDatabase } from "../../indexedDB";
 import { executionReportsRoutes } from "../../routes";
 
-const PautaDetail = ({height, pauta, setReportLocation, executionReport}) => {
+const PautaDetail = ({height, pauta, setReportLocation, executionReport, setProgress}) => {
     const [ gruposObservaciones, setGrupoObservaciones ] = useState([]);
     const [ gruposKeys, setGruposKeys ] = useState([]);
+    const [ elementData, setElementData ] = useState('');
     const [ contentData, setContentData ] = useState([]);
     const [ openReadActivity, setOpenReadActivity ] = useState(false);
     const [ openWriteActivity, setOpenWriteActivity ] = useState(false);
@@ -47,19 +48,51 @@ const PautaDetail = ({height, pauta, setReportLocation, executionReport}) => {
                 }
                 newGroupData.push(tab);
                 if(index == (groupData.length - 1)) {
-                    setGruposKeys(newGroupData);
-                    setContentData(executionReport.group[newGroupData[0].data]);
+                    let checkedList = [];
+                    executionReport.group[newGroupData[0].data].forEach((e, n)=>{
+                        console.log(e.isChecked)
+                        if(!e.obs01) {
+                            e.obs01 = 'Sin Observaciones'
+                        }
+                        if(e.isChecked) {
+                            checkedList.push(e)
+                        }
+                        if(n == (executionReport.group[newGroupData[0].data].length - 1)) {
+                            setGruposKeys(newGroupData);
+                            setElementData(newGroupData[0].data);
+                            setContentData(executionReport.group[newGroupData[0].data]);
+                            console.log('('+checkedList.length+'x100) / '+executionReport.group[newGroupData[0].data].length)
+                            let resultProgress = (checkedList.length * 100) / executionReport.group[newGroupData[0].data].length
+                            setProgress(resultProgress)
+                        }
+                    })
                 }
             })
         }
     }
 
     const handleContent = (gruposKeys, element) => {
+        setElementData(element)
         gruposKeys.forEach((tab, index) => {
             tab.state = false;
             if(index == (gruposKeys.length - 1)) {
-                setContentData(gruposObservaciones[element.data]);
-                element.state = true
+                let checkedList = [];
+                gruposObservaciones[element.data].forEach((e, n)=>{
+                    console.log(e)
+                    if(!e.obs01) {
+                        e.obs01 = 'Sin Observaciones'
+                    }
+                    if(e.isChecked) {
+                        checkedList.push(e)
+                    }
+                    if(n == (gruposObservaciones[element.data].length - 1)) {
+                        setContentData(gruposObservaciones[element.data]);
+                        element.state = true
+                        let resultProgress = ( (checkedList.length) * 100) / gruposObservaciones[element.data].length
+                        setProgress(resultProgress)
+                    }
+                })
+                
             }
         })
     }
@@ -90,8 +123,25 @@ const PautaDetail = ({height, pauta, setReportLocation, executionReport}) => {
                     executionReportsRoutes.saveExecutionReport(executionReport)
                 }
                 setOpenWriteActivity(false);
-                gruposKeys[indexActivity] = activity
+                gruposKeys[indexActivity] = activity;
                 setGruposKeys(gruposKeys);
+                gruposKeys.forEach((tab, index) => {
+                    tab.state = false;
+                    if(index == (gruposKeys.length - 1)) {
+                        let checkedList = [];
+                        gruposObservaciones[elementData.data].forEach((e, n)=>{
+                            if(e.isChecked) {
+                                checkedList.push(e)
+                            }
+                            if(n == (gruposObservaciones[elementData.data].length - 1)) {
+                                //setContentData(gruposObservaciones[element.data]);
+                                let resultProgress = ( (checkedList.length) * 100) / gruposObservaciones[elementData.data].length
+                                setProgress(resultProgress)
+                            }
+                        })
+                        
+                    }
+                })
             }
         }
     }
@@ -168,12 +218,6 @@ const PautaDetail = ({height, pauta, setReportLocation, executionReport}) => {
                 {contentData && <div style={{height: height, overflowY: 'scroll'}}>
                     {
                         contentData.map((e, n) => {
-                            if(!e.isChecked) {
-                                e.isChecked = false;
-                            }
-                            if(!e.obs01) {
-                                e.obs01 = 'Sin Observaciones'
-                            }
                             return(
                                 <ListItem key={n} style={well}>
                                     <div style={{width: '15%', marginLeft: 5 }}>

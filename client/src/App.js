@@ -187,13 +187,13 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                <Route path={['/pms']}>
+                {/* <Route path={['/pms']}>
                     <Switch>
                         <Route exact path='/pms'>
                             <PmsPage route={'pms'}/>
                         </Route>
                     </Switch>
-                </Route>
+                </Route> */}
                 <Route path={['/pauta-detail']}>
                     <Switch>
                         <Route exact path='/pauta-detail/:id'>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Card, Grid, Toolbar, IconButton } from '@material-ui/core'
+import { Box, Card, Grid, Toolbar, IconButton, LinearProgress } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { useStylesTheme } from '../../config'
 import { useHistory, useParams } from 'react-router-dom'
@@ -12,6 +12,7 @@ const ActivitiesDetailPage = () => {
     const {id} = useParams();
     const [ pauta, setPauta ] = useState();
     const [ executionReport, setExecutionReport ] = useState()
+    const [ progress, resutProgress ] = useState(0)
 
     useEffect(() => {
         getPauta()
@@ -45,6 +46,10 @@ const ActivitiesDetailPage = () => {
         }
     }
 
+    const setProgress = (value) => {
+        resutProgress(value)
+    }
+
     return (
         <Box height='80vh'>
             <Grid className={classes.pageRoot} container spacing={0}>
@@ -53,7 +58,7 @@ const ActivitiesDetailPage = () => {
                         <Grid container alignItems='center' justifyContent='center'>
                             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
-                                    <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
+                                    <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10, width: '100%'}}>
                                         <IconButton onClick={() => setTimeout(() => {
                                             history.goBack()
                                         }, 500)}> 
@@ -62,12 +67,24 @@ const ActivitiesDetailPage = () => {
                                         <h1 style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
                                             Actividades Asignadas / Detalle
                                         </h1>
+                                        
+                                        <div style={{position: 'absolute', right: 10, width: '50%', textAlign: 'right'}}>
+                                            {/* <div style={{float: 'left', width: '50%', textAlign: 'right'}}>
+                                                <p>{reportLocatioToPublish}</p>
+                                            </div> */}
+                                            <div style={{float: 'right', width: '5%', padding: 5}}>
+                                                <p>{progress.toFixed(0)}%</p>
+                                            </div>
+                                            <div style={{float: 'right', width: '40%', padding: 10}}>
+                                                <p><LinearProgress variant="determinate" value={progress} style={{width: '100%'}}/></p>
+                                            </div>
+                                        </div>
                                     </Toolbar>
                                 </div>
                             </div>
                             <div style={{width: '98%'}}>
                                 {
-                                    pauta && <PautaDetail height={'calc(100vh - 300px)'} pauta={pauta} executionReport={executionReport} />
+                                    pauta && <PautaDetail height={'calc(100vh - 300px)'} pauta={pauta} executionReport={executionReport} setProgress={setProgress}/>
                                 }
                             </div>
                         </Grid>

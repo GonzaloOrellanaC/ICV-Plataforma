@@ -262,13 +262,13 @@ const Navbar = () => {
                                     </Link>
                                 </IconButton>
                             </div>}
-                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                            {/* <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Listado Pautas'>
                                     <Link to='/pms' className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faList}/> {navBarOpen ?  ' Listado Pautas' : ''}
                                     </Link>
                                 </IconButton>
-                            </div>
+                            </div> */}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar}  title='Configuración'>
                                     <Link to='/configuration' className={classes.sideButtons} style={{ color: (path === '/configuration') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>

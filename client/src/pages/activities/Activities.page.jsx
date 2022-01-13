@@ -99,16 +99,16 @@ const ActivitiesPage = () => {
                                                 </div>
                                             </Grid>
                                             <Grid item lg={2}>
-                                                <h2>Fecha de ejecución</h2>
+                                                <h2>Inicio programado</h2>
                                             </Grid>
                                             <Grid item lg={1}>
                                                 <h2>ID</h2>
                                             </Grid>
+                                            <Grid item lg={2}>
+                                                <h2>Inicio ejecución</h2>
+                                            </Grid>
                                             <Grid item lg={3}>
                                                 <h2>Máquina</h2>
-                                            </Grid>
-                                            <Grid item lg={2}>
-                                                
                                             </Grid>
                                             <Grid item lg={3}>
                                                 <div style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
@@ -127,6 +127,11 @@ const ActivitiesPage = () => {
                                 >
                                     {assignments.map((element, i) => {
                                         element.dateFormat = date(element.datePrev);
+                                        if(!element.dateInit) {
+                                            element.dateInitFormat = 'No iniciado'
+                                        }else{
+                                            element.dateInitFormat = date(element.dateInit);
+                                        }
                                         return(
                                             <div key={i} style={
                                                 {
@@ -150,11 +155,11 @@ const ActivitiesPage = () => {
                                                     <Grid item lg={1}>
                                                         <h4>{element.idIndex}</h4>
                                                     </Grid>
+                                                    <Grid item lg={2}>
+                                                        <h4>{element.dateInitFormat}</h4>
+                                                    </Grid>
                                                     <Grid item lg={3}>
                                                         <h4> {element.machineType} {element.getMachine.model} Número interno: {element.getMachine.number} </h4>
-                                                    </Grid>
-                                                    <Grid item lg={2}>
-                                                        
                                                     </Grid>
                                                     <Grid item lg={3}>
                                                         <div style={{width: '100%', textAlign: 'right', paddingRight: 20}}>

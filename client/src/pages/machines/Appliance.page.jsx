@@ -169,9 +169,9 @@ const AppliancePage = ({ route }) => {
                                                     </div>
                                                 </Grid>
                                             </Grid>
-                                            {
+                                            {/* {
                                                 pauta && <PautaDetail height={'calc(100vh - 420px)'} pauta={pauta} setReportLocation={setReportLocation} />
-                                            }
+                                            } */}
                                         </div>
                                         <div style={{position: 'relative', bottom: 20, width: '100%'}}>
                                             <div style={{float: 'left', width: '50%', textAlign: 'left'}}>

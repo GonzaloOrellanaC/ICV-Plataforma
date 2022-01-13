@@ -68,18 +68,24 @@ const Header = () => {
     }
 
     useEffect(() => {
-        console.log('Initially ' + (window.navigator.onLine ? 'on' : 'off') + 'line');
-        window.addEventListener('online', () => console.log('Became online'));
-        window.addEventListener('offline', () => console.log('Became offline'));
+        if(isAuthenticated) {
+            //console.log('Initially ' + (window.navigator.onLine ? 'on' : 'off') + 'line');
+            window.addEventListener('online', () => {
+                console.log('Became online'); setIfHavNetwork(true);
+            });
+            window.addEventListener('offline', () => {
+                console.log('Became offline'); setIfHavNetwork(false);
+            });
+        }
     }, [])
 
-    setInterval(() => {
+    /* setInterval(() => {
         if(window.navigator.onLine) {
             setIfHavNetwork(true)
         }else{
             setIfHavNetwork(false)
         }
-    }, 10000);
+    }, 10000); */
     
     if(isAuthenticated) {
         

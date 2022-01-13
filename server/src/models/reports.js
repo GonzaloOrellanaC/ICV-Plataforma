@@ -34,6 +34,9 @@ const ReportShema = new Schema({
     datePrev: {
         type: Schema.Types.Date
     },
+    dateInit: {
+        type: Schema.Types.Date
+    },
     idIndex: {
         type: Schema.Types.Number
     }
