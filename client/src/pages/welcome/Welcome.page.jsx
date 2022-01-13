@@ -4,7 +4,7 @@ import { environment, useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes, executionReportsRoutes, reportsRoutes } from '../../routes'
 import { /* pmsDatabase */ sitesDatabase, FilesToStringDatabase, trucksDatabase, machinesDatabase, pautasDatabase, reportsDatabase, machinesImagesDatabase, executionReportsDatabase } from '../../indexedDB'
-import { LoadingModal, VersionControlModal } from '../../modals'
+import { IAModal, LoadingModal, VersionControlModal } from '../../modals'
 import hour from './hour'
 import fecha from './date'
 import getMyReports from './getMyReports'
@@ -531,6 +531,7 @@ const WelcomePage = () => {
                         
                 </Grid>
             </div>
+            {/* <IAModal open={true}/> */}
             <LoadingModal open={openLoader} progress={progress} loadingData={loadingData} withProgress={true}/>
             <VersionControlModal open={openVersion} closeModal={closeModal} />
         </div>

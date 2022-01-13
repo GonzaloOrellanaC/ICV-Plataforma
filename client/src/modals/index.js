@@ -4,6 +4,7 @@ import { LoadingModal } from './loadings';
 import { VersionControlModal } from './version-control';
 import { ReadActivityModal } from './read-activity';
 import { WriteActivityModal } from './write-activity';
+import { IAModal } from './ia-tensorflow';
 
 export {
     AssignReportModal,
@@ -11,5 +12,6 @@ export {
     LoadingModal,
     VersionControlModal,
     ReadActivityModal,
-    WriteActivityModal
+    WriteActivityModal,
+    IAModal
 }

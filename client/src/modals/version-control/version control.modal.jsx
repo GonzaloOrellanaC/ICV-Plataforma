@@ -16,10 +16,16 @@ const VersionControlModal = ({open, closeModal}) => {
                     <h2>Versión {environment.version}</h2>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
-                    <p>
-                        Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.
-                    </p>
-                    <p>
+                    
+                        <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.3.4</strong>
+                        <li>
+                            Se incorpora botón Inteligencia Artificial en navegador para ingresar fotos de las máquinas, para que el sistema identifique sus partes más importantes.
+                        </li>
+                        <li>
+                            Se habilita llenado <strong>solo online</strong> de los reportes a Operarios de Inspección y Operarios de Mantención.
+                        </li>
+                    
                         <strong>v.3.3</strong>
                         <li>
                             Se habilita nuevo botón en navegador lateral "Listado Asignaciones" para operarios
@@ -27,8 +33,8 @@ const VersionControlModal = ({open, closeModal}) => {
                         <li>
                             Indicador de conexión a internet en Header, Parte superior, dereha. Tiempo máximo de espera de aviso una vez desconactado de la red: 10 segundos.
                         </li>
-                    </p>
-                    <p>
+                    
+                    
                         <strong>v.3.2</strong>
                         <li>
                             Se habilitan reportes. Se realizan para pruebas:
@@ -47,26 +53,26 @@ const VersionControlModal = ({open, closeModal}) => {
                                 </li>
                             </ul>
                         </li>
-                    </p>
-                    <p>
+                    
+                    
                         <strong>v.2.9.4</strong>
                         <li>
                             Reparaciones en servicio de reset de contraseña.
                         </li>
-                    </p>
-                    <p>
+                    
+                    
                         <strong>v.2.9.3</strong>
                         <li>
                             Formulario de creación de usuarios con modificaciones. Se generan alertas y bordes rojos en inputs para identificar el estado del formulario.
                         </li>
-                    </p>
-                    <p>
+                    
+                    
                         <strong>v.2.9.2</strong>
                         <li>
                             Se corrige error de requerimiento obligado para obtener lista de todas las máquinas de las obras.
                         </li>
-                    </p>
-                    <p>
+                    
+                    
                         <strong>v.2.9.1</strong>
                         <li>
                             Se habilita color burdeo en navegación por barra lateral.
@@ -74,8 +80,8 @@ const VersionControlModal = ({open, closeModal}) => {
                         <li>
                             Se corrige problemas de acceso a áreas no permitidas, a pesar de contar con privilegios.
                         </li>
-                    </p>
-                    <p>
+                    
+                    
                         <strong>v.2.9</strong>
                         <li>
                             Se habilita restablecimiento de contraseña.
@@ -83,8 +89,7 @@ const VersionControlModal = ({open, closeModal}) => {
                         <li>
                             Se agregan imágenes en formatos SVG, JPG y PNG con mayor resolución.
                         </li>
-                    </p>
-                    <p>
+                    
                         <strong>v.2.5</strong>
                         <li>
                             Se actualiza para responsividad smartphone, excepto control de usuarios usando admin o Ejecutivo SAP y reportes.
@@ -92,8 +97,6 @@ const VersionControlModal = ({open, closeModal}) => {
                         <li>
                             Se corrige error de redacción de correo electrónico. 
                         </li>
-                    </p>
-                    <p>
                         <strong>v.2.2</strong>
                         <li>
                             Los usuarios pueden navegar sin conexión, de acuerdo a sus privilegios. 
@@ -107,7 +110,6 @@ const VersionControlModal = ({open, closeModal}) => {
                         <li>
                             Los administradores pueden asignar obra al crear o editar usuarios. 
                         </li>
-                    </p>
                 </div>
                 <Fab onClick={() => closeModal()} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>
                     <Close style={{color: '#ccc'}} />

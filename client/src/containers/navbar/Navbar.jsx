@@ -16,9 +16,11 @@ import {
     faMapMarkerAlt, 
     faList, 
     faUserCog, 
-    faListAlt} from '@fortawesome/free-solid-svg-icons';
+    faListAlt,
+    faMicrochip,
+    faRobot} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation } from '../../context';
-import { VersionControlModal } from '../../modals'
+import { IAModal, VersionControlModal } from '../../modals'
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -120,6 +122,7 @@ const Navbar = () => {
     const history = useHistory();
     const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true);
     const [ openVersionModal, setOpenVersionModal ] = useState(false);
+    const [ openIAModal, setOpenIAModal ] = useState(false);
 
 
     const logout = async () => {
@@ -153,7 +156,12 @@ const Navbar = () => {
         setOpenVersionModal(false)
     }
 
-
+    const toOpenIAModal = () => {
+        setOpenIAModal(true)
+    }
+    const closeIAModal = () => {
+        setOpenIAModal(false)
+    }
 
     useEffect(() => {
         if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive')) {
@@ -262,13 +270,13 @@ const Navbar = () => {
                                     </Link>
                                 </IconButton>
                             </div>}
-                            {/* <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Listado Pautas'>
-                                    <Link to='/pms' className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
-                                        <FontAwesomeIcon icon={faList}/> {navBarOpen ?  ' Listado Pautas' : ''}
-                                    </Link>
+                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar} title='Int. Artificial (Beta)' onClickCapture={()=>{toOpenIAModal()}}>
+                                    <div className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faRobot}/> {navBarOpen ?  ' Int. Artificial (Beta)' : ''}
+                                    </div>
                                 </IconButton>
-                            </div> */}
+                            </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar}  title='Configuración'>
                                     <Link to='/configuration' className={classes.sideButtons} style={{ color: (path === '/configuration') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
@@ -293,6 +301,7 @@ const Navbar = () => {
                         </Grid>
                     </Grid>
                     <VersionControlModal open={openVersionModal} closeModal={closeModal} />
+                    <IAModal open={openIAModal} closeModal={closeIAModal} />
                 </div>
             </Drawer>
         </div>

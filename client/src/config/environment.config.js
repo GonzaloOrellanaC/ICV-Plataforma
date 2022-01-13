@@ -1,7 +1,7 @@
 
 const environment = {
     storageURL: process.env.URL_STORAGE || 'https://icvmantencion.blob.core.windows.net/plataforma-mantencion/',
-    version: 'Beta 3.3',
+    version: 'Beta 3.4',
     storageApi: {
         account: process.env.AZURE_ACCOUNT,
         accountKey: process.env.TOKEN_SAS_BLOB,
