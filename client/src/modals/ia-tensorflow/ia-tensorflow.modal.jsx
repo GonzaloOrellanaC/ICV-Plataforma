@@ -6,14 +6,11 @@ import {
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import MagicDropzone from "react-magic-dropzone";
-
-//import '@tensorflow/tfjs';
 import * as tf from '@tensorflow/tfjs';
 import { styleModalIA } from '../../config';
-//import {load} from '@tensorflow-models/coco-ssd'
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { debugLog } from 'express-fileupload/lib/utilities';
+import { LoadingModal } from '../';
 
 
 const IAModal = ({open, closeModal}) => {
@@ -25,18 +22,12 @@ const IAModal = ({open, closeModal}) => {
 
     const [ stateModel, setStateModel ] = useState();
     const [ statePreview, setStatePreview ] = useState("")
-    //const [ statePredictions, setStatePredictions ] = useState([])
+    const [ openLoader, setOpen ] = useState(false)
 
     useEffect(() => {
         console.log(weights)
         readModel();
     }, [weights])
-    
-    // Check if webcam access is supported.
-    /* const getUserMediaSupported = () => {
-        return !!(navigator.mediaDevices &&
-        navigator.mediaDevices.getUserMedia);
-    } */
 
     const readModel = async () => {
         let m = await tf.loadGraphModel(weights);
@@ -44,9 +35,14 @@ const IAModal = ({open, closeModal}) => {
     }
 
     const onDrop = (accepted, rejected, links) => {
+        setOpen(true)
         console.log(accepted)
         setStatePreview(accepted[0].preview || links[0]);
     };
+
+    const closeModalLoading = () => {
+        setOpen(false)
+    }
 
     const cropToCanvas = (image, canvas, ctx) => {
         const naturalWidth = image.naturalWidth;
@@ -58,17 +54,16 @@ const IAModal = ({open, closeModal}) => {
         const newWidth = Math.round(naturalWidth * ratio);
         const newHeight = Math.round(naturalHeight * ratio);
         ctx.drawImage(
-          image,
-          0,
-          0,
-          naturalWidth,
-          naturalHeight,
-          (canvas.width - newWidth) / 2,
-          (canvas.height - newHeight) / 2,
-          newWidth,
-          newHeight,
+            image,
+            0,
+            0,
+            naturalWidth,
+            naturalHeight,
+            (canvas.width - newWidth) / 2,
+            (canvas.height - newHeight) / 2,
+            newWidth,
+            newHeight,
         );
-    
     };
 
     const onImageChange = async (e)=> {
@@ -83,6 +78,7 @@ const IAModal = ({open, closeModal}) => {
         if(stateModel) {
             if(input) {
                 stateModel.executeAsync(input).then(res => {
+                    closeModalLoading();
                     console.log(res)
                     const font = "16px sans-serif";
                     ctx.font = font;
@@ -92,44 +88,37 @@ const IAModal = ({open, closeModal}) => {
                     const scores_data = scores.dataSync();
                     const classes_data = classes.dataSync();
                     const valid_detections_data = valid_detections.dataSync()[0];
-              
                     tf.dispose(res)
-              
                     var i;
                     for (i = 0; i < valid_detections_data; ++i){
-                      let [x1, y1, x2, y2] = boxes_data.slice(i * 4, (i + 1) * 4);
-                      x1 *= c.width;
-                      x2 *= c.width;
-                      y1 *= c.height;
-                      y2 *= c.height;
-                      const width = x2 - x1;
-                      const height = y2 - y1;
-                      const klass = names[classes_data[i]];
-                      const score = scores_data[i].toFixed(2);
-              
-                      // Draw the bounding box.
-                      ctx.strokeStyle = "#00FFFF";
-                      ctx.lineWidth = 4;
-                      ctx.strokeRect(x1, y1, width, height);
-              
-                      // Draw the label background.
-                      ctx.fillStyle = "#00FFFF";
-                      const textWidth = ctx.measureText(klass + ":" + score).width;
-                      const textHeight = parseInt(font, 10); // base 10
-                      ctx.fillRect(x1, y1, textWidth + 4, textHeight + 4);
-              
+                        let [x1, y1, x2, y2] = boxes_data.slice(i * 4, (i + 1) * 4);
+                        x1 *= c.width;
+                        x2 *= c.width;
+                        y1 *= c.height;
+                        y2 *= c.height;
+                        const width = x2 - x1;
+                        const height = y2 - y1;
+                        const klass = names[classes_data[i]];
+                        const score = scores_data[i].toFixed(2);
+                        // Draw the bounding box.
+                        ctx.strokeStyle = "#00FFFF";
+                        ctx.lineWidth = 4;
+                        ctx.strokeRect(x1, y1, width, height);
+                        // Draw the label background.
+                        ctx.fillStyle = "#00FFFF";
+                        const textWidth = ctx.measureText(klass + ":" + score).width;
+                        const textHeight = parseInt(font, 10); // base 10
+                        ctx.fillRect(x1, y1, textWidth + 4, textHeight + 4);
                     }
                     for (i = 0; i < valid_detections_data; ++i){
-                      let [x1, y1, , ] = boxes_data.slice(i * 4, (i + 1) * 4);
-                      x1 *= c.width;
-                      y1 *= c.height;
-                      const klass = names[classes_data[i]];
-                      const score = scores_data[i].toFixed(2);
-              
-                      // Draw the text last to ensure it's on top.
-                      ctx.fillStyle = "#000000";
-                      ctx.fillText(klass + ":" + score, x1, y1);
-              
+                        let [x1, y1, , ] = boxes_data.slice(i * 4, (i + 1) * 4);
+                        x1 *= c.width;
+                        y1 *= c.height;
+                        const klass = names[classes_data[i]];
+                        const score = scores_data[i].toFixed(2);
+                        // Draw the text last to ensure it's on top.
+                        ctx.fillStyle = "#000000";
+                        ctx.fillText(klass + ":" + score, x1, y1);
                     }
                 }).catch(err=> {
                     console.log(err)
@@ -171,6 +160,7 @@ const IAModal = ({open, closeModal}) => {
                         <div className="Dropzone">Cargando modelo...</div>
                     )}
                 </div>
+                <LoadingModal open={openLoader} withProgress={false} loadingData={'Cargando datos...'}/>
                 <Fab onClick={() => {closeModal()}} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>
                     <Close style={{color: '#ccc'}} />
                 </Fab>

@@ -18,6 +18,11 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                     
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.3.5</strong>
+                        <li>
+                            Pruebas de reparación IA.
+                        </li>
+
                         <strong>v.3.4</strong>
                         <li>
                             Se incorpora botón Inteligencia Artificial en navegador para ingresar fotos de las máquinas, para que el sistema identifique sus partes más importantes.
