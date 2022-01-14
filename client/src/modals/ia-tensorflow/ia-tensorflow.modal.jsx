@@ -36,8 +36,10 @@ const IAModal = ({open, closeModal}) => {
 
     const onDrop = (accepted, rejected, links) => {
         setOpen(true)
-        console.log(accepted)
-        setStatePreview(accepted[0].preview || links[0]);
+        setTimeout(() => {
+            console.log(accepted)
+            setStatePreview(accepted[0].preview || links[0]);
+        }, 2000);
     };
 
     const closeModalLoading = () => {
