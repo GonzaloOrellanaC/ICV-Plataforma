@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import PropTypes from 'prop-types'
 import { Box, Card, Grid, Toolbar, IconButton, Button } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { useStylesTheme } from '../../config'

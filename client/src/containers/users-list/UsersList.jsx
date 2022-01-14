@@ -95,14 +95,14 @@ const UsersList = ({height, hableButton}) => {
                         </Toolbar>
                     </Grid>
                     <Grid item xs={12} sm={12} md={4} lg={4}>
-                        <Toolbar style={{width: '100%', textAlign: 'right'}}>
+                        <div style={{width: '100%', textAlign: 'right'}}>
                             <Link to="/new-users">
-                                <button disabled={!hableButton} style={{/* position: 'absolute', right: 20,  */width: 171, height: 38, borderRadius: 23, fontSize: 16}}>
+                                <button disabled={!hableButton} style={{marginTop: 20, width: 171, height: 38, borderRadius: 23, fontSize: 16}}>
                                     <FontAwesomeIcon icon={faUser} style={{marginRight: 10}}/>
                                     Crear usuario
                                 </button>
                             </Link>
-                        </Toolbar>
+                        </div>
                     </Grid>
                 </Grid>
                 <div>

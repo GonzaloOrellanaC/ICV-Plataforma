@@ -1,3 +1,19 @@
+.root {
+    margin-top: 70px;
+    height: 90%;
+    font-family:'Raleway';
+}
+
+.navigation-bar {
+    padding-top: 10px;
+    width: 100%;
+    text-align: 'left';
+}
+
+.form-container {
+    padding: 0px;
+}
+
 .container-width {
     padding-top: 90px;
     padding-left: 100px;
@@ -11,6 +27,10 @@
     margin-left: 10px;
     border-radius: 30px;
     margin-bottom: 10px;
+}
+
+.menu-card h3{
+    margin: 5px 0px;
 }
 
 @media screen and (max-width: 560px) {

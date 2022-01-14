@@ -3,14 +3,14 @@ import {Box, Grid, Card, makeStyles, Toolbar, IconButton, ListItem, ListItemIcon
 import { machinesRoutes } from '../../routes';
 import { AssignReportModal } from '../../modals'
 import { useHistory } from "react-router-dom";
-import { useStylesTheme } from '../../config';
-
+import './style.css';
 
 const ReportsList = ({list}) => {
-    const classes = useStylesTheme();
     const [ reportData, setReportData ] = useState(null);
     const [ openModalState, setOpenModalState ] = useState(false);
     const history = useHistory();
+
+    console.log(list)
 
     const openModal = (report) => {
         setReportData(report);
@@ -33,7 +33,7 @@ const ReportsList = ({list}) => {
     const lista = list.reverse()
 
     return(
-        <div style={{width: '100%'}} className={classes.pageRoot}>
+        <div style={{width: '100%'}} className='root'>
             <Grid container style={{width: '100%'}}>
                 {/* <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
                     <Checkbox defaultChecked />
@@ -59,7 +59,7 @@ const ReportsList = ({list}) => {
                 <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
                     <p > <strong>Responsable</strong> </p>
                 </Grid>
-                <Grid item style={{textAlign: 'center', width: '20%', marginLeft: 5}}>
+                <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                     <p > <strong>Obra</strong> </p>
                 </Grid>
                 {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
@@ -107,8 +107,8 @@ const ReportsList = ({list}) => {
                             <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
                                 <p> <button onClick={()=>openModal(item)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
                             </Grid>
-                            <Grid item style={{textAlign: 'center', width: '20%', marginLeft: 5}}>
-                                <p> {item.siteName} </p>
+                            <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                <p> <a title={item.siteName}>{item.site}</a> </p>
                             </Grid>
                             {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                                 <p>  </p>

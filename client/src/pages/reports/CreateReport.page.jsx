@@ -13,6 +13,7 @@ import { ArrowBackIos } from '@material-ui/icons'
 import { useHistory, useParams } from 'react-router-dom';
 import { trucksDatabase, pautasDatabase, machinesDatabase } from '../../indexedDB'
 import { apiIvcRoutes, reportsRoutes } from '../../routes';
+import './reports.css'
 
 const CreateReports = () => {
 
@@ -224,11 +225,11 @@ const CreateReports = () => {
 
     return(
         <Box height='100%'>
-            <Grid className={classes.pageRoot} container spacing={0}>
+            <Grid className='root' container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
                     <Card className={classes.pageCard} >
                         <Grid container alignItems='center' justifyContent='center'>
-                            <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
+                            <div className='navigation-bar' /* style={{width: '100%', textAlign: 'left' }} */>
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20}}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
                                         <IconButton onClick={() => setTimeout(() => {
@@ -238,152 +239,154 @@ const CreateReports = () => {
                                         </IconButton>
                                         <h1 style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
                                             {
-                                                id && 'Reportes / Editar reporte'
+                                                id && 'Ordenes / Editar orden de trabajo'
                                             }
                                             {
-                                                !id && 'Reportes / Crear nuevo reporte'
+                                                !id && 'Ordenes / Crear nueva orden de trabajo'
                                             }
                                         </h1>
                                     </Toolbar>
                                 </div>
                             </div>
-                            <Grid item lg={6}>
-                                <div style={{width: '100%'}}>
-                                    <FormControl>
-                                        <p>#ID</p>
-                                        <input 
-                                        disabled 
-                                        value={idIndex} 
-                                        maxLength={12} 
-                                        onBlur={()=>saveReportData()} 
-                                        className={classes.inputsStyle} 
-                                        type="text" 
-                                        style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
-                                    </FormControl>
-                                </div>
-                                <div style={{width: '100%'}}>
-                                    <FormControl>
-                                        <p>Fecha Prevista</p>
-                                        <input 
-                                        value={date} 
-                                        onChange={(e)=>{setDate(e.target.value)}} 
-                                        maxLength={12} 
-                                        onBlur={()=>saveReportData()} 
-                                        className={classes.inputsStyle} 
-                                        type="date"
-                                        min={toDay}
-                                        style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
-                                    </FormControl>
-                                </div>
-                                <div style={{width: '100%'}}>
-                                    <FormControl>
-                                        <p>Seleccionar tipo de reporte</p>
-                                        <select 
-                                            onBlur={()=>saveReportData(true)}
-                                            className={classes.inputsStyle} 
-                                            name="userType" 
-                                            id="userType" 
-                                            style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
-                                            onChange={(e)=> {setReportType(e.target.value); settingTypePauta(e.target.value)}}
-                                            value={reportType}
-                                        >
-                                            <option value={null}>Seleccione...</option>
-                                            <option>Inspección</option>
-                                            <option>Mantención</option>
-                                        </select>
-                                    </FormControl>
-                                </div>
-                                <div style={{width: '100%'}}>
-                                    <FormControl >
-                                        <p>Seleccionar modelo de máquina</p>
-                                        <select 
-                                            onBlur={()=>saveReportData(true)}
-                                            className={classes.inputsStyle} 
-                                            name="userType" 
-                                            id="userType" 
-                                            style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
-                                            onChange={(e)=> {setTruck(e.target.value); habilitaPauta(); getMachine(e.target.value);}}
-                                            value={truckSelected}
-                                        >
-                                            <option value={''}>Seleccione...</option>
-                                            {
-                                                trucks.map((truck, index) => {
-                                                    return(
-                                                        <option key={index} value={truck.model}>{truck.type} {truck.brand} {truck.model}</option>
-                                                    )
-                                                })
-                                            }
-                                        </select>
-                                    </FormControl>
-                                </div>
-                                
-                            </Grid>
-                            <Grid item lg={6}>
-                                <div style={{width: '100%'}}>
-                                    <FormControl >
-                                        <p>Seleccionar Pauta  {(disablePautas && changed) && <b>ESPERE...</b>}</p>
-                                        <select 
-                                            disabled={disablePautas}
+                            <Grid container className='form-container'>
+                                <Grid item lg={6}>
+                                    <div style={{width: '100%'}}>
+                                        <FormControl>
+                                            <p>#ID</p>
+                                            <input 
+                                            disabled 
+                                            value={idIndex} 
+                                            maxLength={12} 
                                             onBlur={()=>saveReportData()} 
                                             className={classes.inputsStyle} 
-                                            name="userType" 
-                                            id="userType" 
-                                            style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
-                                            onChange={(e)=>{setPauta(e.target.value), setDisableMaquinas(false)}}
-                                            value={pauta}
-                                        >
-                                            <option value={null}>Seleccione...</option>
+                                            type="text" 
+                                            style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
+                                        </FormControl>
+                                    </div>
+                                    <div style={{width: '100%'}}>
+                                        <FormControl>
+                                            <p>Fecha Prevista</p>
+                                            <input 
+                                            value={date} 
+                                            onChange={(e)=>{setDate(e.target.value)}} 
+                                            maxLength={12} 
+                                            onBlur={()=>saveReportData()} 
+                                            className={classes.inputsStyle} 
+                                            type="date"
+                                            min={toDay}
+                                            style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
+                                        </FormControl>
+                                    </div>
+                                    <div style={{width: '100%'}}>
+                                        <FormControl>
+                                            <p>Seleccionar tipo de reporte</p>
+                                            <select 
+                                                onBlur={()=>saveReportData(true)}
+                                                className={classes.inputsStyle} 
+                                                name="userType" 
+                                                id="userType" 
+                                                style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
+                                                onChange={(e)=> {setReportType(e.target.value); settingTypePauta(e.target.value)}}
+                                                value={reportType}
+                                            >
+                                                <option value={null}>Seleccione...</option>
+                                                <option>Inspección</option>
+                                                <option>Mantención</option>
+                                            </select>
+                                        </FormControl>
+                                    </div>
+                                    <div style={{width: '100%'}}>
+                                        <FormControl >
+                                            <p>Seleccionar modelo de máquina</p>
+                                            <select 
+                                                onBlur={()=>saveReportData(true)}
+                                                className={classes.inputsStyle} 
+                                                name="userType" 
+                                                id="userType" 
+                                                style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
+                                                onChange={(e)=> {setTruck(e.target.value); habilitaPauta(); getMachine(e.target.value);}}
+                                                value={truckSelected}
+                                            >
+                                                <option value={''}>Seleccione...</option>
                                                 {
-                                                    (pautas.length > 0) && pautas.map((pauta, index) => {
+                                                    trucks.map((truck, index) => {
                                                         return(
-                                                            <option key={index} value={pauta.typepm}> {pauta.idpm} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
+                                                            <option key={index} value={truck.model}>{truck.type} {truck.brand} {truck.model}</option>
                                                         )
                                                     })
                                                 }
-                                                {
-                                                    (pautas.length == 0) && <option> Selección no cuenta con pautas. </option>
-                                                }
+                                            </select>
+                                        </FormControl>
+                                    </div>
+                                    
+                                </Grid>
+                                <Grid item lg={6}>
+                                    <div style={{width: '100%'}}>
+                                        <FormControl >
+                                            <p>Seleccionar Pauta  {(disablePautas && changed) && <b>ESPERE...</b>}</p>
+                                            <select 
+                                                disabled={disablePautas}
+                                                onBlur={()=>saveReportData()} 
+                                                className={classes.inputsStyle} 
+                                                name="userType" 
+                                                id="userType" 
+                                                style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
+                                                onChange={(e)=>{setPauta(e.target.value), setDisableMaquinas(false)}}
+                                                value={pauta}
+                                            >
+                                                <option value={null}>Seleccione...</option>
+                                                    {
+                                                        (pautas.length > 0) && pautas.map((pauta, index) => {
+                                                            return(
+                                                                <option key={index} value={pauta.typepm}> {pauta.idpm} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
+                                                            )
+                                                        })
+                                                    }
+                                                    {
+                                                        (pautas.length == 0) && <option> Selección no cuenta con pautas. </option>
+                                                    }
 
-                                            
-                                        </select>
-                                    </FormControl>
-                                </div>
-                                <div style={{width: '100%'}}>
-                                    <FormControl >
-                                        <p>Seleccionar máquina de obra</p>
-                                        <select 
-                                            onBlur={()=>saveReportData()} 
-                                            className={classes.inputsStyle} 
-                                            disabled={disableMaquinas}
-                                            name="userType" 
-                                            id="userType" 
-                                            style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
-                                            onChange={(e)=> { if(e.target.value === 'no-select') {setHourMeter(''); setEqID(''); setMachineSelected('')} else{setMachineSelected(e.target.value); setEqID(JSON.parse(e.target.value).equid); setHourMeter((JSON.parse(e.target.value).hourMeter / 3600000))} }}
-                                            value={machineSelected}
-                                        >
-                                            <option value={'no-select'}>Seleccione...</option>
-                                            {
-                                                maquinas.sort((a, b) => {return Number(a.equ) - Number(b.equ)}).map((maquina, index) => {
-                                                    return(
-                                                        <option key={index} value={JSON.stringify(maquina)}> {maquina.equ} / {maquina.type} {maquina.brand} - {maquina.model} </option>
-                                                    )
-                                                })
-                                            }
-                                        </select>
-                                    </FormControl>
-                                </div>
-                                <div style={{width: '100%'}}>
-                                    <FormControl>
-                                        <p>Horas de operación</p>
-                                        <input disabled value={hourMeter} maxLength={12} onBlur={()=>saveReportData()} className={classes.inputsStyle} type="text" style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
-                                    </FormControl>
-                                </div>
-                                <div style={{width: '100%'}}>
-                                    <FormControl>
-                                        <p>Equipo ID</p>
-                                        <input disabled value={equID} maxLength={12} onBlur={()=>saveReportData()} className={classes.inputsStyle} type="text" style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
-                                    </FormControl>
-                                </div>
+                                                
+                                            </select>
+                                        </FormControl>
+                                    </div>
+                                    <div style={{width: '100%'}}>
+                                        <FormControl >
+                                            <p>Seleccionar máquina de obra</p>
+                                            <select 
+                                                onBlur={()=>saveReportData()} 
+                                                className={classes.inputsStyle} 
+                                                disabled={disableMaquinas}
+                                                name="userType" 
+                                                id="userType" 
+                                                style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
+                                                onChange={(e)=> { if(e.target.value === 'no-select') {setHourMeter(''); setEqID(''); setMachineSelected('')} else{setMachineSelected(e.target.value); setEqID(JSON.parse(e.target.value).equid); setHourMeter((JSON.parse(e.target.value).hourMeter / 3600000))} }}
+                                                value={machineSelected}
+                                            >
+                                                <option value={'no-select'}>Seleccione...</option>
+                                                {
+                                                    maquinas.sort((a, b) => {return Number(a.equ) - Number(b.equ)}).map((maquina, index) => {
+                                                        return(
+                                                            <option key={index} value={JSON.stringify(maquina)}> {maquina.equ} / {maquina.type} {maquina.brand} - {maquina.model} </option>
+                                                        )
+                                                    })
+                                                }
+                                            </select>
+                                        </FormControl>
+                                    </div>
+                                    <div style={{width: '100%'}}>
+                                        <FormControl>
+                                            <p>Horas de operación</p>
+                                            <input disabled value={hourMeter} maxLength={12} onBlur={()=>saveReportData()} className={classes.inputsStyle} type="text" style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
+                                        </FormControl>
+                                    </div>
+                                    <div style={{width: '100%'}}>
+                                        <FormControl>
+                                            <p>Equipo ID</p>
+                                            <input disabled value={equID} maxLength={12} onBlur={()=>saveReportData()} className={classes.inputsStyle} type="text" style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
+                                        </FormControl>
+                                    </div>
+                                </Grid>
                             </Grid>
                         </Grid>
                         <Grid container>

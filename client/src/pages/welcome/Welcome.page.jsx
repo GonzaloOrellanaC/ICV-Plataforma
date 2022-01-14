@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Card, Grid, Typography, Modal, Button } from '@material-ui/core'
-import { environment, useStylesTheme } from '../../config'
+import { Grid } from '@material-ui/core'
+import { environment } from '../../config'
 import { CardButton } from '../../components/buttons'
-import { apiIvcRoutes, executionReportsRoutes, reportsRoutes } from '../../routes'
-import { /* pmsDatabase */ sitesDatabase, FilesToStringDatabase, trucksDatabase, machinesDatabase, pautasDatabase, reportsDatabase, machinesImagesDatabase, executionReportsDatabase } from '../../indexedDB'
-import { IAModal, LoadingModal, VersionControlModal } from '../../modals'
-import hour from './hour'
-import fecha from './date'
-import getMyReports from './getMyReports'
+import { apiIvcRoutes } from '../../routes'
+import { FilesToStringDatabase, trucksDatabase, machinesDatabase, machinesImagesDatabase } from '../../indexedDB'
+import { LoadingModal, VersionControlModal } from '../../modals'
 import './style.css'
-
-//const styleWelcomePage = style;
+import getInfo from './getInfo'
+import readDataSite from './readDataSite'
+import get3dElement from './get3dElement'
 
 const WelcomePage = () => {
-    const classes = useStylesTheme();
     const [ date, setDate ] = useState('')
     const [ hora, setHora ] = useState('')
     const [ openLoader, setOpenLoader ] = useState(false);
@@ -31,271 +28,106 @@ const WelcomePage = () => {
 
     useEffect(() => {
         readData();
-        if(localStorage.getItem('sitio')) {
-            setDisableButtons(false)
-        }else{
-            setNotificaciones1('Para navegar en la aplicación debe seleccionar una obra')
-        }
-        if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
-            setDisableButtonsNoSAP(false);
-        }else{
-            setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.');
-            if(localStorage.getItem('role') === 'maintenceOperator') {
-                setDisableIfNoMaintenance(false)
-            }else{
-                setDisableIfNoMaintenance(true)
-            };
-            if(localStorage.getItem('role') === 'inspectionWorker') {
-                setDisableIfNoInspection(false)
-            }else{
-                setDisableIfNoInspection(true)
-            };
-        }
-        if(localStorage.getItem('version')) {
-            if((localStorage.getItem('version') != environment.version)) {
-                alert('Plataforma requiere actualización. Se cerrará sesión para actualizar el servicio.');
-                logout()
-            }
-        }
-        if(!localStorage.getItem('version')) {
-            setOpenVersion(true)
-            localStorage.setItem('version', environment.version);
-        }
-        setDate(fecha(Date.now()));
-        const interval = setInterval(() => {
-            setHora(hour(Date.now()))
-        }, 100);
-        return () => clearInterval(interval);
+        readDataSite(
+            setDisableButtons,
+            setNotificaciones1,
+            setNotificaciones2,
+            setDisableButtonsNoSAP,
+            setDisableIfNoMaintenance,
+            setDisableIfNoInspection,
+            setHora,
+            setDate
+        )    
     }, []);
 
-    const logout = async () => {
-        window.localStorage.clear();
-        window.location.reload();
-        removeDatabases();
-    }
-
-    const removeDatabases = async () => {
-        let databases = await window.indexedDB.databases();
-        if(databases) {
-            databases.forEach((database, index) => {
-                window.indexedDB.deleteDatabase(database.name)
-            })
-        }
-    }
-
-    
-    const setIfNeedReadDataAgain = async () => {
-        return new Promise(async resolve => {
-            if(navigator.onLine) {
-                let sites = [];
-                sites = await getSitesList();
-                let db = await sitesDatabase.initDbObras();
-                if(db) {
-                    const response = await sitesDatabase.consultar(db.database);
-                    if(response) {
-                        if(sites.length == response.length) {
-                            resolve(false)
-                        }else{
-                            resolve(true)
-                        }
-                    }
+    const readData = async () => {
+        const revisarData = await getInfo.setIfNeedReadDataAgain(setDisableButtons, setNotificaciones1);
+        const userRole = localStorage.getItem('role');
+        if(revisarData) {
+            setOpenLoader(true);
+            if(userRole==='admin'||userRole==='superAdmin'||userRole==='sapExecutive') {
+                setLoadingData('Descargando pautas de mantenimiento e inspección.');
+                const estadoDescargaPautas = await getInfo.descargarPautas(setProgress);
+                if(estadoDescargaPautas.state) {
+                    setTimeout( async () => {
+                        setLoadingData('Descargando datos de las obras.');
+                        const responseSites = await getInfo.getSites(setProgress, setDisableButtons, setNotificaciones1);
+                        setTimeout(async () => {
+                            if(responseSites) {
+                                setLoadingData('Descargando datos de las máquinas.')
+                                setProgress(65)
+                                const responseTrucks = await getTrucksList();
+                                console.log(responseTrucks)
+                                setTimeout(async() => {
+                                    if(responseTrucks) {
+                                        setLoadingData('Descargando lista de las máquinas de las obras.')
+                                        setProgress(100)
+                                        const getMachines = await getMachinesList();
+                                        if(getMachines) {
+                                            let n = 0;
+                                            get3dElement(n, responseTrucks, setProgress, setOpenLoader, setLoadingData, setOpenVersion)
+                                            /* if(!localStorage.getItem('version')) {
+                                                setOpenVersion(true)
+                                                localStorage.setItem('version', environment.version);
+                                            } */
+                                        }
+                                    }else{
+                                        setOpenLoader(false)
+                                    }
+                                }, 1000);
+                            }else{
+                                setOpenLoader(false)
+                            }
+                        }, 1000);
+                    }, 1000);
                 }
             }else{
-                resolve(false)
-            }
-        })
-    }
-
-    const readData = async () => {
-        /* getAssignments(); */
-        const revisarData = await setIfNeedReadDataAgain();
-        const userRole = localStorage.getItem('role');
-        if(userRole==='admin'||userRole==='superAdmin'||userRole==='sapExecutive') {
-            
-        }else{
-            const reports = await getMyReports(localStorage.getItem('_id'));
-            let db = await reportsDatabase.initDbReports();
-            if(db) {
-                reports.forEach((report, i) => {
-                    report.idDatabase = i;
-                    reportsDatabase.actualizar(report, db.database);
-                    getReportExecutionFromId(report._id)
-                    if(i == (reports.length - 1)) {
-
-                    }
-                })
-                
-            }
-        }
-        if(revisarData) {
-            setOpenLoader(true)
-            setLoadingData('Descargando pautas de mantenimiento e inspección.');
-            const estadoDescargaPautas = await descargarPautas();
-            if(estadoDescargaPautas.state) {
-                setProgress(100)
-                setTimeout( async () => {
-                    setProgress(0)
-                    setLoadingData('Descargando datos de las obras.');
-                    setProgress(30)
-                    const responseSites = await getSites();
-                    setTimeout(async () => {
-                        if(responseSites) {
-                            setLoadingData('Descargando datos de las máquinas.')
-                            setProgress(65)
-                            const responseTrucks = await getTrucksList();
-                            setTimeout(async() => {
-                                if(responseTrucks) {
-                                    setLoadingData('Descargando lista de las máquinas de las obras.')
-                                    setProgress(100)
-                                    const getMachines = await getMachinesList();
-                                    if(getMachines) {
-                                        setTimeout(async () => {
-                                            let n = 0;
-                                            await get3dElement(n, responseTrucks)
-                                        }, 1000);
-                                    }
+                setLoadingData('Actualizando asignaciones.');
+                const assignMentResolve = await getInfo.getAssignments(setProgress);
+                console.log(assignMentResolve)
+                if(assignMentResolve) {
+                    setLoadingData('Descargando pautas de mantenimiento e inspección.');
+                    const estadoDescargaPautas = await getInfo.descargarPautas(setProgress);
+                    if(estadoDescargaPautas.state) {
+                        setTimeout( async () => {
+                            setLoadingData('Descargando datos de las obras.');
+                            const responseSites = await getInfo.getSites(setProgress, setDisableButtons, setNotificaciones1);
+                            setTimeout(async () => {
+                                if(responseSites) {
+                                    setLoadingData('Descargando datos de las máquinas.')
+                                    setProgress(65)
+                                    const responseTrucks = await getTrucksList();
+                                    console.log(responseTrucks)
+                                    setTimeout(async() => {
+                                        if(responseTrucks) {
+                                            setLoadingData('Descargando lista de las máquinas de las obras.')
+                                            setProgress(100)
+                                            const getMachines = await getMachinesList();
+                                            if(getMachines) {
+                                                let n = 0;
+                                                get3dElement(n, responseTrucks, setProgress, setOpenLoader, setLoadingData, setOpenVersion)
+                                                /* if(!localStorage.getItem('version')) {
+                                                    setOpenVersion(true)
+                                                    localStorage.setItem('version', environment.version);
+                                                } */
+                                            }
+                                        }else{
+                                            setOpenLoader(false)
+                                        }
+                                    }, 1000);
                                 }else{
                                     setOpenLoader(false)
                                 }
                             }, 1000);
-                        }else{
-                            setOpenLoader(false)
-                        }
-                    }, 1000);
-                }, 1000);
+                        }, 1000);
+                    }
+                }
             }
         }else{
             setOpenLoader(false)
         }
     }
 
-    const getReportExecutionFromId = (reportId) => {
-        return new Promise(async resolve => {
-            let reportData = {
-                reportId: reportId,
-                createdBy: localStorage.getItem('_id')
-            };
-            let res = await executionReportsRoutes.getExecutionReportById(reportData);
-            let db = await executionReportsDatabase.initDb();
-            if(db) {
-                await executionReportsDatabase.actualizar(res.data[0], db.database);
-            }
-        })
-    }
-
-    const descargarPautas = () => {
-        return new Promise(async resolve => {
-            const pautas = await getPautas();
-            if(pautas) {
-                pautas.forEach(async (pauta, number ) => {
-                    setProgress(30);
-                    const response = await getHeader(pauta);
-                    pauta.header = response;
-                    pauta.id = number;
-                    if(number == (pautas.length - 1)) {
-                        let numberProgress1 = progress
-                        pautas.forEach(async (pa, n) => {
-                            setProgress(65)
-                            const res = await getStructs(pa)
-                            pa.struct = res;
-                            //console.log(pa);
-                            if(n == (pautas.length - 1)) {
-                                let numberProgress2 = progress
-                                const db = await pautasDatabase.initDbPMs();
-                                if(db) {
-                                    pautas.forEach(async (p, i) => {
-                                        setProgress(78)
-                                        await pautasDatabase.actualizar(p, db.database);
-                                        if(i == (pautas.length - 1)) {
-
-                                            resolve({
-                                                progress: progress,
-                                                state: true
-                                            })
-                                        }
-                                    })
-                                }
-                            }
-                        })
-    
-                    }
-                })
-                
-            }
-        })
-    }
-
-    const get3dElement = async (number, trucks) => {
-        if(number == (trucks.length)) {
-            setTimeout(async () => {
-                setProgress(100);
-                setLoadingData('Recursos descargados');
-                let db = await FilesToStringDatabase.initDb3DFiles();
-                if(db) {
-                    let databaseInfo = await FilesToStringDatabase.consultar(db.database);
-                }
-                setTimeout(() => {
-                    setOpenLoader(false)
-                }, 1000);
-            }, 1000);
-        }else{
-            setLoadingData('Descargando Modelo 3D ' + (number + 1))
-            const url3dTruck = await get3dMachines(trucks[number]);
-            const { id, model, brand, type } = trucks[number];
-            let res = await fetch(url3dTruck);
-            const reader = res.body.getReader();
-            const contentLength = +res.headers.get('Content-Length');
-            let receivedLength = 0; // received that many bytes at the moment
-            let chunks = []; // array of received binary chunks (comprises the body)
-            setProgress(0);
-            setTimeout(async () => {
-                while (true) {
-                    const ele = await reader.read();
-                    if (ele.done) {
-                        let chunksAll = new Uint8Array(receivedLength); // (4.1)
-                        let position = 0;
-                        for(let chunk of chunks) {
-                            chunksAll.set(chunk, position); // (4.2)
-                            position += chunk.length;
-                        }
-                        let result = new TextDecoder("utf-8").decode(chunksAll);
-                        let db = await FilesToStringDatabase.initDb3DFiles();
-                        if(db) {
-                            let actualizado = await FilesToStringDatabase.actualizar({id: id, info: {model: model, brand: brand, type: type}, data: result}, db.database);
-                            if(actualizado) {
-                                number = number + 1;
-                                get3dElement(number, trucks);
-                            }
-                        }
-                        break;
-                    }
-                    chunks.push(ele.value);
-                    receivedLength += ele.value.length;
-                    setProgress((100*receivedLength)/contentLength)                    
-                }
-            }, 1000);
-        }
-    }
-
-    const getSites = () => {
-        return new Promise(async resolve => {
-            let sites = [];
-            sites = await getSitesList();
-            let db = await sitesDatabase.initDbObras();
-            if(db) {
-                sites.forEach(async (fileName, index) => {
-                    fileName.id = index;
-                    await sitesDatabase.actualizar(fileName, db.database, db.database.version);
-                    if(index === (sites.length - 1)) {
-                        const response = await sitesDatabase.consultar(db.database);
-                        if(response) {
-                            resolve(true)
-                        }
-                    } 
-                });
-            }
-        })
-    }
 
     const getMachinesList = () => {
         return new Promise(async resolve => {
@@ -372,30 +204,6 @@ const WelcomePage = () => {
             }
         })
     }
-    
-    const getHeader = (pauta) => {
-        return new Promise(resolve => {
-            apiIvcRoutes.getHeaderPauta(pauta)
-            .then(data => {
-                resolve(data.data)
-            })
-            .catch(err => {
-                //console.log('Error', err)
-            })
-        })
-    }
-
-    const getStructs = (pauta) => {
-        return new Promise(resolve => {
-            apiIvcRoutes.getStructsPauta(pauta)
-            .then(data => {
-                resolve(data.data)
-            })
-            .catch(err => {
-                //console.log('Error', err)
-            })
-        })
-    }
 
     const getMachines = () => {
         return new Promise(resolve => {
@@ -422,71 +230,9 @@ const WelcomePage = () => {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
 
-    const getPMlist = () => {
-        return new Promise(resolve => {
-            apiIvcRoutes.getPMList()
-            .then(data => {
-                resolve(data.data)
-            })
-            .catch(err => {
-                //console.log('Error', err)
-            })
-        })
-    }
-
-    const getPautas = () => {
-        return new Promise(resolve => {
-            apiIvcRoutes.getPautas()
-            .then(data => {
-                resolve(data.data)
-            })
-            .catch(err => {
-                //console.log('Error', err)
-            })
-        })
-    }
-
     const closeModal = () => {
         setOpenVersion(false)
     }
-
-    //Obras o sitios desde la base de datos
-    const getSitesList = () => {
-        return new Promise(resolve => {
-            apiIvcRoutes.getSites()
-            .then(data => {
-                if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
-                    localStorage.setItem('sitio', JSON.stringify(data.data[0]));
-                    setTimeout(() => {
-                        setDisableButtons(false)
-                        setNotificaciones1('Sin notificaciones')
-                    }, 500);
-                }
-                resolve(data.data)
-            })
-            .catch(err => {
-                //console.log('Error', err)
-            })
-        })
-    }
-
-    const get3dMachines = (machine) => {
-        let newMachine;
-        return new Promise(resolve => {
-            if(machine.type === 'Camión') {
-                newMachine = environment.storageURL + 'maquinas/camiones/' + machine.brand.toUpperCase() + '/' + machine.brand.toUpperCase() + '_' + machine.model + '_' + 'Preview.gltf'
-            }else if(machine.type === 'Pala') {
-                newMachine = environment.storageURL + 'maquinas/palas/' + machine.brand.toUpperCase() + '/' + machine.brand + '_' + machine.model + '_' + 'Preview.gltf'
-            }
-            resolve(newMachine)
-        })
-    }/* 
-
-    const getAssignments = () => {
-        reportsRoutes.findMyAssignations(localStorage.getItem('_id')).then(data => {
-            console.log(data.data)
-        })
-    } */
 
     return (
         <div>

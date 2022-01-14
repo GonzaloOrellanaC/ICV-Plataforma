@@ -107,18 +107,18 @@ const ReportsPage = () => {
                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                         </IconButton>
                         <h1 style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
-                            Reportes
+                            Ordenes
                         </h1>
                         <Button onClick={()=>{history.push('/reports/create-report')}} title='Nuevo reporte' style={{position: 'absolute', right: 10, color: '#333'}}>
-                            Nuevo reporte
+                            Nueva orden
                         </Button>
                     </Toolbar>
                 </div>
             </div>
             <Grid container>
                 <Grid item xs={12} sm={12} md={5} lg={3}>
-                    <div className='menu-card' /* style={{width: '100%'}} */>
-                        <h2>Inspecciones</h2>
+                    <div className='menu-card'>
+                        <h3>Inspecciones</h3>
                         <div style={{float: 'left', width: 'calc(45%)', marginRight: 5, padding: 10, backgroundColor: '#fff', borderRadius: 10}}>
                             <div style={{float: 'left', width: '40%'}}>
                                 <p style={{fontSize: 32, margin: 0}}>{inspeccionesPorAsignar}</p>
@@ -157,7 +157,7 @@ const ReportsPage = () => {
                         }
                     </div>
                     <div className='menu-card'>
-                        <h2>Mantenciones</h2>
+                        <h3>Mantenciones</h3>
                         <div style={{float: 'left', width: 'calc(45%)', marginRight: 5, padding: 10, backgroundColor: '#fff', borderRadius: 10}}>
                             <div style={{float: 'left', width: '40%'}}>
                                 <p style={{fontSize: 32, margin: 0}}>{mantencionesPorAsignar}</p>

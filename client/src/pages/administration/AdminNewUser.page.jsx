@@ -210,13 +210,13 @@ const AdminNewUserPage = () => {
                             </div>
                         </Grid>
                         <Grid container alignItems='center' justifyContent='center'>
-                            <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
+                            <div style={{width: '100%', textAlign: 'left', padding: 10, overflowY: 'auto' }}>
                                 {
                                     (usageModule === 0) &&
-                                        <CreateUser height={100} typeDisplay={routingData} uData={userData} />
+                                        <CreateUser width={'calc(100vw - 450px)'} height={'calc(100vh - 320px)'} typeDisplay={routingData} uData={userData} />
                                 }
                                 {   (usageModule === 1) &&
-                                        <PermissionUser height={100} typeDisplay={routingData} id={id} />
+                                        <PermissionUser width={'calc(100vw - 350px)'} height={'calc(100vh - 320px)'} typeDisplay={routingData} id={id} />
                                 }
                                 <div style={{position: 'absolute', right: 40, bottom: 40}}>
                                     <div style={{width: "100%"}}>

@@ -4,6 +4,7 @@ import { ArrowBackIos } from '@material-ui/icons';
 import { useStylesTheme } from '../../config';
 import { useHistory } from 'react-router-dom';
 import { UsersList } from '../../containers';
+import './style.css'
 
 const AdminUsersPage = ({route}) => {
     const [ isConnected, setIsConnected ] = useState(false)
@@ -22,7 +23,7 @@ const AdminUsersPage = ({route}) => {
 
     return (
         <Box height='100%'>
-            <Grid className={classes.pageRoot} container spacing={0}>
+            <Grid className='root' container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
                     <Card className={classes.pageCard}>
                         <Grid container alignItems='center' justifyContent='center'>
@@ -42,7 +43,7 @@ const AdminUsersPage = ({route}) => {
                             </div>
                         </Grid>
                         <Grid container alignItems='center' justifyContent='center'>
-                            <div style={{width: '100%', textAlign: 'left', padding: 10, overflowY: 'scroll', height: '100vh'}}>
+                            <div style={{width: '100%', textAlign: 'left', padding: 20, overflowY: 'auto', height: 'calc(100vh - 200px)'}}>
                                 <UsersList height={'100%'} hableButton={isConnected}/>
                             </div>
                         </Grid>
