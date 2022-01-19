@@ -9,6 +9,8 @@ import './style.css'
 import getInfo from './getInfo'
 import readDataSite from './readDataSite'
 import get3dElement from './get3dElement'
+import Files from './3dFiles'
+import download3DFiles from './download3DFiles'
 
 const WelcomePage = () => {
     const [ date, setDate ] = useState('')
@@ -27,6 +29,7 @@ const WelcomePage = () => {
     const [ notificaciones2, setNotificaciones2 ] = useState('Sin notificaciones')
 
     useEffect(() => {
+        getMachinesList_();
         readData();
         readDataSite(
             setDisableButtons,
@@ -64,12 +67,7 @@ const WelcomePage = () => {
                                         setProgress(100)
                                         const getMachines = await getMachinesList();
                                         if(getMachines) {
-                                            let n = 0;
-                                            get3dElement(n, responseTrucks, setProgress, setOpenLoader, setLoadingData, setOpenVersion)
-                                            /* if(!localStorage.getItem('version')) {
-                                                setOpenVersion(true)
-                                                localStorage.setItem('version', environment.version);
-                                            } */
+                                            download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
                                         }
                                     }else{
                                         setOpenLoader(false)
@@ -104,12 +102,7 @@ const WelcomePage = () => {
                                             setProgress(100)
                                             const getMachines = await getMachinesList();
                                             if(getMachines) {
-                                                let n = 0;
-                                                get3dElement(n, responseTrucks, setProgress, setOpenLoader, setLoadingData, setOpenVersion)
-                                                /* if(!localStorage.getItem('version')) {
-                                                    setOpenVersion(true)
-                                                    localStorage.setItem('version', environment.version);
-                                                } */
+                                                download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
                                             }
                                         }else{
                                             setOpenLoader(false)
@@ -146,6 +139,14 @@ const WelcomePage = () => {
                     } 
                 });
             }
+        })
+    }
+
+    const getMachinesList_ = () => {
+        return new Promise(resolve => {
+            let machines = Files;
+            console.log(machines);
+
         })
     }
 

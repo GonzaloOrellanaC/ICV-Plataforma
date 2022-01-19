@@ -21,7 +21,13 @@ const initDb3DFiles = () => {
             db = e.target.result
             const coleccionObjetos = db.createObjectStore('3dFilesList',{
                 keyPath: 'id'
-            })
+            });
+            coleccionObjetos.createIndex("model", "model", {unique: false});
+            coleccionObjetos.createIndex("name", "name", {unique: false});
+            coleccionObjetos.createIndex("type", "type", {unique: false});
+            coleccionObjetos.createIndex("brand", "brand", {unique: false});
+            coleccionObjetos.createIndex("nameModel", "nameModel", {unique: false});
+
             coleccionObjetos.transaction.oncomplete = (event) => {
                 resolve(
                     {
@@ -56,8 +62,28 @@ const agregar = (data, database) => {
             resolve(false)
         }
     })
-    
 }
+
+
+
+/* const agregarPor = (data, database) => {
+    return new Promise(resolve => {
+        const trasaccion = database.transaction(['3dFilesList'],'readwrite')
+        const coleccionObjetos = trasaccion.objectStore('3dFilesList')
+        const conexion = coleccionObjetos.add(data);
+        conexion.onsuccess = async () =>{
+            let consultarData = await consultar(database);
+            if(consultarData) {
+                resolve(true)
+            }
+        }
+
+        conexion.onerror = (err) => {
+            console.log(err)
+            resolve(false)
+        }
+    })
+} */
 
 const obtener = (clave, database) =>{
     return new Promise(result => {
@@ -67,9 +93,19 @@ const obtener = (clave, database) =>{
     conexion.onsuccess = (e) =>{
         result(e.target.result)
     }
-    })
-    
-    
+    })    
+}
+
+const buscarPorNombreModelo = (value, database) =>{
+    return new Promise(resolve => {
+    const trasaccion = database.transaction(['3dFilesList'],'readonly')
+    const objectStore = trasaccion.objectStore('3dFilesList')
+    const myIndex = objectStore.index('nameModel');
+    const conexion = myIndex.get(value)
+    conexion.onsuccess = (e) =>{
+        resolve(e.target.result)
+    }
+    })    
 }
 
 const actualizar = (data, database) =>{   
@@ -121,5 +157,6 @@ export default {
     obtener,
     actualizar,
     eliminar,
-    consultar
+    consultar,
+    buscarPorNombreModelo
 }

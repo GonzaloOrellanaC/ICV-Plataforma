@@ -1,6 +1,7 @@
 import { Header } from './header'
 import { Login } from './login'
 import { Navbar } from './navbar'
+import { BottomNavbar } from './bottom-navbar'
 import { ResetPassword, RestorePassword } from './reset-password'
 import { Inspects } from './inspect'
 import { Maitence } from './maitence'
@@ -18,8 +19,7 @@ export {
     RestorePassword,
     Inspects,
     Maitence,
-    //VRAvatar,
-    //VRAvatarPreview,
+    BottomNavbar,
     MVAvatar,
     PautaDetail,
     UsersList,

@@ -20,19 +20,21 @@ const IAModal = ({open, closeModal}) => {
 
     const [modelWeight, modelHeight] = [640, 640];
 
-    const [ stateModel, setStateModel ] = useState();
+    const [ stateModel, setStateModel ] = useState(null);
     const [ statePreview, setStatePreview ] = useState("")
     const [ openLoader, setOpen ] = useState(false)
 
     useEffect(() => {
-        console.log(weights)
-        readModel();
-    }, [weights])
-
-    const readModel = async () => {
-        let m = await tf.loadGraphModel(weights);
-        setStateModel(m);
-    }
+        let cancel = false;
+        if(cancel) return;
+        tf.loadGraphModel(weights).then(m => {
+            if(cancel) return;
+            setStateModel(m);
+        });
+        return () => {
+            cancel = true;
+        }
+    }, [])
 
     const onDrop = (accepted, rejected, links) => {
         setOpen(true)

@@ -23,6 +23,11 @@ const VersionControlModal = ({open, closeModal}) => {
                             Pruebas de reparación IA.
                         </li>
 
+                        <strong>v.4.0</strong>
+                        <li>
+                            Descarga y vista mediante menú de equipos y partes de las máquinas en 3D.
+                        </li>
+
                         <strong>v.3.4</strong>
                         <li>
                             Se incorpora botón Inteligencia Artificial en navegador para ingresar fotos de las máquinas, para que el sistema identifique sus partes más importantes.

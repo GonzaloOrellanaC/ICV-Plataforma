@@ -21,7 +21,7 @@ const MachinesListPage = ({route}) => {
     const machine = JSON.parse(id);
     const openCloseModal = () => {
             setTimeout(() => {
-                setOpen(!open)
+                setOpen(true)
             }, 500);
     }
 
@@ -37,8 +37,8 @@ const MachinesListPage = ({route}) => {
         history.push(`machine-detail/${JSON.stringify(newMachine)}`)
     }
 
-    const readAllMachinesFromIndexedDB = async (model) => {
-        let db = await machinesDatabase.initDbMachines();
+    const readAllMachinesFromIndexedDB = (model) => {
+        /* let db = await machinesDatabase.initDbMachines();
         if(db) {
             let readAllMachines = [] = await machinesDatabase.consultar(db.database);
             console.log(readAllMachines);
@@ -47,13 +47,35 @@ const MachinesListPage = ({route}) => {
                 .filter(machine => {if(machine.model === model) { return machine}})
                 .sort((a, b) => {return a.equ - b.equ})
             )
-        }
+        } */
+        machinesDatabase.initDbMachines().then(db => {
+            machinesDatabase.consultar(db.database).then(readAllMachines => {
+                setMachinesList(
+                    readAllMachines
+                    .filter(machine => {if(machine.model === model) { return machine}})
+                    .sort((a, b) => {return a.equ - b.equ})
+                )
+            })
+        })
+    }
+
+    const closeModal = () => {
+        setOpen(false)
     }
 
     useEffect(() => {
-        /* console.log(route)
-        console.log(JSON.parse(id)); */
-        readAllMachinesFromIndexedDB(JSON.parse(id).model);
+        let cancel = false;
+        machinesDatabase.initDbMachines().then(db => {
+            machinesDatabase.consultar(db.database).then(readAllMachines => {
+                if(cancel) return
+                setMachinesList(
+                    readAllMachines
+                    .filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
+                    .sort((a, b) => {return a.equ - b.equ})
+                )
+            })
+        })
+        /* readAllMachinesFromIndexedDB(JSON.parse(id).model); */
         if(!site) {
             history.goBack()
         }
@@ -61,6 +83,9 @@ const MachinesListPage = ({route}) => {
             setRouteData('Inspección')
         }else if(route === 'maintenance') {
             setRouteData('Mantención')
+        }
+        return () => {
+            cancel = true;
         }
     }, [])
 
@@ -114,7 +139,7 @@ const MachinesListPage = ({route}) => {
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={12} lg={2}>
                                                     <div style={{width: '100%', textAlign: 'center'}} >
-                                                        <button style={{width: 100, height: 30, borderRadius: 20}} onClick={openCloseModal}>
+                                                        <button style={{width: 100, height: 30, borderRadius: 20}} onClick={() => openCloseModal()}>
                                                             <strong>Ver 3D</strong>
                                                         </button>
                                                         <button style={{width: 100, height: 30, borderRadius: 20, marginLeft: 6}} onClick={() => goToMachineDetail(machine)}  /* component={Link} to={`/${route}/${JSON.stringify(machine)}` */ >
@@ -132,7 +157,7 @@ const MachinesListPage = ({route}) => {
                             <div>
                                     <Modal
                                         open={open}
-                                        close={!open}
+                                        //close={!open}
                                         //onClose={handleClose}
                                         aria-labelledby="modal-modal-title"
                                         aria-describedby="modal-modal-description"
@@ -141,7 +166,7 @@ const MachinesListPage = ({route}) => {
                                             {/* <VRAvatar machine={machine}/> */} 
                                             <MVAvatar machine={machine}/>
                                             {/* <Test /> */}
-                                            <Fab onClick={openCloseModal} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}} color="primary">
+                                            <Fab onClick={() => closeModal()} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}} color="primary">
                                                 <Close />
                                             </Fab>
                                         </div>
