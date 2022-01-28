@@ -22,6 +22,7 @@ const CreateReports = () => {
     const [ maquinas, setMaquinas ] = useState([])
     const [ machineModel, setMachineModel ] = useState('')
     const [ pauta, setPauta ] = useState()
+    //const [ pautaAction, setPautaAction ] = useState()
     const [ pautaIndex, setPautaIndex ] = useState()
     const [ reportType, setReportType ] = useState()
     const [ truckSelected, setTruck ] = useState()
@@ -34,19 +35,22 @@ const CreateReports = () => {
     const [ hourMeter, setHourMeter ] = useState('')
     const [ equID, setEqID ] = useState('')
     const [ toDay, setToDay ] = useState('')
+    /* const [ sapId, setSapId ] = useState('') */
+    const [ canEdit, setCanEdit ] = useState(true)
 
     const classes = useStylesTheme();
 
     const history = useHistory();
 
-    const {id} = useParams()
+    const {id} = useParams();
+    console.log(id)
 
     const saveReportData = async (activate) => {
         if(activate) {
             setDisablePautas(true)
             setChanged(true)
             const pts = await readPautas();
-            let pautasLista = pts.filter((item, i) => {if((item.header[3].typeDataDesc === machineModel) && (item.typepm.includes(pautaIndex)) ) {  return item }})
+            let pautasLista = pts.filter((item, i) => {if((item.header[3].typeDataDesc === machineModel) && (item.action.includes(pautaIndex))) {  return item }})
             setPautas(pautasLista)
             setTimeout(() => {
                 setDisablePautas(false)
@@ -55,12 +59,9 @@ const CreateReports = () => {
         }
     }
 
+
     const settingTypePauta = (type) => {
-        if(type === 'Inspección') {
-            setPautaIndex('PI')
-        }else if(type === 'Mantención') {
-            setPautaIndex('PM')
-        }
+        setPautaIndex(type)
     }
 
     const settingTypePautaWithReturn = (type) => {
@@ -94,9 +95,10 @@ const CreateReports = () => {
             guide: pauta,
             reportType: reportType,
             machine: JSON.parse(machineSelected).equid,
-            site: JSON.parse(localStorage.getItem('sitio')).idobra
+            site: JSON.parse(localStorage.getItem('sitio')).idobra,
+            sapId: sapId
         }
-        if(!report.machine || (!report.guide || report.guide === "Selección no cuenta con pautas.") || (!report.reportType || report.reportType === 'Seleccione...')) {
+        if(!report.machine || !report.sapId || (!report.guide || report.guide === "Selección no cuenta con pautas.") || (!report.reportType || report.reportType === 'Seleccione...')) {
             alert('Falta información')
         }else{
             let reportState = await reportsRoutes.createReport(report);
@@ -156,6 +158,13 @@ const CreateReports = () => {
     }
 
     useEffect(() => {
+        if(id) {
+            console.log(id)
+            let report = JSON.parse(id);
+            /* if(report.usersAssigned.length > 0) {
+                setCanEdit(false)
+            } */
+        }
         readTrucks();
         activateIfEdit(id);
         formatDateToDay();
@@ -185,8 +194,10 @@ const CreateReports = () => {
 
     const activateIfEdit = async (id) => {
         const pautasData = await readPautas();
+        //console.log(id)
         if((id)) {
             const report = JSON.parse(id);
+            console.log(report)
             let pIndex = settingTypePautaWithReturn(report.reportType);
             setPautaIndex(pIndex)
             setIdIndex(report.idIndex);
@@ -194,32 +205,45 @@ const CreateReports = () => {
             setDate(newDate)
             setReportType(report.reportType);
             settingTypePauta(report.reportType);
+            setDisableMaquinas(false);
+            let db = await machinesDatabase.initDbMachines();
+            let list = await machinesDatabase.consultar(db.database)
+            let listaMaquinas = new Array();
+            listaMaquinas = list;
+            let machine = listaMaquinas.filter((machine) => {if(machine.equid === report.machine) { return machine } });
+            setMachineModel(machine[0].model);
+            let pautasLista = pautasData.filter((item, i) => {if((item.header[3].typeDataDesc === machine[0].model) && (item.action === report.reportType) ) { return item }})
+            setPautas(pautasLista);
+            setPauta(report.guide);
+            /* if(report.sapId) {
+                setSapId(report.sapId);
+            }else{
+                setSapId('N/I')
+            } */
             setDisablePautas(false);
-            setDisableMaquinas(false)
-            machinesDatabase.initDbMachines().then(db => {
-                if(db) {
-                    machinesDatabase.consultar(db.database).then(async list => {
-                        habilitaPauta();
-                        let listaMaquinas = new Array();
-                        listaMaquinas = list;
-                        let machine = listaMaquinas.filter((machine) => {if(machine.equid === report.machine) { return machine } });
-                        setMachineModel(machine[0].model)
-                        let machinesList = listaMaquinas.filter((m) => {if(m.model === machine[0].model) { return machine } });
-                        const p = pautasData.filter((item, i) => {if((item.header[3].typeDataDesc === machine[0].model) && (item.typepm.includes(pIndex)) ) {  return item }});
-                        const machineFromDb = await apiIvcRoutes.getMachineByEquid(machine[0].equid);
-                        setHourMeter((Number(machineFromDb.data[0].hourMeter))/3600000);
-                        setEqID(machine[0].equid);
-                        setMaquinas(machinesList);
-                        setTruck(machine[0].model);
-                        setMachineSelected(JSON.stringify(machine[0]));
-                        setPautas(p);
-                        setPauta(report.guide);
-                        setMaquinas(machinesList);
-                    })
-                }
-            })
+            let machinesList = listaMaquinas.filter((m) => {if(m.model === machine[0].model) { return machine } });
+            const machineFromDb = await apiIvcRoutes.getMachineByEquid(machine[0].equid);
+            setHourMeter((Number(machineFromDb.data[0].hourMeter))/3600000);
+            setEqID(machine[0].equid);
+            setMaquinas(machinesList);
+            setTruck(machine[0].model);
+            setMachineSelected(JSON.stringify(machine[0]));
+            setMaquinas(machinesList);
         }else{
             readReports();
+        }
+    }
+
+    const deleteReport = () => {
+        if(id) {
+            if(confirm('Se borrará el reporte permanentemente. ¿Desea continuar?')) {
+                console.log(JSON.parse(id));
+                reportsRoutes.deleteReport(JSON.parse(id)._id).then(res=>{
+                    alert('Reporte eliminado.')
+                    console.log(res);
+                    history.goBack();
+                })
+            }
         }
     }
 
@@ -262,7 +286,20 @@ const CreateReports = () => {
                                             type="text" 
                                             style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
                                         </FormControl>
-                                    </div>
+                                    </div>{/* 
+                                    <div style={{width: '100%'}}>
+                                        <FormControl>
+                                            <p>ID SAP</p>
+                                            <input 
+                                            value={sapId} 
+                                            onChange={(e)=>{setSapId(e.target.value)}} 
+                                            maxLength={12} 
+                                            onBlur={()=>saveReportData()} 
+                                            className={classes.inputsStyle} 
+                                            type="text"
+                                            style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
+                                        </FormControl>
+                                    </div> */}
                                     <div style={{width: '100%'}}>
                                         <FormControl>
                                             <p>Fecha Prevista</p>
@@ -335,7 +372,7 @@ const CreateReports = () => {
                                                 value={pauta}
                                             >
                                                 <option value={null}>Seleccione...</option>
-                                                    {
+                                                {
                                                         (pautas.length > 0) && pautas.map((pauta, index) => {
                                                             return(
                                                                 <option key={index} value={pauta.typepm}> {pauta.idpm} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
@@ -398,6 +435,11 @@ const CreateReports = () => {
                                     {
                                         id && <button onClick={()=>editReport()} style={{width: 189, height: 48, marginRight: 17, borderRadius: 23, fontSize: 20, color: '#fff',  backgroundColor: '#BB2D2D', borderColor: '#BB2D2D'}}>
                                             Editar reporte
+                                        </button>
+                                    }
+                                    {
+                                        id && <button onClick={()=>deleteReport()} style={{width: 189, height: 48, marginRight: 17, borderRadius: 23, fontSize: 20, color: '#fff',  backgroundColor: '#BB2D2D', borderColor: '#BB2D2D'}}>
+                                            Borrar reporte
                                         </button>
                                     }
                                     {

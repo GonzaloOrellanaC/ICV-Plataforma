@@ -71,6 +71,7 @@ const actualizar = (data, database) =>{
             }
         
         } catch (err) {
+            console.log(err)
             resolve(false)
         }
     }) 

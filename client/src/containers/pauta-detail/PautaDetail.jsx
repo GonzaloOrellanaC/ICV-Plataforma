@@ -8,17 +8,27 @@ import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked';
 import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ReadActivityModal, WriteActivityModal } from '../../modals'
-import { executionReportsDatabase } from "../../indexedDB";
-import { executionReportsRoutes } from "../../routes";
+import { executionReportsDatabase, reportsDatabase } from "../../indexedDB";
+import { executionReportsRoutes, reportsRoutes } from "../../routes";
 
-const PautaDetail = ({height, pauta, setReportLocation, executionReport, setProgress}) => {
+const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgress, reportAssignment, reportLevel}) => {
+
+    //Toda la pauta
     const [ gruposObservaciones, setGrupoObservaciones ] = useState([]);
+
+    //Pestañas
     const [ gruposKeys, setGruposKeys ] = useState([]);
-    const [ elementData, setElementData ] = useState('');
+
+    //Contenido de la vista
     const [ contentData, setContentData ] = useState([]);
+
+    //Lista de checks
+    const [ checks, setChecks ] = useState([])
+
     const [ openReadActivity, setOpenReadActivity ] = useState(false);
     const [ openWriteActivity, setOpenWriteActivity ] = useState(false);
-    const [ activity, setActivity ] = useState({})
+
+    //Indice de la actividad
     const [ indexActivity, setIndexActivity ] = useState();
     
     useEffect(() => {
@@ -26,70 +36,87 @@ const PautaDetail = ({height, pauta, setReportLocation, executionReport, setProg
     }, []);
 
     const readData = () => {
-        let group = pauta.struct.reduce((r, a) => {
-            r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
-            return r;
-        }, {});
-        if(group) {
-            //
-            if(!executionReport.group) {
-                executionReport.group = group;
+        try{
+            let group = pauta.struct.reduce((r, a) => {
+                r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
+                return r;
+            }, {});
+            if(group) {
+                let groupData;
+                if(!executionReport.group) {
+                    executionReport.group = group;
+                    setGrupoObservaciones(executionReport.group);
+                    groupData = Object.keys(executionReport.group)
+                }else{
+                    setGrupoObservaciones(group);
+                    groupData = Object.keys(group);
+                }
+                let newGroupData = [];
+                groupData.forEach((data, index) => {
+                    let tab = {
+                        data: data,
+                        state: false
+                    }
+                    if(index == 0) {
+                        tab.state = true;
+                    }
+                    newGroupData.push(tab);
+                    if(index == (groupData.length - 1)) {
+                        let checkedList = [];
+                        let checkedTrue = [];
+                        let content = executionReport.group[newGroupData[0].data];
+                        content.forEach((e, n)=>{
+                            if(!e.obs01) {
+                                e.obs01 = 'Sin Observaciones'
+                            }
+                            if(e.isChecked) {
+                                checkedTrue.push(e.isChecked)
+                            }else{
+                                e.isChecked = false;
+                            }
+                            checkedList.push(e.isChecked)
+                            if(n == (content.length - 1)) {
+                                setChecks(checkedList);
+                                setGruposKeys(newGroupData);
+                                setContentData(content);
+                                let resultProgress = (checkedTrue.length * 100) / content.length
+                                setProgress(resultProgress)
+                            }
+                        })
+                    }
+                })
             }
-            setGrupoObservaciones(executionReport.group);
-            let groupData = Object.keys(executionReport.group);
-            let newGroupData = [];
-            groupData.forEach((data, index) => {
-                let tab = {
-                    data: data,
-                    state: false
-                }
-                if(index == 0) {
-                    tab.state = true;
-                }
-                newGroupData.push(tab);
-                if(index == (groupData.length - 1)) {
-                    let checkedList = [];
-                    executionReport.group[newGroupData[0].data].forEach((e, n)=>{
-                        console.log(e.isChecked)
-                        if(!e.obs01) {
-                            e.obs01 = 'Sin Observaciones'
-                        }
-                        if(e.isChecked) {
-                            checkedList.push(e)
-                        }
-                        if(n == (executionReport.group[newGroupData[0].data].length - 1)) {
-                            setGruposKeys(newGroupData);
-                            setElementData(newGroupData[0].data);
-                            setContentData(executionReport.group[newGroupData[0].data]);
-                            console.log('('+checkedList.length+'x100) / '+executionReport.group[newGroupData[0].data].length)
-                            let resultProgress = (checkedList.length * 100) / executionReport.group[newGroupData[0].data].length
-                            setProgress(resultProgress)
-                        }
-                    })
-                }
-            })
+        } catch (err) {
+            alert('Error 0010: Existe un problema en la lectura de los datos. Si el problema persiste, contacte al administrador de la plataforma.')
         }
     }
 
     const handleContent = (gruposKeys, element) => {
-        setElementData(element)
+        setContentData([])
         gruposKeys.forEach((tab, index) => {
             tab.state = false;
             if(index == (gruposKeys.length - 1)) {
                 let checkedList = [];
-                gruposObservaciones[element.data].forEach((e, n)=>{
-                    console.log(e)
+                let checkedTrue = [];
+                let newGruposObservaciones = executionReport.group[element.data]//gruposObservaciones[element.data]
+                newGruposObservaciones.forEach((e, n)=>{
                     if(!e.obs01) {
                         e.obs01 = 'Sin Observaciones'
                     }
                     if(e.isChecked) {
-                        checkedList.push(e)
+                        checkedTrue.push(e.isChecked)
+                    }else{
+                        e.isChecked = false;
                     }
-                    if(n == (gruposObservaciones[element.data].length - 1)) {
-                        setContentData(gruposObservaciones[element.data]);
+                    checkedList.push(e.isChecked)
+                    if(n == (newGruposObservaciones.length - 1)) {
+                        setChecks(checkedList);
                         element.state = true
-                        let resultProgress = ( (checkedList.length) * 100) / gruposObservaciones[element.data].length
-                        setProgress(resultProgress)
+                        let resultProgress = ( (checkedTrue.length) * 100) / newGruposObservaciones.length
+                        setProgress(resultProgress);
+                        setTimeout(() => {
+                            setContentData(newGruposObservaciones);
+                        }, 100);
                     }
                 })
                 
@@ -98,51 +125,90 @@ const PautaDetail = ({height, pauta, setReportLocation, executionReport, setProg
     }
 
     const closeModal = async () => {
+        if(!reportAssigned.dateInit) {
+            reportAssigned.dateInit = Date.now();
+        }
+        let contentCache = contentData;
         executionReport.updatedBy = localStorage.getItem('_id');
         executionReport.offLineGuard = Date.now();
-        let db = await executionReportsDatabase.initDb();
+        let db = await reportsDatabase.initDbReports();
         if( db ) {
-            let res = await executionReportsDatabase.actualizar(executionReport, db.database);
-            if( res ) {
+            let res = await reportsDatabase.actualizar(reportAssigned, db.database);
+            let db2 = await executionReportsDatabase.initDb();
+            let res2 = await executionReportsDatabase.actualizar(executionReport, db2.database);
+            if( res && res2 ) {
                 if(navigator.onLine) {
                     executionReportsRoutes.saveExecutionReport(executionReport)
+                    reportsRoutes.editReport(reportAssigned)
                 }
                 setOpenReadActivity(false)
+                contentCache[indexActivity].isWarning = true
+                let checkedList = [];
+                let checkedTrue = [];
+                contentCache.forEach((e, n) => {
+                    if(e.isChecked) {
+                        checkedTrue.push(e.isChecked)
+                    }else{
+                        e.isChecked = false;
+                    }
+                    checkedList.push(e.isChecked)
+                    if(n == (contentCache.length - 1)) {
+                        let newProgress = ( (checkedTrue.length) * 100) / contentCache.length;
+                        setChecks(checkedList)
+                        setProgress(newProgress);
+                        setContentData(contentCache)
+                    }
+                })
+
             }
         }
     }
 
+    const onlyClose = () => {
+        setOpenReadActivity(false);
+        setOpenWriteActivity(false);
+    }
+
     const closeWriteModal = async () => {
-        executionReport.updatedBy = localStorage.getItem('_id');
-        executionReport.offLineGuard = Date.now();
-        let db = await executionReportsDatabase.initDb();
-        if( db ) {
-            let res = await executionReportsDatabase.actualizar(executionReport, db.database);
-            if( res ) {
-                if(navigator.onLine) {
-                    executionReportsRoutes.saveExecutionReport(executionReport)
-                }
-                setOpenWriteActivity(false);
-                gruposKeys[indexActivity] = activity;
-                setGruposKeys(gruposKeys);
-                gruposKeys.forEach((tab, index) => {
-                    tab.state = false;
-                    if(index == (gruposKeys.length - 1)) {
-                        let checkedList = [];
-                        gruposObservaciones[elementData.data].forEach((e, n)=>{
-                            if(e.isChecked) {
-                                checkedList.push(e)
-                            }
-                            if(n == (gruposObservaciones[elementData.data].length - 1)) {
-                                //setContentData(gruposObservaciones[element.data]);
-                                let resultProgress = ( (checkedList.length) * 100) / gruposObservaciones[elementData.data].length
-                                setProgress(resultProgress)
-                            }
-                        })
-                        
+        if(!reportAssigned.dateInit) {
+            reportAssigned.dateInit = Date.now();
+        }
+        let contentCache = contentData;
+        if(contentCache[indexActivity].writeCommits) {
+            executionReport.updatedBy = localStorage.getItem('_id');
+            executionReport.offLineGuard = Date.now();
+            let db = await executionReportsDatabase.initDb();
+            if( db ) {
+                let res = await reportsDatabase.actualizar(reportAssigned, db.database);
+                let db2 = await executionReportsDatabase.initDb();
+                let res2 = await executionReportsDatabase.actualizar(executionReport, db2.database);
+                if( res && res2 ) {
+                    if(navigator.onLine) {
+                        executionReportsRoutes.saveExecutionReport(executionReport)
+                        reportsRoutes.editReport(reportAssigned)
                     }
-                })
+                    setOpenWriteActivity(false);
+                    contentCache[indexActivity].isWarning = false
+                    let checkedList = [];
+                    let checkedTrue = [];
+                    contentCache.forEach((e, n) => {
+                        if(e.isChecked) {
+                            checkedTrue.push(e.isChecked)
+                        }else{
+                            e.isChecked = false;
+                        }
+                        checkedList.push(e.isChecked)
+                        if(n == (contentCache.length - 1)) {
+                            let newProgress = ( (checkedTrue.length) * 100) / contentCache.length;
+                            setChecks(checkedList)
+                            setProgress(newProgress);
+                            setContentData(contentCache)
+                        }
+                    })
+                }
             }
+        }else{
+            setOpenWriteActivity(false);
         }
     }
 
@@ -229,23 +295,23 @@ const PautaDetail = ({height, pauta, setReportLocation, executionReport, setProg
                                     <div style={{width: '40%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {e.obs01}  
                                     </div>
-                                    <IconButton onClick={()=>{setOpenReadActivity(true); setActivity(e); setIndexActivity(n)}}>
+                                    <IconButton onClick={()=>{setOpenReadActivity(true); setIndexActivity(n)}}>
                                         <FontAwesomeIcon icon={faEye}/>
                                     </IconButton>
-                                    <IconButton onClick={()=>{setOpenWriteActivity(true); setActivity(e)}}>
+                                    <IconButton onClick={()=>{setOpenWriteActivity(true); setIndexActivity(n)}}>
                                         <FontAwesomeIcon icon={faPen}/>
                                     </IconButton>
-                                    <Checkbox checked={e.isChecked} disabled style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: '#27AE60'}} />} />
+                                    <Checkbox checked={checks[n]} disabled style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} />
                                 </ListItem>
                             )
                         })
                     }   
                 </div>}
                 {
-                    openReadActivity && <ReadActivityModal open={openReadActivity} closeModal={closeModal} activity={activity} comm={activity.readCommits}/>
+                    openReadActivity && <ReadActivityModal reportLevel={reportLevel} open={openReadActivity} closeModal={closeModal} onlyClose={onlyClose} activity={contentData[indexActivity]} reportAssignment={reportAssignment} reportId={executionReport._id}/>
                 }
                 {
-                    openWriteActivity && <WriteActivityModal open={openWriteActivity} closeWriteModal={closeWriteModal} activity={activity} comm={activity.writeCommits}/>
+                    openWriteActivity && <WriteActivityModal reportLevel={reportLevel} open={openWriteActivity} closeWriteModal={closeWriteModal} onlyClose={onlyClose} activity={contentData[indexActivity]} reportAssignment={reportAssignment} reportId={executionReport._id}/>
                 }
             </div>
         </div>

@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { AzureServices } from '../services';
+
+const router = new Router()
+
+router.post('/uploadImageProfile', AzureServices.uploadImageProfile)
+router.post('/uploadImageReport', AzureServices.uploadImageReport)
+router.post('/uploadImage', AzureServices.uploadImage)
+
+export default router

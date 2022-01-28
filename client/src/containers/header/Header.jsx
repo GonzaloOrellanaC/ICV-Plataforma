@@ -10,7 +10,7 @@ import { faBell, faHome, faInfoCircle, faTools, faUserCog } from '@fortawesome/f
 //import logo from '../../assets/logo.webp'
 import logo from '../../assets/logo_icv_gris.png'
 import { useAuth, useLanguage, useNavigation } from '../../context'
-import { changeTypeUser } from '../../config'
+import { changeTypeUser, sync } from '../../config'
 import { useState } from 'react'
 
 const useStyles = makeStyles((theme) => ({
@@ -69,27 +69,23 @@ const Header = () => {
 
     useEffect(() => {
         if(isAuthenticated) {
-            //console.log('Initially ' + (window.navigator.onLine ? 'on' : 'off') + 'line');
+            /* let go = true; */
             window.addEventListener('online', () => {
                 console.log('Became online'); setIfHavNetwork(true);
+                /* const alerta = sync();
+                if(go) {
+                    go = false;
+                    alert(alerta.message);
+                } */
             });
             window.addEventListener('offline', () => {
+                /* go = true; */
                 console.log('Became offline'); setIfHavNetwork(false);
             });
         }
     }, [])
-
-    /* setInterval(() => {
-        if(window.navigator.onLine) {
-            setIfHavNetwork(true)
-        }else{
-            setIfHavNetwork(false)
-        }
-    }, 10000); */
     
     if(isAuthenticated) {
-        
-        
         return (
             <AppBar className={classes.appbar}/* className='header-bar' */>
                 <div className='header-bar'>

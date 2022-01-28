@@ -9,20 +9,23 @@ import { machinesOfProject } from '../files'
 /* Leer pautas */
 
 const leerPautas = (req, res) => {
-    let pautas = []
-    machinesOfProject.forEach(async ({pIDPM}, i) => {
+    let listaPMsConcat = [];
+    let i = 0;
+    leerPauta(i, machinesOfProject, listaPMsConcat, res);
+}
+
+const leerPauta = async (i, machinesOfProject, listaPMsConcat, res) => {
+    if(i == (machinesOfProject.length)) {
+        res.send(listaPMsConcat);
+    }else{
+        let pIDPM = machinesOfProject[i].pIDPM;
         const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`);
         const listaPMs =  await response.json();
-        console.log('lista pautas:', listaPMs.data)
-        listaPMs.data.forEach((pauta, index) => {
-            pautas.push(pauta);
-        })
-        if(i == (machinesOfProject.length - 1)) {
-            console.log(pautas)
-            res.send(pautas);
-        }
-        
-    }) 
+        listaPMsConcat = listaPMsConcat.concat(listaPMs.data);
+        console.log('Concatenación ' + i, listaPMsConcat.length);
+        i = i + 1;
+        leerPauta(i, machinesOfProject, listaPMsConcat, res)
+    }
 }
 
 const getHeaderPauta = async (req, res) => {
@@ -45,6 +48,22 @@ const getStructsPauta = async (req, res) => {
         //console.log(headers)
         res.send(headers)
     }
+}
+
+const getIdPmInspection = (equi) => {
+    return new Promise(async resolve => {
+        const response4 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=I`);
+        let res = await response4.json();
+        resolve(res.data.idpm);
+    })
+}
+
+const getIdPmMaintenance = (equi) => {
+    return new Promise(async resolve => {
+        const response5 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=M`);
+        let res = await response5.json();
+        resolve(res.data.idpm);
+    })
 }
 
 /* Leer sitios GET - POST */
@@ -237,7 +256,9 @@ const createMachinesToSend = async (pIDOBRA) => {
             if(machinesOnDb.length === machines.length) {
                 console.log('No se requiere guardar.');
             }else{
-                machines.forEach(async (machine, index) => {
+                machines.forEach(async (machine, index) => { 
+                    machine.idpminspeccion = await getIdPmInspection(machine.equid);
+                    machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
                     if(machine.modelo.includes('793-F')){
                         machine.modelo='793-F';
                         machine.type = 'Camión'
@@ -245,10 +266,12 @@ const createMachinesToSend = async (pIDOBRA) => {
                         machine.modelo='PC5500';
                         machine.type = 'Pala'
                     }
+
                     machine.brand = machine.marca;
                     machine.model = machine.modelo;
                     machine.hourMeter = machine.horometro;
                     let newMachine = await new Machine(machine);
+                    console.log(newMachine)
                     newMachine.save();
                     if(index == (machines.length - 1)) {
                         console.log('Máquinas guardadas!');
@@ -295,30 +318,6 @@ const editMachineToSend = async (pIDOBRA) => {
     }
 }
 
-/* Obtener SPMs */
-
-/* Descargar pautas desde API ICV y guardar en archivos*/
-/* const createPMsToSend = async ({idpm, typepm}) => {
-    const response1 = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${idpm}`);
-    const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${idpm}&pTypePm=${typepm}`);
-    const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${idpm}&pTypePm=${typepm}`);
-    const body1 = await response1.json();
-    const body2 = await response2.json();
-    const body3 = await response3.json();
-    if( body1 && body2 && body3 ) {
-        let file = {
-            data: body1.data.find(el => el.typepm === typepm),
-            header: body2 ,
-            struct: body3
-        }
-        fs.writeFile(`../files/GuidesToSend/file_${idpm}_${typepm}.json`, JSON.stringify(file), (err) => {
-            if (err) {
-                console.log('Hay un error')
-            }; 
-        });
-    }
-} */
-
 //Enviar listado de máquinas
 const sendFileOfMachines = ( req, res ) => {
     try{
@@ -330,7 +329,6 @@ const sendFileOfMachines = ( req, res ) => {
         })
     }
 }
-
 
 /* Peticiones GET / POST */
 const filesPetition = ( req, res ) => {

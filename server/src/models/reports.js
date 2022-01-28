@@ -3,6 +3,9 @@ import { model, Schema } from 'mongoose'
 
 /* User Schema */
 const ReportShema = new Schema({
+    sapId: {
+        type: Schema.Types.String
+    },
     createdBy: {
         type: Schema.Types.String
     },
@@ -34,7 +37,16 @@ const ReportShema = new Schema({
     datePrev: {
         type: Schema.Types.Date
     },
+    level: {
+        type: Schema.Types.Number
+    },
+    endReport: {
+        type: Schema.Types.Number
+    },
     dateInit: {
+        type: Schema.Types.Date
+    },
+    dateClose: {
         type: Schema.Types.Date
     },
     idIndex: {

@@ -1,43 +1,74 @@
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
-import { Box, Card, Grid, Toolbar, IconButton, Button } from '@material-ui/core'
+import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { date, useStylesTheme } from '../../config'
-import { CardButton } from '../../components/buttons'
 import { useHistory } from 'react-router-dom'
-import { useLanguage } from '../../context'
 import { machinesDatabase, reportsDatabase } from '../../indexedDB'
+import getAssignments from './getAssignemt'
 
 const ActivitiesPage = () => {
     const classes = useStylesTheme();
     const history = useHistory();
 
     const [ assignments, setAssignments ] = useState([]);
+    const theme = useTheme();
+
+    const isLarge = useMediaQuery(theme.breakpoints.down('lg')) 
+    const isMedium = useMediaQuery(theme.breakpoints.down('md')) 
+    const isSmall = useMediaQuery(theme.breakpoints.down('sm')) 
 
     useEffect(() => {
-        getReports()
-    }, [])
-
-    const getReports = async () => {
-        let db = await reportsDatabase.initDbReports();
-        if(db) {
-            const reports = await reportsDatabase.consultar(db.database);
-            if(reports) {
-                reports.forEach(async (report, i) => {
-                    report.getMachine = await getMachineTypeByEquid(report.machine);
-                    if(report.getMachine.model === 'PC5500') {
-                        report.machineType = 'Pala'
-                    }else if(report.getMachine.model === '793-F') {
-                        report.machineType = 'Camión'
+        let go = true;
+        if(navigator.onLine) {
+            getAssignments().then((assignMentResolve) => {
+                if(go) {
+                    if(assignMentResolve) {
+                        reportsDatabase.initDbReports().then(db => {
+                            if(go) {
+                                reportsDatabase.consultar(db.database).then(reports => {
+                                    reports.forEach(async (report, i) => {
+                                        report.dateFormat = date(report.datePrev);
+                                        report.end = date(report.endReport);
+                                        report.init = date(report.dateInit);
+                                        report.getMachine = await getMachineTypeByEquid(report.machine);
+                                        if(report.getMachine.model === 'PC5500') {
+                                            report.machineType = 'Pala'
+                                        }else if(report.getMachine.model === '793-F') {
+                                            report.machineType = 'Camión'
+                                        }
+                                        if(i == (reports.length - 1)) {
+                                            setAssignments(reports);
+                                        }
+                                    })
+                                })
+                            }
+                        })                
                     }
-                    if(i == (reports.length - 1)) {
-                        setAssignments(reports);
-                    }
-                })
-                
-            }
+                }
+            })            
+        }else{
+            reportsDatabase.initDbReports().then(db => {
+                if(go) {
+                    reportsDatabase.consultar(db.database).then(reports => {
+                        reports.forEach(async (report, i) => {
+                            report.getMachine = await getMachineTypeByEquid(report.machine);
+                            report.end = date(report.endReport);
+                            report.init = date(report.dateInit);
+                            if(report.getMachine.model === 'PC5500') {
+                                report.machineType = 'Pala'
+                            }else if(report.getMachine.model === '793-F') {
+                                report.machineType = 'Camión'
+                            }
+                            if(i == (reports.length - 1)) {
+                                setAssignments(reports);
+                            }
+                        })
+                    })
+                }
+            })
         }
-    }
+        return () => go = false;
+    }, [])
 
     const goToDetail = (element) => {
         history.push(`/activities/${JSON.stringify(element)}`)
@@ -80,7 +111,7 @@ const ActivitiesPage = () => {
                                 </div>
                             </div>
                             <div style={{width: '100%', padding: 10}}>
-                                <Grid container>
+                                <Grid container direction='column'>
                                     <div style={
                                         {
                                             width: '100%', 
@@ -93,26 +124,31 @@ const ActivitiesPage = () => {
                                         }
                                     }>
                                         <Grid container>
-                                            <Grid item lg={1}>
+                                            <Grid item lg={1} md={1} sm={1} xs={2}>
                                                 <div style={{width: '100%', textAlign: 'center'}}>
-                                                <h2>Guía</h2>
+                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Guía</p>
                                                 </div>
                                             </Grid>
-                                            <Grid item lg={2}>
-                                                <h2>Inicio programado</h2>
+                                            <Grid item lg={2} md={1} sm={6} xs={6}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Inicio programado</p>
                                             </Grid>
-                                            <Grid item lg={1}>
-                                                <h2>ID</h2>
+                                            <Grid item lg={1} md={1} sm={1} xs={1}>
+                                                <div style={{width: '100%', textAlign: 'center'}}>
+                                                    <p style={{fontSize: 12, fontWeight: 'bold'}}>ID</p>
+                                                </div>
                                             </Grid>
-                                            <Grid item lg={2}>
-                                                <h2>Inicio ejecución</h2>
-                                            </Grid>
-                                            <Grid item lg={3}>
-                                                <h2>Máquina</h2>
-                                            </Grid>
-                                            <Grid item lg={3}>
-                                                <div style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
-                                                    <h2>Acción</h2>
+                                            {!isSmall && <Grid item lg={2} md={1} sm={3}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Inicio ejecución</p>
+                                            </Grid>}
+                                            {(!isSmall || !isMedium || !isLarge)  && <Grid item xl={1} lg={2} md={2}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Máquina</p>
+                                            </Grid>}
+                                            {!isSmall && <Grid item lg={2} md={1} sm={3}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Término ejecución</p>
+                                            </Grid>}
+                                            <Grid item lg={1} md={1} sm={4} xs={3}>
+                                                <div style={{width: '100%', textAlign: 'center', paddingRight: 20}}>
+                                                    <p style={{fontSize: 12, fontWeight: 'bold'}}>Acción</p>
                                                 </div>
                                             </Grid>
                                         </Grid>
@@ -126,12 +162,6 @@ const ActivitiesPage = () => {
                                 }
                                 >
                                     {assignments.map((element, i) => {
-                                        element.dateFormat = date(element.datePrev);
-                                        if(!element.dateInit) {
-                                            element.dateInitFormat = 'No iniciado'
-                                        }else{
-                                            element.dateInitFormat = date(element.dateInit);
-                                        }
                                         return(
                                             <div key={i} style={
                                                 {
@@ -144,25 +174,35 @@ const ActivitiesPage = () => {
                                                 }
                                             }>
                                                 <Grid container>
-                                                    <Grid item lg={1}>
+                                                    <Grid item lg={1} md={1} sm={1} xs={2}>
                                                         <div style={{width: '100%', textAlign: 'center'}}>
-                                                        <h2>{element.guide}</h2>
+                                                        <p style={{fontSize: 12}}>{element.guide}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item lg={2}>
-                                                        <h4>{element.dateFormat}</h4>
+                                                    <Grid item lg={2} md={1} sm={6} xs={6}>
+                                                        <div style={{width: '100%', textAlign: 'left'}}>
+                                                            <p style={{fontSize: 12}}>{element.dateFormat}</p>
+                                                        </div>
                                                     </Grid>
-                                                    <Grid item lg={1}>
-                                                        <h4>{element.idIndex}</h4>
+                                                    <Grid item lg={1} md={1} sm={1} xs={1}>
+                                                        <div style={{width: '100%', textAlign: 'center'}}>
+                                                            <p style={{fontSize: 12}}>{element.idIndex}</p>
+                                                        </div>
                                                     </Grid>
-                                                    <Grid item lg={2}>
-                                                        <h4>{element.dateInitFormat}</h4>
-                                                    </Grid>
-                                                    <Grid item lg={3}>
-                                                        <h4> {element.machineType} {element.getMachine.model} Número interno: {element.getMachine.number} </h4>
-                                                    </Grid>
-                                                    <Grid item lg={3}>
-                                                        <div style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
+                                                    {!isSmall && <Grid item lg={2} md={1} sm={3}>
+                                                        <p style={{fontSize: 12}}>{element.init}</p>
+                                                    </Grid>}
+                                                    {(!isSmall || !isMedium || !isLarge)  && <Grid item xl={2} lg={2} md={2}>
+                                                        <p style={{fontSize: 12}}> {element.machineType} {element.getMachine.model} N°: {element.getMachine.number} </p>
+                                                    </Grid>}
+                                                    {/* <Grid item lg={2} sm={false}>
+                                                        <p style={{fontSize: 12}}> {element.machineType} {element.getMachine.model} N°: {element.getMachine.number} </p>
+                                                    </Grid> */}
+                                                    { !isSmall && <Grid item lg={2} md={1} sm={3}>
+                                                        <p style={{fontSize: 12}}> {element.end} </p>
+                                                    </Grid>}
+                                                    <Grid item lg={1} md={1} sm={4} xs={3}>
+                                                        <div style={{width: '100%', textAlign: 'center', paddingRight: 20, marginTop: 10}}>
                                                             <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
                                                         </div>
                                                     </Grid>

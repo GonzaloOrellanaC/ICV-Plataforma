@@ -50,6 +50,28 @@ const editUser = async  (req, res, next) => {
     }
 }
 
+const findByRut = async  (req, res, next) => {
+    
+    const { body: { rut } } = req
+
+    //console.log('Respuestas: ',userData)
+
+        try {
+            await Users.find({rut: rut}, (err, user) => {
+                if(err) throw err;
+                if(user.length > 0) {
+                    res.send(true)
+                }else{
+                    res.send(false)
+                }
+            });
+        } catch (error) {
+            console.log(error)
+            //return res.status(400).end(error.message)
+        }
+    
+}
+
 const readAllUsers = (req, res, next) => {
     try {
         Users.find({}, (err, users) => {
@@ -103,5 +125,6 @@ export default {
     readAllUsers,
     readUser,
     deleteUser,
-    editUser
+    editUser,
+    findByRut
 }

@@ -10,12 +10,13 @@ import { Close } from '@material-ui/icons';
 import { styleModalReport } from '../../config';
 import { reportsRoutes, usersRoutes } from '../../routes';
 
-const AssignReportModal = ({open, report, closeModal, reportType}) => {
+const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) => {
     const [ operarios, setOperarios ] = useState([]);
     const [ colorState, setColorState ] = useState();
     const { idIndex, guide, state, siteName, usersAssigned } = report;
     const [ stateAssignment , setStateAssignment ] = useState(false);
-    const [ data, setData ] = useState('')
+    const [ data, setData ] = useState('');
+    const [ closeType, setCloseType ] = useState(false)
 
     const setUserToReport = async (userId) => {
         if(userId === '') {
@@ -42,6 +43,14 @@ const AssignReportModal = ({open, report, closeModal, reportType}) => {
                     setStateAssignment(false)
                 }, 1000);
             }
+        }
+    }
+
+    const close = () => {
+        if(closeType) {
+            closeModal()
+        }else{
+            onlyClose()
         }
     }
 
@@ -73,6 +82,7 @@ const AssignReportModal = ({open, report, closeModal, reportType}) => {
     }
 
     useEffect(() => {
+        setCloseType(false)
         getUsers();
         //console.log(report)
         if(state === 'Por asignar') {
@@ -128,7 +138,7 @@ const AssignReportModal = ({open, report, closeModal, reportType}) => {
                 <div style={{width: '100%', height: 59}}>
                 <label>Asignar Pauta a:</label>
                 <br />
-                <select value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value)}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
+                <select value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value); setCloseType(true)}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
                     <option value={""}>Seleccionar operario</option>
                     {
                         operarios.filter(user => {
@@ -153,7 +163,7 @@ const AssignReportModal = ({open, report, closeModal, reportType}) => {
 
                 </div>
 
-                <Fab onClick={closeModal} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>
+                <Fab onClick={close} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>
                     <Close style={{color: '#ccc'}} />
                 </Fab>
                 

@@ -1,5 +1,5 @@
 import '@google/model-viewer';
-//import './domarrow'
+import './style.css'
 import { Box, Button, Drawer, Fab, IconButton, SwipeableDrawer } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { LoadingModal } from '../../modals';
@@ -67,14 +67,15 @@ const MVAvatar = ({machine}) => {
         readFileDatabase();
         setModelViewer(document.querySelector("model-viewer#machine"))
         let mv = document.querySelector("model-viewer#machine");
-        //console.log(mv)
-        mv.addEventListener('load', (e) => {
+        mv.addEventListener('load', () => {
             setOpenLoader(false)
             const changeColor = async (event) => {
-                let material = mv.materialFromPoint(event.clientX, event.clientY);
+                //console.log(event)
+                /* let material = mv.materialFromPoint(event.clientX, event.clientY);
                 if(material != null) {
-
-                }
+                    console.log(material);
+                    
+                } */
             }
             mv.addEventListener("click", changeColor);
             setTimeout(() => {
@@ -110,6 +111,7 @@ const MVAvatar = ({machine}) => {
     };
 
     const getNewElement =  (element, index) => {
+        console.log(element)
         listaPartes.forEach((e, i) => {
             if(i === index) {
                 e.isSelected = 'primary'
@@ -120,9 +122,16 @@ const MVAvatar = ({machine}) => {
                 setListaPartes(listaPartes)
             }
         })
-        setIsSelected('')
+        if(element.name === 'Chasis') {
+            document.getElementById('imageLoad')
+        }else{
+            setIsSelected('')
+            setOpenLoader(true)
+            setProgress(0)
+        }
+        /* setIsSelected('')
         setOpenLoader(true)
-        setProgress(0)
+        setProgress(0) */
         handleDrawerClose()
         setTimeout(async() => {
             let db = await FilesToStringDatabase.initDb3DFiles();
@@ -151,7 +160,7 @@ const MVAvatar = ({machine}) => {
                 <Drawer 
                     sx={{
                         width: '30%',
-                        flexShrink: 0,
+                        //flexShrink: 0,
                         backgroundColor: 'transparent'
                         /* '& .MuiDrawer-paper': {
                         width: '30%',
@@ -161,7 +170,7 @@ const MVAvatar = ({machine}) => {
                     disableBackdropTransition={!iOS} 
                     disableDiscovery={iOS} 
                     variant="persistent"
-                    anchor="left"
+                    anchor="top"
                     open={open}
                 >
                     <div style={{width: '27vw', textAlign: 'right'}}>
@@ -200,23 +209,24 @@ const MVAvatar = ({machine}) => {
                     </div>
 
                 </Drawer>  
-                    <model-viewer
-                        id="machine"
-                        src={newMachine}
-                        style={{height: '100%', width: '100%', float: 'left'}}
-                        camera-orbit="45deg 90deg 2.5m"
-                        scale="0.001 0.001 0.001"
-                        alt="A Material Picking Example"
-                        //auto-rotate
-                    >
+                <model-viewer
+                    id="machine"
+                    src={newMachine}
+                    style={{height: '100%', width: '100%', float: 'left'}}
+                    camera-orbit="45deg 90deg 2.5m"
+                    scale="0.001 0.001 0.001"
+                    alt="A Material Picking Example"
+                    //auto-rotate
+                >
 
-                    </model-viewer>
-                    <LoadingModal open={openLoader} progress={progress} loadingData={'Preparando vista 3D...'} withProgress={true}/>
-                    <div style={{position: 'absolute', bottom: 0, left: 0, width: '100%', backgroundColor: 'transparent', textAlign: 'center'}}>
-                        <div style={{width: '60%', backgroundColor: 'transparent', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
-                            <h2 style={{color: 'white', fontFamily: 'Raleway'}}>{title}</h2>
-                        </div>
+                </model-viewer>
+                {/* <img src="../assets/images3D/Chasis.png" alt="" id={'imageLoad'} className={'image'} height={'100%'} width={'100%'}/> */}
+                <LoadingModal open={openLoader} progress={progress} loadingData={'Preparando vista 3D...'} withProgress={true}/>
+                <div style={{position: 'absolute', bottom: 0, left: 0, width: '100%', backgroundColor: 'transparent', textAlign: 'center'}}>
+                    <div style={{width: '60%', backgroundColor: 'transparent', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
+                        <h2 style={{color: 'white', fontFamily: 'Raleway'}}>{title}</h2>
                     </div>
+                </div>
                     
                 {!open && <Fab 
                     onClick={() => handleDrawerOpen()} 

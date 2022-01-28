@@ -10,6 +10,7 @@ import UserRoutes from './user.routes'
 import ReportsRoutes from './reports.routes'
 import MachinesRoutes from './machines.routes'
 import ExecutionReportsRoutes from './execution-reports.routes'
+import AzureStorageRoutes from './azure-storage.routes'
 
 const router = new Router()
 
@@ -22,5 +23,6 @@ router.use('/users', UserRoutes)
 router.use('/reports', ReportsRoutes)
 router.use('/machines', MachinesRoutes)
 router.use('/execution-report', ExecutionReportsRoutes)
+router.use('/azure-storage', AzureStorageRoutes)
 
 export default router

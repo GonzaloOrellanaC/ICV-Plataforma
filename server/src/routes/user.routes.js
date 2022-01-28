@@ -8,5 +8,6 @@ router.post('/editUser', UserController.editUser)
 router.get('/getUsers', UserController.readAllUsers)
 router.post('/getUser', UserController.readUser)
 router.post('/deleteUser', UserController.deleteUser)
+router.post('/findByRut', UserController.findByRut)
 
 export default router

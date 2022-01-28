@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { Grid } from '@material-ui/core'
-import { environment } from '../../config'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes } from '../../routes'
-import { FilesToStringDatabase, trucksDatabase, machinesDatabase, machinesImagesDatabase } from '../../indexedDB'
+import { trucksDatabase, machinesDatabase, machinesImagesDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import './style.css'
 import getInfo from './getInfo'
 import readDataSite from './readDataSite'
-import get3dElement from './get3dElement'
+import readData from './readData'
 import Files from './3dFiles'
 import download3DFiles from './download3DFiles'
+import { useHistory } from 'react-router-dom'
 
 const WelcomePage = () => {
     const [ date, setDate ] = useState('')
@@ -23,104 +23,71 @@ const WelcomePage = () => {
     const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true);
     const [ disableIfNoMaintenance, setDisableIfNoMaintenance ] = useState(false);
     const [ disableIfNoInspection, setDisableIfNoInspection ] = useState(false);
+    const [ network, setIfHavNetwork ] = useState(true);
 
     ////Notificaciones
     const [ notificaciones1, setNotificaciones1 ] = useState('Sin notificaciones')
     const [ notificaciones2, setNotificaciones2 ] = useState('Sin notificaciones')
 
-    useEffect(() => {
-        getMachinesList_();
-        readData();
-        readDataSite(
-            setDisableButtons,
-            setNotificaciones1,
-            setNotificaciones2,
-            setDisableButtonsNoSAP,
-            setDisableIfNoMaintenance,
-            setDisableIfNoInspection,
-            setHora,
-            setDate
-        )    
-    }, []);
+    const history = useHistory();
 
-    const readData = async () => {
-        const revisarData = await getInfo.setIfNeedReadDataAgain(setDisableButtons, setNotificaciones1);
-        const userRole = localStorage.getItem('role');
-        if(revisarData) {
-            setOpenLoader(true);
-            if(userRole==='admin'||userRole==='superAdmin'||userRole==='sapExecutive') {
-                setLoadingData('Descargando pautas de mantenimiento e inspección.');
-                const estadoDescargaPautas = await getInfo.descargarPautas(setProgress);
-                if(estadoDescargaPautas.state) {
-                    setTimeout( async () => {
-                        setLoadingData('Descargando datos de las obras.');
-                        const responseSites = await getInfo.getSites(setProgress, setDisableButtons, setNotificaciones1);
-                        setTimeout(async () => {
-                            if(responseSites) {
-                                setLoadingData('Descargando datos de las máquinas.')
-                                setProgress(65)
-                                const responseTrucks = await getTrucksList();
-                                console.log(responseTrucks)
-                                setTimeout(async() => {
-                                    if(responseTrucks) {
-                                        setLoadingData('Descargando lista de las máquinas de las obras.')
-                                        setProgress(100)
-                                        const getMachines = await getMachinesList();
-                                        if(getMachines) {
-                                            download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
-                                        }
-                                    }else{
-                                        setOpenLoader(false)
-                                    }
-                                }, 1000);
-                            }else{
-                                setOpenLoader(false)
-                            }
-                        }, 1000);
-                    }, 1000);
-                }
-            }else{
-                setLoadingData('Actualizando asignaciones.');
-                const assignMentResolve = await getInfo.getAssignments(setProgress);
-                console.log(assignMentResolve)
-                if(assignMentResolve) {
-                    setLoadingData('Descargando pautas de mantenimiento e inspección.');
-                    const estadoDescargaPautas = await getInfo.descargarPautas(setProgress);
-                    if(estadoDescargaPautas.state) {
-                        setTimeout( async () => {
-                            setLoadingData('Descargando datos de las obras.');
-                            const responseSites = await getInfo.getSites(setProgress, setDisableButtons, setNotificaciones1);
-                            setTimeout(async () => {
-                                if(responseSites) {
-                                    setLoadingData('Descargando datos de las máquinas.')
-                                    setProgress(65)
-                                    const responseTrucks = await getTrucksList();
-                                    console.log(responseTrucks)
-                                    setTimeout(async() => {
-                                        if(responseTrucks) {
-                                            setLoadingData('Descargando lista de las máquinas de las obras.')
-                                            setProgress(100)
-                                            const getMachines = await getMachinesList();
-                                            if(getMachines) {
-                                                download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
-                                            }
-                                        }else{
-                                            setOpenLoader(false)
-                                        }
-                                    }, 1000);
-                                }else{
-                                    setOpenLoader(false)
-                                }
-                            }, 1000);
-                        }, 1000);
-                    }
-                }
-            }
-        }else{
-            setOpenLoader(false)
+    window.addEventListener('online', () => {
+        setIfHavNetwork(true);
+        let last = Number(localStorage.getItem('timeOffline'))
+        let now = Date.now();
+        if(now < (last + 21600000)) {
+            localStorage.setItem('revisado', true)
+            localStorage.removeItem('timeOffline')
         }
+    });
+
+    window.addEventListener('offline', () => {
+        setIfHavNetwork(false);
+        if(!localStorage.getItem('timeOffline')) {
+            setTimeOffline(Date.now())
+        }
+    });
+
+    const setTimeOffline = (timestamp) => {
+        localStorage.setItem('timeOffline', timestamp);
+        localStorage.setItem('revisado', false)
+    };
+
+    const setLastActualization = () => {
+        localStorage.setItem('ultimaActualizacion', Date.now())
     }
 
+    useEffect(() => {
+        let cancel = true;
+        //getMachinesList_();
+        if(cancel) {
+            //console.log(history)
+            readData(
+                setOpenLoader,
+                setLoadingData,
+                getTrucksList,
+                setProgress,
+                getMachinesList,
+                setLastActualization, 
+                setDisableButtons, 
+                setNotificaciones1,
+                setOpenVersion,
+                network
+            );
+            readDataSite(
+                setDisableButtons,
+                setNotificaciones1,
+                setNotificaciones2,
+                setDisableButtonsNoSAP,
+                setDisableIfNoMaintenance,
+                setDisableIfNoInspection,
+                setHora,
+                setDate
+            );
+        }
+        return () => {cancel = false};
+        
+    }, []);
 
     const getMachinesList = () => {
         return new Promise(async resolve => {
@@ -134,7 +101,8 @@ const WelcomePage = () => {
                     if(index === (machines.length - 1)) {
                         const response = await machinesDatabase.consultar(db.database);
                         if(response) {
-                            resolve(true)
+                            getInfo.getPautasInstepctList(setProgress, response)
+                            resolve(response)
                         }
                     } 
                 });
@@ -143,11 +111,8 @@ const WelcomePage = () => {
     }
 
     const getMachinesList_ = () => {
-        return new Promise(resolve => {
             let machines = Files;
             console.log(machines);
-
-        })
     }
 
     const getTrucksList = () => {

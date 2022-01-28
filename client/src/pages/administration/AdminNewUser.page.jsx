@@ -137,12 +137,13 @@ const AdminNewUserPage = () => {
         localStorage.removeItem('listaPermisosUsuarios');
     }
 
-    const getUserInfo = () => {
+    const getUserInfo = async () => {
         let user = JSON.parse(localStorage.getItem('userDataToSave'));
         let habilitado = true;
         if(user) {
             if(user.rut) {
                 if(validate(user.rut)) {
+                    //console.log(user);
                     let phone = new String()
                     phone = user.phone;
                     if(user.phone) {
@@ -186,6 +187,12 @@ const AdminNewUserPage = () => {
         }
         
     }
+
+    /* const validateRut = (rut) => {
+        if(validate(rut)) {
+            let user = await usersRoutes.findByRut(user.rut);
+        }
+    } */
 
     return (
         <Box height='100%'>

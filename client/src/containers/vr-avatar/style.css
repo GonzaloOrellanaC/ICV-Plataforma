@@ -1,0 +1,12 @@
+model-viewer {
+    background-color: #414646;
+}
+
+.image {
+    height: 100% ;
+    width: 100% ; 
+    transition: '2s'; 
+    position: 'absolute'; 
+    top: 0px; 
+    left: 0px
+}

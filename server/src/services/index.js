@@ -7,6 +7,7 @@ import RolesServices from './roles.services'
 import PermisosServices from './permisos.services'
 import ReportsService from './reports.service'
 import ExecutionReportsServices from './executionReports.services'
+import AzureServices from './azure.services'
 
 export {
     AccessControlServices,
@@ -17,5 +18,6 @@ export {
     PermisosServices,
     ReportsService,
     EmailMailgunServices,
-    ExecutionReportsServices
+    ExecutionReportsServices,
+    AzureServices
 }

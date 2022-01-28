@@ -1,12 +1,14 @@
 import { useState } from "react";
 import {Box, Grid, Card, makeStyles, Toolbar, IconButton, ListItem, ListItemIcon, ListItemText, Checkbox, Chip} from '@material-ui/core';
 import { machinesRoutes } from '../../routes';
-import { AssignReportModal } from '../../modals'
+import { AssignReportModal, ReviewReportModal } from '../../modals'
 import { useHistory } from "react-router-dom";
 import './style.css';
+import { date, dateSimple } from "../../config";
 
-const ReportsList = ({list}) => {
+const ReportsList = ({list, reloadData}) => {
     const [ reportData, setReportData ] = useState(null);
+    const [ reportDataReview, setReportDataReview ] = useState(null);
     const [ openModalState, setOpenModalState ] = useState(false);
     const history = useHistory();
 
@@ -19,12 +21,23 @@ const ReportsList = ({list}) => {
 
     const closeModal = () => {
         setOpenModalState(false);
+        reloadData();
+    }
+
+    const onlyCloseReview = () => {
+        setReportDataReview(false);
     }
     
+    const onlyClose = () => {
+        setOpenModalState(false);
+    }
     
 
     list.forEach(item => {
-        item.date = item.datePrev.replace('T00:00:00.000Z', '');
+        item.date = dateSimple(item.datePrev);
+        item.end = dateSimple(item.endReport);
+        item.init = dateSimple(item.dateInit);
+        //item.date = item.datePrev.replace('T00:00:00.000Z', '');
         machinesRoutes.getMachineByEquid(item.machine).then(data => {
             item.hourMeter = (Number(data.data[0].hourMeter)/3600000);
         })
@@ -65,9 +78,9 @@ const ReportsList = ({list}) => {
                 {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                     <p > <strong>Descargar</strong> </p>
                 </Grid> */}
-                <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                     <p > <strong>Ver</strong> </p>
-                </Grid>
+                </Grid> */}
             </Grid>
             {
                 (lista.length == 0) && <Grid container>
@@ -93,10 +106,10 @@ const ReportsList = ({list}) => {
                                 <p> {item.date} </p>
                             </Grid>
                             <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                <p>  </p>
+                                <p> {item.init} </p>
                             </Grid>
                             <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                <p>  </p>
+                                <p> {item.end} </p>
                             </Grid>
                             <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                                 <p> {item.hourMeter} </p>
@@ -113,16 +126,21 @@ const ReportsList = ({list}) => {
                             {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                                 <p>  </p>
                             </Grid> */}
-                            <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                <p> <button onClick={()=>{history.push(`/reports/edit-report/${JSON.stringify(item)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
-                            </Grid>
+                            {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                                <p> <button onClick={()=>{setReportDataReview(JSON.stringify(item))}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
+                            </Grid> */}
                         </Grid>
                     )
                 })
             }
             {
                 
-                reportData && <AssignReportModal open={openModalState} report={reportData} reportType={reportData.reportType} closeModal={closeModal}/>
+                reportData && <AssignReportModal open={openModalState} report={reportData} reportType={reportData.reportType} onlyClose={onlyClose} closeModal={closeModal}/>
+                
+            }
+            {
+                
+                reportDataReview && <ReviewReportModal open={openModalState} report={reportData} onlyClose={onlyCloseReview}/>
                 
             }
         </div>

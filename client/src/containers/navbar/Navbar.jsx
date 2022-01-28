@@ -117,7 +117,7 @@ const Navbar = () => {
     const classes = useStyles()
     const { navBarOpen, handleNavBar } = useNavigation()
     const { userData } = useAuth();
-    const [ useButon, setUseButton ] = useState()
+    const [ useButton, setUseButton ] = useState()
     const [ path, setPath ] = useState('')
     const history = useHistory();
     const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true);
@@ -230,22 +230,22 @@ const Navbar = () => {
                                 </IconButton>
                             </div>}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                {useButon && <IconButton onClick={closeSideBar} title='Inspección'>
+                                {useButton && <IconButton onClick={closeSideBar} title='Inspección'>
                                     <Link to='/inspection' className={classes.sideButtons} style={{ color: (path.includes('/inspection')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faSearch}/> {navBarOpen ?  ' Inspección' : ''}
                                     </Link>
                                 </IconButton>}
-                                {!useButon && <IconButton disabled onClick={closeSideBar} title='Inspección'>
+                                {!useButton && <IconButton disabled onClick={closeSideBar} title='Inspección'>
                                     <FontAwesomeIcon icon={faSearch}/> {navBarOpen ?  ' Inspección' : ''}
                                 </IconButton>}
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                {useButon && <IconButton onClick={closeSideBar} title='Mantención'>
+                                {useButton && <IconButton onClick={closeSideBar} title='Mantención'>
                                     <Link to='/maintenance' className={classes.sideButtons} style={{ color: (path.includes('/maintenance')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faTools}/> {navBarOpen ?  ' Mantención' : ''}
                                     </Link>
                                 </IconButton> }
-                                {!useButon && <IconButton disabled onClick={closeSideBar} title='Mantención'>
+                                {!useButton && <IconButton disabled onClick={closeSideBar} title='Mantención'>
                                     <FontAwesomeIcon icon={faTools}/> {navBarOpen ?  ' Mantención' : ''}
                                 </IconButton>}
                             </div>
@@ -263,13 +263,13 @@ const Navbar = () => {
                                     </Link>
                                 </IconButton>
                             </div>}
-                            {disableButtonNoSAP && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Listado Asignaciones'>
                                     <Link to='/activities' className={classes.sideButtons} style={{ color: (path.includes('/activities')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faListAlt}/> {navBarOpen ?  ' Listado Asignaciones' : ''}
                                     </Link>
                                 </IconButton>
-                            </div>}
+                            </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Int. Artificial (Beta)' onClickCapture={()=>{toOpenIAModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
@@ -300,8 +300,8 @@ const Navbar = () => {
                             </div>
                         </Grid>
                     </Grid>
-                    <VersionControlModal open={openVersionModal} closeModal={closeModal} />
-                    <IAModal open={openIAModal} closeModal={closeIAModal} />
+                    {openVersionModal && <VersionControlModal open={openVersionModal} closeModal={closeModal} />}
+                    {openIAModal && <IAModal open={openIAModal} closeModal={closeIAModal} />}
                 </div>
             </Drawer>
         </div>

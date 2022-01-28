@@ -43,16 +43,22 @@ const UsersList = ({height, hableButton}) => {
     }
 
     useEffect(() => {
-        readAllUsers();
-        localStorage.removeItem('userDataToSave')
-        setTimeout(() => {
-
-        }, 1000);
+        let cancel = true;
+        if(cancel) {
+            usersRoutes.getAllUsers().then(users=> {
+                if(cancel) setUsuarios(users.data);
+            }) 
+            localStorage.removeItem('userDataToSave');
+        }
+        return () => {cancel = false}
     }, []);
 
+
     const readAllUsers = () => {
-        usersRoutes.getAllUsers().then(users=> {
-            setUsuarios(users.data);
+        return new Promise(resolve => {
+            usersRoutes.getAllUsers().then(users=> {
+                resolve(users)
+            })
         })
     }
 
@@ -61,9 +67,9 @@ const UsersList = ({height, hableButton}) => {
             alert('No es posible eliminar un Administrador.')
         }else{
             if(confirm(`Removerá al usuario ${userName} ${userLastName}. Confirme la acción.`)) {
-                usersRoutes.removeUser(userId).then(data=>{
+                usersRoutes.removeUser(userId).then(async data=>{
                     if(data) {
-                        readAllUsers()
+                        setUsuarios((await readAllUsers()).data)
                     }
                 })
             }

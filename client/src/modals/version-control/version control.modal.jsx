@@ -18,14 +18,35 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                     
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
-                        <strong>v.3.5</strong>
+
+                        <strong>v.5.0</strong>
                         <li>
-                            Pruebas de reparación IA.
+                            Ejecución de ordenes de trabajo con flujo siguiente:
+                            
+                            Creación de orden por parte de ejecutivo SAP.
+                            |
+                            -- Ejecución y cierre por parte de Operador de Mantención,
+                                |
+                                -- Una vez cerrada la orden por parte de Operador de Mantención, lo puede editar Jefe de Turno,
+                                    |
+                                    -- Cerrado por Jefe de Turno, lo puede editar Jefe de Maquinaria.
+                                        |
+                                        -- Cerrado por Jefe de Maquinaria lo puede editar Ejecutivo SAP.
+                                            |
+                                            -- Ejecutivo SAP cierra el flujo.
+
+                            * Pendiente reasignación de usuario para cambio de turno y agregar conexión a API de Inspecciones.
+                            * Queda pendiente tambien la edición de las ordenes. Solo se pueden crear.
                         </li>
 
                         <strong>v.4.0</strong>
                         <li>
                             Descarga y vista mediante menú de equipos y partes de las máquinas en 3D.
+                        </li>
+
+                        <strong>v.3.5</strong>
+                        <li>
+                            Pruebas de reparación IA.
                         </li>
 
                         <strong>v.3.4</strong>

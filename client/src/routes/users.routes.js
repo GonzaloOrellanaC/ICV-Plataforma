@@ -29,5 +29,11 @@ export default {
             id
         }
         return axios.post('/users/deleteUser', requestBody)
+    },
+    findByRut: (rut) => {
+        const requestBody = {
+            rut
+        }
+        return axios.post('/users/findByRut', requestBody)
     }
 }

@@ -1,11 +1,17 @@
 import { executionReportsDatabase, pautasDatabase, reportsDatabase, sitesDatabase } from "../../indexedDB";
-import { apiIvcRoutes, executionReportsRoutes } from "../../routes";
+import { apiIvcRoutes, executionReportsRoutes, reportsRoutes } from "../../routes";
 import getMyReports from './getMyReports'
+import getAllAssignment from './getAllAssignment'
 
 const getAssignments = (setProgress) => {
     return new Promise(async resolve => {
-        let reps = new Array()
-        reps = await getMyReports(localStorage.getItem('_id'));
+        let reps = new Array();
+        if((localStorage.getItem('role') === 'maintenceOperator'||(localStorage.getItem('role') === 'inspectionWorker'))){
+            reps = await getMyReports(localStorage.getItem('_id'));
+        }else{
+            reps = await getAllAssignment()
+        }
+        
         console.log(reps);
         let progressNumber = 0;
         let everyProgress = 100 / reps.length;
@@ -58,6 +64,7 @@ const descargarPautas = (setProgress) => {
                 const response = await getHeader(pauta);
                 pauta.header = response;
                 pauta.id = number;
+                pauta.action = 'Mantención'
                 if(number == (pautas.length - 1)) {
                     progressNumber = progressNumber + everyProgress1;
                     setProgress(progressNumber)
@@ -90,6 +97,60 @@ const descargarPautas = (setProgress) => {
             })
             
         }
+    })
+}
+
+const getPautasInstepctList = (setProgress, machines) => {
+    setProgress(0);
+    let n = 0;
+    let total = machines.length;
+    let punto = (100/total);
+    let pautas = [];
+    return new Promise(resolve => {
+        machines.forEach(async (machine, index) => {
+            n = n + punto;
+            setProgress(n);
+            let res = await reportsRoutes.getReportByIdpm(machine.idpminspeccion);
+            res.data[0].typepm = encodeURIComponent(res.data[0].typepm);
+            let header = await apiIvcRoutes.getHeaderPauta(res.data[0]);
+            let struct = await apiIvcRoutes.getStructsPauta(res.data[0]);
+            let newPauta = res.data[0];
+            newPauta.header = header;
+            newPauta.struct = struct;
+            newPauta.action = 'Inspección';
+            pautas.push(newPauta);
+            if(index == (machines.length -1)) {
+                resolve(pautas)
+                setProgress(100);
+            }
+        })
+    })
+}
+
+const getPautasMaintenanceList = (setProgress, machines) => {
+    setProgress(0);
+    let n = 0;
+    let total = machines.length;
+    let punto = (100/total);
+    let pautas = []
+    return new Promise(resolve => {
+        machines.forEach(async (machine, index) => {
+            n = n + punto;
+            setProgress(n);
+            let res = await reportsRoutes.getReportByIdpm(machine.idpmmantencion);
+            res.data[0].typepm = encodeURIComponent(res.data[0].typepm);
+            let header = await apiIvcRoutes.getHeaderPauta(res.data[0]);
+            let struct = await apiIvcRoutes.getStructsPauta(res.data[0]);
+            let newPauta = res.data[0];
+            newPauta.header = header;
+            newPauta.struct = struct;
+            newPauta.action = 'Mantención';
+            pautas.push(newPauta);
+            if(index == (machines.length -1)) {
+                resolve(pautas)
+                setProgress(100);
+            }
+        })
     })
 }
 
@@ -183,9 +244,15 @@ const setIfNeedReadDataAgain = async (setDisableButtons, setNotificaciones1) => 
                 const response = await sitesDatabase.consultar(db.database);
                 if(response) {
                     if(sites.length == response.length) {
-                        resolve(false)
+                        resolve({
+                            state: true,
+                            data: 'reload'
+                        })
                     }else{
-                        resolve(true)
+                        resolve({
+                            state: true,
+                            data: 'full'
+                        })
                     }
                 }
             }
@@ -200,6 +267,7 @@ export default {
     descargarPautas,
     getSites,
     getSitesList,
-    setIfNeedReadDataAgain
-
+    setIfNeedReadDataAgain,
+    getPautasInstepctList,
+    getPautasMaintenanceList
 }

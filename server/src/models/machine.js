@@ -26,6 +26,14 @@ const MachineSchema = new Schema({
         type: Schema.Types.String,
         required: true
     },
+    idpminspeccion: {
+        type: Schema.Types.String,
+        required: true
+    },
+    idpmmantencion: {
+        type: Schema.Types.String,
+        required: true
+    },
     hourMeter: {
         type: Schema.Types.Number,
     },

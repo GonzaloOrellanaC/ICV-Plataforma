@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Card, Grid, Toolbar, IconButton, List, Modal, Fab } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { useHistory, useParams } from 'react-router-dom';
-import { useStylesTheme } from '../../config';
+import { styleModal3D, useStylesTheme } from '../../config';
 import { ArrowBackIos } from '@material-ui/icons';
 import { MVAvatar } from '../../containers';
 import { machinesDatabase } from '../../indexedDB';
@@ -162,14 +162,14 @@ const MachinesListPage = ({route}) => {
                                         aria-labelledby="modal-modal-title"
                                         aria-describedby="modal-modal-description"
                                     >
-                                        <div style={{height: '100%', width: '100%', backgroundColor: '#333'}}>
+                                        <Box sx={styleModal3D/* {height: '100%', width: '70%', backgroundColor: '#333'} */}>
                                             {/* <VRAvatar machine={machine}/> */} 
                                             <MVAvatar machine={machine}/>
                                             {/* <Test /> */}
                                             <Fab onClick={() => closeModal()} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}} color="primary">
                                                 <Close />
                                             </Fab>
-                                        </div>
+                                        </Box>
                                         
                                     </Modal>
                             </div>

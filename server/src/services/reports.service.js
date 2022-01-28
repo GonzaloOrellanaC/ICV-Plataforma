@@ -1,6 +1,7 @@
-import { Reports } from "../models";
+import { ExecutionReport, Reports } from "../models";
 import { environment } from '../config'
 const { error: errorMsg, success: successMsg } = environment.messages.services.user
+import fetch from 'node-fetch'
 
 const createReport = async (req, res) => {
     const { body } = req
@@ -41,6 +42,38 @@ const editReport = async (req, res) => {
         }catch(err) {
             res.json(err);
         }  */
+    }
+    
+}
+
+const deleteReport = async (req, res) => {
+    console.log(req.body)
+    console.log(req.query)
+    const { id } = req.body
+    console.log(id)
+    
+    if (!id) {
+        throw new Error(errorMsg.missingParameters)
+    }else{
+        try{
+            const deleted = await Reports.findByIdAndDelete(id)
+            if (!deleted) {
+                res.json({
+                    message: 'Orden no encontrada'
+                })
+            };
+            const deleteExecution = await ExecutionReport.findOneAndDelete({reportId: id});
+            if (!deleteExecution) {
+                res.json({
+                    message: 'Error en sistema'
+                })
+            };
+            res.json({
+                message: 'Orden eliminada'
+            })
+        }catch(err) {
+            res.json(err);
+        }
     }
     
 }
@@ -142,6 +175,13 @@ const findMyAssignations = (req, res) => {
     }
 }
 
+const getReportByIdpm = async (req, res) => {
+    const { body : { idpm } } = req;
+    const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${idpm}`);
+    const pmResponse =  await response.json();
+    res.send(pmResponse.data)
+}
+
 const countTotalReports = () => {
     return new Promise(resolve => {
         Reports.find({}, (err, reports) => {
@@ -154,11 +194,13 @@ const countTotalReports = () => {
 export default {
     createReport,
     editReport,
+    deleteReport,
     getReports,
     getReportByIndex,
     getReportByGuide,
     getReportByType,
     getReportByState,
     getReportsByUser,
-    findMyAssignations
+    findMyAssignations,
+    getReportByIdpm
 }

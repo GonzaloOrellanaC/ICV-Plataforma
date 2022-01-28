@@ -22,9 +22,12 @@ const IAModal = ({open, closeModal}) => {
 
     const [ stateModel, setStateModel ] = useState(null);
     const [ statePreview, setStatePreview ] = useState("")
-    const [ openLoader, setOpen ] = useState(false)
+    const [ openLoader, setOpen ] = useState(false);
+    const [ ready, setReady ] = useState(false);
 
     useEffect(() => {
+        //console.log(stateModel);
+        //console.log(statePreview);
         let cancel = false;
         if(cancel) return;
         tf.loadGraphModel(weights).then(m => {
@@ -37,11 +40,24 @@ const IAModal = ({open, closeModal}) => {
     }, [])
 
     const onDrop = (accepted, rejected, links) => {
-        setOpen(true)
-        setTimeout(() => {
-            console.log(accepted)
-            setStatePreview(accepted[0].preview || links[0]);
-        }, 2000);
+        if(ready) {
+            setOpen(true)
+            tf.loadGraphModel(weights).then(m => {
+                //if(cancel) return;
+                setStateModel(m);
+                setTimeout(() => {
+                    console.log(accepted)
+                    setStatePreview(accepted[0].preview || links[0]);
+                }, 2000);
+            });
+        }else{
+            setOpen(true)
+            setTimeout(() => {
+                console.log(accepted)
+                setStatePreview(accepted[0].preview || links[0]);
+            }, 2000);
+        }
+        
     };
 
     const closeModalLoading = () => {
@@ -83,6 +99,7 @@ const IAModal = ({open, closeModal}) => {
             if(input) {
                 stateModel.executeAsync(input).then(res => {
                     closeModalLoading();
+                    setReady(true);
                     console.log(res)
                     const font = "16px sans-serif";
                     ctx.font = font;
@@ -125,7 +142,9 @@ const IAModal = ({open, closeModal}) => {
                         ctx.fillText(klass + ":" + score, x1, y1);
                     }
                 }).catch(err=> {
-                    console.log(err)
+                    console.log(err);
+                    setOpen(false);
+                    alert('Se detecta que la máquina no está completa en la imágen. Por favor aléjese de la máquina para que el sistema logre identificar todas las partes.')
                 })
             }
         }

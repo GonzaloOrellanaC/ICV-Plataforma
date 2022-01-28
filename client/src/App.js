@@ -1,5 +1,5 @@
 /*  React */
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 /* GraphQL */
@@ -9,7 +9,7 @@ import { createUploadLink } from 'apollo-upload-client'
 
 /* Material UI */
 import { Box, CssBaseline, ThemeProvider } from '@material-ui/core'
-import { theme } from './config'
+import { sync, theme } from './config'
 
 import './App.css'
 import { AuthProvider, LanguageProvider, NavigationProvider, useAuth } from './context'
@@ -40,7 +40,8 @@ import {
     ActivitiesDetailPage,
     ActivitiesPage
 } from './pages';
-
+/* import history from './history'
+ */
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
     if (networkError?.statusCode === 401) {
         /* console.log(networkError)
@@ -70,6 +71,21 @@ const client = new ApolloClient({
 
 const OnApp = () => {
     const { isAuthenticated, loading, admin } = useAuth();
+    useEffect(() => {
+        if(isAuthenticated) {
+            let go = true;
+            window.addEventListener('online', async () => {
+                const alerta = await sync();
+                if(go) {
+                    go = false;
+                    alert(alerta.message);
+                }
+            });
+            window.addEventListener('offline', () => {
+                go = true;
+            });
+        }
+    }, [])
     return (
         <div style={{fontFamily: 'Roboto'}}>
             {isAuthenticated && <Route path={['/']}>
@@ -99,6 +115,9 @@ const OnApp = () => {
                             <CreateReports route='reports'/>
                         </Route>
                         <Route exact path='/reports/edit-report/:id'>
+                            {
+                                console.log('abriendo edición')
+                            }
                             <CreateReports route='reports'/>
                         </Route>
                     </Switch>

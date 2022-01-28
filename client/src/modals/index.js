@@ -1,4 +1,4 @@
-import { AssignReportModal } from './assign-report';
+import { AssignReportModal, ReviewReportModal } from './assign-report';
 import { UserListDataModal } from './user-list-data';
 import { LoadingModal } from './loadings';
 import { VersionControlModal } from './version-control';
@@ -8,6 +8,7 @@ import { IAModal } from './ia-tensorflow';
 
 export {
     AssignReportModal,
+    ReviewReportModal,
     UserListDataModal,
     LoadingModal,
     VersionControlModal,

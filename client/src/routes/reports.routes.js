@@ -13,6 +13,12 @@ export default {
         }
         return axios.post('/reports/editReport', requestBody);
     },
+    deleteReport: (id) => {
+        const requestBody = {
+            id,
+        }
+        return axios.post('/reports/deleteReport', requestBody);
+    },
     getAllReports: () => {
         return axios.get('/reports/getAllReports')
     },
@@ -53,5 +59,11 @@ export default {
             userId
         };
         return axios.post('/reports/findMyAssignations', requestBody);
+    },
+    getReportByIdpm: (idpm) => {
+        const requestBody = {
+            idpm
+        };
+        return axios.post('/reports/getReportByIdpm', requestBody);
     }
 }

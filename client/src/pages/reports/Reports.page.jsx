@@ -26,21 +26,29 @@ const ReportsPage = () => {
     const classes = useStylesTheme();
 
     useEffect(() => {
-        initPage();
+        if(history) {
+            initPage();
+        }
+        
     }, [])
 
     const initPage = () => {
-        Inspecciones.forEach(async (e, i) => {
+        Inspecciones.map(async (e, i) => {
             let response = await reportsRoutes.getReportByState(e.name, 'Inspección');
+            let porAsignar = []
             if(response.data.length > 0) {
-                response.data.forEach(async (item, i) => {
+                e.number = response.data.length;
+                response.data.map(async (item, i) => {
+                    if(item.state === 'Asignar') {
+                        porAsignar.push(item)
+                    }
                     item.siteName = await getSiteName(item.site)
                     machinesRoutes.getMachineByEquid(item.machine).then(data => {
                         item.hourMeter = (Number(data.data[0].hourMeter)/3600000);
                     })
                     if(i == (response.data.length - 1)) {
                         e.lista = response.data.reverse();
-                        e.number = response.data.length;
+                        setInspeccionesPorAsignar(porAsignar.length)
                     }
                 })
             }else{
@@ -51,17 +59,23 @@ const ReportsPage = () => {
                 setInspecciones(Inspecciones)
             }
         })
-        Mantenciones.forEach(async (e, i) => {
+        Mantenciones.map(async (e, i) => {
             let response = await reportsRoutes.getReportByState(e.name, 'Mantención');
+            let porAsignar = []
             if(response.data.length > 0) {
-                response.data.forEach(async (item, i) => {
+                e.number = response.data.length;
+                response.data.map(async (item, i) => {
+                    if(item.state === 'Asignar') {
+                        porAsignar.push(item)
+                    }
                     item.siteName = await getSiteName(item.site)
                     machinesRoutes.getMachineByEquid(item.machine).then(data => {
                         item.hourMeter = (Number(data.data[0].hourMeter)/3600000);
                     })
                     if(i == (response.data.length - 1)) {
                         e.lista = response.data.reverse();
-                        e.number = response.data.length;
+                        setMantencionesPorAsignar(porAsignar.length)
+                        //e.number = response.data.length;
                     }
                 })
             }else{
@@ -94,6 +108,10 @@ const ReportsPage = () => {
     const selectList = (list) => {
         setVista(false)
         setList(list)
+    }
+
+    const reloadData = () => {
+        location.reload();
     }
 
     return(
@@ -206,7 +224,7 @@ const ReportsPage = () => {
                         </div>
                     }
                     {
-                        !vista && <ReportsList list={list}/>
+                        !vista && <ReportsList list={list} reloadData={reloadData}/>
                     }
                 </Grid>
             </Grid>

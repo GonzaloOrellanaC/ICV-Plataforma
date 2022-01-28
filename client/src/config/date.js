@@ -1,7 +1,7 @@
 
 
 export default (time) => {
-    let day = new Date(time).getDay() + 1;
+    let day = new Date(time).getDay();
     let dayName;
     if(day == 1) {
         dayName = 'Lunes'
@@ -18,7 +18,7 @@ export default (time) => {
     }else if(day == 0) {
         dayName = 'Domingo'
     }
-    let date = new Date(time).getDate() + 1;
+    let date = new Date(time).getDate();
     let month = new Date(time).getMonth();
     let monthName
     if(month == 0) {
@@ -46,5 +46,9 @@ export default (time) => {
     }else if(month == 11) {
         monthName = 'Diciembre'
     } 
-    return (dayName + ' ' + date + ' DE ' + monthName).toUpperCase()
+    if(!time) {
+        return ('Sin información').toUpperCase()
+    }else{
+        return (dayName + ' ' + date + ' DE ' + monthName).toUpperCase()
+    }
 }
