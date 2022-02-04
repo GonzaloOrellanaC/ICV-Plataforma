@@ -9,7 +9,7 @@ import './reports.css'
 import { ReportsList } from '../../containers';
 import { useHistory } from 'react-router-dom';
 import { sitesDatabase } from '../../indexedDB';
-import { useStylesTheme } from '../../config';
+import { getWeekReports, useStylesTheme } from '../../config';
 
 const ReportsPage = () => {
     const [ inspecciones, setInspecciones ] = useState([]);
@@ -26,13 +26,26 @@ const ReportsPage = () => {
     const classes = useStylesTheme();
 
     useEffect(() => {
+        
         if(history) {
             initPage();
         }
+        setTimeout(() => {
+            if(!navigator.onLine) {
+                alert('Problemas de red. Revise su conexión.');
+                history.goBack()
+            }
+        }, 1000);
         
     }, [])
 
-    const initPage = () => {
+    const initPage = async () => {
+        let daysOfThisWeek = getWeekReports();
+        console.log(daysOfThisWeek)
+        let completesInspections = await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Inspección');
+        let completesManteinances = await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Mantención');
+        setInspeccionesCompletadas(completesInspections.data.length);
+        setMantencionesCompletadas(completesManteinances.data.length);
         Inspecciones.map(async (e, i) => {
             let response = await reportsRoutes.getReportByState(e.name, 'Inspección');
             let porAsignar = []
@@ -58,7 +71,7 @@ const ReportsPage = () => {
             if(i == (Inspecciones.length - 1)) {
                 setInspecciones(Inspecciones)
             }
-        })
+        });
         Mantenciones.map(async (e, i) => {
             let response = await reportsRoutes.getReportByState(e.name, 'Mantención');
             let porAsignar = []
@@ -134,25 +147,26 @@ const ReportsPage = () => {
                 </div>
             </div>
             <Grid container>
-                <Grid item xs={12} sm={12} md={5} lg={3}>
+                <Grid item xs={12} sm={12} md={5} lg={4} xl={3}>
                     <div className='menu-card'>
                         <h3>Inspecciones</h3>
                         <div style={{float: 'left', width: 'calc(45%)', marginRight: 5, padding: 10, backgroundColor: '#fff', borderRadius: 10}}>
-                            <div style={{float: 'left', width: '40%'}}>
+                            <div style={{float: 'left', width: '30%'}}>
                                 <p style={{fontSize: 32, margin: 0}}>{inspeccionesPorAsignar}</p>
                             </div>
-                            <div style={{float: 'left', right: 5, width: '40%'}}>
-                                <p style={{fontSize: 8}}>Inspecciones por asignar</p>
+                            <div style={{float: 'left', right: 5, width: '60%'}}>
+                                <p style={{fontSize: 10, margin: 0}}>Inspecciones por asignar</p>
                             </div>
                         </div>
                         <div style={{float: 'right', width: 'calc(45%)', marginLeft: 5, padding: 10, backgroundColor: '#fff', borderRadius: 10}}>
-                            <div style={{float: 'left', width: '40%'}}>
+                            <div style={{float: 'left', width: '30%'}}>
                                 <p style={{fontSize: 32, margin: 0}}>{inspeccionesCompletadas} </p>
                             </div>
-                            <div style={{float: 'left', right: 5, width: '40%'}}>
-                                <p style={{fontSize: 8}}>Inspecciones completadas en la semana</p>
+                            <div style={{float: 'left', right: 5, width: '60%'}}>
+                                <p style={{fontSize: 10, margin: 0}}>Inspecciones completadas en la semana</p>
                             </div>
                         </div>
+                        <div style={{paddingLeft: 10, paddingRight: 10,  marginTop: 60}}>
                         {
                             inspecciones.map((e, i) => {
                                 return(
@@ -173,25 +187,27 @@ const ReportsPage = () => {
                                 )
                             })
                         }
+                        </div>
                     </div>
                     <div className='menu-card'>
                         <h3>Mantenciones</h3>
                         <div style={{float: 'left', width: 'calc(45%)', marginRight: 5, padding: 10, backgroundColor: '#fff', borderRadius: 10}}>
-                            <div style={{float: 'left', width: '40%'}}>
+                            <div style={{float: 'left', width: '30%'}}>
                                 <p style={{fontSize: 32, margin: 0}}>{mantencionesPorAsignar}</p>
                             </div>
-                            <div style={{float: 'left', right: 5, width: '40%'}}>
-                                <p style={{fontSize: 8}}>Mantenciones por asignar</p>
+                            <div style={{float: 'left', right: 5, width: '60%'}}>
+                                <p style={{fontSize: 10, margin: 0}}>Mantenciones por asignar</p>
                             </div>
                         </div>
                         <div style={{float: 'right', width: 'calc(45%)', marginLeft: 5, padding: 10, backgroundColor: '#fff', borderRadius: 10}}>
-                            <div style={{float: 'left', width: '40%'}}>
+                            <div style={{float: 'left', width: '30%'}}>
                                 <p style={{fontSize: 32, margin: 0}}>{mantencionesCompletadas} </p>
                             </div>
-                            <div style={{float: 'left', right: 5, width: '40%'}}>
-                                <p style={{fontSize: 8}}>Mantenciones completadas en la semana</p>
+                            <div style={{float: 'left', right: 5, width: '60%'}}>
+                                <p style={{fontSize: 10, margin: 0}}>Mantenciones completadas en la semana</p>
                             </div>
                         </div>
+                        <div style={{paddingLeft: 10, paddingRight: 10,  marginTop: 60}}>
                         {
                             mantenciones.map((e, i) => {
                                 return(
@@ -212,9 +228,10 @@ const ReportsPage = () => {
                                 )
                             })
                         }
+                        </div>
                     </div>
                 </Grid>
-                <Grid item xs={12} sm={12} md={7} lg={9}>
+                <Grid item xs={12} sm={12} md={7} lg={8} xl={9}>
                     {
                         vista && <div>
                             <img style={{margin: 0, position: 'absolute', top: '50%', left: 'calc(100%/1.53)', msTransform: 'translateY(-50%)', transform: 'translateY(-50%)'}} src="../../assets/icons/Arrow.svg" alt="" />

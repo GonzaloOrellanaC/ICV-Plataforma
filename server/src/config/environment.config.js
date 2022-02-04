@@ -19,6 +19,7 @@ const languageSelector = (select) => {
  * if they configured a certain language.
  */
 const environment = {
+    state: process.env.STATE,
     dbURL: process.env.DB_URL,
     port: process.env.PORT,
     env: process.env.NODE_ENV || 'development',

@@ -16,6 +16,9 @@ const getAssignments = (setProgress) => {
         let progressNumber = 0;
         let everyProgress = 100 / reps.length;
         let db = await reportsDatabase.initDbReports();
+        if(reps.length == 0) {
+            resolve(true)
+        }
         if(db) {
             reps.forEach(async (report, i) => {
                 progressNumber = progressNumber + everyProgress;
@@ -58,13 +61,18 @@ const descargarPautas = (setProgress) => {
         console.log('Pautas: ', pautas)
         if(pautas) {
             pautas.forEach(async (pauta, number ) => {
+                console.log(pauta)
                 let progressNumber = 0;
                 let everyProgress1 = (100 / pautas.length) / 3;        
-                
                 const response = await getHeader(pauta);
                 pauta.header = response;
+                console.log(pauta.header)
                 pauta.id = number;
-                pauta.action = 'Mantención'
+                if(pauta.typepm === 'Pauta de Inspección') {
+                    pauta.action = 'Inspección'
+                }else{
+                    pauta.action = 'Mantención'
+                }
                 if(number == (pautas.length - 1)) {
                     progressNumber = progressNumber + everyProgress1;
                     setProgress(progressNumber)

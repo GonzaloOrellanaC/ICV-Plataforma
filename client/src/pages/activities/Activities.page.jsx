@@ -27,6 +27,11 @@ const ActivitiesPage = () => {
                             if(go) {
                                 reportsDatabase.consultar(db.database).then(reports => {
                                     reports.forEach(async (report, i) => {
+                                        if(report.level) {
+                                            if(report.level > 0) {
+                                                report.infoState = 'Terminado'
+                                            }
+                                        }
                                         report.dateFormat = date(report.datePrev);
                                         report.end = date(report.endReport);
                                         report.init = date(report.dateInit);
@@ -37,7 +42,10 @@ const ActivitiesPage = () => {
                                             report.machineType = 'Camión'
                                         }
                                         if(i == (reports.length - 1)) {
-                                            setAssignments(reports);
+                                            //console.log(reports);
+                                            let rs = reports.filter((report) => {if(report.enabled) {return report}});
+                                            console.log(rs)
+                                            setAssignments(rs);
                                         }
                                     })
                                 })
@@ -202,9 +210,19 @@ const ActivitiesPage = () => {
                                                         <p style={{fontSize: 12}}> {element.end} </p>
                                                     </Grid>}
                                                     <Grid item lg={1} md={1} sm={4} xs={3}>
-                                                        <div style={{width: '100%', textAlign: 'center', paddingRight: 20, marginTop: 10}}>
+                                                        {element.infoState && 
+                                                            <div style={{width: '100%',}}>
+                                                            <div style={{float: 'left', width: '50%', textAlign: 'center', paddingRight: 20, marginTop: 0}}>
+                                                                <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
+                                                            </div>
+                                                            <div style={{float: 'left', width: '50%', textAlign: 'center', paddingRight: 20, marginTop: 10}}>
+                                                                <p style={{marginBottom: 0, marginTop: 0, marginLeft: 10}}><strong>{element.infoState}</strong></p>
+                                                            </div>
+                                                            </div>
+                                                        }
+                                                        {!element.infoState && <div style={{width: '100%', textAlign: 'center', paddingRight: 20, marginTop: 10}}>
                                                             <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
-                                                        </div>
+                                                        </div>}
                                                     </Grid>
                                                 </Grid>
                                             </div>

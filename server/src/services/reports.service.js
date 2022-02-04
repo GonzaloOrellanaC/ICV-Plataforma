@@ -2,10 +2,11 @@ import { ExecutionReport, Reports } from "../models";
 import { environment } from '../config'
 const { error: errorMsg, success: successMsg } = environment.messages.services.user
 import fetch from 'node-fetch'
+import { EmailMailgunServices, EmailServices } from ".";
 
 const createReport = async (req, res) => {
     const { body } = req
-    console.log(body)
+    //console.log(body)
     
     if (!body.report) {
         throw new Error(errorMsg.missingParameters)
@@ -23,15 +24,28 @@ const createReport = async (req, res) => {
 
 const editReport = async (req, res) => {
     const { body } = req
-    console.log(body)
+    //'Edición reporte =>>>>>', body)
     
     if (!body.report) {
         throw new Error(errorMsg.missingParameters)
     }else{
         try{
+            if(body.report.emailing) {
+                if(body.report.emailing === 'termino-jornada') {
+                    EmailMailgunServices.sendEmailEndOfWork('endOfWork', body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
+                }else if(body.report.emailing === 'termino-orden-1') {
+                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 1, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
+                }else if(body.report.emailing === 'termino-orden-2') {
+                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 2, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
+                }else if(body.report.emailing === 'termino-orden-3') {
+                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 3, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
+                }/* else if(body.report.emailing === 'termino-orden-4') {
+                    EmailMailgunServices.sendEmailEndOfWork('endOfOrder', body.report.fullNameWorker, 'es', body.report.idIndex, 'ltapia@test.cl, gonzalo.orellana@kauel.com')
+                } */
+            }
             //body.report.idIndex = await countTotalReports()
             const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report);
-            console.log(editReportState);
+            //console.log('Respuesta edición reporte =>>>>>', editReportState);
             res.json(editReportState)
         }catch(err) {
             res.json(err);
@@ -47,10 +61,10 @@ const editReport = async (req, res) => {
 }
 
 const deleteReport = async (req, res) => {
-    console.log(req.body)
-    console.log(req.query)
+    //console.log(req.body)
+    //console.log(req.query)
     const { id } = req.body
-    console.log(id)
+    //console.log(id)
     
     if (!id) {
         throw new Error(errorMsg.missingParameters)
@@ -81,7 +95,7 @@ const deleteReport = async (req, res) => {
 const getReports = (req, res) => {
     try {
         Reports.find({}, (err, reports) => {
-            console.log('Reportes: ', reports)
+            //console.log('Reportes: ', reports)
             res.json(reports)
         });
     } catch (err) {
@@ -91,15 +105,30 @@ const getReports = (req, res) => {
 
 const getReportByGuide = (req, res) => {
     const { body } = req;
-    console.log(body)
-    /* try {
-        Reports.find({}, (err, reports) => {
-            console.log('Reportes', reports);
-            res.jason(reports)
+    //console.log(body);
+}
+
+const getReportsByDateRange = (req, res) => {
+    const { body } = req;
+    console.log(body);
+
+    //console.log(new Date(body.dateInit))
+    let dateInit = body.dateInit;
+    let dateEnd = body.dateEnd;
+    console.log(dateInit, dateEnd)
+    let reportType = body.reportType;
+    try {
+        Reports.find({ dateClose: { $gte: new Date(dateInit) , $lt: new Date(dateEnd) },  reportType: reportType }, (err, reports) => {
+            if(err) {
+                console.log('El error es: ', err)
+            }
+            console.log(reports);
+            res.send(reports)
         })
     } catch (err) {
-        console.log(err)
-    } */
+        console.log('ERRRRRRR',err)
+    }
+    
 }
 
 const getReportByIndex = (req, res) => {
@@ -111,13 +140,13 @@ const getReportByIndex = (req, res) => {
             res.json(report)
         })
     } catch (err) {
-        console.log(err)
+
     }
 }
 
 const getReportByType = (req, res) => {
     const { body } = req;
-    console.log(body)
+    //console.log(body)
     /* try {
         Reports.find({}, (err, reports) => {
             console.log('Reportes', reports);
@@ -130,10 +159,10 @@ const getReportByType = (req, res) => {
 
 const getReportByState = (req, res) => {
     const { body } = req;
-    console.log(body)
+    //console.log(body)
     try {
         Reports.find({ state: body.state, reportType: body.reportType }, (err, reports) => {
-            console.log('Reportes', reports);
+
             res.json(reports)
         })
     } catch (err) {
@@ -143,7 +172,7 @@ const getReportByState = (req, res) => {
 
 const getReportsByUser = (req, res) => {
     const { body } = req;
-    console.log(body);
+
     let reportList = new Array()
     try {
         Reports.find({}, (err, reports) => {
@@ -164,14 +193,14 @@ const getReportsByUser = (req, res) => {
 
 const findMyAssignations = (req, res) => {
     const { body } = req;
-    console.log(body);
+    //console.log(body);
     //let reportList = new Array()
     try {
         Reports.find({usersAssigned: [body.userId]}, (err, reports) => {
             res.json(reports)
         })
     } catch (err) {
-        console.log(err)
+
     }
 }
 
@@ -202,5 +231,6 @@ export default {
     getReportByState,
     getReportsByUser,
     findMyAssignations,
-    getReportByIdpm
+    getReportByIdpm,
+    getReportsByDateRange
 }

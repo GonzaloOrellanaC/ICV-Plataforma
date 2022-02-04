@@ -12,7 +12,7 @@ import {
 import { ArrowBackIos } from '@material-ui/icons'
 import { useHistory, useParams } from 'react-router-dom';
 import { trucksDatabase, pautasDatabase, machinesDatabase } from '../../indexedDB'
-import { apiIvcRoutes, reportsRoutes } from '../../routes';
+import { apiIvcRoutes, machinesRoutes, reportsRoutes } from '../../routes';
 import './reports.css'
 
 const CreateReports = () => {
@@ -32,18 +32,20 @@ const CreateReports = () => {
     const [ disableMaquinas, setDisableMaquinas ] = useState(true);
     const [ idIndex, setIdIndex ] = useState(0);
     const [ date, setDate ] = useState('');
+    const [ dateEnd, setDateEnd ] = useState('');
     const [ hourMeter, setHourMeter ] = useState('')
     const [ equID, setEqID ] = useState('')
     const [ toDay, setToDay ] = useState('')
-    /* const [ sapId, setSapId ] = useState('') */
+    const [ sapId, setSapId ] = useState('')
     const [ canEdit, setCanEdit ] = useState(true)
+    const [ iDPM, setIDPM ] = useState('')
 
     const classes = useStylesTheme();
 
     const history = useHistory();
 
     const {id} = useParams();
-    console.log(id)
+    //console.log(id)
 
     const saveReportData = async (activate) => {
         if(activate) {
@@ -73,7 +75,8 @@ const CreateReports = () => {
     }
 
     const getMachine = async (machineModel) => {
-        setMachineModel(machineModel)
+        setMachineModel(machineModel);
+        
         let db = await machinesDatabase.initDbMachines();
         if(db) {
             machinesDatabase.consultar(db.database).then((machines) => {
@@ -91,12 +94,14 @@ const CreateReports = () => {
             updatedBy: localStorage.getItem('_id'),
             state: 'Asignar',
             datePrev: Date.parse(date),
+            endPrev: Date.parse(dateEnd),
             machine: truckSelected,
             guide: pauta,
             reportType: reportType,
             machine: JSON.parse(machineSelected).equid,
             site: JSON.parse(localStorage.getItem('sitio')).idobra,
-            sapId: sapId
+            sapId: sapId,
+            idPm: iDPM
         }
         if(!report.machine || !report.sapId || (!report.guide || report.guide === "Selección no cuenta con pautas.") || (!report.reportType || report.reportType === 'Seleccione...')) {
             alert('Falta información')
@@ -158,13 +163,6 @@ const CreateReports = () => {
     }
 
     useEffect(() => {
-        if(id) {
-            console.log(id)
-            let report = JSON.parse(id);
-            /* if(report.usersAssigned.length > 0) {
-                setCanEdit(false)
-            } */
-        }
         readTrucks();
         activateIfEdit(id);
         formatDateToDay();
@@ -286,7 +284,7 @@ const CreateReports = () => {
                                             type="text" 
                                             style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
                                         </FormControl>
-                                    </div>{/* 
+                                    </div>
                                     <div style={{width: '100%'}}>
                                         <FormControl>
                                             <p>ID SAP</p>
@@ -299,10 +297,10 @@ const CreateReports = () => {
                                             type="text"
                                             style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
                                         </FormControl>
-                                    </div> */}
+                                    </div>
                                     <div style={{width: '100%'}}>
                                         <FormControl>
-                                            <p>Fecha Prevista</p>
+                                            <p>Fecha Inicio Programado</p>
                                             <input 
                                             value={date} 
                                             onChange={(e)=>{setDate(e.target.value)}} 
@@ -311,6 +309,21 @@ const CreateReports = () => {
                                             className={classes.inputsStyle} 
                                             type="date"
                                             min={toDay}
+                                            style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
+                                        </FormControl>
+                                    </div>
+                                    <div style={{width: '100%'}}>
+                                        <FormControl>
+                                            <p>Fecha Término Programado</p>
+                                            <input 
+                                            value={dateEnd} 
+                                            onChange={(e)=>{setDateEnd(e.target.value)}} 
+                                            maxLength={12} 
+                                            onBlur={()=>saveReportData()} 
+                                            className={classes.inputsStyle} 
+                                            type="date"
+                                            min={date}
+                                            disabled={!date}
                                             style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
                                         </FormControl>
                                     </div>
@@ -368,14 +381,14 @@ const CreateReports = () => {
                                                 name="userType" 
                                                 id="userType" 
                                                 style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
-                                                onChange={(e)=>{setPauta(e.target.value), setDisableMaquinas(false)}}
-                                                value={pauta}
+                                                onChange={(e)=>{setPauta(e.target.value.split(',')[1]), setDisableMaquinas(false), setIDPM(e.target.value.split(',')[0])}}
+                                                value={[iDPM, pauta]}
                                             >
-                                                <option value={null}>Seleccione...</option>
+                                                <option value={null} selected>Seleccione...</option>
                                                 {
                                                         (pautas.length > 0) && pautas.map((pauta, index) => {
                                                             return(
-                                                                <option key={index} value={pauta.typepm}> {pauta.idpm} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
+                                                                <option key={index} value={[pauta.idpm, pauta.typepm]}> {pauta.idpm} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
                                                             )
                                                         })
                                                     }

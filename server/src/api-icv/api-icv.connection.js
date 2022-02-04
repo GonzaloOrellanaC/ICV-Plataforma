@@ -3,49 +3,58 @@ import fetch from 'node-fetch'
 import { environment } from '../config';
 import { SiteController } from '../controller';
 import { Site, Machine } from '../models';
-import { machinesOfProject } from '../files'
+import { machinesOfProject, machinesListPms } from '../files'
 /* import { ApiIcv } from '.'; */
 
 /* Leer pautas */
 
+
+
+/* const getMachinesList = () => {
+    return new Promise(resolve => {
+        Machine.find({}, (err, machines) => {
+            if(err) {
+                res.status(502).json({message: 'Error de lectura en Base de Datos'})
+                throw err
+            }
+            resolve(machines)
+        })
+    })
+} */
+
 const leerPautas = (req, res) => {
     let listaPMsConcat = [];
     let i = 0;
-    leerPauta(i, machinesOfProject, listaPMsConcat, res);
+    leerPauta(i, machinesListPms, listaPMsConcat, res);
 }
 
-const leerPauta = async (i, machinesOfProject, listaPMsConcat, res) => {
-    if(i == (machinesOfProject.length)) {
+const leerPauta = async (i, machinesListPms, listaPMsConcat, res) => {
+    if(i == (machinesListPms.length)) {
         res.send(listaPMsConcat);
     }else{
-        let pIDPM = machinesOfProject[i].pIDPM;
+        let pIDPM = machinesListPms[i].pIDPM;
         const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`);
         const listaPMs =  await response.json();
         listaPMsConcat = listaPMsConcat.concat(listaPMs.data);
-        console.log('Concatenación ' + i, listaPMsConcat.length);
         i = i + 1;
-        leerPauta(i, machinesOfProject, listaPMsConcat, res)
+        leerPauta(i, machinesListPms, listaPMsConcat, res)
     }
 }
 
 const getHeaderPauta = async (req, res) => {
     const {body} = req;
-    //console.log(body.idpm, body.typepm);
     const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${body.idpm}&pTypePm=${body.typepm}`);
     const headers = await response2.json();
     if(headers) {
-        //console.log(headers)
         res.send(headers)
     }
 }
 
 const getStructsPauta = async (req, res) => {
     const {body} = req;
-    //console.log(body.idpm, body.typepm);
     const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${body.idpm}&pTypePm=${body.typepm}`);
     const headers = await response3.json();
     if(headers) {
-        //console.log(headers)
         res.send(headers)
     }
 }
@@ -102,37 +111,30 @@ const readAllMachinesFromDb = ( req, res ) => {
 
 /* Leer máquinas por modelo GET - POST */
 const readMachinesByEquid = ( req, res ) => {
-    //console.log(req)
     const { body } = req;
-    console.log(body)
     Machine.find({ equid: body.equid }, (err, machine) => {
         if(err) {
             res.status(502).json({message: 'Error de lectura en Base de Datos'})
             throw err
         }
-        //console.log(machine)
         res.status(200).json(machine)
     })
 }
 
 /* Leer máquinas por modelo GET - POST */
 const readMachinesByModel = ( req, res ) => {
-    //console.log(req)
     const { body } = req;
-    console.log(body)
     Machine.find({ model: body.model, idobra: body.idobra }, (err, sites) => {
         if(err) {
             res.status(502).json({message: 'Error de lectura en Base de Datos'})
             throw err
         }
-        console.log(sites)
         res.status(200).json(sites)
     })
 }
 
 const getMachineByEquid = ( req, res ) => {
     const {body} = req;
-    console.log(body)
 }
 
 /* Leer máquinas */
@@ -140,7 +142,6 @@ const readMachinesFromDb = () => {
     return new Promise(resolve => {
         Machine.find({}, (err, machines) => {
             if(err) {
-                console.log(err)
             }
             resolve(machines)
         })
@@ -156,26 +157,12 @@ const createSiteToSend = () => {
             if( body ) {
                 const readSitesFromDb = await SiteController.readSites();
                 let sitios = [] = body.data;
-                console.log('Sitios', sitios)
                 if(readSitesFromDb.length == sitios.length) {
-                    console.log(readSitesFromDb, sitios)
                     resolve(true)
                 }else{
                     sitios.forEach(async (site, i) => {
-                        console.log('Sitio nro '+(i+1), site)
                         await createMachinesToSend(site.idobra);
                         await SiteController.createSite(site);
-                        /* readSitesFromDb.forEach(async (siteInspector, number) => {
-                            console.log(site, siteInspector);
-                            if(site.idobra === siteInspector.idobra) {
-                                 
-                            }else{
-                                await SiteController.createSite(site);
-                            }
-                            if(number == (readSitesFromDb.length - 1)) {
-                                resolve(true)
-                            }
-                        }) */
                         if(i == (sitios.length - 1)) {
                             resolve(true)
                         }
@@ -227,7 +214,6 @@ const leerArchivo = (type) => {
         if(fs.existsSync(path)) {
             fs.readFile(path, (err, data) => {
                 if(err) {
-                    console.log(err)
                     resolve({
                         state: false,
                         data: {
@@ -254,7 +240,6 @@ const createMachinesToSend = async (pIDOBRA) => {
             let machines = [];
             machines = body.data;
             if(machinesOnDb.length === machines.length) {
-                console.log('No se requiere guardar.');
             }else{
                 machines.forEach(async (machine, index) => { 
                     machine.idpminspeccion = await getIdPmInspection(machine.equid);
@@ -271,10 +256,9 @@ const createMachinesToSend = async (pIDOBRA) => {
                     machine.model = machine.modelo;
                     machine.hourMeter = machine.horometro;
                     let newMachine = await new Machine(machine);
-                    console.log(newMachine)
                     newMachine.save();
                     if(index == (machines.length - 1)) {
-                        console.log('Máquinas guardadas!');
+
                     }
                 })
             }
@@ -287,7 +271,6 @@ const editMachineToSend = async (pIDOBRA) => {
     if( machines ) {
         const body = await machines.json();
         if( body ) {
-            console.log(body)
             let machines = [];
             machines = body.data;
             machines.forEach(async (machine, index) => {
@@ -301,16 +284,14 @@ const editMachineToSend = async (pIDOBRA) => {
                 machine.brand = machine.marca;
                 machine.model = machine.modelo; */
                 machine.hourMeter = machine.horometro;
-                console.log(machine)
                 let machineEdit = await Machine.findOneAndUpdate({equid: machine.equid},{hourMeter: machine.hourMeter}, { new: true, timestamps: false })
-                console.log(machineEdit)
                 if( machineEdit ) {
-                    console.log('Maquina editada')
+
                 }
                 /* let newMachine = await new Machine(machine);
                 newMachine.save(); */
                 if(index == (machines.length - 1)) {
-                    console.log('Máquinas guardadas!');
+
                 }
             })
             
@@ -323,7 +304,6 @@ const sendFileOfMachines = ( req, res ) => {
     try{
         res.status(200).download('../files/machines/machines.json');
     }catch(err) {
-        console.log(err);
         res.status(500).json({
             message: 'Error en la lectura del servidor.'
         })

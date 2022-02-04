@@ -12,6 +12,24 @@ const ReportShema = new Schema({
     updatedBy: {
         type: Schema.Types.String
     },
+    shiftManagerApprovedBy: {
+        type: Schema.Types.String
+    },
+    shiftManagerApprovedDate: {
+        type: Schema.Types.Date
+    },
+    chiefMachineryApprovedBy: {
+        type: Schema.Types.String
+    },
+    chiefMachineryApprovedDate: {
+        type: Schema.Types.Date
+    },
+    sapExecutiveApprovedBy: {
+        type: Schema.Types.String
+    },
+    sapExecutiveApprovedDate: {
+        type: Schema.Types.Date
+    },
     enabled: {
         type: Schema.Types.Boolean,
         default: true
@@ -37,11 +55,14 @@ const ReportShema = new Schema({
     datePrev: {
         type: Schema.Types.Date
     },
+    endPrev: {
+        type: Schema.Types.Date
+    },
     level: {
         type: Schema.Types.Number
     },
     endReport: {
-        type: Schema.Types.Number
+        type: Schema.Types.Date
     },
     dateInit: {
         type: Schema.Types.Date
@@ -51,6 +72,9 @@ const ReportShema = new Schema({
     },
     idIndex: {
         type: Schema.Types.Number
+    },
+    idPm: {
+        type: Schema.Types.String
     }
 },
 {

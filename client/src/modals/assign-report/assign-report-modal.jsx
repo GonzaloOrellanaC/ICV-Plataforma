@@ -85,11 +85,15 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         setCloseType(false)
         getUsers();
         //console.log(report)
-        if(state === 'Por asignar') {
-            setColorState('#E99797');
+        if(state === 'Asignar') {
+            setColorState('#DE4343');
         }else if(state === 'En proceso') {
-            setColorState('#F5C69C');
-        }   
+            setColorState('#F2994A');
+        }else if(state === 'Por cerrar') {
+            setColorState('#F2C94C');
+        }else if(state === 'Completadas') {
+            setColorState('#27AE60');
+        }     
     }, [])
     
     return(

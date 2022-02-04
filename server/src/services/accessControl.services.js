@@ -27,14 +27,10 @@ const initAccessControl = async () => {
         const findRoles = await Roles.findOne({ name: environment.roles[0].name });
         const adminResult = await getAdminExist();
         const findSites = await getSites();
-        console.log('Sitios: ====>>>>', findSites)
-        console.log('Administrador existente: ', adminResult)
         if(findSites.length == 0) {
             const sites = await ApiIcv.createSiteToSend();
-            console.log(sites)
         }
         if(adminResult.length == 0) {
-            console.log('Se deberá crear administrador ----->')
             createAdminDefault();
         }
         if (!findRoles) {
@@ -42,14 +38,12 @@ const initAccessControl = async () => {
                 let roleCreated = await createRole(role.name, role.dbName);
                 if(roleCreated) {
                     let result = `${role.name} created`;
-                    console.log(result);
                 }
                 if(index == (environment.roles.length - 1)) {
                     environment.permisos.forEach(async (permiso, i) => {
                         let permissionCreated = await createPermission(permiso.name, permiso.resources);
                         if(permissionCreated) {
                             let result2 = `${permiso.name} created`;
-                            console.log(result2);
                         }
                         if(i == (environment.permisos.length - 1)) {
                             
@@ -78,11 +72,8 @@ const createAdminDefault = async () => {
     try {
         let newUser = await UserServices.createUser(environment.adminDefaultData, environment.adminDefaultData.password);
         if(newUser) {
-            console.log('Administrador creado.')
-            console.log(newUser);
         }
     } catch(error) {
-        console.log(error)
     }
 }
 
@@ -93,7 +84,6 @@ const getAdminExist = () => {
             resolve(adminExist);
         })
     } catch (err) {
-        console.log('error al ubicar admin: ', err)
     }
 }
 
@@ -106,7 +96,6 @@ const getSites = () => {
             
         })
     } catch (err) {
-        console.log('error al ubicar admin: ', err)
     }
 }
 

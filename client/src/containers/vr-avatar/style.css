@@ -3,10 +3,30 @@ model-viewer {
 }
 
 .image {
-    height: 100% ;
+    height: 0px;
     width: 100% ; 
-    transition: '2s'; 
-    position: 'absolute'; 
+    transition: opacity 0.5s;
+    opacity: 0;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    /*transition: '2s'; */
+    /* position: 'absolute'; 
     top: 0px; 
-    left: 0px
+    left: 0px */
 }
+
+.cont {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+/* .imageAppearing {
+    height: 100% ;
+    opacity: 1
+} */

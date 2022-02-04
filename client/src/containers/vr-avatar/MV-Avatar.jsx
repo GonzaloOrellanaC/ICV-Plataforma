@@ -2,7 +2,7 @@ import '@google/model-viewer';
 import './style.css'
 import { Box, Button, Drawer, Fab, IconButton, SwipeableDrawer } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import { LoadingModal } from '../../modals';
+import { ImageTransitionModal, LoadingModal } from '../../modals';
 import { FilesToStringDatabase, machinesPartsDatabase } from '../../indexedDB';
 import { BottomNavbar } from '../../containers';
 import { Close, Menu } from '@material-ui/icons';
@@ -17,6 +17,11 @@ const MVAvatar = ({machine}) => {
     const [ listaPartes, setListaPartes ] = useState([]);
     const [ title, setTitle ] = useState('');
     const [ isSelected, setIsSelected ] = useState('');
+    const [ openImage, setOpenImage ] = useState(false);
+    const [ imagePath, setImagePath ] = useState('');
+    const [ cameraOrbit, setCameraOrbit ] = useState("45deg 81deg 100m")
+    const [ scale, setScale ] = useState("0.009 0.009 0.009")
+    const [ cameraTarget, setCameraTarget ] = useState("auto auto auto")
 
     const readFileDatabase = async () => {
         setIsSelected('primary')
@@ -67,20 +72,33 @@ const MVAvatar = ({machine}) => {
         readFileDatabase();
         setModelViewer(document.querySelector("model-viewer#machine"))
         let mv = document.querySelector("model-viewer#machine");
+        mv.addEventListener('model-visibility', (e) => {
+            /* console.log(e)
+            setTimeout(() => {
+                document.getElementById('image').style.opacity = '0';
+                document.getElementById('image').style.height = '0px';
+                
+                console.log('cargado!!')
+                setOpenLoader(false);
+                setTimeout(() => {
+                    //setOpenImage(false);
+                    mv.cameraControls = true;
+                }, 2500);
+            }, 2000); */
+        })
         mv.addEventListener('load', () => {
             setOpenLoader(false)
-            const changeColor = async (event) => {
-                //console.log(event)
-                /* let material = mv.materialFromPoint(event.clientX, event.clientY);
-                if(material != null) {
-                    console.log(material);
-                    
-                } */
-            }
-            mv.addEventListener("click", changeColor);
+            mv.cameraControls = true;
+            document.getElementById('image').style.opacity = '0';
             setTimeout(() => {
-                mv.cameraControls = true;
+                document.getElementById('machine').style.opacity = '1';
+                document.getElementById('image').style.height = '0px';
+                document.getElementById('machine').style.height = '100%';
             }, 2000);
+
+            mv.addEventListener('click', (e) => {
+                console.log(e)
+            })
         })
         mv.addEventListener('progress', (e) => {
             setProgress(e.detail.totalProgress * 130)
@@ -111,43 +129,52 @@ const MVAvatar = ({machine}) => {
     };
 
     const getNewElement =  (element, index) => {
-        console.log(element)
-        listaPartes.forEach((e, i) => {
-            if(i === index) {
-                e.isSelected = 'primary'
-            }else{
-                e.isSelected = ''
-            };
-            if(i === (listaPartes.length - 1)) {
-                setListaPartes(listaPartes)
-            }
-        })
-        if(element.name === 'Chasis') {
-            document.getElementById('imageLoad')
-        }else{
-            setIsSelected('')
-            setOpenLoader(true)
-            setProgress(0)
-        }
-        /* setIsSelected('')
-        setOpenLoader(true)
-        setProgress(0) */
         handleDrawerClose()
-        setTimeout(async() => {
-            let db = await FilesToStringDatabase.initDb3DFiles();
-            let data = await FilesToStringDatabase.buscarPorNombreModelo(element.nameModel, db.database);
-            var json = data.data;
-            var blob = new Blob([json]);
-            var url = URL.createObjectURL(blob);
+        modelViewer.cameraOrbit = cameraOrbit;
+        setTimeout(() => {
             setTitle(changeName(element.name))
-            setNewMachine(url);
+            if(element.brand === 'CATERPILLAR') {
+                console.log(element.brand, element.model, element.name)
+                let imagePath = `../assets/transiciones/${element.brand}/${element.model}/Pantalla_de_carga_${element.name}.png`;
+                setImagePath(imagePath);
+                
+                document.getElementById('machine').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('machine').style.height = '0px';
+                    document.getElementById('image').style.height = '80%';
+                    document.getElementById('image').style.opacity = '1';
+                }, 500);
+            }else{
+                setOpenLoader(true)
+            }
+            
+                
+            listaPartes.forEach((e, i) => {
+                if(i === index) {
+                    e.isSelected = 'primary'
+                }else{
+                    e.isSelected = ''
+                };
+                if(i === (listaPartes.length - 1)) {
+                    setListaPartes(listaPartes)
+                }
+            })
+            setTimeout(async() => {
+                let db = await FilesToStringDatabase.initDb3DFiles();
+                let data = await FilesToStringDatabase.buscarPorNombreModelo(element.nameModel, db.database);
+                var json = data.data;
+                var blob = new Blob([json]);
+                var url = URL.createObjectURL(blob);
+                
+                setNewMachine(url);
+            }, 4000);
         }, 1000);
     }
 
     const setPreview = () => {
+        setOpenLoader(true)
         handleDrawerClose();
         setIsSelected('primary')
-        setOpenLoader(true)
         setProgress(0);
         setTimeout( () => {
             readFileDatabase();
@@ -160,12 +187,7 @@ const MVAvatar = ({machine}) => {
                 <Drawer 
                     sx={{
                         width: '30%',
-                        //flexShrink: 0,
                         backgroundColor: 'transparent'
-                        /* '& .MuiDrawer-paper': {
-                        width: '30%',
-                        boxSizing: 'border-box',
-                        }, */
                     }}
                     disableBackdropTransition={!iOS} 
                     disableDiscovery={iOS} 
@@ -209,18 +231,20 @@ const MVAvatar = ({machine}) => {
                     </div>
 
                 </Drawer>  
+                
+                <img  src={imagePath} id="image" className='image' height={640} width={480}/>
                 <model-viewer
                     id="machine"
                     src={newMachine}
-                    style={{height: '100%', width: '100%', float: 'left'}}
-                    camera-orbit="45deg 90deg 2.5m"
-                    scale="0.001 0.001 0.001"
+                    style={{height: '100%', width: '100%', backgroundColor: '#414646', opacity: 1, transition: 'opacity 0.5s' }}
+                    camera-target={cameraTarget}
+                    camera-orbit={cameraOrbit}
+                    scale={scale}
                     alt="A Material Picking Example"
-                    //auto-rotate
                 >
 
                 </model-viewer>
-                {/* <img src="../assets/images3D/Chasis.png" alt="" id={'imageLoad'} className={'image'} height={'100%'} width={'100%'}/> */}
+                
                 <LoadingModal open={openLoader} progress={progress} loadingData={'Preparando vista 3D...'} withProgress={true}/>
                 <div style={{position: 'absolute', bottom: 0, left: 0, width: '100%', backgroundColor: 'transparent', textAlign: 'center'}}>
                     <div style={{width: '60%', backgroundColor: 'transparent', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto'}}>

@@ -5,7 +5,6 @@ const createUser = async  (req, res, next) => {
     
     const { body: { userData, password } } = req
 
-    console.log('Respuestas: ',userData, 'Password: ', password)
 
     if (!userData.email || !password) {
         //return res.status(400).end(errorMsg.informationMissing)
@@ -14,7 +13,6 @@ const createUser = async  (req, res, next) => {
     try {
         const registerUser = await UserServices.createUser(userData, password)
         if(registerUser) {
-            console.log('Se envía email')
             const emailSenderState = await EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password)
             //EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password )
             //const emailSenderState = await EmailMailgunServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password)
@@ -26,7 +24,6 @@ const createUser = async  (req, res, next) => {
         }
         //return res.status(200).json({ user: registerUser.generateJWT() })
     } catch (error) {
-        console.log(error)
         return res.status(400).end(error.message)
     }
 }
@@ -35,17 +32,14 @@ const editUser = async  (req, res, next) => {
     
     const { body: { userData, id } } = req
 
-    //console.log('Respuestas: ',userData)
 
     try {
         const editingUser = await UserServices.editUser(userData, id);
-        console.log(editingUser)
 
         res.json(editingUser)
         
         //return res.status(200).json({ user: registerUser.generateJWT() })
     } catch (error) {
-        console.log(error)
         return res.status(400).end(error.message)
     }
 }
@@ -54,7 +48,6 @@ const findByRut = async  (req, res, next) => {
     
     const { body: { rut } } = req
 
-    //console.log('Respuestas: ',userData)
 
         try {
             await Users.find({rut: rut}, (err, user) => {
@@ -66,8 +59,27 @@ const findByRut = async  (req, res, next) => {
                 }
             });
         } catch (error) {
-            console.log(error)
             //return res.status(400).end(error.message)
+        }
+    
+}
+
+const findByRole = async  (req, res, next) => {
+    
+    const { body: { role } } = req
+
+
+        try {
+            await Users.find({role: role}, (err, users) => {
+                if(err) throw err;
+                if(users.length > 0) {
+                    res.send(users)
+                }else{
+                    res.send(false)
+                }
+            });
+        } catch (error) {
+
         }
     
 }
@@ -75,7 +87,6 @@ const findByRut = async  (req, res, next) => {
 const readAllUsers = (req, res, next) => {
     try {
         Users.find({}, (err, users) => {
-            console.log('Usuarios: ', users)
             res.json(users)
         });
     } catch (err) {
@@ -85,10 +96,8 @@ const readAllUsers = (req, res, next) => {
 
 const readUser = (req, res, next) => {
     const { body } = req;
-    //console.log(body)
     try{
         Users.findById(body.id, (err, user) => {
-            //console.log('Usuario: ', user)
             res.json(user)
         });
     }catch (err) {
@@ -96,18 +105,6 @@ const readUser = (req, res, next) => {
     }
 }
 
-/* const getUaserId = (req, res, next) => {
-    const { body } = req;
-    //console.log(body)
-    try{
-        Users.findById(body.email, (err, user) => {
-            //console.log('Usuario: ', user)
-            res.json(user)
-        });
-    }catch (err) {
-        console.log(err)
-    }
-} */
 
 const deleteUser = (req, res, next) => {
     const { body } = req;
@@ -126,5 +123,6 @@ export default {
     readUser,
     deleteUser,
     editUser,
-    findByRut
+    findByRut,
+    findByRole
 }

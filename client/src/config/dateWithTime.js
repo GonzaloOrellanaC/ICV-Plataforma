@@ -16,7 +16,6 @@ export default (time) => {
 
 
     let day = new Date(time).getDay();
-    console.log(day, new Date(toDay).getDay())
     let dayName;
     if((day == new Date(toDay).getDay())&&(day < (toDay - 259200000))) {
         dayName = 'Hoy'
@@ -68,9 +67,13 @@ export default (time) => {
     }else if(month == 11) {
         monthName = 'Diciembre'
     } 
-    if((dayName === 'Hoy')||(dayName === 'Ayer')) {
-        return(dayName + ' ' + hr + ':' + min)
+    if(!time) {
+        return 'Sin información'
     }else{
-        return (dayName + ' ' + date + ' DE ' + monthName + ' ' + hr + ':' + min)
+        if((dayName === 'Hoy')||(dayName === 'Ayer')) {
+            return(dayName + ' ' + hr + ':' + min)
+        }else{
+            return (dayName + ' ' + date + ' DE ' + monthName + ' ' + hr + ':' + min)
+        }
     }
 }

@@ -22,6 +22,15 @@ const client = mailgun.client({
 })
 
 
+
+let platformURL;
+
+if(environment.state === 'development') {
+    platformURL = 'http://localhost:3000'
+}else{
+    platformURL = environment.platform.baseUrl
+}
+
 /**
  * Function to send an email
  * @param {*} from Sender of the email, in most cases this will be configured from environment
@@ -35,7 +44,7 @@ const sendEmail = (typeEmail, fullName, language, email, password) => {
         let data = {
             logoAlt: 'Logo',
             fullName: fullName,
-            platformURL: 'https://icv-plataforma-mantencion.azurewebsites.net',
+            platformURL: platformURL,
             platformName: 'ICV Platform',
             email: email,
             //resetLink: 'https://tesso.cl',
@@ -92,10 +101,10 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
         const html = template({
             fullName,
             email,
-            resetLink: environment.platform.baseUrl + environment.platform.routes.resetPassword + token,
+            resetLink: platformURL + environment.platform.routes.resetPassword + token,
             logoRoute: environment.platform.logoRoute,
             logoAlt: environment.platform.logoAlt,
-            platformURL: environment.platform.baseUrl,
+            platformURL: platformURL,
             platformName: environment.platform.name
         })
         await sendEmail(environment.mailApi.baseSender, [email], dataMsg.forgotPasswordSubject(environment.platform.name), html)
@@ -104,8 +113,126 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
         throw new Error(errorMsg.forgotPasswordEmail)
     }
 }
+/**
+ * Function to send an email
+ * @param {*} from Sender of the email, in most cases this will be configured from environment
+ * @param {*} to Recipient of the email
+ * @param {*} subject Subject of the email
+ * @param {*} html Content of the email in a string following an html format
+ * @returns Result from the creation of the email
+ */
+ const sendEmailEndOfWork = (typeEmail, fullNameWorker, language, orderNumber, email) => {
+    return new Promise(async resolve => {
+        try{
+            let data = {
+                fullNameWorker: fullNameWorker,
+                orderNumber: orderNumber,
+                platformName: 'ICV Platform',
+                logoRoute: environment.platform.logoRoute,
+                logoAlt: environment.platform.logoAlt,
+    
+            }
+            
+            //let transporter = nodemailer.createTransport(mailInfo);
+            let from = `Notificación de Orden #${orderNumber} <${environment.mailApi.baseSender}>`
+            let to = email;
+            let subject = "Aviso término de jornada con actividades en Orden #"+orderNumber+" pendientes"
+            let htmlFile = await fsPromises.readFile(path.join(`src/services/email.templates/${typeEmail}.${language}.html`));
+            let template = handlebars.compile(htmlFile.toString());
+            let html = template(data);
+    
+            const messageData = {
+                from: from,
+                to: to,
+                subject: subject,
+                html: html
+            }
+        
+            if (!from || !to || !subject || !html) {
+                throw new Error(errorMsg.sendEmail)
+            }
+            client.messages.create(
+                environment.mailApi.domain,
+                messageData
+            ).then((res => {
+                console.log(res)
+                resolve(true)
+            })).catch(err => {
+                console.log(err);
+                resolve(false)
+            })
+        }catch (err) {
+            console.log(err)
+        }
+        
+    })
+}
 
+
+/**
+ * Function to send an email
+ * @param {*} from Sender of the email, in most cases this will be configured from environment
+ * @param {*} to Recipient of the email
+ * @param {*} subject Subject of the email
+ * @param {*} html Content of the email in a string following an html format
+ * @returns Result from the creation of the email
+ */
+ const sendEmailEndOfOrder = (typeEmail, numberType, fullNameWorker, language, orderNumber, email) => {
+    return new Promise(async resolve => {
+        try{            
+            let contextMail = new String
+            if(numberType == 1) {
+                contextMail = 'termino de ejecución';
+            }else{
+                contextMail = 'aprobación de nivel ' + numberType;
+            }
+
+            let data = {
+                fullNameWorker: fullNameWorker,
+                orderNumber: orderNumber,
+                platformName: 'ICV Platform',
+                logoRoute: environment.platform.logoRoute,
+                logoAlt: environment.platform.logoAlt,
+                contextMail: contextMail
+            }
+            
+            //let transporter = nodemailer.createTransport(mailInfo);
+            let from = `Notificación de Orden #${orderNumber} <${environment.mailApi.baseSender}>`
+            let to = email;
+            let subject = "Aviso de "+ contextMail + " de Orden #"+orderNumber
+            let htmlFile = await fsPromises.readFile(path.join(`src/services/email.templates/${typeEmail}.${language}.html`));
+            let template = handlebars.compile(htmlFile.toString());
+            let html = template(data);
+    
+            const messageData = {
+                from: from,
+                to: to,
+                subject: subject,
+                html: html
+            }
+        
+            if (!from || !to || !subject || !html) {
+                throw new Error(errorMsg.sendEmail)
+            }
+            client.messages.create(
+                environment.mailApi.domain,
+                messageData
+            ).then((res => {
+                console.log(res)
+                resolve(true)
+            })).catch(err => {
+                console.log(err);
+                resolve(false)
+            })
+        }catch (err) {
+            console.log(err)
+        }
+        
+    })
+}
 export default {
     sendEmail,
-    forgotPasswordEmail
+    forgotPasswordEmail,
+    sendEmailEndOfWork,
+    sendEmailEndOfOrder
 }

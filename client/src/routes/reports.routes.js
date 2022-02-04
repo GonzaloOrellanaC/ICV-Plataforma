@@ -65,5 +65,13 @@ export default {
             idpm
         };
         return axios.post('/reports/getReportByIdpm', requestBody);
+    },
+    getReportsByDateRange: (dateInit, dateEnd, reportType) => {
+        const requestBody = {
+            dateInit,
+            dateEnd,
+            reportType
+        };
+        return axios.post('/reports/getReportsByDateRange', requestBody);
     }
 }

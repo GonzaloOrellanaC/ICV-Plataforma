@@ -32,6 +32,7 @@ const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgres
     const [ indexActivity, setIndexActivity ] = useState();
     
     useEffect(() => {
+        console.log(pauta)
         readData();
     }, []);
 
@@ -42,6 +43,7 @@ const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgres
                 return r;
             }, {});
             if(group) {
+                console.log(group)
                 let groupData;
                 if(!executionReport.group) {
                     executionReport.group = group;

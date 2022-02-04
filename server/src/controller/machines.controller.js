@@ -1,11 +1,9 @@
 import { Machine, MachineOfProject, Roles } from '../models'
 
 const readMachineByModel = (model) => {
-    //console.log(model)
     return new Promise(resolve => {
         try{
             MachineOfProject.find({model: model}, (err, machine) => {
-                //console.log('Maquina: ', machine)
                 if(err) {
                     resolve(false)
                 }
@@ -23,13 +21,11 @@ const readMachineByModel = (model) => {
 }
 
 const createMachine = (machine) => {
-    //console.log(machine)
     machine.machineId = machine.id
     return new Promise(async resolve => {
         try {
             const registreMachine = await new MachineOfProject(machine);
             registreMachine.save();
-            console.log(registreMachine);
             if(registreMachine) {
                 resolve(true)
             }

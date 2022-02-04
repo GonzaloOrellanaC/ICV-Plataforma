@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {Box, Grid, Card, makeStyles, Toolbar, IconButton, ListItem, ListItemIcon, ListItemText, Checkbox, Chip} from '@material-ui/core';
 import { machinesRoutes } from '../../routes';
-import { AssignReportModal, ReviewReportModal } from '../../modals'
+import { AssignReportModal, PdfModal, ReviewReportModal } from '../../modals'
 import { useHistory } from "react-router-dom";
 import './style.css';
 import { date, dateSimple } from "../../config";
@@ -10,6 +10,9 @@ const ReportsList = ({list, reloadData}) => {
     const [ reportData, setReportData ] = useState(null);
     const [ reportDataReview, setReportDataReview ] = useState(null);
     const [ openModalState, setOpenModalState ] = useState(false);
+    const [ openReviewModalState, setOpenReviewModalState ] = useState(false);
+    const [ openPdfModal , setOpenPdfModal ] = useState(false);
+    //const [ lista , setLista ] = useState();
     const history = useHistory();
 
     console.log(list)
@@ -25,15 +28,26 @@ const ReportsList = ({list, reloadData}) => {
     }
 
     const onlyCloseReview = () => {
-        setReportDataReview(false);
+        setReportDataReview(null);
     }
     
     const onlyClose = () => {
         setOpenModalState(false);
     }
+
+    const openPdf = (report) => {
+        setReportData(report);
+        setOpenPdfModal(true);
+    }
+
+    const openReviewModal = (report) => {
+        setReportDataReview(report);
+        setOpenReviewModalState(true)
+    }
     
 
-    list.forEach(item => {
+    list.forEach((item, i) => {
+        console.log(item)
         item.date = dateSimple(item.datePrev);
         item.end = dateSimple(item.endReport);
         item.init = dateSimple(item.dateInit);
@@ -42,6 +56,8 @@ const ReportsList = ({list, reloadData}) => {
             item.hourMeter = (Number(data.data[0].hourMeter)/3600000);
         })
     });
+
+
 
     const lista = list.reverse()
 
@@ -75,9 +91,9 @@ const ReportsList = ({list, reloadData}) => {
                 <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                     <p > <strong>Obra</strong> </p>
                 </Grid>
-                {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                    <p > <strong>Descargar</strong> </p>
-                </Grid> */}
+                <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                    <p > <strong>Acción</strong> </p>
+                </Grid>
                 {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                     <p > <strong>Ver</strong> </p>
                 </Grid> */}
@@ -117,12 +133,28 @@ const ReportsList = ({list, reloadData}) => {
                             <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
                                 <p> {item.idIndex} </p>
                             </Grid>
+                            {item.enabled ? 
                             <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
                                 <p> <button onClick={()=>openModal(item)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
+                            </Grid> :
+                            <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
+                                <p> <button disabled style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Terminado</button> </p>
                             </Grid>
+                            }
                             <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                                 <p> <a title={item.siteName}>{item.site}</a> </p>
                             </Grid>
+                    
+                            <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
+                                <p> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
+                                {!item.enabled &&
+                                    <p> <button disabled onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Imprimr</button> </p>
+                                }
+                            </Grid> 
+                            {/* <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
+                                <p> <button disabled onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Imprimr</button> </p>
+                            </Grid> */}
+                            
                             {/* <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                                 <p>  </p>
                             </Grid> */}
@@ -140,7 +172,12 @@ const ReportsList = ({list, reloadData}) => {
             }
             {
                 
-                reportDataReview && <ReviewReportModal open={openModalState} report={reportData} onlyClose={onlyCloseReview}/>
+                reportDataReview && <ReviewReportModal open={openReviewModalState} report={reportDataReview} onlyClose={onlyCloseReview}/>
+                
+            }
+            {
+                
+                reportData && <PdfModal open={openPdfModal} reportData={reportData} onlyClose={onlyCloseReview}/>
                 
             }
         </div>

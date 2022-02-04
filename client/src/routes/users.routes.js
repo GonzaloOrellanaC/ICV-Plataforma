@@ -35,5 +35,11 @@ export default {
             rut
         }
         return axios.post('/users/findByRut', requestBody)
+    },
+    findByRole: (role) => {
+        const requestBody = {
+            role
+        }
+        return axios.post('/users/findByRole', requestBody)
     }
 }

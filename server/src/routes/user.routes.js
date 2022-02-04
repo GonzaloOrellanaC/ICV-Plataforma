@@ -9,5 +9,6 @@ router.get('/getUsers', UserController.readAllUsers)
 router.post('/getUser', UserController.readUser)
 router.post('/deleteUser', UserController.deleteUser)
 router.post('/findByRut', UserController.findByRut)
+router.post('/findByRole', UserController.findByRole)
 
 export default router

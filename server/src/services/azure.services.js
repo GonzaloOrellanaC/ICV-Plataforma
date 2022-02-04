@@ -7,7 +7,7 @@ const createContainerIfNotExist = (containerName) => {
     return new Promise(resolve => {
         blobServiceClient.createContainer(containerName)
         .then(ele=>{
-            console.log(ele)
+
             resolve(true)
         },err => {
             resolve(false)
@@ -28,9 +28,9 @@ const uploadImageProfile = async (req, res) => {
             const containerName = `users`;
             const createContainer = await createContainerIfNotExist(containerName);
             if(createContainer) {
-                console.log('Creado container')
+
             }else{
-                console.log('Container ya existe')
+
             };
             let stream = image.data;
             let mimetype = image.mimetype.replace('image/', '.');
@@ -44,7 +44,7 @@ const uploadImageProfile = async (req, res) => {
             if(uploadBlobResponse) {
                 const blobClient = containerClient.getBlobClient(blobName);
                 const downloadBlockBlobResponse = blobClient.url
-                console.log(downloadBlockBlobResponse);
+
                 res.send({
                     status: true,
                     message: 'File is uploaded',
@@ -55,7 +55,7 @@ const uploadImageProfile = async (req, res) => {
             }
         }
     } catch(err) {
-        console.log(err)
+
         res.status(500).send(err);
     }
 }
@@ -73,9 +73,9 @@ const uploadImageReport = async (req, res) => {
             const containerName = `reports`;
             const createContainer = await createContainerIfNotExist(containerName);
             if(createContainer) {
-                console.log('Creado container')
+
             }else{
-                console.log('Container ya existe')
+
             };
             let stream = image.data;
             let mimetype = image.mimetype.replace('image/', '.');
@@ -89,7 +89,7 @@ const uploadImageReport = async (req, res) => {
             if(uploadBlobResponse) {
                 const blobClient = containerClient.getBlobClient(blobName);
                 const downloadBlockBlobResponse = blobClient.url
-                console.log(downloadBlockBlobResponse);
+
                 res.send({
                     status: true,
                     message: 'File is uploaded',
@@ -100,7 +100,7 @@ const uploadImageReport = async (req, res) => {
             }
         }
     } catch(err) {
-        console.log(err)
+
         res.status(500).send(err);
     }
 }
@@ -117,9 +117,9 @@ const uploadImage = async (req, res) => {
             let image = req.files.image;
             const createContainer = await createContainerIfNotExist(containerName);
             if(createContainer) {
-                console.log('Creado container')
+
             }else{
-                console.log('Container ya existe')
+
             };
             let stream = image.data;
             let mimetype = image.mimetype.replace('image/', '.');
@@ -133,7 +133,7 @@ const uploadImage = async (req, res) => {
             if(uploadBlobResponse) {
                 const blobClient = containerClient.getBlobClient(blobName);
                 const downloadBlockBlobResponse = blobClient.url
-                console.log(downloadBlockBlobResponse);
+
                 res.send({
                     status: true,
                     message: 'File is uploaded',
@@ -144,7 +144,7 @@ const uploadImage = async (req, res) => {
             }
         }
     } catch(err) {
-        console.log(err)
+
         res.status(500).send(err);
     }
 

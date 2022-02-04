@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
-import { useStylesTheme } from '../../config'
+import { getExecutivesSapEmail, useStylesTheme } from '../../config'
 import { useHistory, useParams } from 'react-router-dom'
 import { pautasDatabase, executionReportsDatabase, reportsDatabase } from '../../indexedDB'
 import { PautaDetail } from '../../containers'
@@ -21,6 +21,7 @@ const ActivitiesDetailPage = () => {
 
     useEffect(() => {
         let report = JSON.parse(id);
+        console.log(report)
         setReportAssigned(report)
         getPauta();
         let level = 0;
@@ -46,19 +47,20 @@ const ActivitiesDetailPage = () => {
     }, [])
 
     const getPauta = async () => {
+        let report = JSON.parse(id);
         let db = await pautasDatabase.initDbPMs();
+        let pautaIdpm = getIdpm(report.getMachine.model);
         if(db) {
-            let pautaIdpm = getIdpm(JSON.parse(id).getMachine.model);
-            setReportAssignment(JSON.parse(id).usersAssigned[0]);
-
+            setReportAssignment(report.usersAssigned[0]);
             let pautas = await pautasDatabase.consultar(db.database);
             if(pautas) {
-                let pautaFiltered = pautas.filter((info) => {if((info.typepm === JSON.parse(id).guide)&&(pautaIdpm===info.idpm)) {return info}});
+                let pautaFiltered = pautas.filter((info) => {/* console.log(info.typepm , JSON.parse(id).guide, pautaIdpm, info.idpm); */if((info.typepm === report.guide)&&(report.idPm===info.idpm)||(info.typepm === report.guide)&&(pautaIdpm===info.idpm)) {return info}});
+                console.log(pautaFiltered)
                 let exDb = await executionReportsDatabase.initDb();
                 if( exDb ) {
                     let responseDatabase = await executionReportsDatabase.consultar(exDb.database);
                     if( responseDatabase ) {
-                        let executionReportResponse = responseDatabase.filter((res) => { if(JSON.parse(id)._id === res.reportId) {return res}})
+                        let executionReportResponse = responseDatabase.filter((res) => { if(report._id === res.reportId) {return res}})
                         setExecutionReport(executionReportResponse[0])
                         setPauta(pautaFiltered[0]);
                     }
@@ -101,6 +103,7 @@ const ActivitiesDetailPage = () => {
     const sendToNext = async (okToSend) => {
         if(okToSend) {
             if(confirm('Se enviará información. ¿Desea confirmar?')) {
+                let emails = await getExecutivesSapEmail()
                 let report = JSON.parse(id);
                 reportsDatabase.initDbReports().then(db => {
                     reportsDatabase.consultar(db.database).then(response => {
@@ -108,40 +111,74 @@ const ActivitiesDetailPage = () => {
                         r = response;
                         let filtered = response.filter(item => {if(report._id === item._id) {return item}});
                         let reportToLoad = filtered[0]
-                        reportToLoad.level = reportLevel + 1;
+                        reportToLoad.level = reportLevel + 1;    
+                        reportToLoad.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`;            
                         if(reportToLoad.level == 1) {
+                            reportToLoad.emailing = "termino-orden-1";
                             reportToLoad.endReport = Date.now();
-                            report.endReport = reportToLoad.endReport;
+                            reportToLoad.endReport = reportToLoad.endReport;
+                        }else if(reportToLoad.level == 2) {
+                            reportToLoad.emailing = "termino-orden-2";
+                            reportToLoad.shiftManagerApprovedBy = localStorage.getItem('_id');
+                            reportToLoad.shiftManagerApprovedDate = Date.now();
                         }else if(reportToLoad.level == 3) {
-                            report.state = 'Por cerrar'
+                            reportToLoad.emailing = "termino-orden-3";
+                            reportToLoad.state = 'Por cerrar'
+                            reportToLoad.chiefMachineryApprovedBy = localStorage.getItem('_id');
+                            reportToLoad.chiefMachineryApprovedDate = Date.now();
                         }else if(reportToLoad.level == 4) {
-                            report.state = 'Completadas';
-                            report.enabled = false;
-                            report.dateClose = Date.now();
-                            reportToLoad.dateClose = report.dateClose;
+                            reportToLoad.state = 'Completadas';
+                            reportToLoad.enabled = false;
+                            reportToLoad.dateClose = Date.now();
+                            reportToLoad.sapExecutiveApprovedBy = localStorage.getItem('_id');
                         }
-                        reportToLoad.state = report.state;
-                        reportToLoad.enabled = report.enabled;
-                        report.level = reportToLoad.level;
-                        //console.log(report)
+                        reportToLoad.emailsToSend = emails;
                         reportsDatabase.actualizar(reportToLoad, db.database).then(async res => {
                             if(navigator.onLine) {
                                 if(res) {
-                                    let r = await reportsRoutes.editReport(report);
+                                    let r = await reportsRoutes.editReport(reportToLoad);
                                     if(r) {
                                         alert('Información enviada');
                                         history.goBack();
                                     }
                                 }
                             }else{
-                                alert('Información actualizada en browser. Lista a enviar una vez cuente con conexión a internet.')
+                                alert('Información actualizada en dispositivo. No olvide sincronizar una vez cuente con conexión a internet.')
                             }
-                        })
+                        }) 
                     })
                 })
             }
         }else{
             alert('Orden no se encuantra finalizada. Revise e intente nuevamente.')
+        }
+    }
+
+    const terminarjornada = async () => {
+        let report = JSON.parse(id)
+        let db = await reportsDatabase.initDbReports();
+        let emails = await getExecutivesSapEmail();
+        let reports = await reportsDatabase.consultar(db.database);
+        let reportSelected = reports.filter((r) => {if(r._id === report._id) {return r}});
+        let usersAssigned = new Array();
+        usersAssigned = reportSelected[0].usersAssigned;
+        let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === localStorage.getItem('_id')){}else{return user}});
+        report.usersAssigned = usersAssignedFiltered;
+        report.state = "Asignar";
+        report.emailing = "termino-jornada";
+        report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`;
+        report.emailsToSend = emails;
+        let reportActualized = await reportsDatabase.actualizar(report, db.database);
+        if(reportActualized) {
+            if(navigator.onLine) {
+                let actualiza = await reportsRoutes.editReport(report);
+                if(actualiza) {
+                    alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.');
+                    history.goBack();
+                }
+            }
+        }else{
+            alert('Ha ocurrido un error.')
         }
     }
 
@@ -164,6 +201,11 @@ const ActivitiesDetailPage = () => {
                                         </h1>
                                         
                                         <div style={{position: 'absolute', right: 10, width: '50%', textAlign: 'right'}}>
+                                            {/* <div style={{width: '100%', position: 'relative', right: 50, display: 'block'}}>
+                                                <Button variant="contained" color={'primary'} style={{ borderRadius: 50 }} onClick={()=>{endReport()}}>
+                                                    Enviar
+                                                </Button>
+                                            </div> */}
                                             <div style={{width: '100%', position: 'relative', right: 10, display: 'block'}}>
                                                 <div style={{float: 'right', width: '40%', marginTop: 10, textAlign: 'left'}}>
                                                     <LinearProgress variant="determinate" value={progress} style={{width: '100%'}}/>
@@ -196,8 +238,16 @@ const ActivitiesDetailPage = () => {
                             </div>
                             <div style={{width: '98%'}}>
                                 {
-                                    pauta && <PautaDetail height={'calc(100vh - 300px)'} reportAssigned={reportAssigned} pauta={pauta} executionReport={executionReport} reportLevel={reportLevel} reportAssignment={reportAssignment} setProgress={setProgress}/>
+                                    pauta && <PautaDetail height={'calc(100vh - 380px)'} reportAssigned={reportAssigned} pauta={pauta} executionReport={executionReport} reportLevel={reportLevel} reportAssignment={reportAssignment} setProgress={setProgress}/>
                                 }
+                            </div>
+                            <div style={{width: '98%', marginTop: 20, textAlign: 'right'}}>
+                                {canEdit && <Button variant="contained" color={'primary'} style={{ borderRadius: 50 }} onClick={()=>{terminarjornada()}}>
+                                    Terminar Jornada
+                                </Button>}
+                                {!canEdit && <Button disabled variant="contained" color={'primary'} style={{ borderRadius: 50 }}>
+                                    Terminar Jornada
+                                </Button>}
                             </div>
                         </Grid>
                     </Card>
