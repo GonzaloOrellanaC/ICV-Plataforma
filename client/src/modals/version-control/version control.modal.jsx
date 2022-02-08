@@ -19,21 +19,26 @@ const VersionControlModal = ({open, closeModal}) => {
                     
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
 
+
+                        <strong>v.5.5</strong>
+                        <li>
+                            Conexión a API Inspecciones y sistema de aviso y reasignación de Ordenes para cambios de turno.
+                        </li>
                         <strong>v.5.0</strong>
                         <li>
                             Ejecución de ordenes de trabajo con flujo siguiente:
                             
-                            Creación de orden por parte de ejecutivo SAP.
-                            |
-                            -- Ejecución y cierre por parte de Operador de Mantención,
-                                |
-                                -- Una vez cerrada la orden por parte de Operador de Mantención, lo puede editar Jefe de Turno,
-                                    |
-                                    -- Cerrado por Jefe de Turno, lo puede editar Jefe de Maquinaria.
-                                        |
-                                        -- Cerrado por Jefe de Maquinaria lo puede editar Ejecutivo SAP.
-                                            |
-                                            -- Ejecutivo SAP cierra el flujo.
+                            Creación de orden por parte de ejecutivo SAP. <br/>
+                            | <br/>
+                            -- Ejecución y cierre por parte de Operador de Mantención, <br/>
+                                | <br/>
+                                -- Una vez cerrada la orden por parte de Operador de Mantención, lo puede editar Jefe de Turno, <br/>
+                                    | <br/>
+                                    -- Cerrado por Jefe de Turno, lo puede editar Jefe de Maquinaria. <br/>
+                                        | <br/>
+                                        -- Cerrado por Jefe de Maquinaria lo puede editar Ejecutivo SAP. <br/>
+                                            | <br/>
+                                            -- Ejecutivo SAP cierra el flujo. <br/>
 
                             * Pendiente reasignación de usuario para cambio de turno y agregar conexión a API de Inspecciones.
                             * Queda pendiente tambien la edición de las ordenes. Solo se pueden crear.
