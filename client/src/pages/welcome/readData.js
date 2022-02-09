@@ -21,10 +21,12 @@ export default async (
                 if(userRole==='admin'||userRole==='superAdmin'||userRole==='sapExecutive') {
                     setLoadingData('Descargando pautas de mantenimiento e inspección.');
                     const estadoDescargaPautas = await getInfo.descargarPautas(setProgress);
+                    //console.log(estadoDescargaPautas)
                     if(estadoDescargaPautas.state) {
                         setTimeout( async () => {
                             setLoadingData('Descargando datos de las obras.');
                             const responseSites = await getInfo.getSites(setProgress, setDisableButtons, setNotificaciones1);
+                            //console.log(responseSites)
                             setTimeout(async () => {
                                 if(responseSites) {
                                     setLoadingData('Descargando datos de las máquinas.')

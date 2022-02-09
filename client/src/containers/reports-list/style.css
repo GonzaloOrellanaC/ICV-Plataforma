@@ -1,4 +1,5 @@
 .root {
-    height: 90%;
+    /*height: 90%;*/
     font-family:'Raleway';
+    /*max-height: calc(100% - 300px);*/
 }

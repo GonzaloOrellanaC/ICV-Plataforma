@@ -127,6 +127,7 @@ const ActivitiesDetailPage = () => {
                             reportToLoad.chiefMachineryApprovedBy = localStorage.getItem('_id');
                             reportToLoad.chiefMachineryApprovedDate = Date.now();
                         }else if(reportToLoad.level == 4) {
+                            reportToLoad.emailing = "termino-orden-4";
                             reportToLoad.state = 'Completadas';
                             reportToLoad.enabled = false;
                             reportToLoad.dateClose = Date.now();

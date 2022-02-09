@@ -8,10 +8,12 @@ export default (
     setUserType,
     setSiteToUser,
     setPassword,
-    setConfirmPassword ) => {
+    setConfirmPassword,
+    setImageUrl ) => {
     if(userDataToContinue) {
         setTimeout(() => {
             let data = JSON.parse(userDataToContinue);
+            console.log(data)
             if(data.rut) {
                 setRut(data.rut)
             }
@@ -45,6 +47,9 @@ export default (
             }
             if(data.confirmPassword && (typeDisplay === 'Nuevo usuario')) {
                 setConfirmPassword(data.confirmPassword)
+            }
+            if(data.imageUrl) {
+                setImageUrl(data.imageUrl)
             }
         }, 500);
         

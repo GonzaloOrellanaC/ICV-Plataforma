@@ -1,6 +1,10 @@
-export default (uData, setOpen, setRut, setName, setLastName, setEmail, setPhone, setUserType, setSiteToUser, setPassword, setConfirmPassword) => {
+export default (uData, setOpen, setRut, setName, setLastName, setEmail, setPhone, setUserType, setSiteToUser, setPassword, setConfirmPassword, setImageUrl) => {
+    
     setOpen(true)
     let data = uData;
+    if(data.imageUrl) {
+        setImageUrl(data.imageUrl)
+    }
     if(data.rut) {
         setRut(data.rut)
     }

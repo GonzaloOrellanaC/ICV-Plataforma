@@ -18,7 +18,11 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                     
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
-
+                        <strong>v.5.6</strong>
+                        <li>
+                            Gestión de usuarios. Se permite adjuntar una foto una vez creado el usuario.
+                            Se agrega vista de camión blanca como imágen principal de modelos 3D.
+                        </li>
 
                         <strong>v.5.5</strong>
                         <li>

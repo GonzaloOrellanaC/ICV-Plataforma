@@ -10,6 +10,7 @@ import ValidatorEmail from './emailValidator'
 import { LoadingModal } from '../../modals'
 import _init from './init';
 import _continue from './continue'
+import { imageToBase64 } from "../../config";
 
 const useStyles = makeStyles(theme => ({
     inputsStyle: {
@@ -36,7 +37,8 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
     const [ usersTypes, setUserTypes ] = useState([]);
     const [ sites, setSites ] = useState([]);
     const [ passwordNoIguales, setPasswordNoIguales ] = useState(false)
-    const [ open, setOpen ] = useState(false)
+    const [ open, setOpen ] = useState(false);
+    const [ imageUrl, setImageUrl ] = useState()
 
     const cambiarVistaPassword = () => {
         if(verPassword === 'password') {
@@ -46,20 +48,26 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
         } 
     }
 
-    const userData = {
-        name: name,
-        lastName: lastName,
-        rut: rut,
-        role: role,
-        email: email,
-        phone: phone,
-        password: password,
-        sites: userSite,
-        confirmPassword: confirmPassword,
-        createdBy: localStorage.getItem('_id')
-    }
+    
 
-    const saveUserData = async () => {
+    const saveUserData = async (image) => {
+        const userData = {
+            name: name,
+            lastName: lastName,
+            rut: rut,
+            role: role,
+            email: email,
+            phone: phone,
+            password: password,
+            sites: userSite,
+            confirmPassword: confirmPassword,
+            createdBy: localStorage.getItem('_id'),
+            imageUrl: imageUrl
+        }
+        if(image) {
+            userData.imageUrl = image
+        }
+        
         if(userData.rut) {
             if(!validate(userData.rut)) {
                 document.getElementById('rut').className = 'isInvalid';
@@ -117,6 +125,7 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
                 document.getElementById('phone').className = 'isInvalid';
             }
         }
+        console.log(userData)
         localStorage.setItem('userDataToSave', JSON.stringify(userData));
     }
 
@@ -139,11 +148,14 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
 
     const classes = useStyles();
 
-    const uploadImageProfile = (file) => {
+    const uploadImageProfile = async (file) => {
         console.log(file)
-        azureStorageRoutes.uploadImageProfile(file, localStorage.getItem('_id')).then(res => {
+        let image = await imageToBase64(file);
+        setImageUrl(image);
+        saveUserData(image)
+        /* azureStorageRoutes.uploadImageProfile(file, localStorage.getItem('_id')).then(res => {
             console.log(res)
-        })
+        }) */
     }
 
     const openFile = () => {
@@ -170,7 +182,9 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
             setUserType, 
             setSiteToUser, 
             setPassword, 
-            setConfirmPassword);
+            setConfirmPassword,
+            setImageUrl
+            );
         _continue(
             userDataToContinue, 
             setRut,
@@ -181,7 +195,9 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
             setUserType,
             setSiteToUser,
             setPassword,
-            setConfirmPassword)
+            setConfirmPassword,
+            setImageUrl
+            )
         setTiposUsuarios(usersTypes);
         rolesRoutes.getRoles().then(responseRoles => {
             if(cancel) {
@@ -206,21 +222,24 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
 
     return (
             <div style={{height: height, width: width}}>
-                <Grid>
+                {(typeDisplay === 'Nuevo usuario') && <Grid>
                     <div>
                         <h2>Para enrolar nuevo usuario debe ingresar todos los datos.</h2>
                     </div>
-                </Grid>
+                </Grid>}
                 <Grid container style={{padding: 0, marginLeft: 100}}>
                     <Grid item style={{float: 'left', marginRight: 10}}>
                         <p>Foto de perfil</p>
-                        <button style={{height: 224, width: 190, borderRadius: 8}} onClick={()=>{ openFile();/* alert('No disponible.') */}}>
-                            <FontAwesomeIcon icon={faPaperclip} style={{fontSize: 18}}/>
-                            <br />
-                            <br />
-                            CARGAR
-                            <br />
-                            FOTO
+                        <button style={{height: 224, width: 190, borderRadius: 8, objectFit: 'cover'}} onClick={()=>{ openFile();/* alert('No disponible.') */}}>
+                            {!imageUrl ? <div>
+                                
+                                <FontAwesomeIcon icon={faPaperclip} style={{fontSize: 18}}/>
+                                    <br />
+                                    <br />
+                                    CARGAR
+                                    <br />
+                                    FOTO
+                                </div> : <img src={imageUrl} style={{objectFit: 'cover', width: '100%'}} height={'100%'}/>}
                             
                         </button>
                         <input autoComplete="off" type="file" id="profileImage" onChange={(e)=>{uploadImageProfile(e.target.files[0])}} hidden />

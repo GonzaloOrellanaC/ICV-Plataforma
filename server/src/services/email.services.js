@@ -183,8 +183,10 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
             let contextMail = new String
             if(numberType == 1) {
                 contextMail = 'termino de ejecución';
-            }else{
+            }else if(numberType > 1 && numberType < 4){
                 contextMail = 'aprobación de nivel ' + numberType;
+            }else if(numberType == 4) {
+                contextMail = 'cierre'
             }
 
             let data = {
@@ -230,6 +232,7 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
         
     })
 }
+
 export default {
     sendEmail,
     forgotPasswordEmail,

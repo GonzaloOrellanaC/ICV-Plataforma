@@ -119,9 +119,12 @@ const WelcomePage = () => {
         return new Promise(async resolve => {
             let machines = [];
             machines = await getMachines();
+            console.log(machines)
             let db = await trucksDatabase.initDbMachines();
+            console.log(db)
             if(db) {
                 machines.forEach(async (fileName, index) => {
+                    console.log(fileName)
                     fileName.id = index;
                     var xhr = new XMLHttpRequest();
                     xhr.onload = async () => {
@@ -133,9 +136,12 @@ const WelcomePage = () => {
                                     id: index,
                                     data: reader.result.replace("data:", "")
                                 }
-                                machinesImagesDatabase.actualizar(image, dbToImages.database)
+                                //console.log(image)
+                                await machinesImagesDatabase.actualizar(image, dbToImages.database);
+                                
                             }
-                            trucksDatabase.actualizar(fileName, db.database);
+                            let i = await trucksDatabase.actualizar(fileName, db.database);
+                            console.log(i)
                             /* fileName.image = reader.result.replace("data:", "");
                             if(fileName.image) {
                                 
@@ -144,8 +150,9 @@ const WelcomePage = () => {
                         }
                         reader.readAsDataURL(xhr.response);
                         
-                        if(index === (machines.length - 1)) {
-                            let respuestaConsulta = await consultTrucks(machines)
+                        if(index == (machines.length - 1)) {
+                            let respuestaConsulta = await consultTrucks(machines);
+                            console.log(respuestaConsulta)
                             resolve(respuestaConsulta)
                         }
                     }
@@ -178,7 +185,7 @@ const WelcomePage = () => {
                 resolve(data.data)
             })
             .catch(err => {
-                //console.log('Error', err)
+                console.log('Error', err)
             })
         })
     }

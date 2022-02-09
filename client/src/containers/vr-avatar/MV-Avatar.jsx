@@ -51,6 +51,8 @@ const MVAvatar = ({machine}) => {
     const changeName = (value) => {
         if(value === 'Preview') {
             return `Vista General ${machine.brand} ${machine.model}`
+        }else if(value === 'Preview_Con_Texturas') {
+            return `Vista General ${machine.brand} ${machine.model} Color`
         }else if(value === 'Sistema_direccion') {
             return `Sistema de Dirección`
         }else if(value === 'Sistema_hidraulico') {
@@ -134,17 +136,23 @@ const MVAvatar = ({machine}) => {
         setTimeout(() => {
             setTitle(changeName(element.name))
             if(element.brand === 'CATERPILLAR') {
-                console.log(element.brand, element.model, element.name)
-                let imagePath = `../assets/transiciones/${element.brand}/${element.model}/Pantalla_de_carga_${element.name}.png`;
-                setImagePath(imagePath);
-                
-                document.getElementById('machine').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('machine').style.height = '0px';
-                    document.getElementById('image').style.height = '80%';
-                    document.getElementById('image').style.opacity = '1';
-                }, 500);
+                if (element.name === 'Preview_Con_Texturas') {
+                    setProgress(0)
+                    setOpenLoader(true)
+                }else{
+                    console.log(element.brand, element.model, element.name)
+                    let imagePath = `../assets/transiciones/${element.brand}/${element.model}/Pantalla_de_carga_${element.name}.png`;
+                    setImagePath(imagePath);
+                    
+                    document.getElementById('machine').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('machine').style.height = '0px';
+                        document.getElementById('image').style.height = '80%';
+                        document.getElementById('image').style.opacity = '1';
+                    }, 500);
+                }
             }else{
+                setProgress(0)
                 setOpenLoader(true)
             }
             

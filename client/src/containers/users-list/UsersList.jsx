@@ -46,6 +46,7 @@ const UsersList = ({height, hableButton}) => {
         let cancel = true;
         if(cancel) {
             usersRoutes.getAllUsers().then(users=> {
+                console.log(users.data)
                 if(cancel) setUsuarios(users.data);
             }) 
             localStorage.removeItem('userDataToSave');
@@ -79,7 +80,8 @@ const UsersList = ({height, hableButton}) => {
     const well = {
         height: 70,
         borderRadius: 10,
-        boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)'
+        boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)',
+        fontSize: 14
     }
 
     return (
@@ -113,50 +115,59 @@ const UsersList = ({height, hableButton}) => {
                 </Grid>
                 <div>
                     <ListItem>
-                        <div style={{width: '15%', marginLeft: 5}}>
+                        <div style={{width: '5%', marginLeft: 5, fontSize: 12}}>
+                            
+                        </div>
+                        <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>Nombre de usuario</strong> </p>
                         </div>
-                        <div style={{width: '20%', marginLeft: 5}}>
+                        <div style={{width: '20%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>Correo electrónico</strong> </p>
                         </div>
-                        <div style={{width: '10%', marginLeft: 5}}>
+                        <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>RUN</strong> </p>
                         </div>
-                        <div style={{width: '20%', marginLeft: 5}}>
+                        <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>Rol</strong> </p>
                         </div>
-                        <div style={{width: '10%', marginLeft: 5}}>
+                        <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>Faena/Obra</strong> </p>
                         </div>
-                        <div style={{width: '10%', marginLeft: 5}}>
+                        <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>Estado</strong> </p>
                         </div>
                     </ListItem>
                 </div>
 
                 {
-                    hableButton && <div style={{overflowY: 'auto'}}>
+                    hableButton && <div style={{overflowY: 'auto', height: '53vh'}}>
                     {
                         usuarios.map((e, n) => {
+                            if(!e.imageUrl) {
+                                e.imageUrl = '../assets/no-profile-image.png'
+                            }
                             e.roleTranslated = changeTypeUser(e.role);
                             return(
                                 <ListItem key={n} style={well}>
-                                    <div style={{width: '15%', marginLeft: 5 }}>
+                                    <div style={{width: '5%', marginLeft: 5, fontSize: 12 }}>
+                                        <img style={{height: 50, borderRadius: '50%', objectFit: 'cover', width: 50}} src={e.imageUrl} alt="" /> 
+                                    </div>
+                                    <div style={{width: '15%', marginLeft: 5, fontSize: 12 }}>
                                         {e.name} {e.lastName}    
                                     </div>
-                                    <div style={{width: '20%', marginLeft: 5, wordBreak: 'break-all' }}>
+                                    <div style={{width: '20%', marginLeft: 5, fontSize: 12, wordBreak: 'break-all' }}>
                                         {e.email}  
                                     </div>
-                                    <div style={{width: '10%', marginLeft: 5 }}>
+                                    <div style={{width: '10%', marginLeft: 5, fontSize: 12 }}>
                                           {e.rut}
                                     </div>
-                                    <div style={{width: '20%', marginLeft: 5 }}>
+                                    <div style={{width: '15%', marginLeft: 5, fontSize: 12 }}>
                                           {e.roleTranslated}
                                     </div>
-                                    <div style={{width: '10%', marginLeft: 5 }}>
+                                    <div style={{width: '10%', marginLeft: 5, fontSize: 12 }}>
                                         
                                     </div>
-                                    <div style={{width: '10%', marginLeft: 5 }}>
+                                    <div style={{width: '10%', marginLeft: 5, fontSize: 12 }}>
                                         {
                                             e.enabled &&
                                             <p style={{borderRadius: 5, maxWidth: 200, textAlign: 'center', backgroundColor: '#C3EBD4', paddingTop: 3, paddingRight: 28, paddingBottom: 3, paddingLeft: 28}}>

@@ -39,9 +39,9 @@ const editReport = async (req, res) => {
                     EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 2, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
                 }else if(body.report.emailing === 'termino-orden-3') {
                     EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 3, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
-                }/* else if(body.report.emailing === 'termino-orden-4') {
-                    EmailMailgunServices.sendEmailEndOfWork('endOfOrder', body.report.fullNameWorker, 'es', body.report.idIndex, 'ltapia@test.cl, gonzalo.orellana@kauel.com')
-                } */
+                }else if(body.report.emailing === 'termino-orden-4') {
+                    EmailMailgunServices.sendEmailEndOfOrder('closeOrder', 4, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
+                }
             }
             //body.report.idIndex = await countTotalReports()
             const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report);

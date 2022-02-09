@@ -62,7 +62,7 @@ const ReportsList = ({list, reloadData}) => {
     const lista = list.reverse()
 
     return(
-        <div style={{width: '100%'}} className='root'>
+        <div style={{width: '100%'}} /* className='root' */>
             <Grid container style={{width: '100%'}}>
                 {/* <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
                     <Checkbox defaultChecked />

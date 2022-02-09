@@ -6,6 +6,12 @@ const Files = [
         group: 'camiones',
         files: [
             {
+                name: 'Preview'
+            },
+            {
+                name: 'Preview_Con_Texturas'
+            },
+            {
                 name: 'Cabina'
             },
             {
@@ -28,9 +34,6 @@ const Files = [
             },
             {
                 name: 'Neumaticos'
-            },
-            {
-                name: 'Preview'
             },
             {
                 name: 'Sistema_direccion'

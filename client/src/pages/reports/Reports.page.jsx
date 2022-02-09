@@ -166,11 +166,11 @@ const ReportsPage = () => {
                                 <p style={{fontSize: 10, margin: 0}}>Inspecciones completadas en la semana</p>
                             </div>
                         </div>
-                        <div style={{paddingLeft: 10, paddingRight: 10,  marginTop: 60}}>
+                        <div style={{paddingLeft: 10, paddingRight: 10,  marginTop: '10vh'}}>
                         {
                             inspecciones.map((e, i) => {
                                 return(
-                                    <Grid key={i} container>
+                                    <Grid key={i} container style={{height: '5vh'}}>
                                         <Grid item style={{width: '15%'}}>
                                             <FontAwesomeIcon icon={faCircle} size='2x' style={{marginRight: 10}} color={e.color}/>
                                         </Grid>
@@ -207,11 +207,11 @@ const ReportsPage = () => {
                                 <p style={{fontSize: 10, margin: 0}}>Mantenciones completadas en la semana</p>
                             </div>
                         </div>
-                        <div style={{paddingLeft: 10, paddingRight: 10,  marginTop: 60}}>
+                        <div style={{paddingLeft: 10, paddingRight: 10,  marginTop: '10vh'}}>
                         {
                             mantenciones.map((e, i) => {
                                 return(
-                                    <Grid key={i} container>
+                                    <Grid key={i} container style={{height: '5vh'}}>
                                         <Grid item style={{width: '15%'}}>
                                             <FontAwesomeIcon icon={faCircle} size='2x' style={{marginRight: 10}} color={e.color}/>
                                         </Grid>
@@ -241,7 +241,9 @@ const ReportsPage = () => {
                         </div>
                     }
                     {
-                        !vista && <ReportsList list={list} reloadData={reloadData}/>
+                        !vista && <div style={{height: 'calc(100% - 50px)', display: 'block', overflowY: 'auto'}}>
+                            <ReportsList list={list} reloadData={reloadData}/>
+                        </div>
                     }
                 </Grid>
             </Grid>
