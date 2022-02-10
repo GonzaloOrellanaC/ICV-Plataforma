@@ -8,6 +8,7 @@ import PermisosServices from './permisos.services'
 import ReportsService from './reports.service'
 import ExecutionReportsServices from './executionReports.services'
 import AzureServices from './azure.services'
+import internalMessagesServices from './internal-messages.services'
 
 export {
     AccessControlServices,
@@ -19,5 +20,6 @@ export {
     ReportsService,
     EmailMailgunServices,
     ExecutionReportsServices,
-    AzureServices
+    AzureServices,
+    internalMessagesServices
 }

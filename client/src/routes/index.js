@@ -7,6 +7,7 @@ import reportsRoutes from './reports.routes';
 import machinesRoutes from './machines.routes';
 import executionReportsRoutes from './executionReports.routes';
 import azureStorageRoutes from './azure-storage.routes';
+import internalMessagesRoutes from './internal-messages.routes';
 
 export {
     authRoutes,
@@ -17,5 +18,6 @@ export {
     reportsRoutes,
     machinesRoutes,
     executionReportsRoutes,
-    azureStorageRoutes
+    azureStorageRoutes,
+    internalMessagesRoutes
 }

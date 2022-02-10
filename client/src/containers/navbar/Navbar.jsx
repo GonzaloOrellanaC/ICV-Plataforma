@@ -18,9 +18,11 @@ import {
     faUserCog, 
     faListAlt,
     faMicrochip,
-    faRobot} from '@fortawesome/free-solid-svg-icons';
+    faRobot,
+    faSms,
+    faComment} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation } from '../../context';
-import { IAModal, VersionControlModal } from '../../modals'
+import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -123,6 +125,7 @@ const Navbar = () => {
     const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true);
     const [ openVersionModal, setOpenVersionModal ] = useState(false);
     const [ openIAModal, setOpenIAModal ] = useState(false);
+    const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false)
 
 
     const logout = async () => {
@@ -161,6 +164,14 @@ const Navbar = () => {
     }
     const closeIAModal = () => {
         setOpenIAModal(false)
+    }
+
+
+    const toOpenInternalMessagesModal = () => {
+        setOpenInternalMessagesModal(true)
+    }
+    const closeInternalMessageModal = () => {
+        setOpenInternalMessagesModal(false)
     }
 
     useEffect(() => {
@@ -278,12 +289,19 @@ const Navbar = () => {
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar} title='Feedbacks' onClickCapture={()=>{toOpenInternalMessagesModal()}}>
+                                    <div className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faComment}/> {navBarOpen ?  ' Int. Artificial (Beta)' : ''}
+                                    </div>
+                                </IconButton>
+                            </div>
+                            {/* <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar}  title='Configuración'>
                                     <Link to='/configuration' className={classes.sideButtons} style={{ color: (path === '/configuration') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faCog}/> {navBarOpen ?  ' Configuración' : ''}
                                     </Link>
                                 </IconButton>
-                            </div>
+                            </div> */}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar}  title='Información' onClickCapture={()=>{toOpenVersionModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
@@ -302,6 +320,7 @@ const Navbar = () => {
                     </Grid>
                     {openVersionModal && <VersionControlModal open={openVersionModal} closeModal={closeModal} />}
                     {openIAModal && <IAModal open={openIAModal} closeModal={closeIAModal} />}
+                    {openInternalMessagesModal && <InternalMessageModal open={openInternalMessagesModal} closeModal={closeInternalMessageModal} />}
                 </div>
             </Drawer>
         </div>

@@ -12,6 +12,7 @@ import Roles from './roles';
 import Permission from './permission';
 import Reports from './reports';
 import ExecutionReport from './executionReport';
+import InternalMessage from './internalMessages';
 
 export {
     AssignedMaintenance,
@@ -26,5 +27,6 @@ export {
     Roles,
     Permission,
     Reports,
-    ExecutionReport
+    ExecutionReport,
+    InternalMessage
 }

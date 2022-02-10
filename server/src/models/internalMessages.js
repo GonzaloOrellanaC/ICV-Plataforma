@@ -7,14 +7,21 @@ const InternalMessageSchema = new Schema({
         type: Schema.Types.String,
         required: true
     },
-    to: {
+    subject: {
         type: Schema.Types.String,
         required: true
     },
-    description: {
+    message: {
         type: Schema.Types.String,
         required: true
-    }
+    },
+    sendDate: {
+        type: Schema.Types.Date,
+        required: true
+    },
+    answer: {
+        type: Schema.Types.String,
+    },
 },
 {
     timestamps: true

@@ -1,0 +1,11 @@
+.user-name {
+    cursor: pointer;
+}
+
+.user-name:hover {
+
+}
+
+.user-name:active {
+    background-color: rgb(245, 245, 245);
+}

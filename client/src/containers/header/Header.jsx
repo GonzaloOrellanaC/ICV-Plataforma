@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 import { alpha, AppBar, makeStyles, /* MenuItem, Select, */ Toolbar, Button } from '@material-ui/core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
@@ -12,6 +12,8 @@ import logo from '../../assets/logo_icv_gris.png'
 import { useAuth, useLanguage, useNavigation } from '../../context'
 import { changeTypeUser, sync } from '../../config'
 import { useState } from 'react'
+
+import './style.css'
 
 const useStyles = makeStyles((theme) => ({
     appbar: {
@@ -59,7 +61,8 @@ const Header = () => {
     const { isAuthenticated } = useAuth()
     const { dictionary/* , languageOptions, userLanguage, userLanguageChange */ } = useLanguage();
     const [ network, setIfHavNetwork ] = useState(true);
-    let userData = {}
+    let userData = {};
+    const history = useHistory();
 
     userData.name = window.localStorage.getItem('name');
     userData.lastName = window.localStorage.getItem('lastName');
@@ -92,11 +95,13 @@ const Header = () => {
                 <Toolbar>
                     {!navBarOpen && <Link to='/'><img src={logo} height={75} /></Link>}
                     {isAuthenticated && <Fragment>
+                            <div className='user-name' onClick={()=>{history.push('/user-profile')}}>
                             <dl>
                                 <dt style={{margin: 0}}>{isAuthenticated && <div> <p className='nombre'> { userData.name } { userData.lastName } </p> </div>}</dt>
                                 {/* <dt>{window.localStorage.getItem('name') === 'ADMINISTRADOR' && <div> <p className='rol'> Administrador </p> </div>}</dt> */}
                                 <dt> {userData.role} </dt>
                             </dl>
+                            </div>
                         </Fragment>}
                         <div style={{position: 'absolute', right: 10}}>
                             <p><FontAwesomeIcon icon={faCircle} color={network ? '#2FB83F' : '#B62800'} /> {network ? 'Online' : 'Offline'}</p>

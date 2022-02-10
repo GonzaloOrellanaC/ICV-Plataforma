@@ -1,4 +1,4 @@
-import { theme, useStylesTheme, styleModal, styleImageTransitionModal, styleModalActivity, styleModalReport, styleModalIA, styleModal3D } from './theme.config';
+import { theme, useStylesTheme, styleModal, styleInternalMessageModal, styleImageTransitionModal, styleModalActivity, styleModalReport, styleModalIA, styleModal3D } from './theme.config';
 import { changeTypeUser, returnTypeUser } from './changeTypeUser.config';
 import environment from './environment.config';
 import date from './date';
@@ -21,6 +21,7 @@ export {
     getExecutivesSapEmail,
     getWeekReports,
     styleModal,
+    styleInternalMessageModal,
     styleImageTransitionModal,
     styleModalActivity,
     styleModalReport,

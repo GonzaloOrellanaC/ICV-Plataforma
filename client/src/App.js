@@ -40,6 +40,7 @@ import {
     ActivitiesDetailPage,
     ActivitiesPage
 } from './pages';
+import { UserProfilePage } from './pages/administration'
 /* import history from './history'
  */
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
@@ -126,6 +127,13 @@ const OnApp = () => {
                     <Switch>
                         <Route exact path='/alerts'>
                             <AlertPage route={'alerts'}/>
+                        </Route>
+                    </Switch>
+                </Route>
+                <Route path={['/user-profile']}>
+                    <Switch>
+                        <Route exact path='/user-profile'>
+                            <UserProfilePage route={'user-profile'}/>
                         </Route>
                     </Switch>
                 </Route>
