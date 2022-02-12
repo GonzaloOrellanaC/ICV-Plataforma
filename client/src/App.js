@@ -279,7 +279,7 @@ const OnApp = () => {
                 </Route>
                 <Route path={['/activities']}>
                     <Switch>
-                        <Route exact path='/activities/:id'>
+                        <Route path='/activities/:id'>
                             <ActivitiesDetailPage route={'activities'}/>
                         </Route>
                     </Switch>

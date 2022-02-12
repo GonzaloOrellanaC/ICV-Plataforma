@@ -30,17 +30,55 @@ const editReport = async (req, res) => {
         throw new Error(errorMsg.missingParameters)
     }else{
         try{
+            /* if(body.report.emailing) {
+                if(body.report.emailing === 'termino-jornada') {
+                    EmailMailgunServices.sendEmailEndOfWork('endOfWork', body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
+                }else if(body.report.emailing === 'termino-orden-1') {
+                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 1, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend, '')
+                }else if(body.report.emailing === 'termino-orden-2') {
+                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 2, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend, body.report.shiftManagerApprovedCommit)
+                }else if(body.report.emailing === 'termino-orden-3') {
+                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 3, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend, body.report.chiefMachineryApprovedCommit)
+                }else if(body.report.emailing === 'termino-orden-4') {
+                    EmailMailgunServices.sendEmailEndOfOrder('closeOrder', 4, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend, body.report.sapExecutiveApprovedCommit)
+                }
+            } */
+            //body.report.idIndex = await countTotalReports()
+            const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report);
+            //console.log('Respuesta edición reporte =>>>>>', editReportState);
+            res.json(editReportState)
+        }catch(err) {
+            res.json(err);
+        }
+        /* try{
+            await createReportState.save()
+            res.json(createReportState);
+        }catch(err) {
+            res.json(err);
+        }  */
+    }
+    
+}
+
+const editReportFromAudit = async (req, res) => {
+    const { body } = req
+    //'Edición reporte =>>>>>', body)
+    
+    if (!body.report) {
+        throw new Error(errorMsg.missingParameters)
+    }else{
+        try{
             if(body.report.emailing) {
                 if(body.report.emailing === 'termino-jornada') {
                     EmailMailgunServices.sendEmailEndOfWork('endOfWork', body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
                 }else if(body.report.emailing === 'termino-orden-1') {
-                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 1, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
+                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 1, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend, '---', body.generateLink)
                 }else if(body.report.emailing === 'termino-orden-2') {
-                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 2, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
+                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 2, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend, body.report.shiftManagerApprovedCommit, body.generateLink)
                 }else if(body.report.emailing === 'termino-orden-3') {
-                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 3, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
+                    EmailMailgunServices.sendEmailEndOfOrder('endOfOrder', 3, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend, body.report.chiefMachineryApprovedCommit, body.generateLink)
                 }else if(body.report.emailing === 'termino-orden-4') {
-                    EmailMailgunServices.sendEmailEndOfOrder('closeOrder', 4, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend)
+                    EmailMailgunServices.sendEmailEndOfOrder('closeOrder', 4, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend, body.report.sapExecutiveApprovedCommit, body.generateLink)
                 }
             }
             //body.report.idIndex = await countTotalReports()
@@ -57,7 +95,6 @@ const editReport = async (req, res) => {
             res.json(err);
         }  */
     }
-    
 }
 
 const deleteReport = async (req, res) => {
@@ -223,6 +260,7 @@ const countTotalReports = () => {
 export default {
     createReport,
     editReport,
+    editReportFromAudit,
     deleteReport,
     getReports,
     getReportByIndex,

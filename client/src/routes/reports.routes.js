@@ -13,6 +13,13 @@ export default {
         }
         return axios.post('/reports/editReport', requestBody);
     },
+    editReportFromAudit: (report, generateLink) => {
+        const requestBody = {
+            report,
+            generateLink
+        }
+        return axios.post('/reports/editReportFromAudit', requestBody);
+    },
     deleteReport: (id) => {
         const requestBody = {
             id,

@@ -18,17 +18,26 @@ const ReportShema = new Schema({
     shiftManagerApprovedDate: {
         type: Schema.Types.Date
     },
+    shiftManagerApprovedCommit: {
+        type: Schema.Types.String
+    },
     chiefMachineryApprovedBy: {
         type: Schema.Types.String
     },
     chiefMachineryApprovedDate: {
         type: Schema.Types.Date
     },
+    chiefMachineryApprovedCommit: {
+        type: Schema.Types.String
+    },
     sapExecutiveApprovedBy: {
         type: Schema.Types.String
     },
     sapExecutiveApprovedDate: {
         type: Schema.Types.Date
+    },
+    sapExecutiveApprovedCommit: {
+        type: Schema.Types.String
     },
     enabled: {
         type: Schema.Types.Boolean,

@@ -6,7 +6,8 @@ import { ReadActivityModal } from './read-activity';
 import { WriteActivityModal } from './write-activity';
 import { IAModal } from './ia-tensorflow';
 import { PdfModal } from './pdf';
-import { InternalMessageModal } from './internalMessage'
+import { InternalMessageModal } from './internalMessage';
+import { ReportCommitModal } from './reportCommit';
 
 export {
     AssignReportModal,
@@ -19,5 +20,6 @@ export {
     WriteActivityModal,
     IAModal,
     PdfModal,
-    InternalMessageModal
+    InternalMessageModal,
+    ReportCommitModal
 }

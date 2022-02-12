@@ -79,7 +79,8 @@ const ActivitiesPage = () => {
     }, [])
 
     const goToDetail = (element) => {
-        history.push(`/activities/${JSON.stringify(element)}`)
+        /* history.push(`/activities/${JSON.stringify(element)}`) */
+        history.push(`/activities/${element.idIndex}`)
     }
 
     const getMachineTypeByEquid = (machine) => {

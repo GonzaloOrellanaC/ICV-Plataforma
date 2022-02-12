@@ -37,18 +37,24 @@ const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgres
     }, []);
 
     const readData = () => {
-        try{
+        /* try{ */
+            
             let group = pauta.struct.reduce((r, a) => {
                 r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
                 return r;
             }, {});
             if(group) {
-                console.log(group)
+                console.log(executionReport)
                 let groupData;
-                if(!executionReport.group) {
-                    executionReport.group = group;
-                    setGrupoObservaciones(executionReport.group);
-                    groupData = Object.keys(executionReport.group)
+                if(executionReport) {
+                    if(!executionReport.group) {
+                        executionReport.group = group;
+                        setGrupoObservaciones(executionReport.group);
+                        groupData = Object.keys(executionReport.group)
+                    }else{
+                        setGrupoObservaciones(group);
+                        groupData = Object.keys(group);
+                    }
                 }else{
                     setGrupoObservaciones(group);
                     groupData = Object.keys(group);
@@ -88,9 +94,9 @@ const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgres
                     }
                 })
             }
-        } catch (err) {
+        /* } catch (err) {
             alert('Error 0010: Existe un problema en la lectura de los datos. Si el problema persiste, contacte al administrador de la plataforma.')
-        }
+        } */
     }
 
     const handleContent = (gruposKeys, element) => {

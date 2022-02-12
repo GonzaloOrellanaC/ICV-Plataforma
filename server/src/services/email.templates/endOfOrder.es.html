@@ -11,11 +11,17 @@
         <h2 style="text-align: center">
             Aviso de {{contextMail}} de Orden #{{orderNumber}}
         </h2>
-        <p style="text-align: center;">
+        <p style="text-align: center; white-space: pre-line;">
             Con el presente correo se da aviso de {{contextMail}} de Orden #{{orderNumber}}, por parte de <b>{{fullNameWorker}}</b>.
-            <br>
+        </p>
+        <p style="text-align: center; white-space: pre-line;">
+            Mensaje del revisor:
+            {{message}}
+        </p>
+        <p>
             Ahora ha entrado al proceso de validación. Se avisará una vez esté terminado.
-            
+            <br>
+            Para revisar la orden ingrese al siguiente <a href="{{link}}">Link</a>
         </p>
         
         <p style="margin-top: 7%; text-align: center; font-size: 12px;">

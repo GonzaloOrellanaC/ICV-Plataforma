@@ -177,7 +177,7 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
  * @param {*} html Content of the email in a string following an html format
  * @returns Result from the creation of the email
  */
- const sendEmailEndOfOrder = (typeEmail, numberType, fullNameWorker, language, orderNumber, email) => {
+ const sendEmailEndOfOrder = (typeEmail, numberType, fullNameWorker, language, orderNumber, email, message, link) => {
     return new Promise(async resolve => {
         try{            
             let contextMail = new String
@@ -195,7 +195,9 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
                 platformName: 'ICV Platform',
                 logoRoute: environment.platform.logoRoute,
                 logoAlt: environment.platform.logoAlt,
-                contextMail: contextMail
+                contextMail: contextMail,
+                message: message,
+                link: link
             }
             
             //let transporter = nodemailer.createTransport(mailInfo);
