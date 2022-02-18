@@ -32,7 +32,6 @@ const WriteActivityModal = ({open, closeWriteModal, activity, onlyClose, reportI
         if(myReportLevel == Number(reportLevel)) {
             setCanEdit(true)
         }
-        console.log(activity)
         if(activity.writeCommits) {
             if(activity.writeCommits.length > 0) {
                 setCommitsLength(activity.writeCommits.length);
@@ -54,7 +53,7 @@ const WriteActivityModal = ({open, closeWriteModal, activity, onlyClose, reportI
         if(commit.length > 0) {
             let arr = commits;
             arr.push(obj)
-            setCommits(arr)
+            setCommits(arr);
             setTimeout(() => {
                 activity.writeCommits = commits
                 addCommit('');
@@ -133,7 +132,8 @@ const WriteActivityModal = ({open, closeWriteModal, activity, onlyClose, reportI
         if(commits.length > commitsLength) {
             if(confirm('Guardar avance')) {
                 activity.isChecked = true;
-                closeWriteModal()
+                closeWriteModal();
+                onlyClose();
             }
         }else{
             alert('Debe dejar algún nuevo comentario.')

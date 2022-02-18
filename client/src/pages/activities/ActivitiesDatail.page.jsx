@@ -5,7 +5,7 @@ import { getExecutivesSapEmail, useStylesTheme } from '../../config'
 import { useHistory, useParams } from 'react-router-dom'
 import { pautasDatabase, executionReportsDatabase, reportsDatabase } from '../../indexedDB'
 import { PautaDetail } from '../../containers'
-import { reportsRoutes } from '../../routes'
+import { executionReportsRoutes, reportsRoutes } from '../../routes'
 import { ReportCommitModal } from '../../modals'
 
 const ActivitiesDetailPage = () => {
@@ -22,18 +22,13 @@ const ActivitiesDetailPage = () => {
     const [ openReportCommitModal, setOpenReportCommitModal ] = useState(false)
 
     useEffect(() => {
-        console.log(id)
         reportsRoutes.getReportByIndex(id).then(r => {
-            console.log(r)
             let report = r.data
-            console.log(report)
-            //let level = 0;
             getPauta(report);
             if(!report.level) {
                 report.level = 0
             }
-            setReportAssigned(report)
-            
+            setReportAssigned(report);
             setReportLevel(report.level);
             let myReportLevel;
             if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
@@ -54,55 +49,43 @@ const ActivitiesDetailPage = () => {
 
     const getPauta = async (r) => {
         let report = r;
+        console.log(report)
         let db = await pautasDatabase.initDbPMs();
         let pautaIdpm = r.idPm;
-        console.log(pautaIdpm)
         if(db) {
             setReportAssignment(report.usersAssigned[0]);
             let pautas = await pautasDatabase.consultar(db.database);
-            if(pautas) {
-                let pautaFiltered = pautas.filter((info) => { 
-                    if(
-                        (info.typepm === report.guide)&&(report.idPm===info.idpm)||
-                        (info.typepm === report.guide)&&(pautaIdpm===info.idpm)
-                        ) {return info}});
-                console.log(pautaFiltered)
-                let exDb = await executionReportsDatabase.initDb();
-                if( exDb ) {
-                    let responseDatabase = await executionReportsDatabase.consultar(exDb.database);
-                    console.log(responseDatabase)
-                    if( responseDatabase ) {
-                        let executionReportResponse = responseDatabase.filter(
-                            (res) => { 
-                                console.log(report._id, res.reportId);
-                                if(report._id === res.reportId) {
-                                    return res
-                                }
-                            })
-                        console.log(executionReportResponse)
-                        setExecutionReport(executionReportResponse[0])
-                        setPauta(pautaFiltered[0]);
-                    }
-                }
-                
-            }
+            let pautaFiltered = pautas.filter((info) => { 
+                if(
+                    (info.typepm === report.guide)&&(report.idPm===info.idpm)||
+                    (info.typepm === report.guide)&&(pautaIdpm===info.idpm)
+                    ) {
+                        return info
+                    }});
+            let exDb = await executionReportsDatabase.initDb();
+            let responseDatabase = await executionReportsDatabase.consultar(exDb.database);
+            if((responseDatabase.length == 0) && navigator.onLine) {
+                responseDatabase = await (await executionReportsRoutes.getExecutionReportById(report)).data;
+            };
+            console.log(responseDatabase)
+            setExecutionReport(responseDatabase[0])
+            setPauta(pautaFiltered[0]);
         }
     }
 
-    const getIdpm = (model) => {
+    /* const getIdpm = (model) => {
         if(model === '793-F') {
             return 'SPM000787';
         }else if(model === 'PC5500') {
             return 'SPM000445'
         }
-    }
+    } */
 
     const setProgress = (value) => {
         resutProgress(value)
     }
 
     const endReport = () => {
-        //responseMessage()
         let group = new Array();
         group = Object.values(executionReport.group);
         let state = true;
@@ -118,8 +101,6 @@ const ActivitiesDetailPage = () => {
                         }else{
                             responseMessage()
                         }
-                        
-                        //
                     }
                 }
             })
@@ -128,7 +109,6 @@ const ActivitiesDetailPage = () => {
 
     const getResponseState = (state, report) => {
         if(state) {
-            console.log(report);
             sendToNext(state, report)
         }
     }
@@ -152,7 +132,6 @@ const ActivitiesDetailPage = () => {
                         r = response;
                         let filtered = response.filter(item => {if(report._id === item._id) {return item}});
                         let reportToLoad = filtered[0];
-                        console.log(reportToLoad)
                         reportToLoad.level = reportLevel + 1;
                         if(report.shiftManagerApprovedCommit){
                             reportToLoad.shiftManagerApprovedCommit = report.shiftManagerApprovedCommit
@@ -205,16 +184,6 @@ const ActivitiesDetailPage = () => {
             }
         }else{
             alert('Orden no se encuantra finalizada. Revise e intente nuevamente.');
-            /* if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
-                
-            }else if(localStorage.getItem('role') === 'shiftManager') {
-                JSON.parse(id).shiftManagerApprovedCommit = null
-            }else if(localStorage.getItem('role') === 'chiefMachinery') {
-                JSON.parse(id).chiefMachineryApprovedCommit = null
-            }else if(localStorage.getItem('role') === 'sapExecutive') {
-                JSON.parse(id).sapExecutiveApprovedCommit = null
-            }; */
-            
         }
     }
 
@@ -246,10 +215,6 @@ const ActivitiesDetailPage = () => {
         }
     }
 
-    /* const openCommitModal = () => {
-        setOpenReportCommitModal(true)
-    } */
-
     const closeCommitModal = () => {
         setOpenReportCommitModal(false)
     }
@@ -273,11 +238,6 @@ const ActivitiesDetailPage = () => {
                                         </h1>
                                         
                                         <div style={{position: 'absolute', right: 10, width: '50%', textAlign: 'right'}}>
-                                            {/* <div style={{width: '100%', position: 'relative', right: 50, display: 'block'}}>
-                                                <Button variant="contained" color={'primary'} style={{ borderRadius: 50 }} onClick={()=>{endReport()}}>
-                                                    Enviar
-                                                </Button>
-                                            </div> */}
                                             <div style={{width: '100%', position: 'relative', right: 10, display: 'block'}}>
                                                 <div style={{float: 'right', width: '40%', marginTop: 10, textAlign: 'left'}}>
                                                     <LinearProgress variant="determinate" value={progress} style={{width: '100%'}}/>
@@ -310,7 +270,7 @@ const ActivitiesDetailPage = () => {
                             </div>
                             <div style={{width: '98%'}}>
                                 {
-                                    pauta && <PautaDetail height={'calc(100vh - 380px)'} reportAssigned={reportAssigned} pauta={pauta} executionReport={executionReport} reportLevel={reportLevel} reportAssignment={reportAssignment} setProgress={setProgress}/>
+                                    pauta && <PautaDetail height={'calc(100vh - 380px)'} reportAssigned={reportAssigned} pauta={pauta} reportLevel={reportLevel} reportAssignment={reportAssignment} setProgress={setProgress}/>
                                 }
                             </div>
                             {

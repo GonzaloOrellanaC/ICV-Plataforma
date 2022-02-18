@@ -8,6 +8,7 @@ import machinesRoutes from './machines.routes';
 import executionReportsRoutes from './executionReports.routes';
 import azureStorageRoutes from './azure-storage.routes';
 import internalMessagesRoutes from './internal-messages.routes';
+import pdfMakeRoutes from './pdf-make.routes'
 
 export {
     authRoutes,
@@ -19,5 +20,6 @@ export {
     machinesRoutes,
     executionReportsRoutes,
     azureStorageRoutes,
-    internalMessagesRoutes
+    internalMessagesRoutes,
+    pdfMakeRoutes
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Button, makeStyles } from '@material-ui/core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faClipboardList, faTools, faUserCog, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faClipboardList, faTools, faUserCog, faUsers, faListAlt, faTruck } from '@fortawesome/free-solid-svg-icons'
 import { useLanguage } from '../../context'
 import { useHistory } from 'react-router-dom'
 
@@ -47,6 +47,10 @@ const CardButton = ({ variant, disableButton }) => {
         switch (variant) {
         case 'inspection':
             return (<FontAwesomeIcon icon={faSearch} size='4x' className={classes.iconButton}/>)
+        case 'assignment':
+            return (<FontAwesomeIcon icon={faListAlt} size='4x' className={classes.iconButton}/>)
+        case 'machines':
+            return (<FontAwesomeIcon icon={faTruck} size='4x' className={classes.iconButton}/>)
         case 'maintenance':
             return (<FontAwesomeIcon icon={faTools} size='4x' className={classes.iconButton}/>)
         case 'reports':
@@ -61,6 +65,10 @@ const CardButton = ({ variant, disableButton }) => {
         switch (variant) {
         case 'inspection':
             return dictionary.welcome.inspectionButton
+        case 'assignment':
+            return dictionary.welcome.assignmentButton
+        case 'machines':
+            return dictionary.welcome.machinesButton
         case 'maintenance':
             return dictionary.welcome.maintenanceButton
         case 'reports':
@@ -84,7 +92,7 @@ const CardButton = ({ variant, disableButton }) => {
 }
 
 CardButton.propTypes = {
-    variant: PropTypes.oneOf(['inspection', 'maintenance', 'reports', 'configuration', 'administration', 'users'])
+    variant: PropTypes.oneOf(['inspection', 'assignment', 'machines', 'maintenance', 'reports', 'configuration', 'administration', 'users'])
 }
 
 export default CardButton

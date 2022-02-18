@@ -11,7 +11,10 @@ import userState from './userState';
 import getUserNameById from './getUserNameById';
 import getExecutivesSapEmail from './getExecutivesSapEmail';
 import getWeekReports from './getWeekReports';
-
+import getMachineData from './getMachineData';
+import getExecutionReportData from './getExecutionReportData';
+import saveExecutionReport from './saveExecutionReport'
+import compareExecutionReport from './compareExecutionReport'
 export {
     theme,
     getUserNameById,
@@ -34,5 +37,9 @@ export {
     uploadImage,
     imageToBase64,
     sync,
-    userState
+    userState,
+    getMachineData,
+    getExecutionReportData,
+    saveExecutionReport,
+    compareExecutionReport
 }

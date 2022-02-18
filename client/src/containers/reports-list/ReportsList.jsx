@@ -148,7 +148,7 @@ const ReportsList = ({list, reloadData}) => {
                             <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
                                 <p> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
                                 {!item.enabled &&
-                                    <p> <button disabled onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Imprimr</button> </p>
+                                    <p> <button  onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Imprimr</button> </p>
                                 }
                             </Grid> 
                             {/* <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>

@@ -6,21 +6,16 @@ import clsx from 'clsx';
 import logo from '../../assets/Logologo_icv_1.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
-    faCog, 
     faHome, 
     faInfoCircle, 
     faSignOutAlt, 
-    faTools, 
-    faSearch, 
     faClipboardList, 
     faMapMarkerAlt, 
-    faList, 
     faUserCog, 
     faListAlt,
-    faMicrochip,
     faRobot,
-    faSms,
-    faComment} from '@fortawesome/free-solid-svg-icons';
+    faComment,
+    faTruck} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation } from '../../context';
 import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
 
@@ -233,6 +228,13 @@ const Navbar = () => {
                                     </Link>
                                 </IconButton>
                             </div>
+                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar} title='Máquinas'>
+                                    <Link to='/machines' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path === '/machines') ? '#BE2E26' : '#FFFFFF' }}>
+                                        <FontAwesomeIcon icon={faTruck}/> {navBarOpen ?  ' Máquinas' : ''}
+                                    </Link>
+                                </IconButton>
+                            </div>
                             {(localStorage.getItem('role')==='admin' || localStorage.getItem('role')==='sapExecutive') && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Obras'>
                                     <Link to='/sites' className={classes.sideButtons} style={{ color: (path === '/sites') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
@@ -240,26 +242,6 @@ const Navbar = () => {
                                     </Link>
                                 </IconButton>
                             </div>}
-                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                {useButton && <IconButton onClick={closeSideBar} title='Inspección'>
-                                    <Link to='/inspection' className={classes.sideButtons} style={{ color: (path.includes('/inspection')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
-                                        <FontAwesomeIcon icon={faSearch}/> {navBarOpen ?  ' Inspección' : ''}
-                                    </Link>
-                                </IconButton>}
-                                {!useButton && <IconButton disabled onClick={closeSideBar} title='Inspección'>
-                                    <FontAwesomeIcon icon={faSearch}/> {navBarOpen ?  ' Inspección' : ''}
-                                </IconButton>}
-                            </div>
-                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                {useButton && <IconButton onClick={closeSideBar} title='Mantención'>
-                                    <Link to='/maintenance' className={classes.sideButtons} style={{ color: (path.includes('/maintenance')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
-                                        <FontAwesomeIcon icon={faTools}/> {navBarOpen ?  ' Mantención' : ''}
-                                    </Link>
-                                </IconButton> }
-                                {!useButton && <IconButton disabled onClick={closeSideBar} title='Mantención'>
-                                    <FontAwesomeIcon icon={faTools}/> {navBarOpen ?  ' Mantención' : ''}
-                                </IconButton>}
-                            </div>
                             {!disableButtonNoSAP && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Reportes'>
                                     <Link to='/reports' className={classes.sideButtons} style={{ color: (path.includes('/reports')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
@@ -276,7 +258,7 @@ const Navbar = () => {
                             </div>}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Listado Asignaciones'>
-                                    <Link to='/activities' className={classes.sideButtons} style={{ color: (path.includes('/activities')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                    <Link to='/assignment' className={classes.sideButtons} style={{ color: (path.includes('/assignment')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faListAlt}/> {navBarOpen ?  ' Listado Asignaciones' : ''}
                                     </Link>
                                 </IconButton>
@@ -295,13 +277,6 @@ const Navbar = () => {
                                     </div>
                                 </IconButton>
                             </div>
-                            {/* <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}  title='Configuración'>
-                                    <Link to='/configuration' className={classes.sideButtons} style={{ color: (path === '/configuration') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
-                                        <FontAwesomeIcon icon={faCog}/> {navBarOpen ?  ' Configuración' : ''}
-                                    </Link>
-                                </IconButton>
-                            </div> */}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar}  title='Información' onClickCapture={()=>{toOpenVersionModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>

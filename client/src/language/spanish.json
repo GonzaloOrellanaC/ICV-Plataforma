@@ -14,6 +14,8 @@
     },
     "welcome": {
         "inspectionButton": "Inspección",
+        "assignmentButton": "Asignaciones",
+        "machinesButton": "Máquinas",
         "maintenanceButton": "Mantención",
         "reportsButton": "Reportes",
         "configurationButton": "Configuración",

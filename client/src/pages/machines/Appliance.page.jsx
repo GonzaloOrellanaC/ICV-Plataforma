@@ -87,6 +87,8 @@ const AppliancePage = ({ route }) => {
         routeData = 'Inspección'
     }else if(route === 'maintenance/machine-detail') {
         routeData = 'Mantención'
+    }else if(route === 'machines/machine-detail') {
+        routeData = 'Máquinas'
     }
 
     const setReportLocation = (location) => {
@@ -115,7 +117,10 @@ const AppliancePage = ({ route }) => {
                                 </div>
                             </div>
                             <Grid container>
-                                <Grid item xl={2} lg={4}>
+                                <Grid item xs={null} sm={2} md={3} lg={4} xl={4} >
+
+                                </Grid>
+                                <Grid item xs={12} sm={8} md={6} lg={4} xl={4} >
                                     <div style={{width: '100%', textAlign: 'left', padding: 10}}>
                                         <div style={{padding: 15, borderTopLeftRadius: 20, borderEndStartRadius: 20, backgroundColor: '#F9F9F9', borderRadius: 10, minHeight: 400}}>
                                             <h3 style={{marginTop: 5, marginBottom: 5}}>{machine.type}</h3>
@@ -149,7 +154,10 @@ const AppliancePage = ({ route }) => {
                                         </div>
                                     </div>
                                 </Grid>
-                                <Grid item xl={10} lg={8} style={{height: 'calc(100vh - 200px)', display: 'block'}}>
+                                <Grid item xs={null} sm={2} md={3} lg={4} xl={4} >
+
+                                </Grid>
+                                {/* <Grid item xl={10} lg={8} style={{height: 'calc(100vh - 200px)', display: 'block'}}>
                                     <div style={{height: 'calc(100vh - 210px)', width: '100%', padding: 5}}>
                                         <div style={{height: '100%', padding: 5, borderEndEndRadius: 20, borderTopRightRadius: 20, backgroundColor: '#fff'}}>
                                             <Grid container>
@@ -169,9 +177,9 @@ const AppliancePage = ({ route }) => {
                                                     </div>
                                                 </Grid>
                                             </Grid>
-                                            {/* {
+                                            {
                                                 pauta && <PautaDetail height={'calc(100vh - 420px)'} pauta={pauta} setReportLocation={setReportLocation} />
-                                            } */}
+                                            } 
                                         </div>
                                         <div style={{position: 'relative', bottom: 20, width: '100%'}}>
                                             <div style={{float: 'left', width: '50%', textAlign: 'left'}}>
@@ -186,7 +194,7 @@ const AppliancePage = ({ route }) => {
                                             </div>
                                         </div>
                                     </div>
-                                </Grid>
+                                </Grid> */}
                                 <div>
                                     <Modal
                                         open={open}
@@ -214,7 +222,7 @@ const AppliancePage = ({ route }) => {
 }
 
 AppliancePage.propTypes = {
-    route: PropTypes.oneOf(['inspection/machine-detail', 'maintenance/machine-detail'])
+    route: PropTypes.oneOf(['machines/machine-detail'])
 }
 
 export default AppliancePage

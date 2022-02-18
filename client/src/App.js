@@ -9,7 +9,7 @@ import { createUploadLink } from 'apollo-upload-client'
 
 /* Material UI */
 import { Box, CssBaseline, ThemeProvider } from '@material-ui/core'
-import { sync, theme } from './config'
+import { theme } from './config'
 
 import './App.css'
 import { AuthProvider, LanguageProvider, NavigationProvider, useAuth } from './context'
@@ -76,11 +76,7 @@ const OnApp = () => {
         if(isAuthenticated) {
             let go = true;
             window.addEventListener('online', async () => {
-                const alerta = await sync();
-                if(go) {
-                    go = false;
-                    alert(alerta.message);
-                }
+                
             });
             window.addEventListener('offline', () => {
                 go = true;
@@ -144,28 +140,27 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                {((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'superAdmin'))
-                ) && <Route path={['/inspection']}>
+                <Route path={['/machines']}>
                     <Switch>
-                        <Route exact path='/inspection'>
-                            <MachinesPage route={'inspection'}/>
+                        <Route exact path='/machines'>
+                            <MachinesPage route={'machines'}/>
                         </Route>
-                        <Route exact path='/inspection/:id'>
-                            <MachinesListPage route='inspection'/>
+                        <Route exact path='/machines/:id'>
+                            <MachinesListPage route='machines'/>
                         </Route>
-                        <Route exact path='/inspection/machine-detail/:id'>
-                            <AppliancePage route={'inspection/machine-detail'}/>
+                        <Route exact path='/machines/machine-detail/:id'>
+                            <AppliancePage route={'machines/machine-detail'}/>
                         </Route>
                     </Switch>
-                </Route>}
-                { !(localStorage.getItem('role') === 'inspectionWorker') && <Route path={['/inspection']}>
+                </Route>
+                {/* <Route path={['/inspection']}>
                     <Switch>
                         <Route exact path='/inspection'>
                             <NoPermissionPage route={'inspection'}/>
                         </Route>
                     </Switch>
-                </Route>}
-                {((localStorage.getItem('role') === 'maintenceOperator') ||(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'superAdmin')))
+                </Route> */}
+                {/* {((localStorage.getItem('role') === 'maintenceOperator') ||(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'superAdmin')))
                  && <Route path={['/maintenance']}>
                     <Switch>
                         <Route exact path='/maintenance'>
@@ -178,7 +173,7 @@ const OnApp = () => {
                             <AppliancePage route={'maintenance/machine-detail'}/>
                         </Route>
                     </Switch>
-                </Route>}
+                </Route>} */}
                 { !(localStorage.getItem('role') === 'maintenceOperator') && <Route path={['/maintenance']}>
                     <Switch>
                         <Route exact path='/maintenance'>
@@ -277,15 +272,15 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                <Route path={['/activities']}>
+                <Route path={['/assignment']}>
                     <Switch>
-                        <Route path='/activities/:id'>
-                            <ActivitiesDetailPage route={'activities'}/>
+                        <Route path='/assignment/:id'>
+                            <ActivitiesDetailPage route={'assignment'}/>
                         </Route>
                     </Switch>
                     <Switch>
-                        <Route exact path='/activities'>
-                            <ActivitiesPage route={'activities'}/>
+                        <Route exact path='/assignment'>
+                            <ActivitiesPage route={'assignment'}/>
                         </Route>
                     </Switch>
                 </Route>

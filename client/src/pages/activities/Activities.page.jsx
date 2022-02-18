@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { date, useStylesTheme } from '../../config'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { machinesDatabase, reportsDatabase } from '../../indexedDB'
 import getAssignments from './getAssignemt'
 
 const ActivitiesPage = () => {
     const classes = useStylesTheme();
     const history = useHistory();
+
+    const {id} = useParams();
+
 
     const [ assignments, setAssignments ] = useState([]);
     const theme = useTheme();
@@ -20,40 +23,60 @@ const ActivitiesPage = () => {
     useEffect(() => {
         let go = true;
         if(navigator.onLine) {
-            getAssignments().then((assignMentResolve) => {
-                if(go) {
-                    if(assignMentResolve) {
-                        reportsDatabase.initDbReports().then(db => {
-                            if(go) {
-                                reportsDatabase.consultar(db.database).then(reports => {
-                                    reports.forEach(async (report, i) => {
-                                        if(report.level) {
-                                            if(report.level > 0) {
-                                                report.infoState = 'Terminado'
-                                            }
-                                        }
-                                        report.dateFormat = date(report.datePrev);
-                                        report.end = date(report.endReport);
-                                        report.init = date(report.dateInit);
-                                        report.getMachine = await getMachineTypeByEquid(report.machine);
-                                        if(report.getMachine.model === 'PC5500') {
-                                            report.machineType = 'Pala'
-                                        }else if(report.getMachine.model === '793-F') {
-                                            report.machineType = 'Camión'
-                                        }
-                                        if(i == (reports.length - 1)) {
-                                            //console.log(reports);
-                                            let rs = reports.filter((report) => {if(report.enabled) {return report}});
-                                            console.log(rs)
-                                            setAssignments(rs);
-                                        }
-                                    })
-                                })
-                            }
-                        })                
+            getAssignments().then((data) => {
+                data.forEach(async (report, i) => {
+                    if(report.level) {
+                        if(report.level > 0) {
+                            report.infoState = 'Terminado'
+                        }
                     }
+                    report.dateFormat = date(report.datePrev);
+                    report.end = date(report.endReport);
+                    report.init = date(report.dateInit);
+                    report.getMachine = await getMachineTypeByEquid(report.machine);
+                    if(report.getMachine.model === 'PC5500') {
+                        report.machineType = 'Pala'
+                    }else if(report.getMachine.model === '793-F') {
+                        report.machineType = 'Camión'
+                    }
+                    if(i == (data.length - 1)) {
+                        let rs = data.filter((report) => {if(report.enabled) {return report}});
+                        setAssignments(rs);
+                    }
+                })
+            })
+                /*if(go) {
+                    reportsDatabase.initDbReports().then(db => {
+                        if(go) {
+                            reportsDatabase.consultar(db.database).then(reports => {
+                                reports.forEach(async (report, i) => {
+                                    if(report.level) {
+                                        if(report.level > 0) {
+                                            report.infoState = 'Terminado'
+                                        }
+                                    }
+                                    report.dateFormat = date(report.datePrev);
+                                    report.end = date(report.endReport);
+                                    report.init = date(report.dateInit);
+                                    report.getMachine = await getMachineTypeByEquid(report.machine);
+                                    if(report.getMachine.model === 'PC5500') {
+                                        report.machineType = 'Pala'
+                                    }else if(report.getMachine.model === '793-F') {
+                                        report.machineType = 'Camión'
+                                    }
+                                    if(i == (reports.length - 1)) {
+                                        //console.log(reports);
+                                        let rs = reports.filter((report) => {if(report.enabled) {return report}});
+                                        console.log(rs)
+                                        setAssignments(rs);
+                                    }
+                                })
+                            })
+                        }
+                    })                
+                    
                 }
-            })            
+            })    */        
         }else{
             reportsDatabase.initDbReports().then(db => {
                 if(go) {
@@ -80,7 +103,7 @@ const ActivitiesPage = () => {
 
     const goToDetail = (element) => {
         /* history.push(`/activities/${JSON.stringify(element)}`) */
-        history.push(`/activities/${element.idIndex}`)
+        history.push(`/assignment/${element.idIndex}`)
     }
 
     const getMachineTypeByEquid = (machine) => {

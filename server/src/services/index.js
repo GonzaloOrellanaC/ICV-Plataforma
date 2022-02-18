@@ -9,6 +9,7 @@ import ReportsService from './reports.service'
 import ExecutionReportsServices from './executionReports.services'
 import AzureServices from './azure.services'
 import internalMessagesServices from './internal-messages.services'
+import PdfMakerServices from './pdf-maker.services'
 
 export {
     AccessControlServices,
@@ -21,5 +22,6 @@ export {
     EmailMailgunServices,
     ExecutionReportsServices,
     AzureServices,
-    internalMessagesServices
+    internalMessagesServices,
+    PdfMakerServices
 }

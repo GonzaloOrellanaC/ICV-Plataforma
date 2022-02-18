@@ -7,8 +7,8 @@ const getExecutionReportById = (req, res) => {
     console.log(body);
 
     try{
-        ExecutionReport.find({reportId: body.reportData.reportId}, async (err, doc) => {
-            console.log(doc)
+        ExecutionReport.find({reportId: body.reportData._id}, async (err, doc) => {
+            console.log('Report!!', doc)
             if(err) {
                 res.json({
                     state: false,

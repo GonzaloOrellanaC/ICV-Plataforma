@@ -83,6 +83,8 @@ const MachinesListPage = ({route}) => {
             setRouteData('Inspección')
         }else if(route === 'maintenance') {
             setRouteData('Mantención')
+        }else if(route === 'machines') {
+            setRouteData('Máquinas')
         }
         return () => {
             cancel = true;
@@ -148,8 +150,6 @@ const MachinesListPage = ({route}) => {
                                                     </div>
                                                 </Grid>
                                             </Grid>
-                                            
-                                        
                                     )
                                 })
                             }

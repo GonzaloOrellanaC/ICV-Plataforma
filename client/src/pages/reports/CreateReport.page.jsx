@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useStylesTheme } from '../../config';
+import { getExecutionReportData, useStylesTheme } from '../../config';
 import { 
     Box, 
     Grid, 
@@ -107,6 +107,12 @@ const CreateReports = () => {
             alert('Falta información')
         }else{
             let reportState = await reportsRoutes.createReport(report);
+            console.log(reportState);
+            let reportData = {
+                reportId: reportState.data._id,
+                createdBy: localStorage.getItem('_id')
+            };
+            getExecutionReportData(reportData);
             if(reportState) {
                 alert(`Reporte ${reportState.data.idIndex}, para máquina modelo ${reportState.data.machine} creado satisfactoriamente.`)
                 history.goBack();

@@ -9,7 +9,6 @@ import getInfo from './getInfo'
 import readDataSite from './readDataSite'
 import readData from './readData'
 import Files from './3dFiles'
-import download3DFiles from './download3DFiles'
 import { useHistory } from 'react-router-dom'
 
 const WelcomePage = () => {
@@ -59,9 +58,7 @@ const WelcomePage = () => {
 
     useEffect(() => {
         let cancel = true;
-        //getMachinesList_();
         if(cancel) {
-            //console.log(history)
             readData(
                 setOpenLoader,
                 setLoadingData,
@@ -85,7 +82,7 @@ const WelcomePage = () => {
                 setDate
             );
         }
-        return () => {cancel = false};
+        return () => cancel = false;
         
     }, []);
 
@@ -236,10 +233,10 @@ const WelcomePage = () => {
                 <br />
                 <Grid container spacing={5}>
                         <Grid item xs={12} sm={12} md={6} lg={3}>
-                            <CardButton variant='inspection' disableButton={disableButton || disableIfNoInspection}/>
+                            <CardButton variant='assignment' disableButton={disableButton}/>
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={3}>
-                            <CardButton variant='maintenance' disableButton={disableButton || disableIfNoMaintenance}/>
+                            <CardButton variant='machines' disableButton={disableButton}/>
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={3}>
                             <CardButton variant='reports' disableButton={disableButtonNoSAP}/>

@@ -10,17 +10,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ReadActivityModal, WriteActivityModal } from '../../modals'
 import { executionReportsDatabase, reportsDatabase } from "../../indexedDB";
 import { executionReportsRoutes, reportsRoutes } from "../../routes";
+import { compareExecutionReport, saveExecutionReport } from "../../config";
 
-const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgress, reportAssignment, reportLevel}) => {
-
-    //Toda la pauta
-    const [ gruposObservaciones, setGrupoObservaciones ] = useState([]);
+const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignment, reportLevel}) => {
 
     //Pestañas
     const [ gruposKeys, setGruposKeys ] = useState([]);
 
     //Contenido de la vista
     const [ contentData, setContentData ] = useState([]);
+
+    //
+    const [ group, setGroup ] = useState();
+
+    const [ executionReport, setExecutionReport ] = useState()
 
     //Lista de checks
     const [ checks, setChecks ] = useState([])
@@ -30,73 +33,111 @@ const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgres
 
     //Indice de la actividad
     const [ indexActivity, setIndexActivity ] = useState();
+
+    //
+    const [ indexGroup, setIndexGroup ] = useState();
     
     useEffect(() => {
-        console.log(pauta)
         readData();
     }, []);
 
-    const readData = () => {
-        /* try{ */
+    const getExecutionReportData = () => {
+        return new Promise(resolve => {
+            executionReportsRoutes.getExecutionReportById(reportAssigned)
+            .then(data => {
+                resolve(data.data[0])
+            })
+        })
+    }
+
+    const setGroupData = (groupData, groupD) => {
+        let newGroupData = [];
+        groupData.forEach((data, index) => {
             
-            let group = pauta.struct.reduce((r, a) => {
-                r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
-                return r;
-            }, {});
-            if(group) {
-                console.log(executionReport)
-                let groupData;
-                if(executionReport) {
-                    if(!executionReport.group) {
-                        executionReport.group = group;
-                        setGrupoObservaciones(executionReport.group);
-                        groupData = Object.keys(executionReport.group)
+            let tab = {
+                data: data,
+                state: false
+            }
+            if(index == 0) {
+                tab.state = true;
+                setIndexGroup(data);
+            }
+            newGroupData.push(tab);
+            if(index == (groupData.length - 1)) {
+                let checkedList = [];
+                let checkedTrue = [];
+                let content = groupD[newGroupData[0].data];
+                content.forEach((e, n)=>{
+                    if(!e.obs01) {
+                        e.obs01 = 'Sin Observaciones'
+                    }
+                    if(e.isChecked) {
+                        checkedTrue.push(e.isChecked)
                     }else{
-                        setGrupoObservaciones(group);
-                        groupData = Object.keys(group);
+                        e.isChecked = false;
                     }
-                }else{
-                    setGrupoObservaciones(group);
-                    groupData = Object.keys(group);
-                }
-                let newGroupData = [];
-                groupData.forEach((data, index) => {
-                    let tab = {
-                        data: data,
-                        state: false
-                    }
-                    if(index == 0) {
-                        tab.state = true;
-                    }
-                    newGroupData.push(tab);
-                    if(index == (groupData.length - 1)) {
-                        let checkedList = [];
-                        let checkedTrue = [];
-                        let content = executionReport.group[newGroupData[0].data];
-                        content.forEach((e, n)=>{
-                            if(!e.obs01) {
-                                e.obs01 = 'Sin Observaciones'
-                            }
-                            if(e.isChecked) {
-                                checkedTrue.push(e.isChecked)
-                            }else{
-                                e.isChecked = false;
-                            }
-                            checkedList.push(e.isChecked)
-                            if(n == (content.length - 1)) {
-                                setChecks(checkedList);
-                                setGruposKeys(newGroupData);
-                                setContentData(content);
-                                let resultProgress = (checkedTrue.length * 100) / content.length
-                                setProgress(resultProgress)
-                            }
-                        })
+                    checkedList.push(e.isChecked)
+                    if(n == (content.length - 1)) {
+                        setChecks(checkedList);
+                        setGruposKeys(newGroupData);
+                        setContentData(content);
+                        let resultProgress = (checkedTrue.length * 100) / content.length
+                        setProgress(resultProgress)
                     }
                 })
             }
-        /* } catch (err) {
-            alert('Error 0010: Existe un problema en la lectura de los datos. Si el problema persiste, contacte al administrador de la plataforma.')
-        } */
+        })
+    }
+
+    const readData = async () => {
+        let groupD;
+        let executionReportData;
+        if(navigator.onLine) {
+            let executionReportDataFromCloud = await getExecutionReportData();
+            let state = new Boolean;
+            state = compareExecutionReport(executionReportDataFromCloud);
+            if(state) {
+                executionReportData = executionReportDataFromCloud
+            }else{
+                let exDb = await executionReportsDatabase.initDb();
+                let executionReportList = new Array();
+                executionReportList = await executionReportsDatabase.consultar(exDb.database);
+                let executionR = executionReportList.filter(r => {if(r._id === executionReportData._id) {return r}});
+                executionReportData = executionR[0];
+            }
+            if(executionReportData.group) {
+                setGroup(executionReportData.group)
+                setGroupData(Object.keys(executionReportData.group), executionReportData.group);
+                setExecutionReport(executionReportData);
+            }else{
+                groupD = pauta.struct.reduce((r, a) => {
+                    r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
+                    return r;
+                }, {});
+                setGroup(groupD);
+                executionReportData.group = groupD;
+                setGroupData(Object.keys(groupD), groupD);
+                executionReportsRoutes.saveExecutionReport(executionReportData);
+                setExecutionReport(executionReportData)
+            }
+        }else{
+            let exDb = await executionReportsDatabase.initDb();
+            let executionReportList = new Array();
+            executionReportList = await executionReportsDatabase.consultar(exDb.database);
+            let executionR = executionReportList.filter(r => {if(r._id === executionReportData._id) {return r}});
+            if(executionR.length > 0) {
+                executionReportData = executionR[0];
+                groupD = executionReportData.group;
+            }else{
+                groupD = pauta.struct.reduce((r, a) => {
+                    r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
+                    return r;
+                }, {});
+            }
+            setGroup(groupD)
+            setGroupData(Object.keys(groupD), groupD);
+            setExecutionReport(executionReportData)
+        }
     }
 
     const handleContent = (gruposKeys, element) => {
@@ -106,7 +147,7 @@ const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgres
             if(index == (gruposKeys.length - 1)) {
                 let checkedList = [];
                 let checkedTrue = [];
-                let newGruposObservaciones = executionReport.group[element.data]//gruposObservaciones[element.data]
+                let newGruposObservaciones = group[element.data]//gruposObservaciones[element.data]
                 newGruposObservaciones.forEach((e, n)=>{
                     if(!e.obs01) {
                         e.obs01 = 'Sin Observaciones'
@@ -124,6 +165,7 @@ const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgres
                         setProgress(resultProgress);
                         setTimeout(() => {
                             setContentData(newGruposObservaciones);
+                            setIndexGroup(element.data)
                         }, 100);
                     }
                 })
@@ -132,42 +174,41 @@ const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgres
         })
     }
 
-    const closeModal = async () => {
+    const closeModal = async (isOnlyClose) => {
+        let group_ = executionReport.group
         if(!reportAssigned.dateInit) {
             reportAssigned.dateInit = Date.now();
-        }
-        let contentCache = contentData;
-        executionReport.updatedBy = localStorage.getItem('_id');
-        executionReport.offLineGuard = Date.now();
-        let db = await reportsDatabase.initDbReports();
-        if( db ) {
-            let res = await reportsDatabase.actualizar(reportAssigned, db.database);
-            let db2 = await executionReportsDatabase.initDb();
-            let res2 = await executionReportsDatabase.actualizar(executionReport, db2.database);
-            if( res && res2 ) {
-                if(navigator.onLine) {
-                    executionReportsRoutes.saveExecutionReport(executionReport)
-                    reportsRoutes.editReport(reportAssigned)
+        };
+        setContentData([])
+        if(group_[indexGroup][indexActivity].readCommits) {
+            if(navigator.onLine) {
+                if(!isOnlyClose) {
+                    group_[indexGroup][indexActivity].isWarning = true
                 }
-                setOpenReadActivity(false)
-                contentCache[indexActivity].isWarning = true
                 let checkedList = [];
                 let checkedTrue = [];
-                contentCache.forEach((e, n) => {
+                group_[indexGroup].forEach((e, n) => {
+                    console.log(e)
                     if(e.isChecked) {
                         checkedTrue.push(e.isChecked)
                     }else{
                         e.isChecked = false;
                     }
                     checkedList.push(e.isChecked)
-                    if(n == (contentCache.length - 1)) {
-                        let newProgress = ( (checkedTrue.length) * 100) / contentCache.length;
-                        setChecks(checkedList)
+                    if(n == (group_[indexGroup].length - 1)) {
+                        let newProgress = ( (checkedTrue.length) * 100) / group_[indexGroup].length;
                         setProgress(newProgress);
-                        setContentData(contentCache)
+                        console.log(newProgress, group_[indexGroup])
+                        setContentData(group_[indexGroup])
+                        setChecks(checkedList)
+                        if(navigator.onLine) {
+                            executionReportsRoutes.saveExecutionReport(executionReport)
+                            reportsRoutes.editReport(reportAssigned);
+                        }
+                        reportAssigned.idDatabase = reportAssigned.idIndex
+                        saveExecutionReport(executionReport, reportAssigned);
                     }
                 })
-
             }
         }
     }
@@ -177,46 +218,39 @@ const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgres
         setOpenWriteActivity(false);
     }
 
-    const closeWriteModal = async () => {
+    const closeWriteModal = async (isOnlyClose) => {
+        let group_ = executionReport.group
         if(!reportAssigned.dateInit) {
             reportAssigned.dateInit = Date.now();
-        }
-        let contentCache = contentData;
-        if(contentCache[indexActivity].writeCommits) {
-            executionReport.updatedBy = localStorage.getItem('_id');
-            executionReport.offLineGuard = Date.now();
-            let db = await executionReportsDatabase.initDb();
-            if( db ) {
-                let res = await reportsDatabase.actualizar(reportAssigned, db.database);
-                let db2 = await executionReportsDatabase.initDb();
-                let res2 = await executionReportsDatabase.actualizar(executionReport, db2.database);
-                if( res && res2 ) {
+        };
+        setContentData([])
+        if(group_[indexGroup][indexActivity].writeCommits) {
+            if(!isOnlyClose) {
+                group_[indexGroup][indexActivity].isWarning = false
+            }
+            let checkedList = [];
+            let checkedTrue = [];
+            group_[indexGroup].forEach((e, n) => {
+                if(e.isChecked) {
+                    checkedTrue.push(e.isChecked)
+                }else{
+                    e.isChecked = false;
+                }
+                checkedList.push(e.isChecked)
+                if(n == (group_[indexGroup].length - 1)) {
+                    let newProgress = ( (checkedTrue.length) * 100) / group_[indexGroup].length;
+                    setProgress(newProgress);
+                    setContentData(group_[indexGroup])
+                    setChecks(checkedList)
                     if(navigator.onLine) {
                         executionReportsRoutes.saveExecutionReport(executionReport)
-                        reportsRoutes.editReport(reportAssigned)
+                        reportsRoutes.editReport(reportAssigned);
                     }
-                    setOpenWriteActivity(false);
-                    contentCache[indexActivity].isWarning = false
-                    let checkedList = [];
-                    let checkedTrue = [];
-                    contentCache.forEach((e, n) => {
-                        if(e.isChecked) {
-                            checkedTrue.push(e.isChecked)
-                        }else{
-                            e.isChecked = false;
-                        }
-                        checkedList.push(e.isChecked)
-                        if(n == (contentCache.length - 1)) {
-                            let newProgress = ( (checkedTrue.length) * 100) / contentCache.length;
-                            setChecks(checkedList)
-                            setProgress(newProgress);
-                            setContentData(contentCache)
-                        }
-                    })
+                    reportAssigned.idDatabase = reportAssigned.idIndex
+                    saveExecutionReport(executionReport, reportAssigned);
                 }
-            }
-        }else{
-            setOpenWriteActivity(false);
+            })
+            
         }
     }
 
@@ -319,7 +353,7 @@ const PautaDetail = ({height, pauta, reportAssigned, executionReport, setProgres
                     openReadActivity && <ReadActivityModal reportLevel={reportLevel} open={openReadActivity} closeModal={closeModal} onlyClose={onlyClose} activity={contentData[indexActivity]} reportAssignment={reportAssignment} reportId={executionReport._id}/>
                 }
                 {
-                    openWriteActivity && <WriteActivityModal reportLevel={reportLevel} open={openWriteActivity} closeWriteModal={closeWriteModal} onlyClose={onlyClose} activity={contentData[indexActivity]} reportAssignment={reportAssignment} reportId={executionReport._id}/>
+                    openWriteActivity && <WriteActivityModal reportLevel={reportLevel} open={openWriteActivity} closeWriteModal={closeWriteModal} onlyClose={onlyClose} activity={executionReport.group[indexGroup][indexActivity]} reportAssignment={reportAssignment} reportId={executionReport._id}/>
                 }
             </div>
         </div>

@@ -64,6 +64,8 @@ const MachinesPage = ({ route }) => {
         routeData = 'Inspección'
     }else if(route === 'maintenance') {
         routeData = 'Mantención'
+    }else if(route === 'machines') {
+        routeData = 'Máquinas'
     }
 
     return (
@@ -87,16 +89,22 @@ const MachinesPage = ({ route }) => {
                                 </div>
                             </div>
                             <Grid container spacing={5} justifyContent='flex-start' style={{textAlign: 'center', height: '75vh', overflowY: 'auto'}}>
+                                <Grid item xs={null} sm={null} md={2} lg={2} xl={2}>
+
+                                </Grid>
                                 {
-                                    machinesList/* .filter(a => a.toString()) */.map((machine) => {
-                                        console.log(machine)
+                                    machinesList.map((machine) => {
                                         return (
-                                            <Grid item key={machine.id} style={{minWidth: '25%', margin: 10}}>
+                                            <Grid item xs={12} sm={12} md={4} lg={4} xl={4} key={machine.id} style={{margin: 10}}>
                                                 <MachineButton machine={machine} image={machine.image} route={route}/>
                                             </Grid>
                                         )
                                     })
                                 }
+                                <Grid item xs={null} sm={null} md={2} lg={2} xl={2}>
+
+                                </Grid>
+                                
                             </Grid>
                         </Grid>
                     </div>
@@ -107,7 +115,7 @@ const MachinesPage = ({ route }) => {
 }
 
 MachinesPage.propTypes = {
-    route: PropTypes.oneOf(['inspection', 'maintenance'])
+    route: PropTypes.oneOf(['machines'])
 }
 
 export default MachinesPage

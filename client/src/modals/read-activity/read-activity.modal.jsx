@@ -128,7 +128,8 @@ const ReadActivityModal = ({open, closeModal, activity, onlyClose, reportId, rep
             console.log(commits)
             if(confirm('Guardar avance')) {
                 activity.isChecked = true;
-                closeModal()
+                closeModal();
+                onlyClose()
             }
         }else{
             alert('Debe dejar algún nuevo comentario.')

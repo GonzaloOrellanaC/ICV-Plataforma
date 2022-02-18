@@ -9,19 +9,22 @@ export default () => {
         }else{
             reps = await getAllAssignment()
         }
-        let db = await reportsDatabase.initDbReports();
-        if(db) {
+        console.log(reps)
+        resolve(reps)
+        /* let db = await reportsDatabase.initDbReports(); */
+        /*if(db) {
+            resolve(reps)
             reps.forEach(async (report, i) => {
                 report.idDatabase = i;
                 reportsDatabase.actualizar(report, db.database);
-                let state = await getReportExecutionFromId(report._id);
+                 let state = await getReportExecutionFromId(report._id);
                 if(i == (reps.length - 1)) {
                     setTimeout(() => {
                         resolve(state)
                     }, 100);
-                }
+                } 
             })
-        }
+        }*/
     })
 }
 
