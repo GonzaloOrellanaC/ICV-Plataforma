@@ -4,7 +4,7 @@ import { Box, Button, Drawer, Fab, IconButton } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { LoadingModal } from '../../modals';
 import { FilesToStringDatabase, machinesPartsDatabase } from '../../indexedDB';
-import { Close, Menu } from '@material-ui/icons';
+import { Close, ControlCamera, Menu } from '@material-ui/icons';
 import buttonSelections from './buttonSelections';
 
 const MVAvatar = ({machine}) => {
@@ -21,7 +21,9 @@ const MVAvatar = ({machine}) => {
     const [ cameraOrbit, setCameraOrbit ] = useState("45deg 81deg 100m")
     const [ scale, setScale ] = useState("0.009 0.009 0.009")
     const [ cameraTarget, setCameraTarget ] = useState("auto auto auto")
-    const [ buttons, setButtons ] = useState([])
+    const [ isButton, setIsButton ] = useState(false)
+    const [ buttons, setButtons ] = useState([]);
+    //const [ machineModel, setMachineModel ] = useState()
 
     useEffect(() => {
         setButtons([])
@@ -95,6 +97,10 @@ const MVAvatar = ({machine}) => {
             }, 2000);
         })
 
+        mv.addEventListener('click', (e) => {
+            //console.log(e)
+        })
+
         mv.addEventListener('error', (err) => {
             console.log(err)
         })
@@ -110,12 +116,12 @@ const MVAvatar = ({machine}) => {
     };
 
     const getNewElement =  (element, index) => {
-        handleDrawerClose()
-        modelViewer.cameraOrbit = cameraOrbit;
+        handleDrawerClose();
+        setCenter();
+        setButtons([])
         setTimeout(() => {
             setTitle(changeName(element.name))
-            setButtons(buttonSelections(element.name));
-            console.log(buttonSelections(element.name))
+            console.log(buttonSelections(element.name, machine.model))
             if(element.brand === 'CATERPILLAR') {
                 if (element.name === 'Preview_Con_Texturas') {
                     setProgress(0)
@@ -154,10 +160,17 @@ const MVAvatar = ({machine}) => {
                 var json = data.data;
                 var blob = new Blob([json]);
                 var url = URL.createObjectURL(blob);
-                
+                setButtons(buttonSelections(element.name, machine.model));
                 setNewMachine(url);
             }, 4000);
         }, 1000);
+    }
+
+    const setCenter = () => {
+        setCameraOrbit("45deg 81deg 100m")
+        setScale("0.009 0.009 0.009")
+        setCameraTarget("auto auto auto")
+        setIsButton(false)
     }
 
     const setPreview = () => {
@@ -240,7 +253,7 @@ const MVAvatar = ({machine}) => {
                            buttons.map((e, i) => {
                                return (
                                 <button 
-                                    onClick={()=>setCameraOrbit(e.orbit)}
+                                    onClick={()=>{setCameraOrbit(e.orbit); setCameraTarget(e.target); setIsButton(true)}}
                                     key={i}
                                     className="view-button" 
                                     slot={`hotspot-${i}`} 
@@ -258,6 +271,9 @@ const MVAvatar = ({machine}) => {
                 <LoadingModal open={openLoader} progress={progress} loadingData={'Preparando vista 3D...'} withProgress={true}/>
                 <div style={{position: 'absolute', bottom: 0, left: 0, width: '100%', backgroundColor: 'transparent', textAlign: 'center'}}>
                     <div style={{width: '60%', backgroundColor: 'transparent', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
+                        {isButton && <IconButton onClick={()=>setCenter()}>
+                            <ControlCamera style={{color: 'white', fontFamily: 'Raleway', marginRight: 10}} /> <p style={{color: 'white', fontFamily: 'Raleway'}}>Centrar cámara</p>
+                        </IconButton>}
                         <h2 style={{color: 'white', fontFamily: 'Raleway'}}>{title}</h2>
                     </div>
                 </div>
