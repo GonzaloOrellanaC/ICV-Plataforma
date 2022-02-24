@@ -22,6 +22,7 @@ const initDbReports = () => {
             const coleccionObjetos = db.createObjectStore('Reports',{
                 keyPath: 'idDatabase'
             })
+            coleccionObjetos.createIndex("_id", "_id", {unique: false});
 
             coleccionObjetos.transaction.oncomplete = (event) => {
                 resolve(

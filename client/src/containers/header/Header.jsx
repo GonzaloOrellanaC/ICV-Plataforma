@@ -72,17 +72,10 @@ const Header = () => {
 
     useEffect(() => {
         if(isAuthenticated) {
-            /* let go = true; */
             window.addEventListener('online', () => {
                 console.log('Became online'); setIfHavNetwork(true);
-                /* const alerta = sync();
-                if(go) {
-                    go = false;
-                    alert(alerta.message);
-                } */
             });
             window.addEventListener('offline', () => {
-                /* go = true; */
                 console.log('Became offline'); setIfHavNetwork(false);
             });
         }
@@ -110,43 +103,6 @@ const Header = () => {
                         </div>
                 </Toolbar>
                 </div>
-                {/* <Toolbar className={classes.toolbar}>
-                    {!navBarOpen && <Link to='/'><img src={logo} height={75} style={{ marginLeft: '15vw' }}/></Link>}
-                    {navBarOpen && <Link to='/'><img src={logo} height={75} style={{ marginLeft: 330 }}/></Link>}
-                    {
-                        isAuthenticated && <Fragment>
-                            <dl>
-                                <dt style={{margin: 0}}>{isAuthenticated && <div> <p style={{margin: 10}}> { userData.name } { userData.lastName } </p> </div>}</dt>
-                                <dt>{window.localStorage.getItem('name') === 'ADMINISTRADOR' && <div> <h5 style={{margin: 10}}> Administrador </h5> </div>}</dt>
-                            </dl>
-                        </Fragment>
-                    }
-                    {
-                        isAuthenticated && <Fragment>
-                            <dl>
-                                <dt style={{margin: 0}}>{isAuthenticated && <div> <p style={{margin: 10}}> { userData.name } { userData.lastName } </p> </div>}</dt>
-                                <dt>{window.localStorage.getItem('name') === 'ADMINISTRADOR' && <div> <h5 style={{margin: 10}}> Administrador </h5> </div>}</dt>
-                            </dl>
-                        </Fragment>
-                    }
-                    <Fragment>
-                        <div className={classes.locationText}>
-                            <Link to="/info">
-                                <Button title='Información'>
-                                    {<FontAwesomeIcon icon={faInfoCircle} size='2x'/>}
-                                </Button>
-                            </Link>
-                        </div>
-                        <div className={classes.locationIcon}>
-                            <Link to="/alerts">
-                                <Button title='Alertas'>
-                                    {<FontAwesomeIcon icon={faBell} size='2x'/>}
-                                </Button>
-                            </Link>
-                        </div>
-                    </Fragment>
-                    
-                </Toolbar> */}
             </AppBar>
         )
     }

@@ -73,14 +73,6 @@ const ActivitiesDetailPage = () => {
         }
     }
 
-    /* const getIdpm = (model) => {
-        if(model === '793-F') {
-            return 'SPM000787';
-        }else if(model === 'PC5500') {
-            return 'SPM000445'
-        }
-    } */
-
     const setProgress = (value) => {
         resutProgress(value)
     }

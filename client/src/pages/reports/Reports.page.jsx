@@ -20,24 +20,26 @@ const ReportsPage = () => {
     const [ mantencionesPorAsignar, setMantencionesPorAsignar ] = useState(0);
     const [ mantencionesCompletadas, setMantencionesCompletadas ] = useState(0);
     const [ list, setList ] = useState([]);
-    const [ vista, setVista ] = useState(true)
+    const [ vista, setVista ] = useState(true);
+    const [ cancel, setCancel ] = useState(true);
 
     const history = useHistory()
     const classes = useStylesTheme();
 
     useEffect(() => {
-        
         if(history) {
             initPage();
         }
-        setTimeout(() => {
-            if(!navigator.onLine) {
-                alert('Problemas de red. Revise su conexión.');
-                history.goBack()
-            }
-        }, 1000);
-        
-    }, [])
+        if(cancel) {
+            setTimeout(() => {
+                if(!navigator.onLine) {
+                    alert('Problemas de red. Revise su conexión.');
+                    history.goBack()
+                }
+            }, 1000);
+        }
+        return () => setCancel(false);
+    }, [cancel]);
 
     const initPage = async () => {
         let daysOfThisWeek = getWeekReports();

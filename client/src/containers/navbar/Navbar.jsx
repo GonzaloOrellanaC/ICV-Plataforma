@@ -15,7 +15,8 @@ import {
     faListAlt,
     faRobot,
     faComment,
-    faTruck} from '@fortawesome/free-solid-svg-icons';
+    faTruck,
+    faUser} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation } from '../../context';
 import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
 
@@ -120,7 +121,8 @@ const Navbar = () => {
     const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true);
     const [ openVersionModal, setOpenVersionModal ] = useState(false);
     const [ openIAModal, setOpenIAModal ] = useState(false);
-    const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false)
+    const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false);
+    const [ cancel, setCancel ] = useState(true)
 
 
     const logout = async () => {
@@ -170,23 +172,26 @@ const Navbar = () => {
     }
 
     useEffect(() => {
-        if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive')) {
-            setDisableButtonsNoSAP(false);
-        }
-        setPath(history.location.pathname)
-        if(history.listen(data => {
-            setPath(data.pathname)
-        }))
-        setUseButton(true)
-        const timer = setInterval(() => {
-            if(!(localStorage.getItem('sitio'))) {
-                setUseButton(false)
-            }else{
-                setUseButton(true)
-                clearInterval(timer);
+        if(cancel) {
+            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive')) {
+                setDisableButtonsNoSAP(false);
             }
-        }, 1000);
-    }, [])
+            setPath(history.location.pathname)
+            if(history.listen(data => {
+                setPath(data.pathname)
+            }))
+            setUseButton(true)
+            const timer = setInterval(() => {
+                if(!(localStorage.getItem('sitio'))) {
+                    setUseButton(false)
+                }else{
+                    setUseButton(true)
+                    clearInterval(timer);
+                }
+            }, 1000);
+        }
+        return () => setCancel(false);
+    }, [cancel])
 
     return (
         <div>
@@ -264,6 +269,13 @@ const Navbar = () => {
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar} title='Perfil'>
+                                    <Link to='/user-profile' className={classes.sideButtons} style={{ color: (path.includes('/user-profile')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faUser}/> {navBarOpen ?  ' Perfil' : ''}
+                                    </Link>
+                                </IconButton>
+                            </div>
+                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Int. Artificial (Beta)' onClickCapture={()=>{toOpenIAModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faRobot}/> {navBarOpen ?  ' Int. Artificial (Beta)' : ''}
@@ -271,9 +283,9 @@ const Navbar = () => {
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Feedbacks' onClickCapture={()=>{toOpenInternalMessagesModal()}}>
+                                <IconButton onClick={closeSideBar} title='Mensajes App' onClickCapture={()=>{toOpenInternalMessagesModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
-                                        <FontAwesomeIcon icon={faComment}/> {navBarOpen ?  ' Int. Artificial (Beta)' : ''}
+                                        <FontAwesomeIcon icon={faComment}/> {navBarOpen ?  ' Mensajes App' : ''}
                                     </div>
                                 </IconButton>
                             </div>

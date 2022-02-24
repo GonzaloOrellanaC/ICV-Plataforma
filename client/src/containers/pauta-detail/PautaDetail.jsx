@@ -53,7 +53,6 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
     const setGroupData = (groupData, groupD) => {
         let newGroupData = [];
         groupData.forEach((data, index) => {
-            
             let tab = {
                 data: data,
                 state: false
@@ -94,9 +93,13 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         let executionReportData;
         if(navigator.onLine) {
             let executionReportDataFromCloud = await getExecutionReportData();
+            let db = await executionReportsDatabase.initDb();
+            let data = await executionReportsDatabase.actualizar(executionReportDataFromCloud, db.database);
             let state = new Boolean;
-            state = compareExecutionReport(executionReportDataFromCloud);
-            if(state) {
+            executionReportData = executionReportDataFromCloud
+            /*state = compareExecutionReport(executionReportDataFromCloud);
+
+             if(state) {
                 executionReportData = executionReportDataFromCloud
             }else{
                 let exDb = await executionReportsDatabase.initDb();
@@ -104,7 +107,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 executionReportList = await executionReportsDatabase.consultar(exDb.database);
                 let executionR = executionReportList.filter(r => {if(r._id === executionReportData._id) {return r}});
                 executionReportData = executionR[0];
-            }
+            } */
             if(executionReportData.group) {
                 setGroup(executionReportData.group)
                 setGroupData(Object.keys(executionReportData.group), executionReportData.group);

@@ -1,11 +1,11 @@
 import '@google/model-viewer';
 import './style.css'
-import { Box, Button, Drawer, Fab, IconButton, SwipeableDrawer } from '@material-ui/core';
+import { Box, Button, Drawer, Fab, IconButton } from '@material-ui/core';
 import { useEffect, useState } from 'react';
-import { ImageTransitionModal, LoadingModal } from '../../modals';
+import { LoadingModal } from '../../modals';
 import { FilesToStringDatabase, machinesPartsDatabase } from '../../indexedDB';
-import { BottomNavbar } from '../../containers';
 import { Close, Menu } from '@material-ui/icons';
+import buttonSelections from './buttonSelections';
 
 const MVAvatar = ({machine}) => {
 
@@ -17,11 +17,16 @@ const MVAvatar = ({machine}) => {
     const [ listaPartes, setListaPartes ] = useState([]);
     const [ title, setTitle ] = useState('');
     const [ isSelected, setIsSelected ] = useState('');
-    const [ openImage, setOpenImage ] = useState(false);
     const [ imagePath, setImagePath ] = useState('');
     const [ cameraOrbit, setCameraOrbit ] = useState("45deg 81deg 100m")
     const [ scale, setScale ] = useState("0.009 0.009 0.009")
     const [ cameraTarget, setCameraTarget ] = useState("auto auto auto")
+    const [ buttons, setButtons ] = useState([])
+
+    useEffect(() => {
+        setButtons([])
+        initModelViewer()
+    }, []);
 
     const readFileDatabase = async () => {
         setIsSelected('primary')
@@ -70,23 +75,14 @@ const MVAvatar = ({machine}) => {
         }
     }
 
+
     const initModelViewer = async () => {
         readFileDatabase();
         setModelViewer(document.querySelector("model-viewer#machine"))
         let mv = document.querySelector("model-viewer#machine");
+
         mv.addEventListener('model-visibility', (e) => {
-            /* console.log(e)
-            setTimeout(() => {
-                document.getElementById('image').style.opacity = '0';
-                document.getElementById('image').style.height = '0px';
-                
-                console.log('cargado!!')
-                setOpenLoader(false);
-                setTimeout(() => {
-                    //setOpenImage(false);
-                    mv.cameraControls = true;
-                }, 2500);
-            }, 2000); */
+            
         })
         mv.addEventListener('load', () => {
             setOpenLoader(false)
@@ -97,29 +93,12 @@ const MVAvatar = ({machine}) => {
                 document.getElementById('image').style.height = '0px';
                 document.getElementById('machine').style.height = '100%';
             }, 2000);
-
-            mv.addEventListener('click', (e) => {
-                console.log(e)
-            })
-        })
-        mv.addEventListener('progress', (e) => {
-            setProgress(e.detail.totalProgress * 130)
-            if(e.detail.totalProgress == 1) {
-                setProgress(100)
-                setTimeout(() => {
-                    setOpenLoader(false)
-                }, 2000);
-            }
         })
 
         mv.addEventListener('error', (err) => {
             console.log(err)
         })
     }
-
-    useEffect(() => {
-        initModelViewer()
-    }, []);
 
     const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
     const handleDrawerOpen = () => {
@@ -135,6 +114,8 @@ const MVAvatar = ({machine}) => {
         modelViewer.cameraOrbit = cameraOrbit;
         setTimeout(() => {
             setTitle(changeName(element.name))
+            setButtons(buttonSelections(element.name));
+            console.log(buttonSelections(element.name))
             if(element.brand === 'CATERPILLAR') {
                 if (element.name === 'Preview_Con_Texturas') {
                     setProgress(0)
@@ -249,8 +230,29 @@ const MVAvatar = ({machine}) => {
                     camera-orbit={cameraOrbit}
                     scale={scale}
                     alt="A Material Picking Example"
+                    touch-action="none" 
+                    min-field-of-view="45deg" 
+                    interpolation-decay="200" 
+                    min-camera-orbit="auto auto 10%" 
+                    oncontextmenu="return false;"
                 >
-
+                       {
+                           buttons.map((e, i) => {
+                               return (
+                                <button 
+                                    onClick={()=>setCameraOrbit(e.orbit)}
+                                    key={i}
+                                    className="view-button" 
+                                    slot={`hotspot-${i}`} 
+                                    data-position={e.position} 
+                                    data-normal={e.normal}  
+                                    data-orbit={e.orbit}  
+                                    data-target={e.target} >
+                                    {e.title}
+                                </button>
+                               )
+                           })
+                       }
                 </model-viewer>
                 
                 <LoadingModal open={openLoader} progress={progress} loadingData={'Preparando vista 3D...'} withProgress={true}/>
@@ -273,8 +275,6 @@ const MVAvatar = ({machine}) => {
                     <Menu />
                 </Fab>}
             </Box>
-            
-        
     )
 }
 

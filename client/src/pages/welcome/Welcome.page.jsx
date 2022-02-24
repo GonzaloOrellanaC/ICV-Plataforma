@@ -28,6 +28,8 @@ const WelcomePage = () => {
     const [ notificaciones1, setNotificaciones1 ] = useState('Sin notificaciones')
     const [ notificaciones2, setNotificaciones2 ] = useState('Sin notificaciones')
 
+    const [ cancel, setCancel ] = useState(true)
+ 
     const history = useHistory();
 
     window.addEventListener('online', () => {
@@ -57,34 +59,36 @@ const WelcomePage = () => {
     }
 
     useEffect(() => {
-        let cancel = true;
         if(cancel) {
-            readData(
-                setOpenLoader,
-                setLoadingData,
-                getTrucksList,
-                setProgress,
-                getMachinesList,
-                setLastActualization, 
-                setDisableButtons, 
-                setNotificaciones1,
-                setOpenVersion,
-                network
-            );
-            readDataSite(
-                setDisableButtons,
-                setNotificaciones1,
-                setNotificaciones2,
-                setDisableButtonsNoSAP,
-                setDisableIfNoMaintenance,
-                setDisableIfNoInspection,
-                setHora,
-                setDate
-            );
+            init()
         }
-        return () => cancel = false;
-        
-    }, []);
+        return () => setCancel(false);
+    }, [cancel]);
+
+    const init = () => {
+        readData(
+            setOpenLoader,
+            setLoadingData,
+            getTrucksList,
+            setProgress,
+            getMachinesList,
+            setLastActualization, 
+            setDisableButtons, 
+            setNotificaciones1,
+            setOpenVersion,
+            network
+        );
+        readDataSite(
+            setDisableButtons,
+            setNotificaciones1,
+            setNotificaciones2,
+            setDisableButtonsNoSAP,
+            setDisableIfNoMaintenance,
+            setDisableIfNoInspection,
+            setHora,
+            setDate
+        );
+    }
 
     const getMachinesList = () => {
         return new Promise(async resolve => {
