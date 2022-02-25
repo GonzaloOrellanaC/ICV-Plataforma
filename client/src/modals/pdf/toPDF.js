@@ -1,13 +1,85 @@
 import { dateSimple, getExecutionReportData, getUserNameById } from "../../config";
 import { pdfMakeRoutes } from "../../routes";
-import logo from '../../assets/logo_icv_gris.png'
+import logo from '../../assets/logo_icv_gris.png';
+
+const createTable = ( groupKeys = new Array, group = new Array) => {
+    let arrayTable = []
+    return new Promise(resolve => {
+        group.forEach(async (element, index) => {
+            console.log(element, groupKeys[index]);
+            arrayTable.push(
+                {
+                    style: 'title',
+                    table: {
+                        widths: [50, 120, 120, '*'],
+                        body: 
+                            await createSubTables(element, groupKeys[index], index),
+                            
+                        
+                    }/* ,
+                    layout: {
+                        fillColor: '#DADADA'
+                    } */
+                },
+
+            );
+            if(index == (group.length - 1)) {
+                resolve(arrayTable)
+            }
+        })
+    })
+}
+
+const createSubTables = (list = new Array, index = new String, indexNumber = new Number) => {
+    let pageBreak;
+    if(indexNumber == 0) {
+        pageBreak = 'none'
+    }else{
+        pageBreak = 'before'
+    }
+    let table = [
+        [
+            {
+                colSpan: 4, 
+                border: [true, true, true, true],
+                text: index,
+                fillColor: '#DADADA',
+                pageBreak: pageBreak
+            },
+            {},
+            {},
+            {}
+        ]
+    ];
+    //table = table.push(['hola', 'que tal', 'como va', 'quien eres'])
+    return new Promise(resolve => {
+        list.forEach((e, i) => {
+            let commit
+            if(e.writeCommits) {
+                commit = `${e.writeCommits[0].userName}: ${e.writeCommits[0].commit}`
+            }else{
+                commit = `Observación: -- ${e.readCommits[0].userName}: ${e.readCommits[0].commit}`
+            }
+            
+            table.push([e.workteamdesc,  e.taskdesc ,  e.obs01 , commit])
+            if(i == (list.length - 1)) {
+                resolve(table)
+            }
+        })
+    })
+}
 
 export default async (reportData, machineData) => {
-    console.log(reportData);
-    console.log(machineData);
+    //console.log(reportData);
+    //console.log(machineData);
     const admin = await getUserNameById(reportData.createdBy);
     const executionReportData = await getExecutionReportData(reportData);
-    console.log(executionReportData)
+    //console.log(executionReportData);
+    //if(executionReportData) {
+        const groupKeys = Object.keys(executionReportData[0].group)
+        const group = Object.values(executionReportData[0].group);
+        //createTable(groupKeys, group)
+    //}
     var docDefinition = {
         content: [
             {
@@ -101,27 +173,60 @@ export default async (reportData, machineData) => {
             {
                 style: 'title',
                 table: {
-                    widths: [50, '*', 150, 70],
+                    widths: [50, 120, 120, '*'],
                     body: [
-                        ['Personal Necesario', 'Descripción de la tarea', 'Observaciones', 'Ejecutado']
+                        ['Personal Necesario', 'Descripción de la tarea', 'Observaciones', 'Comentarios']
                     ]
                 },
                 layout: {
                     fillColor: '#DADADA'
                 }
             },
+            await createTable(groupKeys, group),
             {
-                style: 'title',
-                table: {
-                    widths: ['*'],
-                    body: [
-                        ['Indicaciones Iniciales']
-                    ]
-                },
-                layout: {
-                    fillColor: '#DADADA'
-                }
+                columns: [
+                    {
+                        text: 'Responsables: ',
+                        margin: [0, 50, 0, 0],
+                    },
+                    {
+                        alignment: 'right',
+                        margin: [0, 50, 0, 0],
+                        width: '*',
+                        text: 'Fecha __ / __ / ____'
+                    }
+                ]
+            },
+            {
+                columns: [
+                    {
+                        alignment: 'center',
+                        margin: [0, 200, 0, 200],
+                        width: '*',
+                        text: 'Firma Ejecutivo SAP'
+                    },
+                    {
+                        alignment: 'center',
+                        margin: [0, 200, 0, 200],
+                        width: '*',
+                        text: 'Firma Jefe de Maquinaria'
+                    },
+                    {
+                        alignment: 'center',
+                        margin: [0, 200, 0, 200],
+                        width: '*',
+                        text: 'Firma Jefe de Turno'
+                    },
+                    {
+                        alignment: 'center',
+                        margin: [0, 200, 0, 200],
+                        width: '*',
+                        text: 'Firma Técnico Inspección o Mantenimiento'
+                    },
+                ]
             }
+                
+            
         ],
         styles: {
             header: {
@@ -156,6 +261,8 @@ export default async (reportData, machineData) => {
             }
         },
     };
+
+    console.log(docDefinition)
     
     pdfMakeRoutes.createPdf(docDefinition).then(data=> {
         const linkSource = data.data;
