@@ -161,7 +161,7 @@ const changePassword = async (userId, password) => {
  */
 const forgotPassword = async (email) => {
     const findUser = await Users.findOneAndUpdate({ email }, { updatedAt: new Date() }, { new: true, timestamps: false })
-    console.log(findUser);
+    //console.log(findUser);
     if(!findUser) {
         return { token: null, fullName: null, email: null }
     }

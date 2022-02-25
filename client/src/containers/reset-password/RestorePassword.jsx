@@ -44,10 +44,12 @@ const RestorePassword = ({id}) => {
     const handleSubmit = async () => {
         if(password === confirmPassword) {
             if(password.length > 5) {
-                
+                authRoutes.restorePassword(password, token).then(data => {
+                    alert('Contraseña cambiada con éxito');
+                    history.push('/');
+                })
                 /* setAlertData('Contraseña debe contar con al menos 6 carácteres.') */
             }else{
-                
                 alert('Contraseña debe contener al menos 6 carácteres.')
             }
         }else{

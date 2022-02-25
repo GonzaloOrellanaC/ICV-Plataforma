@@ -18,6 +18,17 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                     
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.5.9</strong>
+                        <li>
+                            Etiquetado de modelos 3D.
+                        </li>
+                        <li>
+                            PDF de prueba de Orden de Trabajo terminado.
+                        </li>
+                        <li>
+                            Reparación de errores en recuperación de password.
+                        </li>
+
                         <strong>v.5.8</strong>
                         <li>
                             Desde correo electrónico puede seguir vía link el flujo de aprobaciones de las Ordenes de Trabajo.

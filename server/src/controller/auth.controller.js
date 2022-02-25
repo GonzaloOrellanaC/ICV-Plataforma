@@ -52,6 +52,7 @@ const register = async (req, res, next) => {
 const forgotPassword = async (req, res, next) => {
     const { body: { email } } = req
 
+    console.log(email)
     if (!email) {
         return res.status(400).end(errorMsg.missingEmail)
     }
@@ -76,7 +77,8 @@ const resetPassword = async (req, res, next) => {
     const { payload: { id, data }, body: { password } } = req
 
     try {
-        const message = await UserServices.resetPassword(id, data, password)
+        const message = await UserServices.resetPassword(id, data, password);
+        console.log(message)
         res.status(200).json({ message })
     } catch (error) {
         return res.status(400).end(error.message)

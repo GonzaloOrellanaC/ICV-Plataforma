@@ -69,12 +69,47 @@ const sendEmail = (typeEmail, fullName, language, email, password) => {
 }
 
 const send = (from, to, subject, html) => {
+
+    let auth = {
+        host: 'smtp.mailgun.org',
+        port: 587,
+        secure: false, // upgrade later with STARTTLS
+        auth: {
+          user: environment.mailApi.baseSender,
+          pass: environment.mailApi.key,
+        },
+    }
     
     return new Promise(resolve => {
+        /* const auth = {
+            auth: {
+                api_key: environment.mailApi.key,
+                domain: environment.mailApi.domain
+            }
+        } */
+    
+        let transporter = nodemailer.createTransport(auth);
+    
+        transporter.sendMail({
+            from: from/* `No Responder --Plataforma mantención ICV <${environment.mailApi.baseSender}>` */,
+            to: to,
+            subject: subject,
+            html: html
+        })
+        .then(()=> {
+            console.log('Mensaje enviado');
+            resolve(true)
+        })
+        .catch(e=>{
+            console.log('Error en el envio de correos: ', e);
+            resolve(false)
+        })
+    })
+    /* return new Promise(resolve => {
         if (!from || !to || !subject || !html) {
             resolve(errorMsg.sendEmail)
         }
-        resolve(mailgun.messages.create(
+        mailgun.messages.create(
             environment.mailApi.domain,
             {
                 from,
@@ -82,13 +117,14 @@ const send = (from, to, subject, html) => {
                 subject,
                 html
             }
-        )) 
-    })
+        )
+        resolve() 
+    }) */
 }
 
 const forgotPasswordEmail = async (fullName, token, language, email) => {
-    console.log(fullName, language, email);
-    console.log(environment.platform.baseUrl, environment.platform.routes.resetPassword)
+    //console.log(fullName, language, email);
+    //console.log(environment.platform.baseUrl, environment.platform.routes.resetPassword)
 
     return new Promise (async resolve => {
         const htmlFile = await fsPromises.readFile(path.join(`src/services/email.templates/forgotPass.${language}.html`))
@@ -103,6 +139,8 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
             platformURL: environment.platform.baseUrl,
             platformName: environment.platform.name
         })
+
+        console.log(environment.mailApi.baseSender)
         const emailSendState = await send(environment.mailApi.baseSender, [email], dataMsg.forgotPasswordSubject(environment.platform.name), html)
         console.log(emailSendState)
         if(emailSendState) {
