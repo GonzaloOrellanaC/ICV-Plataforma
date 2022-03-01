@@ -166,9 +166,11 @@ const getPautas = () => {
     return new Promise(resolve => {
         apiIvcRoutes.getPautas()
         .then(data => {
+            console.log(data.data)
             resolve(data.data)
         })
         .catch(err => {
+            console.log(err)
             //console.log('Error', err)
         })
     })

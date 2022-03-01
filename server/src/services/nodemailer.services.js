@@ -1,6 +1,6 @@
-import Mailgun from 'mailgun.js'
+/* import Mailgun from 'mailgun.js'
 import formData from 'form-data'
-
+ */
 import nodemailer from "nodemailer";
 import mg from 'nodemailer-mailgun-transport'
 import fs from 'fs';
@@ -9,12 +9,6 @@ import path from 'path';
 import environment from "../config/environment.config";
 
 const { error: errorMsg, success: successMsg, data: dataMsg } = environment.messages.services.email
-
-
-const mailgun = (new Mailgun(formData)).client({
-    username: 'api',
-    key: environment.mailApi.key
-})
 
 const fsPromises = fs.promises;
 
@@ -37,7 +31,7 @@ const sendEmail = (typeEmail, fullName, language, email, password) => {
         let data = {
             logoAlt: 'Logo',
             fullName: fullName,
-            platformURL: 'https://icv-plataforma-mantencion.azurewebsites.net',
+            platformURL: environment.platform.baseUrl,
             platformName: 'ICV Platform',
             email: email,
             resetLink: 'https://tesso.cl',
@@ -73,7 +67,7 @@ const send = (from, to, subject, html) => {
     let auth = {
         host: 'smtp.mailgun.org',
         port: 587,
-        secure: false, // upgrade later with STARTTLS
+        secure: false,
         auth: {
           user: environment.mailApi.baseSender,
           pass: environment.mailApi.key,
@@ -81,17 +75,11 @@ const send = (from, to, subject, html) => {
     }
     
     return new Promise(resolve => {
-        /* const auth = {
-            auth: {
-                api_key: environment.mailApi.key,
-                domain: environment.mailApi.domain
-            }
-        } */
     
         let transporter = nodemailer.createTransport(auth);
     
         transporter.sendMail({
-            from: from/* `No Responder --Plataforma mantención ICV <${environment.mailApi.baseSender}>` */,
+            from: from,
             to: to,
             subject: subject,
             html: html
@@ -105,27 +93,11 @@ const send = (from, to, subject, html) => {
             resolve(false)
         })
     })
-    /* return new Promise(resolve => {
-        if (!from || !to || !subject || !html) {
-            resolve(errorMsg.sendEmail)
-        }
-        mailgun.messages.create(
-            environment.mailApi.domain,
-            {
-                from,
-                to,
-                subject,
-                html
-            }
-        )
-        resolve() 
-    }) */
 }
 
 const forgotPasswordEmail = async (fullName, token, language, email) => {
     //console.log(fullName, language, email);
     //console.log(environment.platform.baseUrl, environment.platform.routes.resetPassword)
-
     return new Promise (async resolve => {
         const htmlFile = await fsPromises.readFile(path.join(`src/services/email.templates/forgotPass.${language}.html`))
         const template = handlebars.compile(htmlFile.toString())
@@ -144,7 +116,6 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
         const emailSendState = await send(environment.mailApi.baseSender, [email], dataMsg.forgotPasswordSubject(environment.platform.name), html)
         console.log(emailSendState)
         if(emailSendState) {
-            
             resolve(successMsg.resetPasswordEmail)
         }else{
             resolve(errorMsg.forgotPasswordEmail)

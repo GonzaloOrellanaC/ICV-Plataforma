@@ -19,34 +19,41 @@ export default async (
             if(revisarData.data === 'full') {
                 setOpenLoader(true);
                 if(userRole==='admin'||userRole==='superAdmin'||userRole==='sapExecutive') {
-                    setTimeout( async () => {
-                        setLoadingData('Descargando datos de las obras.');
-                        const responseSites = await getInfo.getSites(setProgress, setDisableButtons, setNotificaciones1);
-                        //console.log(responseSites)
-                        setTimeout(async () => {
-                            if(responseSites) {
-                                setLoadingData('Descargando datos de las máquinas.')
-                                setProgress(65)
-                                const responseTrucks = await getTrucksList();
-                                console.log(responseTrucks)
-                                setTimeout(async() => {
-                                    if(responseTrucks) {
-                                        setLoadingData('Descargando lista de las máquinas de las obras.')
-                                        setProgress(100)
-                                        const getMachines = await getMachinesList();
-                                        if(getMachines) {
-                                            download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
-                                            setLastActualization()
-                                        }
+                    setTimeout(async () => {
+                        setLoadingData('Descargando pautas de mantenimiento e inspección.');
+                        const estadoDescargaPautas = await getInfo.descargarPautas(setProgress);
+                        console.log(estadoDescargaPautas)
+                        if(estadoDescargaPautas.state) {
+                            setTimeout( async () => {
+                                setLoadingData('Descargando datos de las obras.');
+                                const responseSites = await getInfo.getSites(setProgress, setDisableButtons, setNotificaciones1);
+                                //console.log(responseSites)
+                                setTimeout(async () => {
+                                    if(responseSites) {
+                                        setLoadingData('Descargando datos de las máquinas.')
+                                        setProgress(65)
+                                        const responseTrucks = await getTrucksList();
+                                        console.log(responseTrucks)
+                                        setTimeout(async() => {
+                                            if(responseTrucks) {
+                                                setLoadingData('Descargando lista de las máquinas de las obras.')
+                                                setProgress(100)
+                                                const getMachines = await getMachinesList();
+                                                if(getMachines) {
+                                                    download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
+                                                    setLastActualization()
+                                                }
+                                            }else{
+                                                setOpenLoader(false)
+                                            }
+                                        }, 1000);
                                     }else{
                                         setOpenLoader(false)
                                     }
                                 }, 1000);
-                            }else{
-                                setOpenLoader(false)
-                            }
-                        }, 1000);
-                    }, 1000);
+                            }, 1000);
+                        }
+                    }, 500);
                 }else{
                     /* setLoadingData('Actualizando asignaciones.');
                     const assignMentResolve = await getInfo.getAssignments(setProgress);

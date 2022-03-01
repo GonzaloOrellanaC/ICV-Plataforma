@@ -210,6 +210,11 @@ const CreateReports = () => {
             setReportType(report.reportType);
             settingTypePauta(report.reportType);
             setDisableMaquinas(false);
+            if(navigator.onLine) {
+                apiIvcRoutes.getPautas().then(data => {
+                    console.log(data.data)
+                })
+            }
             let db = await machinesDatabase.initDbMachines();
             let list = await machinesDatabase.consultar(db.database)
             let listaMaquinas = new Array();
@@ -334,8 +339,8 @@ const CreateReports = () => {
                                         </FormControl>
                                     </div>
                                     <div style={{width: '100%'}}>
+                                    <p>Seleccionar tipo de reporte</p>
                                         <FormControl>
-                                            <p>Seleccionar tipo de reporte</p>
                                             <select 
                                                 onBlur={()=>saveReportData(true)}
                                                 className={classes.inputsStyle} 
@@ -344,8 +349,8 @@ const CreateReports = () => {
                                                 style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
                                                 onChange={(e)=> {setReportType(e.target.value); settingTypePauta(e.target.value)}}
                                                 value={reportType}
-                                            >
-                                                <option value={null}>Seleccione...</option>
+                                                >
+                                                <option>Seleccione...</option>  
                                                 <option>Inspección</option>
                                                 <option>Mantención</option>
                                             </select>
@@ -363,14 +368,14 @@ const CreateReports = () => {
                                                 onChange={(e)=> {setTruck(e.target.value); habilitaPauta(); getMachine(e.target.value);}}
                                                 value={truckSelected}
                                             >
-                                                <option value={''}>Seleccione...</option>
+                                                <option>Seleccione...</option>
                                                 {
                                                     trucks.map((truck, index) => {
                                                         return(
                                                             <option key={index} value={truck.model}>{truck.type} {truck.brand} {truck.model}</option>
                                                         )
                                                     })
-                                                }
+                                                } 
                                             </select>
                                         </FormControl>
                                     </div>
@@ -390,19 +395,17 @@ const CreateReports = () => {
                                                 onChange={(e)=>{setPauta(e.target.value.split(',')[1]), setDisableMaquinas(false), setIDPM(e.target.value.split(',')[0])}}
                                                 value={[iDPM, pauta]}
                                             >
-                                                <option value={null} selected>Seleccione...</option>
+                                                <option>Seleccione...</option>
                                                 {
-                                                        (pautas.length > 0) && pautas.map((pauta, index) => {
-                                                            return(
-                                                                <option key={index} value={[pauta.idpm, pauta.typepm]}> {pauta.idpm} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
-                                                            )
-                                                        })
-                                                    }
-                                                    {
-                                                        (pautas.length == 0) && <option> Selección no cuenta con pautas. </option>
-                                                    }
-
-                                                
+                                                    (pautas.length > 0) && pautas.map((pauta, index) => {
+                                                        return(
+                                                            <option key={index} value={[pauta.idpm, pauta.typepm]}> {pauta.idpm} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
+                                                        )
+                                                    })
+                                                }
+                                                 {
+                                                    (pautas.length == 0) && <option> Selección no cuenta con pautas. </option>
+                                                } 
                                             </select>
                                         </FormControl>
                                     </div>
@@ -416,10 +419,11 @@ const CreateReports = () => {
                                                 name="userType" 
                                                 id="userType" 
                                                 style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
-                                                onChange={(e)=> { if(e.target.value === 'no-select') {setHourMeter(''); setEqID(''); setMachineSelected('')} else{setMachineSelected(e.target.value); setEqID(JSON.parse(e.target.value).equid); setHourMeter((JSON.parse(e.target.value).hourMeter / 3600000))} }}
+                                                onChange={(e)=> { if(e.target.value === 'init') {setHourMeter(''); setEqID(''); setMachineSelected('')} else{setMachineSelected(e.target.value); setEqID(JSON.parse(e.target.value).equid); setHourMeter((JSON.parse(e.target.value).hourMeter / 3600000))} }}
                                                 value={machineSelected}
+                                                defaultValue={'init'}
                                             >
-                                                <option value={'no-select'}>Seleccione...</option>
+                                                <option value={'init'} selected>Seleccione...</option>
                                                 {
                                                     maquinas.sort((a, b) => {return Number(a.equ) - Number(b.equ)}).map((maquina, index) => {
                                                         return(
