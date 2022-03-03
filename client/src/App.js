@@ -71,7 +71,8 @@ const client = new ApolloClient({
     
 
 const OnApp = () => {
-    const { isAuthenticated, loading, admin } = useAuth();
+    const { isAuthenticated, loading } = useAuth();
+    //console.log(userData)
     useEffect(() => {
         if(isAuthenticated) {
             let go = true;

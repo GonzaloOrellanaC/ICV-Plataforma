@@ -16,12 +16,13 @@ const UserProfilePage = ({route}) => {
 
     useEffect(() => {
         const _id = localStorage.getItem('_id');
-        console.log(navigator.onLine)
+        console.log(navigator.onLine);
         if(navigator.onLine) {
             usersRoutes.getAllUsers().then(users => {
                 let usersList = new Array();
                 usersList = users.data;
                 let me = usersList.filter(u => {if(u._id === _id){return u}});
+                console.log(me[0])
                 setUserData(me[0]);
                 let list = usersList.filter(u => {if((u._id != _id)&&(u.role != 'admin')){return u}});
                 setUsers(list);
@@ -72,6 +73,12 @@ const UserProfilePage = ({route}) => {
                                             <h3>{userData.email}</h3>
                                             <h3>+56{userData.phone}</h3>
                                             <h3>{(JSON.parse(userData.sites)).idobra} - {(JSON.parse(userData.sites)).descripcion}</h3>
+                                            <div style={{width: '100%', textAlign: 'center'}}>
+                                                <div style={{width: 200, height: 200}}>
+                                                    <h3>Firma</h3>
+                                                    <img src={userData.sign} width={200} height={200} />
+                                                </div>
+                                            </div>
                                         </div>}
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={4} lg={4}>

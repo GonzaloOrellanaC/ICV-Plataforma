@@ -41,5 +41,12 @@ export default {
             role
         }
         return axios.post('/users/findByRole', requestBody)
+    },
+    getUserSign: (id) => {
+        const requestBody = {
+            id
+        }
+        console.log(requestBody)
+        return axios.post('/users/getUserSign', requestBody)
     }
 }

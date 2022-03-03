@@ -5,8 +5,6 @@ import fs from 'fs';
 const createPdf = (req, res) => {
     const { pdfContent } = req.body;
 
-    console.log(pdfContent);
-
     createPdfBinary(pdfContent, (binary) => {
         res.contentType('application/pdf');
 		res.send(binary);

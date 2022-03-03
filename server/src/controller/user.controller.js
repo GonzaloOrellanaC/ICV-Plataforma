@@ -105,6 +105,18 @@ const readUser = (req, res, next) => {
     }
 }
 
+const getUserSign = (req, res, next) => {
+    const { body } = req;
+    console.log(body)
+    try{
+        Users.findById(body.id, (err, user) => {
+            res.json(user.sign)
+        });
+    }catch (err) {
+        console.log(err)
+    }
+}
+
 
 const deleteUser = (req, res, next) => {
     const { body } = req;
@@ -121,6 +133,7 @@ export default {
     createUser,
     readAllUsers,
     readUser,
+    getUserSign,
     deleteUser,
     editUser,
     findByRut,

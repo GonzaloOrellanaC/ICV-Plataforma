@@ -10,6 +10,7 @@ import { PautaDetail } from './pauta-detail'
 import { UsersList } from './users-list'
 import { CreateUser, PermissionUser } from './create-user'
 import { ReportsList } from './reports-list'
+import { Canvas } from './canvas'
 
 export {
     Header,
@@ -25,5 +26,6 @@ export {
     UsersList,
     CreateUser,
     PermissionUser,
-    ReportsList
+    ReportsList,
+    Canvas
 }

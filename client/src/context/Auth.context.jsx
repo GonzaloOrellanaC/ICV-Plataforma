@@ -45,6 +45,7 @@ export const AuthProvider = (props) => {
                 authRoutes.login(email, password)
                 .then(response => {
                     let userDataToSave = response.data;
+                    console.log(userDataToSave)
                     if(response.data.enabled) {
                         localStorage.setItem('email', userDataToSave.email);
                         localStorage.setItem('fullName', userDataToSave.fullName);

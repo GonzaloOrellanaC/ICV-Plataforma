@@ -1,30 +1,97 @@
-import { dateSimple, getExecutionReportData, getUserNameById } from "../../config";
+import { dateSimple, dateWithTime, environment, getExecutionReportData, getSignById, getUserNameById, time } from "../../config";
 import { pdfMakeRoutes } from "../../routes";
 import logo from '../../assets/logo_icv_gris.png';
+
+let imagesList = new Array;
 
 const createTable = ( groupKeys = new Array, group = new Array) => {
     let arrayTable = []
     return new Promise(resolve => {
         group.forEach(async (element, index) => {
-            console.log(element, groupKeys[index]);
             arrayTable.push(
                 {
                     style: 'title',
                     table: {
-                        widths: [50, 120, 120, '*'],
+                        widths: [50, 50, 100, 100, '*'],
                         body: 
                             await createSubTables(element, groupKeys[index], index),
-                            
-                        
-                    }/* ,
-                    layout: {
-                        fillColor: '#DADADA'
-                    } */
+                    }
                 },
-
             );
             if(index == (group.length - 1)) {
                 resolve(arrayTable)
+            }
+        })
+    })
+}
+
+const createImagesTables = () => {
+    let imageArrayColumns = [
+        {
+            alignment: 'center',
+            width: '*',
+            pageBreak: 'before',
+            text: 'Imágenes de la OT'
+        },
+        {
+            style: 'imageTables',
+            table: {},
+            layout: 'noBorders'
+        }
+    ];
+    let imageColumns = [];
+    let textColumns = [];
+    let table = {
+        widths: [250, 250],
+        height: [200, 200],
+        body: []
+    }
+    let number = 0;
+    let numberTop = 2;
+    return new Promise(resolve => {
+        imagesList.forEach((element, index) => {
+            if((index) == numberTop) {
+                table.body[number] = imageColumns;
+                table.body[number + 1] = textColumns;
+                imageColumns = [];
+                textColumns = [];            
+                number = numberTop
+                numberTop = numberTop + numberTop
+            }
+            let imageContent = {
+                width: 150,
+                alignment: 'center',
+                image: element.urlBase64
+            }
+            let textContent = {
+                width: 150,
+                alignment: 'center',
+                text: 'Comentario id: ' + element.id + '\n\ "' + element.commit + '"' + '\n\ Imágen: ' + dateWithTime(element.id) + '\n\ Usuario: ' + element.userName + '\n\ ',
+            }
+            
+            imageColumns.push(imageContent);
+            textColumns.push(textContent);
+            
+            if(index == (imagesList.length - 1)) {
+                if( (imagesList.length%2) == 1 ) {
+                    imageColumns.push({})
+                    textColumns.push({})
+                }
+                table.body[number] = imageColumns;
+                table.body[number + 1] = textColumns;
+                console.log(table)
+                imageArrayColumns[1].table = table;
+                imageColumns = [];
+                textColumns = [];
+                table = {
+                    widths: [250, 250],
+                    height: [200, 200],
+                    body: []
+                }
+                number = 0;
+                numberTop = 2;
+                imagesList = [];
+                resolve(imageArrayColumns)
             }
         })
     })
@@ -40,7 +107,7 @@ const createSubTables = (list = new Array, index = new String, indexNumber = new
     let table = [
         [
             {
-                colSpan: 4, 
+                colSpan: 5, 
                 border: [true, true, true, true],
                 text: index,
                 fillColor: '#DADADA',
@@ -48,38 +115,82 @@ const createSubTables = (list = new Array, index = new String, indexNumber = new
             },
             {},
             {},
+            {},
             {}
         ]
     ];
-    //table = table.push(['hola', 'que tal', 'como va', 'quien eres'])
     return new Promise(resolve => {
         list.forEach((e, i) => {
-            let commit
+            let commit;
+            let date;
+            let timeData;
             if(e.writeCommits) {
+                //console.log(e.writeCommits);
+                if(e.writeCommits.length > 0) {
+                    e.writeCommits.forEach((commitItem, index) => {
+                        if(commitItem.urlBase64) {
+                            imagesList.push(commitItem)
+                        }
+                    })
+                }
                 commit = `${e.writeCommits[0].userName}: ${e.writeCommits[0].commit}`
+                date = dateSimple(e.writeCommits[0].id)
+                timeData = time(e.writeCommits[0].id)
             }else{
+                //console.log(e.readCommits);
+                if(e.readCommits.length > 0) {
+                    e.readCommits.forEach((commitItem, index) => {
+                        if(commitItem.urlBase64) {
+                            imagesList.push(commitItem)
+                        }
+                    })
+                }
                 commit = `Observación: -- ${e.readCommits[0].userName}: ${e.readCommits[0].commit}`
+                date = dateSimple(e.readCommits[0].id)
+                timeData = time(e.readCommits[0].id)
             }
             
-            table.push([e.workteamdesc,  e.taskdesc ,  e.obs01 , commit])
+            table.push([ 
+                {
+                    fontSize: 8,
+                    text: `${date} \n\ ${timeData}` 
+                },
+                {
+                    fontSize: 8,
+                    text: e.workteamdesc
+                },
+                {
+                    fontSize: 8,
+                    text: e.taskdesc
+                },
+                {
+                    fontSize: 8,
+                    text: e.obs01
+                },
+                {
+                    fontSize: 8,
+                    text: commit
+                }
+            ])
             if(i == (list.length - 1)) {
-                resolve(table)
+                resolve(table);
             }
         })
     })
 }
 
-export default async (reportData, machineData) => {
-    //console.log(reportData);
-    //console.log(machineData);
+export default async (reportData, machineData, stopPrintingLoad, fileName) => {
     const admin = await getUserNameById(reportData.createdBy);
+    const adminSign = await getSignById(reportData.createdBy);
+    const chiefMachineryName = await getUserNameById(reportData.chiefMachineryApprovedBy);
+    const chiefMachinerySign = await getSignById(reportData.chiefMachineryApprovedBy);
+    const shiftManagerName = await getUserNameById(reportData.shiftManagerApprovedBy);
+    const shiftManagerSign = await getSignById(reportData.shiftManagerApprovedBy);
+    const executionUser = await getUserNameById(reportData.usersAssigned[0]);
+    const executionUserSign = await getSignById(reportData.usersAssigned[0]);
     const executionReportData = await getExecutionReportData(reportData);
-    //console.log(executionReportData);
-    //if(executionReportData) {
-        const groupKeys = Object.keys(executionReportData[0].group)
-        const group = Object.values(executionReportData[0].group);
-        //createTable(groupKeys, group)
-    //}
+    const groupKeys = Object.keys(executionReportData[0].group)
+    const group = Object.values(executionReportData[0].group);
     var docDefinition = {
         content: [
             {
@@ -173,9 +284,9 @@ export default async (reportData, machineData) => {
             {
                 style: 'title',
                 table: {
-                    widths: [50, 120, 120, '*'],
+                    widths: [50, 50, 100, 100, '*'],
                     body: [
-                        ['Personal Necesario', 'Descripción de la tarea', 'Observaciones', 'Comentarios']
+                        ['Fecha', 'Personal Necesario', 'Descripción de la tarea', 'Observaciones', 'Comentarios']
                     ]
                 },
                 layout: {
@@ -193,7 +304,7 @@ export default async (reportData, machineData) => {
                         alignment: 'right',
                         margin: [0, 50, 0, 0],
                         width: '*',
-                        text: 'Fecha __ / __ / ____'
+                        text: `Fecha: ${dateSimple(Date.now())} \n\ Hora: ${time(Date.now())}`
                     }
                 ]
             },
@@ -201,34 +312,73 @@ export default async (reportData, machineData) => {
                 columns: [
                     {
                         alignment: 'center',
-                        margin: [0, 200, 0, 200],
-                        width: '*',
-                        text: 'Firma Ejecutivo SAP'
+                        margin: [0, 100, 0, 10],
+                        width: 125,
+			            height: 100,
+                        image: adminSign
                     },
                     {
                         alignment: 'center',
-                        margin: [0, 200, 0, 200],
-                        width: '*',
-                        text: 'Firma Jefe de Maquinaria'
+                        margin: [0, 100, 0, 10],
+                        width: 125,
+			            height: 100,
+                        image: chiefMachinerySign
                     },
                     {
                         alignment: 'center',
-                        margin: [0, 200, 0, 200],
-                        width: '*',
-                        text: 'Firma Jefe de Turno'
+                        margin: [0, 100, 0, 10],
+                        width: 125,
+			            height: 100,
+                        image: shiftManagerSign
                     },
                     {
                         alignment: 'center',
-                        margin: [0, 200, 0, 200],
-                        width: '*',
-                        text: 'Firma Técnico Inspección o Mantenimiento'
+                        margin: [0, 100, 0, 10],
+                        width: 125,
+			            height: 100,
+                        image: executionUserSign
                     },
                 ]
-            }
-                
-            
+            },
+            {
+                columns: [
+                    {
+                        alignment: 'center',
+                        margin: [0, 10, 0, 200],
+                        width: '*',
+                        text: admin + '\n\ Ejecutivo SAP'
+                    },
+                    {
+                        alignment: 'center',
+                        margin: [0, 10, 0, 200],
+                        width: '*',
+                        text: chiefMachineryName + '\n\ Jefe de Maquinaria'
+                    },
+                    {
+                        alignment: 'center',
+                        margin: [0, 10, 0, 200],
+                        width: '*',
+                        text: shiftManagerName + '\n\ Jefe de Turno'
+                    },
+                    {
+                        alignment: 'center',
+                        margin: [0, 10, 0, 200],
+                        width: '*',
+                        text: executionUser + '\n\ Técnico Inspección o Mantenimiento'
+                    },
+                ]
+            },
+            {
+                margin: [0, 10, 0, 200],
+                text: `Descargado desde https://mantencion.icv.cl`
+            },
+             await createImagesTables()
         ],
         styles: {
+            imageTables: {
+                fontSize: 8,
+                margin: [0, 50, 0, 50]
+            },
             header: {
                 fontSize: 18,
                 bold: true,
@@ -246,7 +396,7 @@ export default async (reportData, machineData) => {
             },
             table: {
                 margin: [0, 5, 0, 15],
-                fontSize: 8
+                fontSize: 6
             },
             title: {
                 margin: [0, 5, 0, 15],
@@ -268,8 +418,12 @@ export default async (reportData, machineData) => {
         const linkSource = data.data;
         let a = document.createElement("a");
         a.href = linkSource;
-        a.download = `Orden_de_trabajo_${reportData.idIndex}_aprobado.pdf`
+        a.download = `${fileName}.pdf`
         a.click();
+        stopPrintingLoad()
+    }).catch(err => {
+        alert('Error al descargar PDF');
+        stopPrintingLoad()
     })
     
 }

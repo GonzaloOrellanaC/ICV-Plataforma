@@ -6,6 +6,7 @@ import dateSimple from './dateSimple';
 import dateWithTime from './dateWithTime';
 import uploadImage from './uploadImage';
 import imageToBase64 from './imageToBase64';
+import base64ToImage from './base64ToImage';
 import sync from './sync';
 import userState from './userState';
 import getUserNameById from './getUserNameById';
@@ -13,8 +14,10 @@ import getExecutivesSapEmail from './getExecutivesSapEmail';
 import getWeekReports from './getWeekReports';
 import getMachineData from './getMachineData';
 import getExecutionReportData from './getExecutionReportData';
-import saveExecutionReport from './saveExecutionReport'
-import compareExecutionReport from './compareExecutionReport'
+import saveExecutionReport from './saveExecutionReport';
+import compareExecutionReport from './compareExecutionReport';
+import getSignById from './getSignById';
+import time from './time'
 export {
     theme,
     getUserNameById,
@@ -36,10 +39,13 @@ export {
     dateWithTime,
     uploadImage,
     imageToBase64,
+    base64ToImage,
     sync,
     userState,
     getMachineData,
     getExecutionReportData,
     saveExecutionReport,
-    compareExecutionReport
+    compareExecutionReport,
+    getSignById,
+    time
 }

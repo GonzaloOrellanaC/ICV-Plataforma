@@ -68,6 +68,9 @@ const UsersSchema = new Schema({
         type: Schema.Types.Boolean,
         default: true
     },
+    sign: {
+        type: Schema.Types.String
+    },
     hash: { type: String },
     salt: { type: String }
 },
