@@ -5,18 +5,21 @@ export default {
         const requestBody = {
             _id
         }
-        return axios.post('/internal-messages/get-messages-by-user', requestBody)
+        return axios.post('/internalMessagesData/get-messages-by-user', requestBody)
+    },
+    getAllMessages: () => {
+        return axios.get('/internalMessagesData/getAllMessages')
     },
     sendMessage: (message) => {
         const requestBody = {
             message
         }
-        return axios.post('/internal-messages/sendMessage', requestBody)
+        return axios.post('/internalMessagesData/sendMessage', requestBody)
     },
     removeMessage: (_id) => {
         const requestBody = {
             _id
         }
-        return axios.post('/internal-messages/removeMessage', requestBody)
+        return axios.post('/internalMessagesData/removeMessage', requestBody)
     }
 }

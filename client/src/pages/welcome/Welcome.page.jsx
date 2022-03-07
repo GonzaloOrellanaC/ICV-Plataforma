@@ -137,14 +137,11 @@ const WelcomePage = () => {
                                     id: index,
                                     data: reader.result.replace("data:", "")
                                 }
-                                //console.log(image)
                                 await machinesImagesDatabase.actualizar(image, dbToImages.database);
                                 
                             }
                             let i = await trucksDatabase.actualizar(fileName, db.database);
-                            console.log(i)
-                            /* fileName.image = reader.result.replace("data:", "");
-                            if(fileName.image) {
+                            /*if(fileName.image) {
                                 
                                 
                             } */
@@ -251,7 +248,6 @@ const WelcomePage = () => {
                         
                 </Grid>
             </div>
-            {/* <IAModal open={true}/> */}
             <LoadingModal open={openLoader} progress={progress} loadingData={loadingData} withProgress={true}/>
             <VersionControlModal open={openVersion} closeModal={closeModal} />
         </div>

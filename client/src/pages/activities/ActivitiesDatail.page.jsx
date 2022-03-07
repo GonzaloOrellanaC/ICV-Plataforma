@@ -49,7 +49,6 @@ const ActivitiesDetailPage = () => {
 
     const getPauta = async (r) => {
         let report = r;
-        console.log(report)
         let db = await pautasDatabase.initDbPMs();
         let pautaIdpm = r.idPm;
         if(db) {
@@ -67,7 +66,6 @@ const ActivitiesDetailPage = () => {
             if((responseDatabase.length == 0) && navigator.onLine) {
                 responseDatabase = await (await executionReportsRoutes.getExecutionReportById(report)).data;
             };
-            console.log(responseDatabase)
             setExecutionReport(responseDatabase[0])
             setPauta(pautaFiltered[0]);
         }

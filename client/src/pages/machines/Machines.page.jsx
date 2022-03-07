@@ -29,7 +29,6 @@ const MachinesPage = ({ route }) => {
                         respuestaConsulta[i].image = res.data;
                     }
                     if(i == (respuestaConsulta.length - 1)) { 
-                        console.log(respuestaConsulta)
                         setMachineList(respuestaConsulta)
                     }
                 }
@@ -44,7 +43,7 @@ const MachinesPage = ({ route }) => {
                 resolve(data.data)
             })
             .catch(err => {
-                console.log('Error', err)
+
             })
         })
     }

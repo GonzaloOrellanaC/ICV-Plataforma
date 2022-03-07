@@ -111,6 +111,11 @@ const MachinesListPage = ({route}) => {
                                     </Toolbar>
                                 </div>
                             </div>
+                            <div style={{width: '100%', paddingLeft: 20, height: 40, textAlign: 'center'}}>
+                                <button style={{height: 30, borderRadius: 20, position: 'relative', right: 10, paddingLeft: 30, paddingRight: 30}} onClick={() => openCloseModal()}>
+                                    <strong>{`Ver modelo 3D de ${machine.type} ${machine.brand} ${machine.model}`}</strong>
+                                </button>
+                            </div>
                             <List style={{width: '100vw', marginRight: 11, overflowY: 'scroll', maxHeight: '70vh', paddingLeft: 20, paddingRight: 20}}>
                             {
                                 machinesList.map((machine, i) => {
@@ -141,9 +146,6 @@ const MachinesListPage = ({route}) => {
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={12} lg={2}>
                                                     <div style={{width: '100%', textAlign: 'center'}} >
-                                                        <button style={{width: 100, height: 30, borderRadius: 20}} onClick={() => openCloseModal()}>
-                                                            <strong>Ver 3D</strong>
-                                                        </button>
                                                         <button style={{width: 100, height: 30, borderRadius: 20, marginLeft: 6}} onClick={() => goToMachineDetail(machine)}  /* component={Link} to={`/${route}/${JSON.stringify(machine)}` */ >
                                                             <strong>Ver más</strong>
                                                         </button>

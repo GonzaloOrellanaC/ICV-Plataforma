@@ -70,25 +70,22 @@ const Header = () => {
         if(isAuthenticated) {
             if(navigator.onLine) {
                 usersRoutes.getUser(localStorage.getItem('_id')).then(data => {
-                    console.log(data)
                     if(!data.data.sign) {
-                        console.log('No hay firma');
                         setOpenSign(true)
                     }
                 })
             }
             window.addEventListener('online', () => {
-                console.log('Became online'); setIfHavNetwork(true);
+                // console.log('Became online'); setIfHavNetwork(true);
             });
             window.addEventListener('offline', () => {
-                console.log('Became offline'); setIfHavNetwork(false);
+                // console.log('Became offline'); setIfHavNetwork(false);
             });
         }
     }, [])
 
     const setRefCanvasFunction = (ref) => {
         setRefCanvas(ref);
-        console.log(ref)
     }
 
     const clear = () => {
@@ -96,9 +93,7 @@ const Header = () => {
     }
 
     const getImage = () => {
-        console.log(refCanvas.toDataURL());
         usersRoutes.editUser({sign: refCanvas.toDataURL()}, localStorage.getItem('_id')).then(data => {
-            console.log(data)
             setOpenSign(false);
             alert('Muchas gracias. Su firma ha sido actualizada.')
         })

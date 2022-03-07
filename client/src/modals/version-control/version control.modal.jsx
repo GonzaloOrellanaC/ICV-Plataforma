@@ -18,6 +18,13 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                     
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.6.2</strong>
+                        <li>
+                            Reparaciones menores.
+                        </li>
+                        <li>
+                            Se elimina necesidad de volver a descargar modelos 3D.
+                        </li>
                         <strong>v.6.1</strong>
                         <li>
                             Se agrega firma digital.

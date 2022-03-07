@@ -14,84 +14,37 @@ import {
 import { ArrowBackIos } from '@material-ui/icons';
 import { Link, useHistory } from 'react-router-dom';
 import { useStylesTheme } from '../../config';
-import { useLanguage } from '../../context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
-import { ReportsList } from '../../containers';
 import { reportsRoutes } from '../../routes';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
-import { AssignReportModal } from '../../modals';
-
-const useStyles = makeStyles((theme) => ({
-    paper: {
-      padding: theme.spacing(1),
-      textAlign: "center",
-      color: theme.palette.text.secondary
-    }
-}));
 
 const ReportsPage = () => {
-    const [ vista, setVista ] = useState(true);
     const [ inspecciones, setInspecciones ] = useState([]);
     const [ mantenciones, setMantenciones ] = useState([]);
     const [ inspeccionesPorAsignar, setInspeccionesPorAsignar ] = useState(0);
     const [ inspeccionesCompletadas, setInspeccionesCompletadas ] = useState(0);
     const [ mantencionesPorAsignar, setMantencionesPorAsignar ] = useState(0);
     const [ mantencionesCompletadas, setMantencionesCompletadas ] = useState(0);
-    const [ reportList, setReportList ] = useState([])
     const [ reportType, setReportType ] = useState('')
     const [ hableCreateReport, setHableCreateReport ] = useState(false)
     const classes = useStylesTheme()
-    const { dictionary } = useLanguage();
-    //const [ openAssignModal, setOpenAssignModal ] = useState(false)
     const history = useHistory();
     const [ reports, setReports ] = useState([])
-
-    
-
-    const openDetail = () => {
-        setVista(false)
-    }
-
-    const getReportesPorGuia = (guide) => {
-        reportsRoutes.getReportByGuide(guide).then(reports => {
-
-        })
-    }
-
-    /* const getReportesPorTipo = (type) => {
-        reportsRoutes.getReportByType(type).then(reports => {
-            console.log(reports)
-        })
-    } */
 
     const getReportesPorEstado = async (state, reportType) => {
         try{
             const res = await reportsRoutes.getReportByState(state, reportType);
             let arr = res.data;
             setReports(arr);
-            /* setReportType(reportType)
-            setTimeout(() => {
-                setVista(false)
-            }, 1000);; */
         } catch (err) {
-            console.log(err);
 
-        }/* 
-        
-
-        reportsRoutes.getReportByState(state, reportType).then(reports => {
-            let arr = [];
-            arr = reports.data
-            
-        }) */
+        }
     }
     
-
     useEffect(() => {
         Inspecciones.forEach(async (e, i) => {
             let response = await reportsRoutes.getReportByState(e.name, 'Inspección');
-            //console.log(response)
             e.number = response.data.length;
             if(i == (Inspecciones.length - 1)) {
                 setInspecciones(Inspecciones)
@@ -108,7 +61,6 @@ const ReportsPage = () => {
             setHableCreateReport(true);
         }
     }, [])
-    
 
     return (
         <Box height='100%'>
@@ -215,7 +167,6 @@ const ReportsPage = () => {
                         </div>
                         <div style={{height: 'calc(100%/1.2)', width: '68%', float: 'right'}}>
                             {
-                                
                                 <div style={{height: '100%'}}>
                                     <div style={{height: '100%'}}>
                                         <Toolbar style={{width: '100%'}}>
@@ -255,7 +206,6 @@ const ReportsPage = () => {
                                                 </div>
                                             </ListItem>
                                         </div>
-
                                         <div style={{overflowY: 'auto'}}>
                                             {
                                                 (reports.length > 0) && reports.map(async (e, n) => {
@@ -302,23 +252,10 @@ const ReportsPage = () => {
                                                     )
                                                 })
                                                 }
-                                                {
-                                                    
-                                                    /* reportData && <AssignReportModal open={openModalState} report={reportData} closeModal={closeModal}/> */
-                                                    
-                                                }
                                             </div>
                                         </div>
                                     </div>
                                 }
-                            {
-                                /* vista && <div>
-                                    <img style={{margin: 0, position: 'absolute', top: '50%', left: 'calc(100%/1.53)', msTransform: 'translateY(-50%)', transform: 'translateY(-50%)'}} src="../../assets/icons/Arrow.svg" alt="" />
-                                    <div style={{textAlign: 'center', position: 'absolute', top: '55%', left: 'calc(100%/1.6)'}}>
-                                        <p>Selecciona una opción <br /> para ver el detalle</p>
-                                    </div>
-                                </div> */
-                            }
                         </div>
                         {hableCreateReport && <div style={{height: '10vh', width: '60%', position: 'absolute', bottom: 10, right: 10, textAlign: 'right'}}>
                             <Link to={'/reports/create-report'}>

@@ -60,7 +60,8 @@ const obtener = (clave, database) =>{
     
 }
 
-const actualizar = (data, database) =>{    
+const actualizar = (data, database) =>{   
+    console.log(data) 
     return new Promise(resolve => {
         try{
             const trasaccion = database.transaction(['Machines'],'readwrite')
@@ -68,6 +69,9 @@ const actualizar = (data, database) =>{
             const conexion = coleccionObjetos.put(data)
             
             conexion.onsuccess = () =>{
+                consultar(database).then(d=> {
+                    console.log(d)
+                })
                 resolve(true)
             }
         }catch(err){
@@ -98,7 +102,6 @@ const consultar = (database) => {
             const cursor = e.target.result;
             const allObject = coleccionObjetos.getAll()
             allObject.onsuccess = (ev) => {
-                //console.log(ev)
                 resolve(ev.target.result)
             }
         }

@@ -15,6 +15,7 @@ import { AdminPage, AdminUsersPage, AdminNewUserPage } from './administration'
 import { PmsPage, PautaDetailPage } from './pms'
 import { NoPermissionPage } from './no-permission'
 import { ActivitiesPage, ActivitiesDetailPage } from './activities'
+import { InternalMessagesPage } from './internal-messages'
 
 export {
     AppliancePage,
@@ -42,5 +43,6 @@ export {
     PautaDetailPage,
     NoPermissionPage,
     ActivitiesPage,
-    ActivitiesDetailPage
+    ActivitiesDetailPage,
+    InternalMessagesPage
 }

@@ -26,7 +26,7 @@ router.use('/reports', ReportsRoutes)
 router.use('/machines', MachinesRoutes)
 router.use('/execution-report', ExecutionReportsRoutes)
 router.use('/azure-storage', AzureStorageRoutes)
-router.use('/internal-messages', InternalMessagesRoutes)
+router.use('/internalMessagesData', InternalMessagesRoutes)
 router.use('/pdf-maker', PdfMakerRoutes)
 
 export default router

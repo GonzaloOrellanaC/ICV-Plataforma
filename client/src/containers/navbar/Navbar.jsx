@@ -136,9 +136,13 @@ const Navbar = () => {
 
     const removeDatabases = async () => {
         let databases = await window.indexedDB.databases();
-        if(databases) {
+        if(databases.length > 0) {
             databases.forEach((database, index) => {
-                window.indexedDB.deleteDatabase(database.name)
+                if(database.name === '3Ds' || database.name === 'MachinesParts') {
+
+                }else{
+                    window.indexedDB.deleteDatabase(database.name)
+                }
             })
         }
     }

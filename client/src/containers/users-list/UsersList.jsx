@@ -46,7 +46,6 @@ const UsersList = ({height, hableButton}) => {
         let cancel = true;
         if(cancel) {
             usersRoutes.getAllUsers().then(users=> {
-                console.log(users.data)
                 if(cancel) setUsuarios(users.data);
             }) 
             localStorage.removeItem('userDataToSave');

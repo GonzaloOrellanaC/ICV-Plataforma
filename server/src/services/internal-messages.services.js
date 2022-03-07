@@ -48,8 +48,26 @@ const getMessagesByUser = (req, res) => {
     }
 }
 
+
+const getAllMessages = (req, res) => {
+    try{
+        InternalMessage.find({}, (err, data) => {
+            console.log(data.data)
+            if(err) {
+                res.send({
+                    message: 'Error en los datos'
+                })
+            };
+            res.send(data)
+        })
+    }catch(err){
+
+    }
+}
+
 export default {
     sendMessage,
     removeMessage,
-    getMessagesByUser
+    getMessagesByUser,
+    getAllMessages
 }

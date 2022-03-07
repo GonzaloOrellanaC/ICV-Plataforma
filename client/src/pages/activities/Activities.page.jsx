@@ -45,38 +45,6 @@ const ActivitiesPage = () => {
                     }
                 })
             })
-                /*if(go) {
-                    reportsDatabase.initDbReports().then(db => {
-                        if(go) {
-                            reportsDatabase.consultar(db.database).then(reports => {
-                                reports.forEach(async (report, i) => {
-                                    if(report.level) {
-                                        if(report.level > 0) {
-                                            report.infoState = 'Terminado'
-                                        }
-                                    }
-                                    report.dateFormat = date(report.datePrev);
-                                    report.end = date(report.endReport);
-                                    report.init = date(report.dateInit);
-                                    report.getMachine = await getMachineTypeByEquid(report.machine);
-                                    if(report.getMachine.model === 'PC5500') {
-                                        report.machineType = 'Pala'
-                                    }else if(report.getMachine.model === '793-F') {
-                                        report.machineType = 'Camión'
-                                    }
-                                    if(i == (reports.length - 1)) {
-                                        //console.log(reports);
-                                        let rs = reports.filter((report) => {if(report.enabled) {return report}});
-                                        console.log(rs)
-                                        setAssignments(rs);
-                                    }
-                                })
-                            })
-                        }
-                    })                
-                    
-                }
-            })    */        
         }else{
             reportsDatabase.initDbReports().then(db => {
                 if(go) {

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Card, Grid, Toolbar, IconButton, Button } from '@material-ui/core'
+import { Box, Card, Grid, Toolbar, IconButton } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { changeTypeUser, useStylesTheme } from '../../config'
-import { CardButton } from '../../components/buttons'
 import { useHistory } from 'react-router-dom'
-import { useLanguage } from '../../context'
 import { usersRoutes } from '../../routes'
 
 const UserProfilePage = ({route}) => {
@@ -16,13 +14,11 @@ const UserProfilePage = ({route}) => {
 
     useEffect(() => {
         const _id = localStorage.getItem('_id');
-        console.log(navigator.onLine);
         if(navigator.onLine) {
             usersRoutes.getAllUsers().then(users => {
                 let usersList = new Array();
                 usersList = users.data;
                 let me = usersList.filter(u => {if(u._id === _id){return u}});
-                console.log(me[0])
                 setUserData(me[0]);
                 let list = usersList.filter(u => {if((u._id != _id)&&(u.role != 'admin')){return u}});
                 setUsers(list);
@@ -107,10 +103,7 @@ const UserProfilePage = ({route}) => {
                                         </div>
                                     </Grid>
                                 </Grid>}
-                            </Grid>
-                            {/* <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
-                                
-                            </div>   */}      
+                            </Grid>  
                         </Grid>
                     </Card>
                 </Grid>

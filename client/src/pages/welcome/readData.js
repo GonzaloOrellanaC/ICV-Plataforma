@@ -1,5 +1,6 @@
 import getInfo from './getInfo';
 import download3DFiles from './download3DFiles';
+import { FilesToStringDatabase } from '../../indexedDB';
 
 export default async (
     setOpenLoader,

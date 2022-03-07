@@ -43,7 +43,6 @@ const ReportsPage = () => {
 
     const initPage = async () => {
         let daysOfThisWeek = getWeekReports();
-        console.log(daysOfThisWeek)
         let completesInspections = await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Inspección');
         let completesManteinances = await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Mantención');
         setInspeccionesCompletadas(completesInspections.data.length);

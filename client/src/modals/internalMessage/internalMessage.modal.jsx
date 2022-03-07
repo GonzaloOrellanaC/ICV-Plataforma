@@ -13,12 +13,14 @@ import {
 import { Close } from '@material-ui/icons';
 import { dateWithTime, styleInternalMessageModal } from '../../config';
 import { internalMessagesRoutes } from '../../routes';
+import { useHistory } from 'react-router-dom';
 
 const InternalMessageModal = ({open, report, closeModal}) => {
     const [ messages, setMessages ] = useState([]);
     const [ message, setMessage ] = useState('');
     const [ subject, setSubject ] = useState('');
     const _id = localStorage.getItem('_id')
+    const history = useHistory()
 
     useEffect(() => {
         internalMessagesRoutes.getMessagesByUser(_id).then(data => {
@@ -56,7 +58,6 @@ const InternalMessageModal = ({open, report, closeModal}) => {
         if(navigator.onLine) {
             if(confirm('Confirme la eliminación de su consulta.')) {
                 internalMessagesRoutes.removeMessage(_id).then(data => {
-                    console.log(data.data);
                     let newMessages = messages.filter(m => {if(m._id === data.data._id){}else{return m}});
                     setMessages(newMessages)
                     alert('Mensaje borrado.')
@@ -98,6 +99,10 @@ const InternalMessageModal = ({open, report, closeModal}) => {
                     <Button variant="contained" color={'primary'} style={{ borderRadius: 50 }} onClick={()=>{sendMessage()}}>
                         Enviar Mensaje
                     </Button>
+                    {(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'superAdmin')) && 
+                    <Button variant="contained" color={'primary'} style={{ borderRadius: 50, marginLeft: 10 }} onClick={()=>{closeModal();history.push('/internal-messages')}}>
+                        Listado de mensajes
+                    </Button>}
                     </Grid>
                     <Grid item xl={4} md={3} sm={2} xs={null}> 
 
