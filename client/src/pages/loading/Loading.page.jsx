@@ -11,7 +11,7 @@ const LoadingPage = () => {
         <Box height='100%'>
             <Grid className={classes.pageRoot} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
-                    <Card className={clsx(classes.pageCard, classes.noNavBarMargin)}>
+                    <Card elevation={0} className={clsx(classes.pageCard, classes.noNavBarMargin)}>
                         <Grid container style={{ height: '100%' }} alignItems='center' justifyContent='center'>
                             <Grid container item spacing={8} justifyContent='center'>
                                 <Grid item>

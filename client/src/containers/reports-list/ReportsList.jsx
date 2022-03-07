@@ -1,10 +1,10 @@
 import { useState } from "react";
-import {Box, Grid, Card, makeStyles, Toolbar, IconButton, ListItem, ListItemIcon, ListItemText, Checkbox, Chip} from '@material-ui/core';
+import { Grid} from '@material-ui/core';
 import { machinesRoutes } from '../../routes';
 import { AssignReportModal, PdfModal, ReviewReportModal } from '../../modals'
 import { useHistory } from "react-router-dom";
 import './style.css';
-import { date, dateSimple } from "../../config";
+import { dateSimple } from "../../config";
 
 const ReportsList = ({list, reloadData}) => {
     const [ reportData, setReportData ] = useState(null);

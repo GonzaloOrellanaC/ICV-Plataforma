@@ -36,7 +36,7 @@ const DivisionsPage = () => {
         <Box height='100%'>
             <Grid className={classes.pageRoot} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
-                    <Card className={classes.pageCard}>
+                    <Card elevation={0} className={classes.pageCard}>
                         <Grid container alignItems='center' justifyContent='center'>
                             <Grid container item xs={12} justifyContent='flex-end'>
                                 <FilterField value={filter} onChange={handleFilter}/>
@@ -47,7 +47,7 @@ const DivisionsPage = () => {
                                 </div>
                             </Grid>
                             <Grid item xs={12}>
-                                <Card className={localClasses.root}>
+                                <Card elevation={0} className={localClasses.root}>
                                     <Grid container item alignContent='center' spacing={2}>
                                         <Grid item xs={12} md={6}>
                                             <div className={clsx(localClasses.name, localClasses.fichaText)}>NOMBRE TIPO</div>

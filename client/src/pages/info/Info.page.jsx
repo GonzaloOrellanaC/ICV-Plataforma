@@ -8,7 +8,7 @@ const InfoPage = () => {
         <Box height='100%'>
             <Grid className={classes.pageRoot} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
-                    <Card className={classes.pageCard}>
+                    <Card elevation={0} className={classes.pageCard}>
                         
                     </Card>
                 </Grid>

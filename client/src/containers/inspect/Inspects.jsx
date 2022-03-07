@@ -25,7 +25,7 @@ const Inspects = () => {
 
             <Grid container spacing={1}>
                 <div style={{width: '50%', textAlign: 'center', paddingTop: 5, paddingLeft: 10, paddingBottom: 5, paddingRight: 5}}>
-                    <Card>
+                    <Card elevation={0}>
                         <Grid container spacing={1}>
                             <div style={{width: '20%', textAlign: 'center', paddingTop: 5, paddingLeft: 10, paddingBottom: 5, paddingRight: 5}}>
                                 <h2>
@@ -41,7 +41,7 @@ const Inspects = () => {
                     </Card>
                 </div>
                 <div style={{width: '50%', textAlign: 'center', paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 10}}>
-                    <Card>
+                    <Card elevation={0}>
                         <Grid container spacing={1}>
                             <div style={{width: '20%', textAlign: 'center', paddingTop: 5, paddingLeft: 10, paddingBottom: 5, paddingRight: 5}}>
                                 <h2>

@@ -26,7 +26,7 @@ const InternalMessagesPage = () => {
         <Box height='100%'>
             <Grid className={classes.pageRoot} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
-                    <Card className={classes.pageCard}>
+                    <Card elevation={0} className={classes.pageCard}>
                         <Grid container alignItems='center' justifyContent='center'>
                             <div style={{width: '100%', textAlign: 'center', padding: 10 }}>
                                 <div style={{width: '100%', textAlign: 'center', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
