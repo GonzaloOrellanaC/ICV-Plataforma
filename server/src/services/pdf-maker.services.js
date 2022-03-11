@@ -4,6 +4,7 @@ import fs from 'fs';
 
 const createPdf = (req, res) => {
     const { pdfContent } = req.body;
+    console.log(pdfContent)
 
     createPdfBinary(pdfContent, (binary) => {
         res.contentType('application/pdf');
@@ -28,7 +29,7 @@ const createPdfBinary = ( pdfContent, callback ) => {
     const doc = new pdfMake(fonts);
     const pdf = doc.createPdfKitDocument(pdfContent);
 
-    console.log(pdf)
+    //console.log(pdf)
     
     var chunks = [];
 	var result;
