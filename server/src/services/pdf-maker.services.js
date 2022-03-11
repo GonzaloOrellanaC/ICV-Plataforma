@@ -3,10 +3,15 @@ import path from 'path';
 import fs from 'fs';
 
 const createPdf = (req, res) => {
+    console.log('Iniciando descarga de pdf')
     const { pdfContent } = req.body;
-    console.log(pdfContent)
+
+    if(pdfContent) {
+        console.log('Contenido descargado')
+    }
 
     createPdfBinary(pdfContent, (binary) => {
+        console.log('Enviando...')
         res.contentType('application/pdf');
 		res.send(binary);
 	    }, (error) => {
@@ -26,6 +31,8 @@ const createPdfBinary = ( pdfContent, callback ) => {
         }
     };
 
+    console.log(fonts);
+
     const doc = new pdfMake(fonts);
     const pdf = doc.createPdfKitDocument(pdfContent);
 
@@ -40,7 +47,7 @@ const createPdfBinary = ( pdfContent, callback ) => {
 	});
 	pdf.on('end', () => {
 		result = Buffer.concat(chunks);
-        //console.log(result)
+        console.log('PDF Listo')
         callback('data:application/pdf;base64,' + result.toString('base64'));
 	});
 	pdf.end();
