@@ -1,8 +1,5 @@
-import React from 'react'
-import { Box, Card, Grid, List, ListItem, Toolbar, IconButton, Button } from '@material-ui/core'
-import { Close, ArrowBackIos } from '@material-ui/icons'
+import { Box, Card, Grid } from '@material-ui/core'
 import { useStylesTheme } from '../../config'
-import { CardButton, SiteButton } from '../../components/buttons'
 
 
 

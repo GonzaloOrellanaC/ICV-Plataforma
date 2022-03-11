@@ -26,16 +26,20 @@ const createPdfBinary = ( pdfContent, callback ) => {
     };
 
     const doc = new pdfMake(fonts);
-    const pdf = doc.createPdfKitDocument(pdfContent)
+    const pdf = doc.createPdfKitDocument(pdfContent);
+
+    console.log(pdf)
     
     var chunks = [];
 	var result;
 
-	pdf.on('data', function (chunk) {
+	pdf.on('data', (chunk) => {
+        //console.log(chunk)
 		chunks.push(chunk);
 	});
-	pdf.on('end', function () {
+	pdf.on('end', () => {
 		result = Buffer.concat(chunks);
+        //console.log(result)
         callback('data:application/pdf;base64,' + result.toString('base64'));
 	});
 	pdf.end();

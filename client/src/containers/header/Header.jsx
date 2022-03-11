@@ -70,8 +70,10 @@ const Header = () => {
         if(isAuthenticated) {
             if(navigator.onLine) {
                 usersRoutes.getUser(localStorage.getItem('_id')).then(data => {
-                    if(!data.data.sign) {
-                        setOpenSign(true)
+                    if(data.data) {
+                        if(!data.data.sign) {
+                            setOpenSign(true)
+                        }
                     }
                 })
             }

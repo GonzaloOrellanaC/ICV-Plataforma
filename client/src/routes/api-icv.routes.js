@@ -2,7 +2,6 @@ import axios from 'axios';
 
 export default {
     getMachines: () => {
-        //return axios.get('/icv/fileMachines')
         return axios.get('/machines/getMachinesOfProject')
     },
     getAllMachines: () => {

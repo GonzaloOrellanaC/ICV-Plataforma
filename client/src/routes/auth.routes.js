@@ -8,7 +8,6 @@ export default {
                 password
             }
         }
-
         return axios.post('/auth/login', requestBody)
     },
     register: (userData, password) => {
@@ -16,28 +15,24 @@ export default {
             userData,
             password
         }
-
         return axios.post('/auth/register', requestBody)
     },
     forgotPassword: (email) => {
         const requestBody = {
             email
         }
-
         return axios.post('/auth/forgotpassword', requestBody)
     },
     restorePassword: (password, token) => {
         const requestBody = {
             password
         }
-
         return axios.post(`/auth/resetpassword/${token}`, requestBody)
     },
     logout: (userData) => {
         const requestBody = {
             userData
         }
-
         return axios.post('/auth/logout', requestBody)
     }
 }
