@@ -16,8 +16,22 @@ const VersionControlModal = ({open, closeModal}) => {
                     <h2>Versión {environment.version}</h2>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
-                    
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.6.4</strong>
+                        <li>
+                            (En ejecución) Reparación de PDF.
+                        </li>
+                        <li>
+                            Se agregan botones para mostrar password.
+                        </li>
+                        <li>
+                            Se repara aviso de creación de usuario, el cual no aparecía, dejando el 
+                            spinner girando de manera infinita a menos que se recargue la página.
+                        </li>
+                        <strong>v.6.3</strong>
+                        <li>
+                            (En ejecución) Reparación de PDF.
+                        </li>
                         <strong>v.6.2</strong>
                         <li>
                             Reparaciones menores.

@@ -250,7 +250,7 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
                                 <FormControl fullWidth>
                                     {/* <TextField id="outlined-basic" label="Rut" variant="outlined" /> */}
                                     <p>RUT</p>
-                                    <input autoComplete="off" required id="rut" className="inputClass" type="text" minLength={11} maxLength={12} onBlur={()=>saveUserData()} onInput={(e)=>changeRut(e.target.value)} /* onChange={(e)=>{setRut(e.target.value)}} */ value={rut} /*className={classes.inputsStyle}*/ placeholder="11.222.333-K" type="text" style={{width: 293, height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <input autoComplete="off" required id="rut" className="inputClass" type="text" minLength={11} maxLength={12} onBlur={()=>saveUserData()} onInput={(e)=>changeRut(e.target.value)} /* onChange={(e)=>{setRut(e.target.value)}} */ value={rut} /*className={classes.inputsStyle}*/ placeholder="11.222.333-K" style={{width: 293, height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
                             <div style={{float: 'left'}}>
@@ -283,7 +283,6 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
                                     <select 
                                         required 
                                         onBlur={()=>saveUserData()} 
-                                        required 
                                         name="site" 
                                         id="site" 
                                         style={{width: 548, height: 44, borderRadius: 10, fontSize: 20}}

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { Button, Grid, Link, makeStyles, TextField } from '@material-ui/core'
+import { Button, Grid, IconButton, Link, makeStyles, TextField } from '@material-ui/core'
 import { useAuth, useLanguage } from '../../context'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -21,6 +23,15 @@ const Login = () => {
     const classes = useStyles()
     const [ userData, setUserData ] = useState({})
     const history = useHistory();
+    const [ verPassword, setVerPassword ] = useState('password')
+
+    const cambiarVistaPassword = () => {
+        if(verPassword === 'password') {
+            setVerPassword('text')
+        }else{
+            setVerPassword('password')
+        } 
+    }
 
     const handleChange = (event) => {
         switch (event?.target?.name) {
@@ -62,7 +73,7 @@ const Login = () => {
                     </Grid>
                     <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
                         <TextField
-                            type='password'
+                            type={verPassword}
                             name='password'
                             label={dictionary.login.passwordField}
                             value={password}
@@ -70,6 +81,14 @@ const Login = () => {
                             variant='outlined'
                             style={{maxWidth: 400, minWidth: 300, width: '100%'}}
                         />
+                        <IconButton style={{width: 0, position: 'relative', right: 25, zIndex: 1, padding: 0}} onClick={() => {cambiarVistaPassword()}}>
+                            {
+                                verPassword === 'password' && <FontAwesomeIcon icon={faEye}/>
+                            }
+                            {
+                                verPassword === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
+                            }
+                        </IconButton>
                     </Grid>
                     <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
                         <Button className={classes.button} type='submit' variant='contained' color='primary'>

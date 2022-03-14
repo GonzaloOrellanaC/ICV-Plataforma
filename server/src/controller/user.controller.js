@@ -17,7 +17,9 @@ const createUser = async  (req, res, next) => {
             //EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password )
             //const emailSenderState = await EmailMailgunServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password)
             if(emailSenderState) {
-                res.status(200).json({ user: registerUser })
+                res.status(200).json({ user: registerUser, email: 'Sended' })
+            }else{
+                res.status(200).json({ user: registerUser, email: 'Not sended' })
             }
         }else{
             return res.status(400).end({message: 'Error al guardar usuario'})

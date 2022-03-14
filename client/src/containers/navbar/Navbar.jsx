@@ -16,7 +16,8 @@ import {
     faRobot,
     faComment,
     faTruck,
-    faUser} from '@fortawesome/free-solid-svg-icons';
+    faUser,
+    faCube} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation } from '../../context';
 import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
 
@@ -175,6 +176,22 @@ const Navbar = () => {
         setOpenInternalMessagesModal(false)
     }
 
+    const openCadAssistant = () => {
+        //window.location.replace('org.opencascade.cadassistant&hl=es&gl=US://')
+        /* var fallbackToStore = function() { */
+            //window.location.replace('market://details?id=org.opencascade.cadassistant');
+        /* };
+        var triggerAppOpen = function() {
+            openApp();
+            setTimeout(fallbackToStore, 250);
+        }; */
+    }
+
+    
+    var openApp = function() {
+        window.location.replace('your_uri_scheme://');
+    };
+
     useEffect(() => {
         if(cancel) {
             if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive')) {
@@ -297,6 +314,13 @@ const Navbar = () => {
                                 <IconButton onClick={closeSideBar}  title='Información' onClickCapture={()=>{toOpenVersionModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faInfoCircle}/> {navBarOpen ?  ' Información' : ''}
+                                    </div>
+                                </IconButton>
+                            </div>
+                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar}  title='Información' onClickCapture={()=>{openCadAssistant()}}>
+                                    <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faCube}/> {navBarOpen ?  ' Cad Assistant' : ''}
                                     </div>
                                 </IconButton>
                             </div>

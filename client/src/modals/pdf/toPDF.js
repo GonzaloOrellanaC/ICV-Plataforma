@@ -79,7 +79,7 @@ const createImagesTables = () => {
                 }
                 table.body[number] = imageColumns;
                 table.body[number + 1] = textColumns;
-                console.log(table)
+                //console.log(table)
                 imageArrayColumns[1].table = table;
                 imageColumns = [];
                 textColumns = [];
@@ -191,7 +191,7 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
     const executionReportData = await getExecutionReportData(reportData);
     const groupKeys = Object.keys(executionReportData[0].group)
     const group = Object.values(executionReportData[0].group);
-    var docDefinition = {
+    let docDefinition = {
         content: [
             {
                 columns: [

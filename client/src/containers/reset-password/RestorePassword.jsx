@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Grid, Link, makeStyles, TextField } from '@material-ui/core'
-import { useAuth, useLanguage } from '../../context'
+import { Button, Grid, IconButton, Link, makeStyles, TextField } from '@material-ui/core'
+import { useLanguage } from '../../context'
 import { useHistory } from 'react-router-dom';
 import { authRoutes } from '../../routes';
 import './resetUser.css'
-import checkpassword from './checkPassword'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -26,6 +27,24 @@ const RestorePassword = ({id}) => {
 
     const classes = useStyles();
     const history = useHistory();
+    const [ verPassword, setVerPassword ] = useState('password')
+    const [ verPassword2, setVerPassword2 ] = useState('password')
+
+    const cambiarVistaPassword = () => {
+        if(verPassword === 'password') {
+            setVerPassword('text')
+        }else{
+            setVerPassword('password')
+        } 
+    }
+
+    const cambiarVistaPassword2 = () => {
+        if(verPassword2 === 'password') {
+            setVerPassword2('text')
+        }else{
+            setVerPassword2('password')
+        } 
+    }
 
     useEffect(() => {
         setToken(id)
@@ -76,7 +95,7 @@ const RestorePassword = ({id}) => {
                 <Grid container item spacing={2}>
                     <Grid item xs={12} container justifyContent='center'>
                         <TextField
-                            type='password'
+                            type={verPassword}
                             name='password'
                             label={dictionary.restorePassword.passwordField}
                             value={password}
@@ -87,10 +106,18 @@ const RestorePassword = ({id}) => {
                             id="password"
                             
                         />
+                        <IconButton style={{width: 0, position: 'relative', right: 25, zIndex: 1, padding: 0}} onClick={() => {cambiarVistaPassword()}}>
+                            {
+                                verPassword === 'password' && <FontAwesomeIcon icon={faEye}/>
+                            }
+                            {
+                                verPassword === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
+                            }
+                        </IconButton>
                     </Grid>
                     <Grid item xs={12} container justifyContent='center' style={{paddingTop: 10}}>
                         <TextField
-                            type='password'
+                            type={verPassword2}
                             name='confirmPassword'
                             label={dictionary.restorePassword.confirmPasswordField}
                             value={confirmPassword}
@@ -101,6 +128,14 @@ const RestorePassword = ({id}) => {
                             id="c_password"
                             
                         />
+                        <IconButton style={{width: 0, position: 'relative', right: 25, zIndex: 1, padding: 0}} onClick={() => {cambiarVistaPassword2()}}>
+                            {
+                                verPassword2 === 'password' && <FontAwesomeIcon icon={faEye}/>
+                            }
+                            {
+                                verPassword2 === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
+                            }
+                        </IconButton>
                     </Grid>
                     {
                         passwLength && <div style={{width: '100%', textAlign: 'center'}}>
@@ -113,11 +148,11 @@ const RestorePassword = ({id}) => {
                         </div>  
                     }
                         
-                        <div style={{width: '100%', textAlign: 'center'}}>
+                        {/* <div style={{width: '100%', textAlign: 'center'}}>
                             <p>Nivel de seguridad</p>
                             <progress max="100" value="0" id="meter"></progress>
                             <p>Si agrega a la contrseña letras mayúsculas, números y símbolos, el nivel de seguridad aumenta.</p>
-                        </div>
+                        </div> */}
                     <Grid item xs={12} container justifyContent='center' style={{paddingTop: 10}}>
                         <Button className={classes.button} variant='contained' color='primary' onClick={()=>{handleSubmit()}}>
                             {/* {dictionary.login.loginButton} */}
