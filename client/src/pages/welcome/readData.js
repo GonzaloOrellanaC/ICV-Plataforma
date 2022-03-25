@@ -26,7 +26,7 @@ export default async (
                         if(estadoDescargaPautas.state) {
                             setTimeout( async () => {
                                 setLoadingData('Descargando datos de las obras.');
-                                const responseSites = await getInfo.getSites(setProgress, setDisableButtons, setNotificaciones1);
+                                const responseSites = await getInfo.getSites(setProgress, setDisableButtons);
                                 //console.log(responseSites)
                                 setTimeout(async () => {
                                     if(responseSites) {
