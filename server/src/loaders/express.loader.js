@@ -8,12 +8,14 @@ import passport from 'passport'
 
 import { environment, localStrategy } from '../config'
 import router from '../routes'
+//import {Socket} from '../controller'
 
 /**
  * Initialization of the Express framework and the configuration of it.
  * Configures parsers, passport, CORS, security headers and routes.
  */
 export default async () => {
+    //Socket()
     const app = express();
 
     console.log('Iniciando node JS')

@@ -39,9 +39,12 @@ import {
     RestorePasswordPage,
     ActivitiesDetailPage,
     ActivitiesPage,
-    InternalMessagesPage
+    InternalMessagesPage,
+    NotificationsPage
 } from './pages';
 import { UserProfilePage } from './pages/administration'
+import { Notifications } from 'react-push-notification';
+
 /* import history from './history'
  */
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
@@ -269,6 +272,18 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
+                <Route path={['/notifications']}>
+                    {/* <Switch>
+                        <Route path='/notifications/:id'>
+                            <ActivitiesDetailPage route={'assignment'}/>
+                        </Route>
+                    </Switch> */}
+                    <Switch>
+                        <Route exact path='/notifications'>
+                            <NotificationsPage route={'notifications'}/>
+                        </Route>
+                    </Switch>
+                </Route>
             </Switch>
         </div>
     )
@@ -279,6 +294,7 @@ const App = () => {
 
     return (
         <Router>
+            <Notifications />
             <ApolloProvider client={client}>
                 <AuthProvider>
                     <LanguageProvider>

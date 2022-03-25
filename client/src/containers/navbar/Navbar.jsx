@@ -20,6 +20,9 @@ import {
     faCube} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation } from '../../context';
 import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
+import { io } from "socket.io-client";
+import logoNotification from '../../assets/logo_icv_notification_push.png'
+import addNotification from 'react-push-notification';
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -115,16 +118,16 @@ const useStyles = makeStyles(theme => ({
 const Navbar = () => {
     const classes = useStyles()
     const { navBarOpen, handleNavBar } = useNavigation()
-    const { userData } = useAuth();
+    const { userData } = useAuth()
     const [ useButton, setUseButton ] = useState()
     const [ path, setPath ] = useState('')
-    const history = useHistory();
-    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true);
-    const [ openVersionModal, setOpenVersionModal ] = useState(false);
-    const [ openIAModal, setOpenIAModal ] = useState(false);
-    const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false);
+    const history = useHistory()
+    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true)
+    const [ openVersionModal, setOpenVersionModal ] = useState(false)
+    const [ openIAModal, setOpenIAModal ] = useState(false)
+    const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false)
     const [ cancel, setCancel ] = useState(true)
-
+    // 
 
     const logout = async () => {
         if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
@@ -193,7 +196,23 @@ const Navbar = () => {
     };
 
     useEffect(() => {
+        const socket = io()
         if(cancel) {
+            //socket.emit('isConnected', {message: 'Hello!!', userId: localStorage.getItem('_id')})
+            socket.on(`test_${localStorage.getItem('_id')}`, data => {
+                alert(data.message)
+            })
+            socket.on(`notification_${localStorage.getItem('_id')}`, data => {
+                addNotification({
+                    icon: logoNotification,
+                    title: data.title,
+                    subtitle: data.subtitle,
+                    message: data.message,
+                    theme: 'red',
+                    duration: 5000,
+                    native: true // when using native, your OS will handle theming.
+                })
+            })
             if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive')) {
                 setDisableButtonsNoSAP(false);
             }

@@ -16,6 +16,7 @@ import { PmsPage, PautaDetailPage } from './pms'
 import { NoPermissionPage } from './no-permission'
 import { ActivitiesPage, ActivitiesDetailPage } from './activities'
 import { InternalMessagesPage } from './internal-messages'
+import { NotificationsPage } from './notifications'
 
 export {
     AppliancePage,
@@ -44,5 +45,6 @@ export {
     NoPermissionPage,
     ActivitiesPage,
     ActivitiesDetailPage,
-    InternalMessagesPage
+    InternalMessagesPage,
+    NotificationsPage
 }

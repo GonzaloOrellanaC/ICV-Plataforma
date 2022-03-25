@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Toolbar, ListItem, IconButton, Grid } from "@material-ui/core";
-import { faInfoCircle, faPen, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp, faInfoCircle, faPen, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, useHistory } from 'react-router-dom';
 import { usersRoutes } from '../../routes';
 import { changeTypeUser } from '../../config';
 import { UserListDataModal } from '../../modals'
+import { io } from "socket.io-client";
 
 const UsersList = ({height, hableButton}) => {
     const [ usuarios, setUsuarios ] = useState([])
@@ -81,6 +82,12 @@ const UsersList = ({height, hableButton}) => {
         borderRadius: 10,
         boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)',
         fontSize: 14
+    }
+
+    const sendTest = (_id) => {
+        console.log(_id)
+        const socket = io()
+        socket.emit('test_user', {message: 'Envío de alerta desde el administrador.', id: _id})
     }
 
     return (
@@ -190,6 +197,9 @@ const UsersList = ({height, hableButton}) => {
                                     </Link>
                                     <IconButton onClick={()=>{deleteUser(e._id, e.name, e.lastName, e.role)}}>
                                         <FontAwesomeIcon icon={faTrash}/>
+                                    </IconButton>
+                                    <IconButton onClick={()=>{sendTest(e._id)}}>
+                                        <FontAwesomeIcon icon={faArrowUp}/>
                                     </IconButton>
                                 </ListItem>
                             )

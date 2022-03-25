@@ -10,11 +10,10 @@ export default async (
     getMachinesList,
     setLastActualization,
     setDisableButtons, 
-    setNotificaciones1,
     setOpenVersion,
     network
 ) => {
-    const revisarData = await getInfo.setIfNeedReadDataAgain(setDisableButtons, setNotificaciones1);
+    const revisarData = await getInfo.setIfNeedReadDataAgain(setDisableButtons);
         const userRole = localStorage.getItem('role');
         if(revisarData.state) {
             if(revisarData.data === 'full') {
@@ -66,7 +65,7 @@ export default async (
                         if(estadoDescargaPautas.state) {
                             setTimeout( async () => {
                                 setLoadingData('Descargando datos de las obras.');
-                                const responseSites = await getInfo.getSites(setProgress, setDisableButtons, setNotificaciones1);
+                                const responseSites = await getInfo.getSites(setProgress, setDisableButtons);
                                 setTimeout(async () => {
                                     if(responseSites) {
                                         setLoadingData('Descargando datos de las máquinas.')

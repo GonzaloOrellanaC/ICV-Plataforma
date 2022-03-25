@@ -5,6 +5,7 @@ import { AppBar, makeStyles, Toolbar, Button, Modal, Box } from '@material-ui/co
 import { faCircle, faEraser, faPen, faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import logo from '../../assets/logo_icv_gris.png'
+import logoNotification from '../../assets/logo_icv_notification_push.png'
 import { useAuth, useLanguage, useNavigation } from '../../context'
 import { changeTypeUser, styleModal, sync } from '../../config'
 import { useState } from 'react'
@@ -12,6 +13,7 @@ import { useState } from 'react'
 import './style.css'
 import { usersRoutes } from '../../routes'
 import { Canvas } from '..'
+import addNotification from 'react-push-notification';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -82,9 +84,37 @@ const Header = () => {
             });
             window.addEventListener('offline', () => {
                 // console.log('Became offline'); setIfHavNetwork(false);
+                addNotification({
+                    icon: logoNotification,
+                    title: 'Alerta',
+                    subtitle: 'Pérdida de conexión',
+                    message: 'El dispositivo no cuenta con conexión a internet.',
+                    theme: 'red',
+                    native: true // when using native, your OS will handle theming.
+                })
             });
+            Notification.requestPermission().then((res) => {
+                if(res === 'denied' || res === 'default') {
+                    alert("Para recibir mensajes desde la aplicación debe permitir notificaciones")
+                }
+            })
+            //setTimeout(() => {
+                /*addNotification({
+                    icon: logoNotification,
+                    title: 'Warning',
+                    subtitle: 'This is a subtitle',
+                    message: 'This is a very long message',
+                    theme: 'red',
+                    onClick: () => openPage(),
+                    native: true // when using native, your OS will handle theming.
+                });*/
+            //}, 1000);
         }
     }, [])
+
+    const openPage = () => {
+        window.open('http://localhost:3000')
+    }
 
     const setRefCanvasFunction = (ref) => {
         setRefCanvas(ref);

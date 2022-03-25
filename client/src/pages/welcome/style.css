@@ -48,6 +48,16 @@
     text-align: justify;
 }
 
+.alertas:hover {
+    cursor: pointer;
+    background-color: #e4e4e4; 
+}
+
+.alertas:active {
+    cursor: pointer;
+    background-color: #c7c6c6; 
+}
+
 @media screen and (max-width: 660px) {
     .titulo {
         font-size: 20px;

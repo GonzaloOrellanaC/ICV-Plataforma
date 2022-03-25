@@ -5,7 +5,6 @@ import { environment } from '../../config';
 
 export default (
     setDisableButtons,
-    setNotificaciones1,
     setNotificaciones2,
     setDisableButtonsNoSAP,
     setDisableIfNoMaintenance,
@@ -16,7 +15,7 @@ export default (
         if(localStorage.getItem('sitio')) {
             setDisableButtons(false)
         }else{
-            setNotificaciones1('Para navegar en la aplicación debe seleccionar una obra')
+            
         }
         if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
             setDisableButtonsNoSAP(false);

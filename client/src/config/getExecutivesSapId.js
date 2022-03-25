@@ -1,6 +1,5 @@
 import { usersRoutes } from "../routes"
 
-
 export default async (level) => { 
     return new Promise(async resolve => {
         let admin = await usersRoutes.findByRole('admin');
@@ -13,37 +12,37 @@ export default async (level) => {
         sapExecutives = data.data;
         let chiefMachineries = data1.data;
         let shiftManagers = data2.data;
-        let emails = new Array();
-        emails = []
+        let ids = new Array();
+        ids = []
         admins.forEach((admin, index) => {
-            emails.push(admin.email);
+            ids.push(admin._id);
             if(index == (admins.length - 1)) {
                 sapExecutives.forEach((user, i) => {
-                    emails.push(user.email);
+                    ids.push(user._id);
                     if(i == (sapExecutives.length - 1)) {
                         if(level == 1) {
                             chiefMachineries.forEach((u, n) => {
-                                emails.push(u.email);
+                                ids.push(u._id);
                                 if(n == (chiefMachineries.length - 1)) {
                                     shiftManagers.forEach((s, x) => {
-                                        emails.push(s.email)
+                                        ids.push(s._id)
                                     });
                                     if(n == (shiftManagers.length - 1)) {
-                                        resolve(emails.toString())
+                                        resolve(ids)
                                     }
                                 }
                             })
                         }else if(level == 2) {
                             chiefMachineries.forEach((u, n) => {
-                                emails.push(u.email);
+                                ids.push(u._id);
                                 if(n == (chiefMachineries.length - 1)) {
-                                    resolve(emails.toString())
+                                    resolve(ids)
                                 }
                             })
                         }else if((level == 3) || (level == 4)){
-                            resolve(emails.toString())
+                            resolve(ids)
                         }else{
-                            resolve(emails.toString())
+                            resolve(ids)
                         }
                     }
                 })

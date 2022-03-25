@@ -202,11 +202,11 @@ const getStructs = (pauta) => {
     })
 }
 
-const getSites = (setProgress, setDisableButtons, setNotificaciones1) => {
+const getSites = (setProgress, setDisableButtons) => {
     setProgress(0)
     return new Promise(async resolve => {
         let sites = [];
-        sites = await getSitesList(setDisableButtons, setNotificaciones1);
+        sites = await getSitesList(setDisableButtons);
         let db = await sitesDatabase.initDbObras();
         if(db) {
             let progressNumber = 0;
@@ -227,7 +227,7 @@ const getSites = (setProgress, setDisableButtons, setNotificaciones1) => {
     })
 }
 
-const getSitesList = (setDisableButtons, setNotificaciones1) => {
+const getSitesList = (setDisableButtons) => {
     return new Promise(resolve => {
         apiIvcRoutes.getSites()
         .then(data => {
@@ -235,7 +235,6 @@ const getSitesList = (setDisableButtons, setNotificaciones1) => {
                 localStorage.setItem('sitio', JSON.stringify(data.data[0]));
                 setTimeout(() => {
                     setDisableButtons(false)
-                    setNotificaciones1('Sin notificaciones')
                 }, 500);
             }
             resolve(data.data)
@@ -246,11 +245,11 @@ const getSitesList = (setDisableButtons, setNotificaciones1) => {
     })
 }
 
-const setIfNeedReadDataAgain = async (setDisableButtons, setNotificaciones1) => {
+const setIfNeedReadDataAgain = async (setDisableButtons) => {
     return new Promise(async resolve => {
         if(navigator.onLine) {
             let sites = [];
-            sites = await getSitesList(setDisableButtons, setNotificaciones1);
+            sites = await getSitesList(setDisableButtons);
             let db = await sitesDatabase.initDbObras();
             if(db) {
                 const response = await sitesDatabase.consultar(db.database);

@@ -10,6 +10,7 @@ import ExecutionReportsServices from './executionReports.services'
 import AzureServices from './azure.services'
 import internalMessagesServices from './internal-messages.services'
 import PdfMakerServices from './pdf-maker.services'
+import NotificationService from './notification.service'
 
 export {
     AccessControlServices,
@@ -23,5 +24,6 @@ export {
     ExecutionReportsServices,
     AzureServices,
     internalMessagesServices,
-    PdfMakerServices
+    PdfMakerServices,
+    NotificationService
 }

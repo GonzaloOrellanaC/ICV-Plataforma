@@ -1,12 +1,13 @@
 import React, { useState, useEffect, ReactDOM } from 'react';
 import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
-import { getExecutivesSapEmail, useStylesTheme } from '../../config'
+import { getExecutivesSapEmail, getExecutivesSapId, useStylesTheme } from '../../config'
 import { useHistory, useParams } from 'react-router-dom'
 import { pautasDatabase, executionReportsDatabase, reportsDatabase } from '../../indexedDB'
 import { PautaDetail } from '../../containers'
 import { executionReportsRoutes, reportsRoutes } from '../../routes'
 import { ReportCommitModal } from '../../modals'
+import { SocketConnection } from '../../connections';
 
 const ActivitiesDetailPage = () => {
     const classes = useStylesTheme();
@@ -178,31 +179,57 @@ const ActivitiesDetailPage = () => {
     }
 
     const terminarjornada = async () => {
-        let report = JSON.parse(id)
+        let report = reportAssigned;
+        console.log(report)
         let db = await reportsDatabase.initDbReports();
-        let emails = await getExecutivesSapEmail();
+        console.log(db)
+        let emails = await getExecutivesSapEmail(reportLevel);
+        console.log(emails)
         let reports = await reportsDatabase.consultar(db.database);
-        let reportSelected = reports.filter((r) => {if(r._id === report._id) {return r}});
+        console.log(reports)
+        let reportSelected = reports.filter((r) => {if(r.idIndex == Number(id)) {return r}});
+        console.log(reportSelected)
         let usersAssigned = new Array();
         usersAssigned = reportSelected[0].usersAssigned;
         let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === localStorage.getItem('_id')){}else{return user}});
+        report.idIndex = id
         report.usersAssigned = usersAssignedFiltered;
         report.state = "Asignar";
         report.emailing = "termino-jornada";
         report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`;
         report.emailsToSend = emails;
-        let reportActualized = await reportsDatabase.actualizar(report, db.database);
-        if(reportActualized) {
+        //let reportActualized = await reportsDatabase.actualizar(report, db.database);
+        //console.log(reportActualized)
+        //if(reportActualized) {
             if(navigator.onLine) {
-                let actualiza = await reportsRoutes.editReport(report);
-                if(actualiza) {
-                    alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.');
-                    history.goBack();
-                }
+                let ids = new Array();
+                ids = await getExecutivesSapId();
+                ids.forEach(async (id, index) => {
+                    SocketConnection.sendnotificationToUser(
+                        'termino-jornada',
+                        `${localStorage.getItem('_id')}`,
+                        id,
+                        'Aviso general',
+                        'Término de jornada',
+                        `${localStorage.getItem('name')} ${localStorage.getItem('lastName')} ha terminado su jornada. Recuerde reasignar OT`,
+                        '/reports'
+                    );
+                    if(index == (ids.length - 1)) {
+                        console.log('enviadas las notificaciones!')
+                        let actualiza = await reportsRoutes.editReport(report);
+                        if(actualiza) {
+                            alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.');
+                            history.goBack();
+                        }
+                    }
+                })
+                
+            }else{
+                
             }
-        }else{
+        /* }else{
             alert('Ha ocurrido un error.')
-        }
+        } */
     }
 
     const closeCommitModal = () => {

@@ -13,6 +13,7 @@ import ExecutionReportsRoutes from './execution-reports.routes'
 import AzureStorageRoutes from './azure-storage.routes'
 import InternalMessagesRoutes from './internal-messages.routes'
 import PdfMakerRoutes from './pdf-maker.routes'
+import NotificationsRoutes from './notifications.routes'
 
 const router = new Router()
 
@@ -28,5 +29,6 @@ router.use('/execution-report', ExecutionReportsRoutes)
 router.use('/azure-storage', AzureStorageRoutes)
 router.use('/internalMessagesData', InternalMessagesRoutes)
 router.use('/pdf-maker', PdfMakerRoutes)
+router.use('/notifications', NotificationsRoutes)
 
 export default router

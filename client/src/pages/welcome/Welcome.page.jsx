@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Grid } from '@material-ui/core'
 import { CardButton } from '../../components/buttons'
-import { apiIvcRoutes } from '../../routes'
+import { apiIvcRoutes, notificationsRoutes } from '../../routes'
 import { trucksDatabase, machinesDatabase, machinesImagesDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import './style.css'
@@ -10,6 +10,7 @@ import readDataSite from './readDataSite'
 import readData from './readData'
 import Files from './3dFiles'
 import { useHistory } from 'react-router-dom'
+import { dateWithTime } from '../../config'
 
 const WelcomePage = () => {
     const [ date, setDate ] = useState('')
@@ -26,7 +27,7 @@ const WelcomePage = () => {
 
     ////Notificaciones
     const [ notificaciones1, setNotificaciones1 ] = useState('Sin notificaciones')
-    const [ notificaciones2, setNotificaciones2 ] = useState('Sin notificaciones')
+    const [ notificaciones2, setNotificaciones2 ] = useState('Sin informaciones')
 
     const [ cancel, setCancel ] = useState(true)
  
@@ -59,6 +60,14 @@ const WelcomePage = () => {
     }
 
     useEffect(() => {
+        notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
+            console.log(data);
+            let lista = new Array();
+            lista = data.data.reverse();
+            if(lista.length > 0) {
+                setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt));
+            }
+        })
         if(cancel) {
             init()
         }
@@ -74,13 +83,11 @@ const WelcomePage = () => {
             getMachinesList,
             setLastActualization, 
             setDisableButtons, 
-            setNotificaciones1,
             setOpenVersion,
             network
         );
         readDataSite(
             setDisableButtons,
-            setNotificaciones1,
             setNotificaciones2,
             setDisableButtonsNoSAP,
             setDisableIfNoMaintenance,
@@ -221,9 +228,10 @@ const WelcomePage = () => {
                         </div>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={4}>
-                        <div className='notificaciones alertas'>
+                        <button className='notificaciones alertas' onClick={() => history.push('/notifications')}>
+                            <p className='notificaciones-texto'> <b>Notificaciones:</b> </p>
                             <p className='notificaciones-texto'> {notificaciones1} </p>
-                        </div>
+                        </button>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={4}>
                         <div className='notificaciones alertas'>

@@ -65,16 +65,21 @@ const actualizar = (data, database) =>{
         try {
             const trasaccion = database.transaction(['Reports'],'readwrite')
             const coleccionObjetos = trasaccion.objectStore('Reports')
-            const conexion = coleccionObjetos.put(data)
+            const conexion = coleccionObjetos.put(data, data._id)
+            console.log(conexion)
             
             conexion.onsuccess = () =>{
                 resolve(true)
+            }
+
+            conexion.onerror = (err) => {
+                console.log(err)
             }
         
         } catch (err) {
             console.log(err)
             resolve(false)
-        }
+        } 
     }) 
 }
 
