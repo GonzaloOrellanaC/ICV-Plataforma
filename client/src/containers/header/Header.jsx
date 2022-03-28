@@ -14,6 +14,7 @@ import './style.css'
 import { usersRoutes } from '../../routes'
 import { Canvas } from '..'
 import addNotification from 'react-push-notification';
+import { SocketConnection } from '../../connections'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -131,6 +132,10 @@ const Header = () => {
             alert('Muchas gracias. Su firma ha sido actualizada.')
         })
     }
+
+    const sendTestNotification = () => {
+        SocketConnection.sendnotificationToAllUsers('test', localStorage.getItem('_id'), 'Envío prueba', 'Todos los usuarios', 'Se envía notificación de prueba a todos los usuarios.')
+    }
     
     if(isAuthenticated) {
         return (
@@ -147,6 +152,9 @@ const Header = () => {
                                 </div>
                             </Fragment>}
                             <div style={{position: 'absolute', right: 10}}>
+                                {
+                                    (localStorage.getItem('role')==='admin') && <button onClick={() => sendTestNotification()}>Notif. Test</button>
+                                }
                                 <p><FontAwesomeIcon icon={faCircle} color={network ? '#2FB83F' : '#B62800'} /> {network ? 'Online' : 'Offline'}</p>
                                 {!network && <p>Sin red</p>}
                             </div>

@@ -10,7 +10,12 @@ const sendnotificationToManyUsers = (notificationType, from, title, subtitle, me
     socket.emit(notificationType, {title: title, from: from, subtitle: subtitle, message: message, url: url})
 }
 
+const sendnotificationToAllUsers = (notificationType, from, title, subtitle, message, url) => {
+    socket.emit(notificationType, {title: title, from: from, subtitle: subtitle, message: message, url: url})
+}
+
 export default {
     sendnotificationToUser,
-    sendnotificationToManyUsers
+    sendnotificationToManyUsers,
+    sendnotificationToAllUsers
 }

@@ -109,5 +109,37 @@ export default (server) => {
                 NotificationService.createNotification(notificationToSave)
             })
         })
+        socket.on('test', async (data) => {
+            const admins = await UserServices.getUserByRole('admin')
+            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
+            const shiftManagers = await UserServices.getUserByRole('shiftManager')
+            const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
+            const inspectionWorkers = await UserServices.getUserByRole('inspectionWorker')
+            const maintenceOperators = await UserServices.getUserByRole('maintenceOperator')
+            const all = admins.concat(
+                            sapExecutives.concat(
+                                shiftManagers.concat(
+                                    chiefMachineries.concat(
+                                        inspectionWorkers.concat(
+                                            maintenceOperators
+                                        )
+                                    )
+                                )
+                            )
+                        )
+            all.forEach((user) => {
+                console.log('Se crea notificación a '+user._id)
+                let notificationToSave = {
+                    id: user._id.toString(),
+                    from: data.from,
+                    url: data.url,
+                    title: data.title, 
+                    subtitle: data.title, 
+                    message: data.message
+                }
+                io.emit(`notification_${user._id}`, {title: data.title, subtitle: data.title, message: data.message})
+                NotificationService.createNotification(notificationToSave)
+            })
+        })
     })
 }
