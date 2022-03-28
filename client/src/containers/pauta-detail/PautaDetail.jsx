@@ -8,7 +8,7 @@ import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked';
 import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ReadActivityModal, WriteActivityModal } from '../../modals'
-import { executionReportsDatabase, reportsDatabase } from "../../indexedDB";
+import { executionReportsDatabase } from "../../indexedDB";
 import { executionReportsRoutes, reportsRoutes } from "../../routes";
 import { compareExecutionReport, saveExecutionReport } from "../../config";
 

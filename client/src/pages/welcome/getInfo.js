@@ -11,32 +11,25 @@ const getAssignments = (setProgress) => {
         }else{
             reps = await getAllAssignment()
         }
-        
-        console.log(reps);
         let progressNumber = 0;
         let everyProgress = 100 / reps.length;
-        let db = await reportsDatabase.initDbReports();
         if(reps.length == 0) {
             resolve(true)
         }
-        if(db) {
-            reps.forEach(async (report, i) => {
-                progressNumber = progressNumber + everyProgress;
-                setProgress(progressNumber)
-                console.log(report)
-                report.idDatabase = i;
-                reportsDatabase.actualizar(report, db.database);
-                getReportExecutionFromId(report._id);
-                console.log(i, reps.length)
-                if(i == (reps.length - 1)) {
-                    setProgress(100)
-                    console.log(true)
-                    setTimeout(() => {
-                        resolve(true)
-                    }, 100);
-                }
-            })
-        }
+        reps.forEach(async (report, i) => {
+            progressNumber = progressNumber + everyProgress;
+            setProgress(progressNumber)
+            report.idDatabase = i;
+            getReportExecutionFromId(report._id);
+            console.log(i, reps.length)
+            if(i == (reps.length - 1)) {
+                setProgress(100)
+                console.log(true)
+                setTimeout(() => {
+                    resolve(true)
+                }, 100);
+            }
+        })
     })
 }
 

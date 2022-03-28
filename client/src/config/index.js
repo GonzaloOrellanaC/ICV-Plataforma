@@ -19,6 +19,7 @@ import saveExecutionReport from './saveExecutionReport'
 import compareExecutionReport from './compareExecutionReport'
 import getSignById from './getSignById'
 import time from './time'
+import reportPriority from './reportPriority'
 export {
     theme,
     getUserNameById,
@@ -49,5 +50,6 @@ export {
     saveExecutionReport,
     compareExecutionReport,
     getSignById,
-    time
+    time,
+    reportPriority
 }

@@ -9,6 +9,7 @@ import {
 import { Close } from '@material-ui/icons';
 import { styleModalReport } from '../../config';
 import { reportsRoutes, usersRoutes } from '../../routes';
+import { SocketConnection } from '../../connections';
 
 const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) => {
     const [ operarios, setOperarios ] = useState([]);
@@ -17,7 +18,8 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
     const [ stateAssignment , setStateAssignment ] = useState(false);
     const [ data, setData ] = useState('');
     const [ closeType, setCloseType ] = useState(false)
-
+    const [ userAssigned, setUserAssigned ] = useState()
+    console.log(usersAssigned)
     const setUserToReport = async (userId) => {
         if(userId === '') {
             let usersAssigned = new Array();
@@ -27,8 +29,21 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
             if(reportState) {
                 report.usersAssigned = usersAssigned;
                 setStateAssignment(true);
+                alert('Se retira asignación')
+                if(userAssigned) {
+                    SocketConnection.sendnotificationToUser(
+                        'retiro-asignacion',
+                        `${localStorage.getItem('_id')}`,
+                        userAssigned,
+                        'Asignaciones',
+                        'Se ha retirado su asignación de OT',
+                        `OT ${report.idIndex} se reasignará a otro usuario`,
+                        '/assignment'
+                        )
+                }
                 setTimeout(() => {
                     setStateAssignment(false)
+                    closeModal()
                 }, 1000);
             }
         }else{
@@ -39,8 +54,19 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
             if(reportState) {
                 report.usersAssigned = usersAssigned;
                 setStateAssignment(true);
+                alert('Pauta asignada');
+                SocketConnection.sendnotificationToUser(
+                    'nueva-asignacion',
+                    `${localStorage.getItem('_id')}`,
+                    userId,
+                    'Asignaciones',
+                    'Se ha asignado nueva OT',
+                    `OT ${report.idIndex} asignada a usted`,
+                    '/assignment'
+                    )
                 setTimeout(() => {
-                    setStateAssignment(false)
+                    setStateAssignment(false);
+                    closeModal();
                 }, 1000);
             }
         }
@@ -82,6 +108,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
     }
 
     useEffect(() => {
+        setUserAssigned(usersAssigned[0])
         setCloseType(false)
         getUsers();
         //console.log(report)

@@ -4,6 +4,7 @@ import { ArrowBackIos } from '@material-ui/icons'
 import { changeTypeUser, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
 import { usersRoutes } from '../../routes'
+import { imageDatabase } from '../../indexedDB'
 
 const UserProfilePage = ({route}) => {
     const [userData, setUserData ] = useState();
@@ -15,11 +16,20 @@ const UserProfilePage = ({route}) => {
     useEffect(() => {
         const _id = localStorage.getItem('_id');
         if(navigator.onLine) {
-            usersRoutes.getAllUsers().then(users => {
+            usersRoutes.getAllUsers().then(async users => {
                 let usersList = new Array();
                 usersList = users.data;
                 let me = usersList.filter(u => {if(u._id === _id){return u}});
+                if(!me[0].imageUrl) {
+                    me[0].imageUrl = '../assets/no-profile-image.png'
+                    /* let dbImage = await imageDatabase.initDb()
+                    let pImages = new Array()
+                    pImages = await imageDatabase.consultar(dbImage.database)
+                    let image = pImages.filter(image =>{if(image.name === 'no-image-profile') {return image}})
+                    me[0].imageUrl = 'data:'+image[0].data */
+                }
                 setUserData(me[0]);
+                console.log(me[0])
                 let list = usersList.filter(u => {if((u._id != _id)&&(u.role != 'admin')){return u}});
                 setUsers(list);
             })
@@ -82,6 +92,9 @@ const UserProfilePage = ({route}) => {
                                             <h1>Otros usuarios</h1>
                                             {
                                                 users.map((e, i) => {
+                                                    if(!e.imageUrl) {
+                                                        e.imageUrl = '../assets/no-profile-image.png'
+                                                    }
                                                     return(
                                                         <div key={i} style={{width: '100%'}}>
                                                             <Grid container>

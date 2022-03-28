@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Grid } from '@material-ui/core'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes, notificationsRoutes } from '../../routes'
-import { trucksDatabase, machinesDatabase, machinesImagesDatabase } from '../../indexedDB'
+import { trucksDatabase, machinesDatabase, machinesImagesDatabase, imageDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import './style.css'
 import getInfo from './getInfo'
@@ -10,7 +10,7 @@ import readDataSite from './readDataSite'
 import readData from './readData'
 import Files from './3dFiles'
 import { useHistory } from 'react-router-dom'
-import { dateWithTime } from '../../config'
+import { dateWithTime, imageToBase64 } from '../../config'
 
 const WelcomePage = () => {
     const [ date, setDate ] = useState('')
@@ -59,9 +59,8 @@ const WelcomePage = () => {
         localStorage.setItem('ultimaActualizacion', Date.now())
     }
 
-    useEffect(() => {
+    useEffect(async() => {
         notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
-            console.log(data);
             let lista = new Array();
             lista = data.data.reverse();
             if(lista.length > 0) {
@@ -70,6 +69,24 @@ const WelcomePage = () => {
         })
         if(cancel) {
             init()
+            var xhr = new XMLHttpRequest();
+            xhr.onload = async () => {
+                let reader = new FileReader();
+                reader.onload = async () => {
+                    let dbImages = await imageDatabase.initDb();
+                    if(dbImages) {
+                        let image = {
+                            name: 'no-image-profile',
+                            data: reader.result.replace("data:", "")
+                        }
+                        await imageDatabase.actualizar(image, dbImages.database);
+                    }
+                }
+                reader.readAsDataURL(xhr.response);
+            }
+            xhr.open('GET', '../assets/no-profile-image.png');
+            xhr.responseType = 'blob';
+            xhr.send();
         }
         return () => setCancel(false);
     }, [cancel]);
@@ -215,6 +232,7 @@ const WelcomePage = () => {
     return (
         <div>
             <div className='container'>
+                {/* <img src="../assets/no-profile-image.png" width={100} alt="" /> */}
                 <Grid container spacing={5}>
                     <div>
                         <p className='titulo'>Hola {localStorage.getItem('name')} ¿Por dónde quieres comenzar hoy?</p>

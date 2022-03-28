@@ -14,7 +14,7 @@ export default () => {
         if(db) {
             reps.forEach(async (report, i) => {
                 report.idDatabase = i;
-                reportsDatabase.actualizar(report, db.database);
+                //reportsDatabase.actualizar(report, db.database);
             })
         }
     })

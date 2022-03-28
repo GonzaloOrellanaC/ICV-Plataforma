@@ -5,7 +5,6 @@ export default {
         const requestBody = {
             id: _id
         }
-        console.log(requestBody)
         return axios.post('/notifications/getNotificationsById', requestBody)
     },
     actualiceNotificationState: (_id) => {

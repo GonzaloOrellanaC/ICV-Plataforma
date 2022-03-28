@@ -10,6 +10,7 @@ import reportsDatabase from './reports.database'
 import activitiesDatabase from './activities.database'
 import executionReportsDatabase from './executionReports.database'
 import machinesPartsDatabase from './machinesParts.database'
+import imageDatabase from './image.database'
 
 export {
     trucksDatabase,
@@ -23,5 +24,6 @@ export {
     reportsDatabase,
     activitiesDatabase,
     executionReportsDatabase,
-    machinesPartsDatabase
+    machinesPartsDatabase,
+    imageDatabase
 }

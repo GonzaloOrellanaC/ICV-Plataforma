@@ -43,6 +43,16 @@
   color: #61dafb;
 }
 
+.border-color-primary {
+  border-style: solid;
+  border-width: 2px;
+  border-color: #be2e26;
+}
+
+.item-style {
+  color: #be2e26;
+}
+
 /* Header */
 
 .header-bar {

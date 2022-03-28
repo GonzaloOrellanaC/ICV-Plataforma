@@ -10,6 +10,7 @@ const createNotification = (data) => {
         state: false,
         url: data.url
     }
+    console.log(notificationData)
     return new Promise(resolve => {
         const notification = new Notification(notificationData);
         notification.save()

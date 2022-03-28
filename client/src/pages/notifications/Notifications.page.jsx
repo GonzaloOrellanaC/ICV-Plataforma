@@ -79,7 +79,7 @@ const NotificationsPage = () => {
                             </div>
                         </Grid>
                         <Grid alignItems='center' justifyContent='center' style={{padding: 10, borderRadius: 20}}>
-                            <div style={{height: 'calc(100vh - 210px)', overflowY: 'auto'}}>
+                            <div style={{height: 'calc(100vh - 220px)', overflowY: 'auto'}}>
                             {
                                 notifications.map((item, index) => {
                                     console.log(item)

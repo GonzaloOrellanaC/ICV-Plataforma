@@ -8,6 +8,7 @@ import { PautaDetail } from '../../containers'
 import { executionReportsRoutes, reportsRoutes } from '../../routes'
 import { ReportCommitModal } from '../../modals'
 import { SocketConnection } from '../../connections';
+import sendnotificationToManyUsers from './sendnotificationToManyUsers';
 
 const ActivitiesDetailPage = () => {
     const classes = useStylesTheme();
@@ -117,7 +118,59 @@ const ActivitiesDetailPage = () => {
                 }else{
                     report = JSON.parse(id);
                 }
-                reportsDatabase.initDbReports().then(db => {
+                report.level = report.level + 1
+                /* if(report.shiftManagerApprovedCommit){
+                    reportToLoad.shiftManagerApprovedCommit = report.shiftManagerApprovedCommit
+                }
+                if(report.chiefMachineryApprovedCommit) {
+                    reportToLoad.chiefMachineryApprovedCommit = report.chiefMachineryApprovedCommit
+                }
+                if(report.sapExecutiveApprovedCommit) {
+                    reportToLoad.sapExecutiveApprovedCommit = report.sapExecutiveApprovedCommit
+                } */
+                report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`;            
+                if(report.level == 1) {
+                    report.emailing = "termino-orden-1";
+                    report.endReport = Date.now();
+                    report.endReport = report.endReport;
+                    sendnotificationToManyUsers(report.emailing, report.idIndex)
+                }else if(report.level == 2) {
+                    report.emailing = "termino-orden-2";
+                    report.shiftManagerApprovedBy = localStorage.getItem('_id');
+                    report.shiftManagerApprovedDate = Date.now();
+                    sendnotificationToManyUsers(report.emailing, report.idIndex)
+                }else if(report.level == 3) {
+                    report.emailing = "termino-orden-3";
+                    report.state = 'Por cerrar'
+                    report.chiefMachineryApprovedBy = localStorage.getItem('_id');
+                    report.chiefMachineryApprovedDate = Date.now();
+                    sendnotificationToManyUsers(report.emailing, report.idIndex)
+                }else if(report.level == 4) {
+                    report.emailing = "termino-orden-4";
+                    report.state = 'Completadas';
+                    report.enabled = false;
+                    report.dateClose = Date.now();
+                    report.sapExecutiveApprovedBy = localStorage.getItem('_id');
+                    sendnotificationToManyUsers(report.emailing, report.idIndex)
+                }
+                let emails = await getExecutivesSapEmail(report.level);
+                report.emailsToSend = emails;
+                console.log(report)
+                //reportsDatabase.actualizar(reportToLoad, db.database).then(async res => {
+                    if(navigator.onLine) {
+                        let generateLink=`/activities/${id}`
+                        //if(res) {
+                            let r = await reportsRoutes.editReportFromAudit(report, generateLink);
+                            if(r) {
+                                alert('Información enviada');
+                                history.goBack();
+                            }
+                        //}
+                    }else{
+                        alert('Información actualizada en dispositivo. No olvide sincronizar una vez cuente con conexión a internet.')
+                    }
+                //}) 
+                /*reportsDatabase.initDbReports().then(db => {
                     reportsDatabase.consultar(db.database).then(async response => {
                         let r = new Array()
                         r = response;
@@ -138,40 +191,44 @@ const ActivitiesDetailPage = () => {
                             reportToLoad.emailing = "termino-orden-1";
                             reportToLoad.endReport = Date.now();
                             reportToLoad.endReport = reportToLoad.endReport;
+                            sendnotificationToManyUsers(reportToLoad.emailing, reportToLoad.idIndex)
                         }else if(reportToLoad.level == 2) {
                             reportToLoad.emailing = "termino-orden-2";
                             reportToLoad.shiftManagerApprovedBy = localStorage.getItem('_id');
                             reportToLoad.shiftManagerApprovedDate = Date.now();
+                            sendnotificationToManyUsers(reportToLoad.emailing, reportToLoad.idIndex)
                         }else if(reportToLoad.level == 3) {
                             reportToLoad.emailing = "termino-orden-3";
                             reportToLoad.state = 'Por cerrar'
                             reportToLoad.chiefMachineryApprovedBy = localStorage.getItem('_id');
                             reportToLoad.chiefMachineryApprovedDate = Date.now();
+                            sendnotificationToManyUsers(reportToLoad.emailing, reportToLoad.idIndex)
                         }else if(reportToLoad.level == 4) {
                             reportToLoad.emailing = "termino-orden-4";
                             reportToLoad.state = 'Completadas';
                             reportToLoad.enabled = false;
                             reportToLoad.dateClose = Date.now();
                             reportToLoad.sapExecutiveApprovedBy = localStorage.getItem('_id');
+                            sendnotificationToManyUsers(reportToLoad.emailing, reportToLoad.idIndex)
                         }
                         let emails = await getExecutivesSapEmail(reportToLoad.level);
                         reportToLoad.emailsToSend = emails;
-                        reportsDatabase.actualizar(reportToLoad, db.database).then(async res => {
+                        //reportsDatabase.actualizar(reportToLoad, db.database).then(async res => {
                             if(navigator.onLine) {
-                                let generateLink=`https://icv-plataforma-mantencion.azurewebsites.net/activities/${id}`
-                                if(res) {
+                                let generateLink=`/activities/${id}`
+                                //if(res) {
                                     let r = await reportsRoutes.editReportFromAudit(reportToLoad, generateLink);
                                     if(r) {
                                         alert('Información enviada');
                                         history.goBack();
                                     }
-                                }
+                                //}
                             }else{
                                 alert('Información actualizada en dispositivo. No olvide sincronizar una vez cuente con conexión a internet.')
                             }
-                        }) 
+                        //}) 
                     })
-                })
+                })*/
             }
         }else{
             alert('Orden no se encuantra finalizada. Revise e intente nuevamente.');
@@ -198,38 +255,32 @@ const ActivitiesDetailPage = () => {
         report.emailing = "termino-jornada";
         report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`;
         report.emailsToSend = emails;
-        //let reportActualized = await reportsDatabase.actualizar(report, db.database);
-        //console.log(reportActualized)
-        //if(reportActualized) {
-            if(navigator.onLine) {
-                let ids = new Array();
-                ids = await getExecutivesSapId();
-                ids.forEach(async (id, index) => {
-                    SocketConnection.sendnotificationToUser(
-                        'termino-jornada',
-                        `${localStorage.getItem('_id')}`,
-                        id,
-                        'Aviso general',
-                        'Término de jornada',
-                        `${localStorage.getItem('name')} ${localStorage.getItem('lastName')} ha terminado su jornada. Recuerde reasignar OT`,
-                        '/reports'
-                    );
-                    if(index == (ids.length - 1)) {
-                        console.log('enviadas las notificaciones!')
-                        let actualiza = await reportsRoutes.editReport(report);
-                        if(actualiza) {
-                            alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.');
-                            history.goBack();
-                        }
+        if(navigator.onLine) {
+            let ids = new Array();
+            ids = await getExecutivesSapId();
+            ids.forEach(async (id, index) => {
+                SocketConnection.sendnotificationToUser(
+                    'termino-jornada',
+                    `${localStorage.getItem('_id')}`,
+                    id,
+                    'Aviso general',
+                    'Término de jornada',
+                    `${localStorage.getItem('name')} ${localStorage.getItem('lastName')} ha terminado su jornada. Recuerde reasignar OT`,
+                    '/reports'
+                );
+                if(index == (ids.length - 1)) {
+                    console.log('enviadas las notificaciones!')
+                    let actualiza = await reportsRoutes.editReport(report);
+                    if(actualiza) {
+                        alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.');
+                        history.goBack();
                     }
-                })
-                
-            }else{
-                
-            }
-        /* }else{
-            alert('Ha ocurrido un error.')
-        } */
+                }
+            })
+            
+        }else{
+            
+        }
     }
 
     const closeCommitModal = () => {
