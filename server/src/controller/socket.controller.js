@@ -127,7 +127,7 @@ export default (server) => {
                                 )
                             )
                         )
-            all.forEach((user) => {
+            all.map((user) => {
                 console.log('Se crea notificación a '+user._id)
                 let notificationToSave = {
                     id: user._id.toString(),

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
-import { date, reportPriority, useStylesTheme } from '../../config'
+import { date, reportPriority, saveReport, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
 import { machinesDatabase } from '../../indexedDB'
 import getAssignments from './getAssignemt'
@@ -44,6 +44,7 @@ const ActivitiesPage = () => {
                         let assign = new Array()
                         let prioritaryAssign = new Array()
                         rs.map((element, index) => {
+                            saveReport(element)
                             if(element.priority) {
                                 prioritaryAssign.push(element)
                             }else{

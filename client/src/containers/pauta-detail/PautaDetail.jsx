@@ -10,34 +10,43 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ReadActivityModal, WriteActivityModal } from '../../modals'
 import { executionReportsDatabase } from "../../indexedDB";
 import { executionReportsRoutes, reportsRoutes } from "../../routes";
-import { compareExecutionReport, saveExecutionReport } from "../../config";
+import { compareExecutionReport, getExecutionReport, saveExecutionReport } from "../../config";
+import { ReportDataDialog } from '../../dialogs'
 
 const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignment, reportLevel}) => {
 
     //Pestañas
-    const [ gruposKeys, setGruposKeys ] = useState([]);
+    const [ gruposKeys, setGruposKeys ] = useState([])
 
     //Contenido de la vista
-    const [ contentData, setContentData ] = useState([]);
+    const [ contentData, setContentData ] = useState([])
 
     //
-    const [ group, setGroup ] = useState();
+    const [ group, setGroup ] = useState()
 
     const [ executionReport, setExecutionReport ] = useState()
 
     //Lista de checks
     const [ checks, setChecks ] = useState([])
 
-    const [ openReadActivity, setOpenReadActivity ] = useState(false);
-    const [ openWriteActivity, setOpenWriteActivity ] = useState(false);
+    const [ openReadActivity, setOpenReadActivity ] = useState(false)
+    const [ openWriteActivity, setOpenWriteActivity ] = useState(false)
 
     //Indice de la actividad
-    const [ indexActivity, setIndexActivity ] = useState();
+    const [ indexActivity, setIndexActivity ] = useState()
 
     //
-    const [ indexGroup, setIndexGroup ] = useState();
+    const [ indexGroup, setIndexGroup ] = useState()
+
+    //
+    const [ openDialog1, setOpenDialog1 ] = useState(false)
+
+    //
+    const [ item, setItem ] = useState()
+    const [ index, setIndex ] = useState()
     
     useEffect(() => {
+        console.log(reportAssigned)
         readData();
     }, []);
 
@@ -48,6 +57,17 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 resolve(data.data[0])
             })
         })
+    }
+
+    const openDialog = (item, index) => {
+        setIndex(index)
+        setItem(item)
+        setOpenDialog1(true)
+    }
+
+    const closeDialog = () => {
+        setOpenDialog1(false)
+        setItem(null)
     }
 
     const setGroupData = (groupData, groupD) => {
@@ -93,40 +113,54 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         let executionReportData;
         if(navigator.onLine) {
             let executionReportDataFromCloud = await getExecutionReportData();
-            let db = await executionReportsDatabase.initDb();
-            let data = await executionReportsDatabase.actualizar(executionReportDataFromCloud, db.database);
-            let state = new Boolean;
             executionReportData = executionReportDataFromCloud
-            /*state = compareExecutionReport(executionReportDataFromCloud);
-
-             if(state) {
-                executionReportData = executionReportDataFromCloud
+            if(reportAssigned.testMode) {
+                let g = {
+                    'Indicaciones Iniciales': null,
+                    'Indicaciones Finales': null
+                }
+                g["Indicaciones Iniciales"] = executionReportData.group['Indicaciones Iniciales']
+                g["Indicaciones Finales"] = executionReportData.group['Indicaciones Finales']
+                console.log(g)
+                if(g) {
+                    setGroup(g)
+                    setGroupData(Object.keys(g), g);
+                    setExecutionReport(executionReportData);
+                    saveExecutionReport(executionReportData, reportAssigned)
+                }else{
+                    groupD = pauta.struct.reduce((r, a) => {
+                        r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
+                        return r;
+                    }, {});
+                    setGroup(groupD);
+                    executionReportData.group = groupD;
+                    setGroupData(Object.keys(groupD), groupD);
+                    executionReportsRoutes.saveExecutionReport(executionReportData);
+                    setExecutionReport(executionReportData)
+                    saveExecutionReport(executionReportData, reportAssigned)
+                }
             }else{
-                let exDb = await executionReportsDatabase.initDb();
-                let executionReportList = new Array();
-                executionReportList = await executionReportsDatabase.consultar(exDb.database);
-                let executionR = executionReportList.filter(r => {if(r._id === executionReportData._id) {return r}});
-                executionReportData = executionR[0];
-            } */
-            if(executionReportData.group) {
-                setGroup(executionReportData.group)
-                setGroupData(Object.keys(executionReportData.group), executionReportData.group);
-                setExecutionReport(executionReportData);
-            }else{
-                groupD = pauta.struct.reduce((r, a) => {
-                    r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
-                    return r;
-                }, {});
-                setGroup(groupD);
-                executionReportData.group = groupD;
-                setGroupData(Object.keys(groupD), groupD);
-                executionReportsRoutes.saveExecutionReport(executionReportData);
-                setExecutionReport(executionReportData)
+                if(executionReportData.group) {
+                    setGroup(executionReportData.group)
+                    setGroupData(Object.keys(executionReportData.group), executionReportData.group);
+                    setExecutionReport(executionReportData);
+                    saveExecutionReport(executionReportData, reportAssigned)
+                }else{
+                    groupD = pauta.struct.reduce((r, a) => {
+                        r[a.strpmdesc] = [...r[a.strpmdesc] || [], a];
+                        return r;
+                    }, {});
+                    setGroup(groupD);
+                    executionReportData.group = groupD;
+                    setGroupData(Object.keys(groupD), groupD);
+                    executionReportsRoutes.saveExecutionReport(executionReportData);
+                    setExecutionReport(executionReportData)
+                    saveExecutionReport(executionReportData, reportAssigned)
+                }
             }
         }else{
-            let exDb = await executionReportsDatabase.initDb();
             let executionReportList = new Array();
-            executionReportList = await executionReportsDatabase.consultar(exDb.database);
+            executionReportList = await getExecutionReport(reportAssigned._id) //executionReportsDatabase.consultar(exDb.database);
             let executionR = executionReportList.filter(r => {if(r._id === executionReportData._id) {return r}});
             if(executionR.length > 0) {
                 executionReportData = executionR[0];
@@ -258,7 +292,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
     }
 
     const well = {
-        height: 70,
+        //height: 70,
         borderRadius: 10,
         boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)'
     }
@@ -296,13 +330,11 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                                     style={{
                                     textAlign: 'center', 
                                     height: '100%'}}>
-
                                         <Button style={{textAlign: 'center', width: '100%', height: 70}} onClick={() => handleContent(gruposKeys, element)}>
                                             <p style={{margin: 0}}>{element.data}</p>
                                         </Button>
                                     {
                                         element.state && <div style={{width: '100%', height: 6, backgroundColor: '#BB2D2D', position: 'relative', bottom: 5, borderRadius: 5}}>
-
                                         </div>
                                     }
                                 </div>
@@ -313,17 +345,26 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
             </div>
             <div>
                 <ListItem>
-                    <div style={{width: '15%', marginLeft: 5}}>
+                    <div style={{width: '10%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Personal Necesario</strong> </p>
                     </div>
-                    <div style={{width: '30%', marginLeft: 5}}>
+                    <div style={{width: '20%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Descripcion De Tarea</strong> </p>
                     </div>
-                    <div style={{width: '40%', marginLeft: 5}}>
+                    <div style={{width: '30%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Observaciones</strong> </p>
                     </div>
-                    <div style={{width: '15%', marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>Acciones</strong> </p>
+                    <div style={{width: '13%', marginLeft: 5}}>
+                        <p style={{margin: 0}}> <strong>Part Number</strong> </p>
+                    </div>
+                    <div style={{width: '12%', textAlign: 'center'}}>
+                        <p style={{margin: 0}}> <strong>Valores</strong> </p>
+                    </div>
+                    <div style={{width: '5%', textAlign: 'center'}}>
+                        <p style={{margin: 0}}> <strong>Ejecutar Tarea</strong> </p>
+                    </div>
+                    <div style={{width: '10%', textAlign: 'center'}}>
+                        <p style={{margin: 0}}> <strong>Estado</strong> </p>
                     </div>
                 </ListItem>
                 {contentData && <div style={{height: height, overflowY: 'scroll'}}>
@@ -331,33 +372,44 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                         contentData.map((e, n) => {
                             return(
                                 <ListItem key={n} style={well}>
-                                    <div style={{width: '15%', marginLeft: 5 }}>
+                                    <div style={{width: '10%', marginLeft: 5 }}>
                                         {e.workteamdesc}    
                                     </div>
-                                    <div style={{width: '30%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    <div style={{width: '20%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {e.taskdesc}  
                                     </div>
-                                    <div style={{width: '40%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    <div style={{width: '30%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {e.obs01}  
                                     </div>
-                                    <IconButton onClick={()=>{setOpenReadActivity(true); setIndexActivity(n)}}>
+                                    <div style={{width: '13%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                        {(e.partnumberUtl === '*') ? <p>N/A</p> : <p>{e.partnumberUtl}</p>}  
+                                    </div>
+                                    <div style={{width: '12%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                        {(e.unidad === '*') ? <p>N/A</p> : <p> {e.uNumber ? e.uNumber : '______'} {e.unidad}</p>}
+                                    </div>
+                                    {/* <IconButton onClick={()=>{setOpenReadActivity(true); setIndexActivity(n)}}>
                                         <FontAwesomeIcon icon={faEye}/>
-                                    </IconButton>
-                                    <IconButton onClick={()=>{setOpenWriteActivity(true); setIndexActivity(n)}}>
-                                        <FontAwesomeIcon icon={faPen}/>
-                                    </IconButton>
-                                    <Checkbox checked={checks[n]} disabled style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} />
+                                    </IconButton> */}
+                                    <div style={{width: '5%', textAlign: 'center'}}>
+                                        <IconButton style={{width: '5%', textAlign: 'center'}} onClick={()=>{/* setOpenWriteActivity(true) */openDialog(e, n); setIndexActivity(n)}}>
+                                            <FontAwesomeIcon icon={faPen}/>
+                                        </IconButton>
+                                    </div>
+                                    <div style={{width: '10%', textAlign: 'center'}}>
+                                        <Checkbox checked={checks[n]} disabled style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} />
+                                    </div>
                                 </ListItem>
                             )
                         })
                     }   
                 </div>}
-                {
+                {openDialog1 && <ReportDataDialog open={openDialog1} handleClose={closeDialog} report={reportAssigned} item={item} index={index} />}
+                {/* {
                     openReadActivity && <ReadActivityModal reportLevel={reportLevel} open={openReadActivity} closeModal={closeModal} onlyClose={onlyClose} activity={contentData[indexActivity]} reportAssignment={reportAssignment} reportId={executionReport._id}/>
                 }
                 {
                     openWriteActivity && <WriteActivityModal reportLevel={reportLevel} open={openWriteActivity} closeWriteModal={closeWriteModal} onlyClose={onlyClose} activity={executionReport.group[indexGroup][indexActivity]} reportAssignment={reportAssignment} reportId={executionReport._id}/>
-                }
+                } */}
             </div>
         </div>
     )

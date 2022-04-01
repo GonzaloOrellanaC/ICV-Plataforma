@@ -7,7 +7,8 @@ import {
     Card,
     Toolbar, 
     IconButton,
-    FormControl
+    FormControl,
+    Switch
 } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { useHistory, useParams } from 'react-router-dom';
@@ -39,6 +40,7 @@ const CreateReports = () => {
     const [ sapId, setSapId ] = useState('')
     const [ canEdit, setCanEdit ] = useState(true)
     const [ iDPM, setIDPM ] = useState('')
+    const [ isTest, setIsTest ] = useState(false)
 
     const classes = useStylesTheme();
 
@@ -101,7 +103,8 @@ const CreateReports = () => {
             machine: JSON.parse(machineSelected).equid,
             site: JSON.parse(localStorage.getItem('sitio')).idobra,
             sapId: sapId,
-            idPm: iDPM
+            idPm: iDPM,
+            testMode: isTest
         }
         if(!report.machine || !report.sapId || (!report.guide || report.guide === "Selección no cuenta con pautas.") || (!report.reportType || report.reportType === 'Seleccione...')) {
             alert('Falta información')
@@ -223,6 +226,9 @@ const CreateReports = () => {
             setMachineModel(machine[0].model);
             let pautasLista = pautasData.filter((item, i) => {if((item.header[3].typeDataDesc === machine[0].model) && (item.action === report.reportType) ) { return item }})
             setPautas(pautasLista);
+            if(!report.guide.testMode) {
+                report.guide.testMode = false
+            }
             setPauta(report.guide);
             /* if(report.sapId) {
                 setSapId(report.sapId);
@@ -408,6 +414,9 @@ const CreateReports = () => {
                                                 } 
                                             </select>
                                         </FormControl>
+                                    </div>
+                                    <div style={{width: '100%'}}>
+                                        <p>Test: <Switch checked={isTest} onChange={(e) => setIsTest(e.target.checked)}/></p>
                                     </div>
                                     <div style={{width: '100%'}}>
                                         <FormControl >

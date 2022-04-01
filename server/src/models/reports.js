@@ -84,6 +84,9 @@ const ReportShema = new Schema({
     },
     idPm: {
         type: Schema.Types.String
+    },
+    testMode: {
+        type: Schema.Types.Boolean
     }
 },
 {

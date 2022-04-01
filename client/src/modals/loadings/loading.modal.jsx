@@ -7,9 +7,6 @@ import {
 import { styleModal } from '../../config';
 
 const LoadingModal = ({open, progress, loadingData, withProgress}) => {
-
-    
-    
     return(
         <Modal
             open={open}

@@ -1,7 +1,7 @@
 const initDbReports = () => {
     const indexedDb = window.indexedDB;
 
-    const conexion = indexedDb.open('Documentation',1)
+    const conexion = indexedDb.open('Documentation', 1)
 
     let db
 
@@ -22,7 +22,6 @@ const initDbReports = () => {
             const coleccionObjetos = db.createObjectStore('Reports',{
                 keyPath: 'idDatabase'
             })
-            coleccionObjetos.createIndex("_id", "_id", {unique: false});
 
             coleccionObjetos.transaction.oncomplete = (event) => {
                 resolve(
@@ -65,7 +64,7 @@ const actualizar = (data, database) =>{
         try {
             const trasaccion = database.transaction(['Reports'],'readwrite')
             const coleccionObjetos = trasaccion.objectStore('Reports')
-            const conexion = coleccionObjetos.put(data, data._id)
+            const conexion = coleccionObjetos.put(data)
             console.log(conexion)
             
             conexion.onsuccess = () =>{

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, ReactDOM } from 'react';
 import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
-import { getExecutivesSapEmail, getExecutivesSapId, useStylesTheme } from '../../config'
+import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, saveExecutionReport, useStylesTheme } from '../../config'
 import { useHistory, useParams } from 'react-router-dom'
 import { pautasDatabase, executionReportsDatabase, reportsDatabase } from '../../indexedDB'
 import { PautaDetail } from '../../containers'
 import { executionReportsRoutes, reportsRoutes } from '../../routes'
-import { ReportCommitModal } from '../../modals'
+import { LoadingModal, ReportCommitModal } from '../../modals'
 import { SocketConnection } from '../../connections';
 import sendnotificationToManyUsers from './sendnotificationToManyUsers';
 
@@ -15,38 +15,43 @@ const ActivitiesDetailPage = () => {
     const history = useHistory();
     const {id} = useParams();
     const [ pauta, setPauta ] = useState();
-    const [ executionReport, setExecutionReport ] = useState()
+    // const [ executionReport, setExecutionReport ] = useState()
     const [ progress, resutProgress ] = useState(0)
     const [ reportAssignment, setReportAssignment ] = useState()
     const [ reportLevel, setReportLevel ] = useState()
     const [ canEdit, setCanEdit ] = useState()
     const [ reportAssigned, setReportAssigned ] = useState()
     const [ openReportCommitModal, setOpenReportCommitModal ] = useState(false)
+    const [ loading, setLoading ] = useState(false)
+    const [ loadingMessage, setLoadingMessage ] = useState(false)
 
     useEffect(() => {
-        reportsRoutes.getReportByIndex(id).then(r => {
-            let report = r.data
-            getPauta(report);
-            if(!report.level) {
-                report.level = 0
-            }
-            setReportAssigned(report);
-            setReportLevel(report.level);
-            let myReportLevel;
-            if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
-                myReportLevel = 0;
-            }else if(localStorage.getItem('role') === 'shiftManager') {
-                myReportLevel = 1;
-            }else if(localStorage.getItem('role') === 'chiefMachinery') {
-                myReportLevel = 2;
-            }else if(localStorage.getItem('role') === 'sapExecutive') {
-                myReportLevel = 3;
-            };
-            if(myReportLevel === report.level) {
-                setCanEdit(true)
-            }
-        })
-        
+        if(navigator.onLine) {
+            reportsRoutes.getReportByIndex(id).then(r => {
+                let report = r.data
+                getPauta(report);
+                if(!report.level) {
+                    report.level = 0
+                }
+                setReportAssigned(report);
+                setReportLevel(report.level);
+                let myReportLevel;
+                if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+                    myReportLevel = 0;
+                }else if(localStorage.getItem('role') === 'shiftManager') {
+                    myReportLevel = 1;
+                }else if(localStorage.getItem('role') === 'chiefMachinery') {
+                    myReportLevel = 2;
+                }else if(localStorage.getItem('role') === 'sapExecutive') {
+                    myReportLevel = 3;
+                };
+                if(myReportLevel === report.level) {
+                    setCanEdit(true)
+                }
+            })
+        }else{
+
+        }       
     }, [])
 
     const getPauta = async (r) => {
@@ -63,13 +68,12 @@ const ActivitiesDetailPage = () => {
                     ) {
                         return info
                     }});
-            let exDb = await executionReportsDatabase.initDb();
-            let responseDatabase = await executionReportsDatabase.consultar(exDb.database);
-            if((responseDatabase.length == 0) && navigator.onLine) {
-                responseDatabase = await (await executionReportsRoutes.getExecutionReportById(report)).data;
-            };
-            setExecutionReport(responseDatabase[0])
+            const state = await saveExecutionReport(pautaFiltered[0], report)
             setPauta(pautaFiltered[0]);
+            setTimeout(async () => {
+                const element = await getExecutionReport(report._id)
+                console.log(element)
+            }, 2000);
         }
     }
 
@@ -77,30 +81,43 @@ const ActivitiesDetailPage = () => {
         resutProgress(value)
     }
 
-    const endReport = () => {
-        let group = new Array();
-        group = Object.values(executionReport.group);
-        let state = true;
-        group.map((item, index) => {
-            item.map((i, n) => {
-                if(!i.isChecked) {
-                    state = false;
-                };
-                if(n == (item.length - 1)) {
-                    if(index == (group.length - 1)) {
-                        if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
-                            sendToNext(state, reportAssigned)
-                        }else{
-                            responseMessage()
+    const endReport = async () => {
+        if(navigator.onLine) {
+            setLoading(true)
+            if(localStorage.getItem('role') === 'sapExecutive') {
+                setLoadingMessage('Cerrando OT...')
+            }else{
+                setLoadingMessage('Enviando estado...')
+            }
+            let group = new Array()
+            const executionReportData = await getExecutionReport(reportAssigned._id)
+            group = Object.values(executionReportData.data.group)
+            let state = true;
+            group.map((item, index) => {
+                item.map((i, n) => {
+                    if(!i.isChecked) {
+                        state = false
+                    }
+                    if(n == (item.length - 1)) {
+                        if(index == (group.length - 1)) {
+                            setLoading(false)
+                            if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+                                sendToNext(state, reportAssigned)
+                            }else{
+                                responseMessage()
+                            }
                         }
                     }
-                }
+                })
             })
-        })
+        }else{
+            alert('Dispositivo no está conectado a internet. Conecte a una red e intente nuevamente')
+        }
     }
 
     const getResponseState = (state, report) => {
         if(state) {
+            setLoading(true)
             sendToNext(state, report)
         }
     }
@@ -119,15 +136,6 @@ const ActivitiesDetailPage = () => {
                     report = JSON.parse(id);
                 }
                 report.level = report.level + 1
-                /* if(report.shiftManagerApprovedCommit){
-                    reportToLoad.shiftManagerApprovedCommit = report.shiftManagerApprovedCommit
-                }
-                if(report.chiefMachineryApprovedCommit) {
-                    reportToLoad.chiefMachineryApprovedCommit = report.chiefMachineryApprovedCommit
-                }
-                if(report.sapExecutiveApprovedCommit) {
-                    reportToLoad.sapExecutiveApprovedCommit = report.sapExecutiveApprovedCommit
-                } */
                 report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`;            
                 if(report.level == 1) {
                     report.emailing = "termino-orden-1";
@@ -142,7 +150,7 @@ const ActivitiesDetailPage = () => {
                 }else if(report.level == 3) {
                     report.emailing = "termino-orden-3";
                     report.state = 'Por cerrar'
-                    report.chiefMachineryApprovedBy = localStorage.getItem('_id');
+                    report.chiefMachineryApprovedBy = localStorage.getItem('_id')
                     report.chiefMachineryApprovedDate = Date.now();
                     sendnotificationToManyUsers(report.emailing, report.idIndex)
                 }else if(report.level == 4) {
@@ -150,114 +158,51 @@ const ActivitiesDetailPage = () => {
                     report.state = 'Completadas';
                     report.enabled = false;
                     report.dateClose = Date.now();
-                    report.sapExecutiveApprovedBy = localStorage.getItem('_id');
+                    report.sapExecutiveApprovedBy = localStorage.getItem('_id')
                     sendnotificationToManyUsers(report.emailing, report.idIndex)
                 }
-                let emails = await getExecutivesSapEmail(report.level);
+                const emails = await getExecutivesSapEmail(report.level);
                 report.emailsToSend = emails;
-                console.log(report)
-                //reportsDatabase.actualizar(reportToLoad, db.database).then(async res => {
-                    if(navigator.onLine) {
-                        let generateLink=`/activities/${id}`
-                        //if(res) {
-                            let r = await reportsRoutes.editReportFromAudit(report, generateLink);
-                            if(r) {
-                                alert('Información enviada');
-                                history.goBack();
-                            }
-                        //}
-                    }else{
-                        alert('Información actualizada en dispositivo. No olvide sincronizar una vez cuente con conexión a internet.')
-                    }
-                //}) 
-                /*reportsDatabase.initDbReports().then(db => {
-                    reportsDatabase.consultar(db.database).then(async response => {
-                        let r = new Array()
-                        r = response;
-                        let filtered = response.filter(item => {if(report._id === item._id) {return item}});
-                        let reportToLoad = filtered[0];
-                        reportToLoad.level = reportLevel + 1;
-                        if(report.shiftManagerApprovedCommit){
-                            reportToLoad.shiftManagerApprovedCommit = report.shiftManagerApprovedCommit
-                        }
-                        if(report.chiefMachineryApprovedCommit) {
-                            reportToLoad.chiefMachineryApprovedCommit = report.chiefMachineryApprovedCommit
-                        }
-                        if(report.sapExecutiveApprovedCommit) {
-                            reportToLoad.sapExecutiveApprovedCommit = report.sapExecutiveApprovedCommit
-                        }
-                        reportToLoad.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`;            
-                        if(reportToLoad.level == 1) {
-                            reportToLoad.emailing = "termino-orden-1";
-                            reportToLoad.endReport = Date.now();
-                            reportToLoad.endReport = reportToLoad.endReport;
-                            sendnotificationToManyUsers(reportToLoad.emailing, reportToLoad.idIndex)
-                        }else if(reportToLoad.level == 2) {
-                            reportToLoad.emailing = "termino-orden-2";
-                            reportToLoad.shiftManagerApprovedBy = localStorage.getItem('_id');
-                            reportToLoad.shiftManagerApprovedDate = Date.now();
-                            sendnotificationToManyUsers(reportToLoad.emailing, reportToLoad.idIndex)
-                        }else if(reportToLoad.level == 3) {
-                            reportToLoad.emailing = "termino-orden-3";
-                            reportToLoad.state = 'Por cerrar'
-                            reportToLoad.chiefMachineryApprovedBy = localStorage.getItem('_id');
-                            reportToLoad.chiefMachineryApprovedDate = Date.now();
-                            sendnotificationToManyUsers(reportToLoad.emailing, reportToLoad.idIndex)
-                        }else if(reportToLoad.level == 4) {
-                            reportToLoad.emailing = "termino-orden-4";
-                            reportToLoad.state = 'Completadas';
-                            reportToLoad.enabled = false;
-                            reportToLoad.dateClose = Date.now();
-                            reportToLoad.sapExecutiveApprovedBy = localStorage.getItem('_id');
-                            sendnotificationToManyUsers(reportToLoad.emailing, reportToLoad.idIndex)
-                        }
-                        let emails = await getExecutivesSapEmail(reportToLoad.level);
-                        reportToLoad.emailsToSend = emails;
-                        //reportsDatabase.actualizar(reportToLoad, db.database).then(async res => {
-                            if(navigator.onLine) {
-                                let generateLink=`/activities/${id}`
-                                //if(res) {
-                                    let r = await reportsRoutes.editReportFromAudit(reportToLoad, generateLink);
-                                    if(r) {
-                                        alert('Información enviada');
-                                        history.goBack();
-                                    }
-                                //}
-                            }else{
-                                alert('Información actualizada en dispositivo. No olvide sincronizar una vez cuente con conexión a internet.')
-                            }
-                        //}) 
-                    })
-                })*/
+                const generateLink=`/activities/${id}`
+                const r = await reportsRoutes.editReportFromAudit(report, generateLink)
+                setLoading(false)
+                if(r) {
+                    alert('Información enviada')
+                    history.goBack()
+                }
             }
         }else{
-            alert('Orden no se encuantra finalizada. Revise e intente nuevamente.');
+            alert('Orden no se encuantra finalizada. Revise e intente nuevamente.')
+            setLoadingMessage('Retrocediendo...')
+            setTimeout(() => {
+                setLoading(false)
+            }, 1000);
         }
     }
 
     const terminarjornada = async () => {
-        let report = reportAssigned;
-        console.log(report)
-        let db = await reportsDatabase.initDbReports();
-        console.log(db)
-        let emails = await getExecutivesSapEmail(reportLevel);
-        console.log(emails)
-        let reports = await reportsDatabase.consultar(db.database);
-        console.log(reports)
-        let reportSelected = reports.filter((r) => {if(r.idIndex == Number(id)) {return r}});
-        console.log(reportSelected)
-        let usersAssigned = new Array();
-        usersAssigned = reportSelected[0].usersAssigned;
-        let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === localStorage.getItem('_id')){}else{return user}});
-        report.idIndex = id
-        report.usersAssigned = usersAssignedFiltered;
-        report.state = "Asignar";
-        report.emailing = "termino-jornada";
-        report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`;
-        report.emailsToSend = emails;
         if(navigator.onLine) {
-            let ids = new Array();
-            ids = await getExecutivesSapId();
+            setLoading(true)
+            setLoadingMessage('Terminando su jornada')
+            const report = reportAssigned
+            const emails = await getExecutivesSapEmail(reportLevel)
+            console.log(emails)
+    /*      let reports = await reportsDatabase.consultar(db.database);
+            console.log(reports)
+            let reportSelected = reports.filter((r) => {if(r.idIndex == Number(id)) {return r}});
+            console.log(reportSelected) */
+            let usersAssigned = new Array()
+            usersAssigned = reportAssigned.usersAssigned
+            let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === localStorage.getItem('_id')){}else{return user}})
+            report.idIndex = id
+            report.usersAssigned = usersAssignedFiltered
+            report.state = "Asignar"
+            report.emailing = "termino-jornada"
+            report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`
+            report.emailsToSend = emails
+            let ids = new Array()
+            ids = await getExecutivesSapId()
+            console.log(ids)
             ids.forEach(async (id, index) => {
                 SocketConnection.sendnotificationToUser(
                     'termino-jornada',
@@ -270,16 +215,18 @@ const ActivitiesDetailPage = () => {
                 );
                 if(index == (ids.length - 1)) {
                     console.log('enviadas las notificaciones!')
-                    let actualiza = await reportsRoutes.editReport(report);
+                    let actualiza = await reportsRoutes.editReport(report)
                     if(actualiza) {
-                        alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.');
-                        history.goBack();
+                        setLoading(false)
+                        setTimeout(() => {
+                            alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
+                            history.goBack()
+                        }, 500)
                     }
                 }
             })
-            
         }else{
-            
+            alert('Dispositivo no está conectado a internet. Conecte a una red e intente nuevamente')
         }
     }
 
@@ -356,6 +303,9 @@ const ActivitiesDetailPage = () => {
                     </Card>
                 </Grid>
             </Grid>
+            {
+                <LoadingModal open={loading} withProgress={false} loadingData={loadingMessage} />
+            }
         </Box>
     )
 }

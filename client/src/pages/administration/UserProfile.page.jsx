@@ -19,7 +19,8 @@ const UserProfilePage = ({route}) => {
             usersRoutes.getAllUsers().then(async users => {
                 let usersList = new Array();
                 usersList = users.data;
-                let me = usersList.filter(u => {if(u._id === _id){return u}});
+                let me = usersList.filter(u => { console.log(u._id, _id);if(u._id === _id){return u}});
+                console.log(me)
                 if(!me[0].imageUrl) {
                     me[0].imageUrl = '../assets/no-profile-image.png'
                     /* let dbImage = await imageDatabase.initDb()

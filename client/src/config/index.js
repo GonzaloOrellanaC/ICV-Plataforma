@@ -15,11 +15,13 @@ import getExecutivesSapId from './getExecutivesSapId'
 import getWeekReports from './getWeekReports'
 import getMachineData from './getMachineData'
 import getExecutionReportData from './getExecutionReportData'
+import getExecutionReport from './getExecutionReport'
 import saveExecutionReport from './saveExecutionReport'
 import compareExecutionReport from './compareExecutionReport'
 import getSignById from './getSignById'
 import time from './time'
 import reportPriority from './reportPriority'
+import saveReport from './saveReport'
 export {
     theme,
     getUserNameById,
@@ -47,9 +49,11 @@ export {
     userState,
     getMachineData,
     getExecutionReportData,
+    getExecutionReport,
     saveExecutionReport,
     compareExecutionReport,
     getSignById,
     time,
-    reportPriority
+    reportPriority,
+    saveReport
 }
