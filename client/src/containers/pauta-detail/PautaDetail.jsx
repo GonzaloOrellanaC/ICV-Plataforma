@@ -114,6 +114,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         if(navigator.onLine) {
             let executionReportDataFromCloud = await getExecutionReportData();
             executionReportData = executionReportDataFromCloud
+            console.log(executionReportData)
             if(reportAssigned.testMode) {
                 let g = {
                     'Indicaciones Iniciales': null,
