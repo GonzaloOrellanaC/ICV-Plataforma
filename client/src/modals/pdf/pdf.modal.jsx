@@ -28,14 +28,12 @@ const PdfModal = ({open, reportData, close}) => {
 
     const changeName = (value) => {
         setFileName(value);
-        console.log(value)
     }
     
     const print = () => {
         console.log('Iniciando descarga de PDF')
         try{
             console.log('Descargando...')
-            console.log(reportData, machineData[0], fileName)
             toPDF(reportData, machineData[0], stopPrintingLoad, fileName);
             setPrinting(true)
         }catch (err) {

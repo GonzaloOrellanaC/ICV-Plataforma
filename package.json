@@ -9,7 +9,8 @@
         "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
         "install-server": "cd server && npm install",
         "postinstall": "npm run install-server",
-        "start": "npm run start --prefix server"
+        "start": "npm run start --prefix server",
+        "build-client": "npm run build-app --prefix client"
     },
     "author": "Javier Romero <javier.romero@kauel.com>",
     "license": "ISC",

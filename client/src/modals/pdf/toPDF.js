@@ -136,7 +136,7 @@ const createSubTables = (list = new Array, index = new String, indexNumber = new
                 commit = `${e.writeCommits[0].userName}: ${e.writeCommits[0].commit}`
                 date = dateSimple(e.writeCommits[0].id)
                 timeData = time(e.writeCommits[0].id)
-            }else{
+            }else if(e.readCommits){
                 //console.log(e.readCommits);
                 if(e.readCommits.length > 0) {
                     e.readCommits.forEach((commitItem, index) => {
@@ -148,6 +148,23 @@ const createSubTables = (list = new Array, index = new String, indexNumber = new
                 commit = `Observación: -- ${e.readCommits[0].userName}: ${e.readCommits[0].commit}`
                 date = dateSimple(e.readCommits[0].id)
                 timeData = time(e.readCommits[0].id)
+            }else if(e.messages) {
+                if(e.messages.length > 0) {
+                    e.messages.forEach((commitItem, index) => {
+                        if(commitItem.urlBase64) {
+                            imagesList.push(commitItem)
+                        }
+                    })
+                }
+                if(e.isWarning) {
+                    commit = `Observación: -- ${e.messages[0].name}: ${e.messages[0].content}`
+                    date = dateSimple(e.messages[0].id)
+                    timeData = time(e.messages[0].id)
+                }else{
+                    commit = `${e.messages[0].name}: ${e.messages[0].content}`
+                    date = dateSimple(e.messages[0].id)
+                    timeData = time(e.messages[0].id)
+                }
             }
             
             table.push([ 
@@ -180,17 +197,26 @@ const createSubTables = (list = new Array, index = new String, indexNumber = new
 }
 
 export default async (reportData, machineData, stopPrintingLoad, fileName) => {
-    const admin = await getUserNameById(reportData.createdBy);
-    const adminSign = await getSignById(reportData.createdBy);
-    const chiefMachineryName = await getUserNameById(reportData.chiefMachineryApprovedBy);
-    const chiefMachinerySign = await getSignById(reportData.chiefMachineryApprovedBy);
-    const shiftManagerName = await getUserNameById(reportData.shiftManagerApprovedBy);
-    const shiftManagerSign = await getSignById(reportData.shiftManagerApprovedBy);
-    const executionUser = await getUserNameById(reportData.usersAssigned[0]);
-    const executionUserSign = await getSignById(reportData.usersAssigned[0]);
-    const executionReportData = await getExecutionReportData(reportData);
-    const groupKeys = Object.keys(executionReportData[0].group)
-    const group = Object.values(executionReportData[0].group);
+    const admin = await getUserNameById(reportData.createdBy)
+    const adminSign = await getSignById(reportData.createdBy)
+    const chiefMachineryName = await getUserNameById(reportData.chiefMachineryApprovedBy)
+    const chiefMachinerySign = await getSignById(reportData.chiefMachineryApprovedBy)
+    const shiftManagerName = await getUserNameById(reportData.shiftManagerApprovedBy)
+    const shiftManagerSign = await getSignById(reportData.shiftManagerApprovedBy)
+    const executionUser = await getUserNameById(reportData.usersAssigned[0])
+    const executionUserSign = await getSignById(reportData.usersAssigned[0])
+    const executionReportData = await getExecutionReportData(reportData)
+    let groupKeys
+    let group
+    if(reportData.testMode) {
+        let filteredKeys = Object.keys(executionReportData[0].group)
+        let filteredValues = Object.values(executionReportData[0].group)
+        groupKeys = [filteredKeys[0], filteredKeys[1]]
+        group = [filteredValues[0], filteredValues[1]]
+    }else{
+        groupKeys = Object.keys(executionReportData[0].group)
+        group = Object.values(executionReportData[0].group)
+    }
     let docDefinition = {
         content: [
             {
@@ -412,7 +438,6 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
         },
     };
 
-    console.log(docDefinition)
     
     pdfMakeRoutes.createPdf(docDefinition).then(data=> {
         const linkSource = data.data;
