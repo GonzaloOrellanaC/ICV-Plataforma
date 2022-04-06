@@ -153,32 +153,70 @@ const ActivitiesDetailPage = () => {
                 report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`; 
                 console.log(report)           
                 if(report.level === 1) {
+                    console.log('Iniciando envío nivel 1')
                     report.emailing = "termino-orden-1";
                     report.endReport = Date.now();
                     report.endReport = report.endReport;
-                    sendnotificationToManyUsers(report.emailing, report.idIndex)
-                    nextActivity(report)
+                    console.log(report)
+                    let res = await nextActivity(report)
+                    if(res) {
+                        sendnotificationToManyUsers(report.emailing, report.idIndex)
+                        setLoading(false)
+                        history.goBack()
+                    }else{
+                        alert('Error de actualización de datos en servidor. contacte al administrador.')
+                        setLoading(false)
+                    }
                 }else if(report.level === 2) {
+                    console.log('Iniciando envío nivel 2')
                     report.emailing = "termino-orden-2";
                     report.shiftManagerApprovedBy = localStorage.getItem('_id');
                     report.shiftManagerApprovedDate = Date.now();
-                    sendnotificationToManyUsers(report.emailing, report.idIndex)
-                    nextActivity(report)
+                    console.log(report)
+                    let res = await nextActivity(report)
+                    if(res) {
+                        sendnotificationToManyUsers(report.emailing, report.idIndex)
+                        setLoading(false)
+                        history.goBack()
+                    }else{
+                        alert('Error de actualización de datos en servidor. contacte al administrador.')
+                        setLoading(false)
+                    }
                 }else if(report.level === 3) {
+                    console.log('Iniciando envío nivel 3')
                     report.emailing = "termino-orden-3";
                     report.state = 'Por cerrar'
                     report.chiefMachineryApprovedBy = localStorage.getItem('_id')
                     report.chiefMachineryApprovedDate = Date.now();
-                    sendnotificationToManyUsers(report.emailing, report.idIndex)
-                    nextActivity(report)
+                    console.log(report)
+                    let res = await nextActivity(report)
+                    if(res) {
+                        sendnotificationToManyUsers(report.emailing, report.idIndex)
+                        setLoading(false)
+                        history.goBack()
+                    }else{
+                        alert('Error de actualización de datos en servidor. contacte al administrador.')
+                        setLoading(false)
+                    }
                 }else if(report.level === 4) {
+                    console.log('Iniciando envío nivel 4')
                     report.emailing = "termino-orden-4";
                     report.state = 'Completadas';
                     report.enabled = false;
                     report.dateClose = Date.now();
                     report.sapExecutiveApprovedBy = localStorage.getItem('_id')
-                    sendnotificationToManyUsers(report.emailing, report.idIndex)
-                    nextActivity(report)
+                    console.log(report)
+                    let res = await nextActivity(report)
+                    if(res) {
+                        sendnotificationToManyUsers(report.emailing, report.idIndex)
+                        setLoading(false)
+                        history.goBack()
+                    }else{
+                        alert('Error de actualización de datos en servidor. contacte al administrador.')
+                        setLoading(false)
+                    }
+                } else {
+                    alert('Error al leer los niveles del reporte. Debe ser reparado por el administrador del servicio.')
                 }
             }
         }else{
@@ -190,22 +228,26 @@ const ActivitiesDetailPage = () => {
         }
     }
 
-    const nextActivity = async (report) => {
-        const emails = await getExecutivesSapEmail(report.level);
-        report.emailsToSend = emails;
-        console.log(report)
-        setTimeout(async () => {
-            const generateLink=`/activities/${id}`
-            const r = await reportsRoutes.editReportFromAudit(report, generateLink)
-            console.log(r)
-            if(r) {
-                alert('Información enviada')
-                setTimeout(() => {
-                    setLoading(false)
-                    history.goBack()
-                }, 500);
-            }
-        }, 1000);
+    const nextActivity =  (report) => {
+        return new Promise(async resolve => {
+            console.log('Segunda lectura :', report)
+            const emails = await getExecutivesSapEmail(report.level);
+            report.emailsToSend = emails;
+            console.log(report)
+            setTimeout(async () => {
+                const generateLink=`/activities/${id}`
+                const r = await reportsRoutes.editReportFromAudit(report, generateLink)
+                console.log(r)
+                if(r) {
+                    alert('Información enviada')
+                    setTimeout(() => {
+                        resolve(true)
+                    }, 500);
+                }else{
+                    resolve(false)
+                }
+            }, 1000);
+        })
     }
 
     const terminarjornada = async () => {

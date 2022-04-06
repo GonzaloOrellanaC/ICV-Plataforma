@@ -51,7 +51,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         if((localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator')) {
             setIconToItemDetail(faPen)
         }else{
-            setIconToItemDetail(faEye)
+            setIconToItemDetail(faPen)
         }
     }, [])
 
@@ -427,13 +427,16 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                     <div style={{width: '20%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Descripcion De Tarea</strong> </p>
                     </div>
-                    <div style={{width: '30%', marginLeft: 5}}>
+                    <div style={{width: '25%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Observaciones</strong> </p>
                     </div>
-                    <div style={{width: '10%', marginLeft: 5}}>
+                    <div style={{width: '11%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Part Number</strong> </p>
                     </div>
-                    <div style={{width: '10%', textAlign: 'center'}}>
+                    <div style={{width: '7%', textAlign: 'center'}}>
+                        <p style={{margin: 0}}> <strong>Cantidad a utilizar</strong> </p>
+                    </div>
+                    <div style={{width: '7%', textAlign: 'center'}}>
                         <p style={{margin: 0}}> <strong>Cantidad Utilizada</strong> </p>
                     </div>
                     <div style={{width: '5%', textAlign: 'center'}}>
@@ -454,13 +457,16 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                                     <div style={{width: '20%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {e.taskdesc}  
                                     </div>
-                                    <div style={{width: '30%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    <div style={{width: '25%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {e.obs01}  
                                     </div>
-                                    <div style={{width: '10%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    <div style={{width: '11%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {(e.partnumberUtl === '*') ? <p>N/A</p> : <p>{e.partnumberUtl}</p>}  
                                     </div>
-                                    <div style={{width: '10%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                        {(e.unidad === '*') ? <p>N/A</p> : <p> {e.cantidad} {e.unidad}</p>}
+                                    </div>
+                                    <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {(e.unidad === '*') ? <p>N/A</p> : <p> {e.unidadData ? e.unidadData : '______'} {e.unidad}</p>}
                                     </div>
                                     <div style={{width: '5%', textAlign: 'center'}}>
