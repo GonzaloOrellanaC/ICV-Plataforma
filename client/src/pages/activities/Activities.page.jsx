@@ -40,7 +40,7 @@ const ActivitiesPage = () => {
                     }
                     if(i == (data.length - 1)) {
                         let rs = data.filter((report) => {if(report.enabled) {return report}});
-                        console.log(rs)
+                        //console.log(rs)
                         let assign = new Array()
                         let prioritaryAssign = new Array()
                         rs.map((element, index) => {

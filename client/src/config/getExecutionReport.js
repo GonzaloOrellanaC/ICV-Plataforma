@@ -1,13 +1,13 @@
 import { executionReportsDatabase } from "../indexedDB"
 
 export default (reportDataId = new String()) => {
-    console.log(reportDataId)
+    //console.log(reportDataId)
     return new Promise(async resolve => {
         const db = await executionReportsDatabase.initDb()
         const {database} = db
         let response = new Array()
         response = await executionReportsDatabase.consultar(database)
-        console.log(response)
+        //console.log(response)
         const executionReport = response.filter((element) => {if(element.reportId === reportDataId) {return element}})
         if(executionReport.length > 0) {
             resolve({

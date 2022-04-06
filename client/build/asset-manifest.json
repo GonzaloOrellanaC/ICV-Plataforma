@@ -1,21 +1,21 @@
 {
   "files": {
     "main.css": "/static/css/main.78792348.chunk.css",
-    "main.js": "/static/js/main.f8908481.chunk.js",
-    "main.js.map": "/static/js/main.f8908481.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.d4ea5e31.js",
-    "runtime-main.js.map": "/static/js/runtime-main.d4ea5e31.js.map",
+    "main.js": "/static/js/main.e17f215a.chunk.js",
+    "main.js.map": "/static/js/main.e17f215a.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.8c2ef0f2.js",
+    "runtime-main.js.map": "/static/js/runtime-main.8c2ef0f2.js.map",
     "static/css/2.a3c5fc7b.chunk.css": "/static/css/2.a3c5fc7b.chunk.css",
-    "static/js/2.aa05c896.chunk.js": "/static/js/2.aa05c896.chunk.js",
-    "static/js/2.aa05c896.chunk.js.map": "/static/js/2.aa05c896.chunk.js.map",
-    "static/js/3.03fe76f9.chunk.js": "/static/js/3.03fe76f9.chunk.js",
-    "static/js/3.03fe76f9.chunk.js.map": "/static/js/3.03fe76f9.chunk.js.map",
+    "static/js/2.49f9c99d.chunk.js": "/static/js/2.49f9c99d.chunk.js",
+    "static/js/2.49f9c99d.chunk.js.map": "/static/js/2.49f9c99d.chunk.js.map",
+    "static/js/3.7864d672.chunk.js": "/static/js/3.7864d672.chunk.js",
+    "static/js/3.7864d672.chunk.js.map": "/static/js/3.7864d672.chunk.js.map",
     "index.html": "/index.html",
     "service-worker.js": "/service-worker.js",
     "service-worker.js.map": "/service-worker.js.map",
     "static/css/2.a3c5fc7b.chunk.css.map": "/static/css/2.a3c5fc7b.chunk.css.map",
     "static/css/main.78792348.chunk.css.map": "/static/css/main.78792348.chunk.css.map",
-    "static/js/2.aa05c896.chunk.js.LICENSE.txt": "/static/js/2.aa05c896.chunk.js.LICENSE.txt",
+    "static/js/2.49f9c99d.chunk.js.LICENSE.txt": "/static/js/2.49f9c99d.chunk.js.LICENSE.txt",
     "static/media/ICV-transparent.a120acf7.png": "/static/media/ICV-transparent.a120acf7.png",
     "static/media/Iniciar sesión-1.0c206597.png": "/static/media/Iniciar sesión-1.0c206597.png",
     "static/media/Logologo_icv_1.054cafd3.svg": "/static/media/Logologo_icv_1.054cafd3.svg",
@@ -24,10 +24,10 @@
     "static/media/slider_home_01.0b665994.jpg": "/static/media/slider_home_01.0b665994.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.d4ea5e31.js",
+    "static/js/runtime-main.8c2ef0f2.js",
     "static/css/2.a3c5fc7b.chunk.css",
-    "static/js/2.aa05c896.chunk.js",
+    "static/js/2.49f9c99d.chunk.js",
     "static/css/main.78792348.chunk.css",
-    "static/js/main.f8908481.chunk.js"
+    "static/js/main.e17f215a.chunk.js"
   ]
 }

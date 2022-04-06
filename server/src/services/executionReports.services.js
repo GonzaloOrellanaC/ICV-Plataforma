@@ -17,6 +17,7 @@ const getExecutionReportById = (req, res) => {
             }
             if(doc.length == 0) {
                 const newDoc = await createNewExecutionReport(body.reportData);
+                console.log(newDoc)
                 if(newDoc) {
                     res.json(newDoc);
                 }

@@ -15,7 +15,6 @@ const ActivitiesDetailPage = () => {
     const history = useHistory();
     const {id} = useParams();
     const [ pauta, setPauta ] = useState();
-    // const [ executionReport, setExecutionReport ] = useState()
     const [ progress, resutProgress ] = useState(0)
     const [ reportAssignment, setReportAssignment ] = useState()
     const [ reportLevel, setReportLevel ] = useState()
@@ -24,11 +23,13 @@ const ActivitiesDetailPage = () => {
     const [ openReportCommitModal, setOpenReportCommitModal ] = useState(false)
     const [ loading, setLoading ] = useState(false)
     const [ loadingMessage, setLoadingMessage ] = useState(false)
+    const [ indexGroup, setIndexGroup] = useState([])
 
     useEffect(() => {
         if(navigator.onLine) {
             reportsRoutes.getReportByIndex(id).then(r => {
                 let report = r.data
+                //console.log(report)
                 getPauta(report);
                 if(!report.level) {
                     report.level = 0
@@ -69,10 +70,10 @@ const ActivitiesDetailPage = () => {
                         return info
                     }});
             const state = await saveExecutionReport(pautaFiltered[0], report)
+            console.log(state)
             setPauta(pautaFiltered[0]);
             setTimeout(async () => {
                 const element = await getExecutionReport(report._id)
-                console.log(element)
             }, 2000);
         }
     }
@@ -91,28 +92,42 @@ const ActivitiesDetailPage = () => {
             }
             let group = new Array()
             const executionReportData = await getExecutionReport(reportAssigned._id)
-            group = Object.values(executionReportData.data.group)
             let state = true;
-            group.map((item, index) => {
-                item.map((i, n) => {
-                    if(!i.isChecked) {
-                        state = false
-                    }
-                    if(n == (item.length - 1)) {
-                        if(index == (group.length - 1)) {
-                            setLoading(false)
-                            if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
-                                sendToNext(state, reportAssigned)
-                            }else{
-                                responseMessage()
-                            }
-                        }
+            if(reportAssigned.testMode) {
+                let groupFiltered = []
+                indexGroup.map((g, i) => {
+                    groupFiltered.push(executionReportData.data.group[g.data])
+                    if(i == (indexGroup.length - 1)) {
+                        sendDataToRead(groupFiltered, state)
                     }
                 })
-            })
+            }else{
+                group = Object.values(executionReportData.data.group)
+                sendDataToRead(group, state)
+            }
         }else{
             alert('Dispositivo no está conectado a internet. Conecte a una red e intente nuevamente')
         }
+    }
+
+    const sendDataToRead = (group = new Array(), state = new Boolean()) => {
+        group.map((item, index) => {
+            item.map((i, n) => {
+                if(!i.isChecked) {
+                    state = false
+                }
+                if(n == (item.length - 1)) {
+                    if(index == (group.length - 1)) {
+                        setLoading(false)
+                        if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+                            sendToNext(state, reportAssigned)
+                        }else{
+                            responseMessage()
+                        }
+                    }
+                }
+            })
+        })
     }
 
     const getResponseState = (state, report) => {
@@ -186,11 +201,8 @@ const ActivitiesDetailPage = () => {
             setLoadingMessage('Terminando su jornada')
             const report = reportAssigned
             const emails = await getExecutivesSapEmail(reportLevel)
-            console.log(emails)
     /*      let reports = await reportsDatabase.consultar(db.database);
-            console.log(reports)
-            let reportSelected = reports.filter((r) => {if(r.idIndex == Number(id)) {return r}});
-            console.log(reportSelected) */
+            let reportSelected = reports.filter((r) => {if(r.idIndex == Number(id)) {return r}}); */
             let usersAssigned = new Array()
             usersAssigned = reportAssigned.usersAssigned
             let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === localStorage.getItem('_id')){}else{return user}})
@@ -202,7 +214,6 @@ const ActivitiesDetailPage = () => {
             report.emailsToSend = emails
             let ids = new Array()
             ids = await getExecutivesSapId()
-            console.log(ids)
             ids.forEach(async (id, index) => {
                 SocketConnection.sendnotificationToUser(
                     'termino-jornada',
@@ -249,7 +260,7 @@ const ActivitiesDetailPage = () => {
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 
                                         <h1 style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
-                                            Actividades Asignadas / Detalle
+                                            Actividades Asignadas / Detalle / OT {id} <strong>{reportAssigned && reportAssigned.testMode ? 'Modo test' : ''}</strong>
                                         </h1>
                                         
                                         <div style={{position: 'absolute', right: 10, width: '50%', textAlign: 'right'}}>
@@ -285,7 +296,7 @@ const ActivitiesDetailPage = () => {
                             </div>
                             <div style={{width: '98%'}}>
                                 {
-                                    pauta && <PautaDetail height={'calc(100vh - 380px)'} reportAssigned={reportAssigned} pauta={pauta} reportLevel={reportLevel} reportAssignment={reportAssignment} setProgress={setProgress}/>
+                                    pauta && <PautaDetail height={'calc(100vh - 380px)'} reportAssigned={reportAssigned} pauta={pauta} reportLevel={reportLevel} reportAssignment={reportAssignment} setProgress={setProgress} setIndexGroupToSend={setIndexGroup}/>
                                 }
                             </div>
                             {

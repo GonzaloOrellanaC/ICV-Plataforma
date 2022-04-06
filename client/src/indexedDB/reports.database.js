@@ -65,7 +65,7 @@ const actualizar = (data, database) =>{
             const trasaccion = database.transaction(['Reports'],'readwrite')
             const coleccionObjetos = trasaccion.objectStore('Reports')
             const conexion = coleccionObjetos.put(data)
-            console.log(conexion)
+            //console.log(conexion)
             
             conexion.onsuccess = () =>{
                 resolve(true)

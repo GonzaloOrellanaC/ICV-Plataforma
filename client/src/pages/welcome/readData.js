@@ -27,7 +27,7 @@ export default async (
                             setTimeout( async () => {
                                 setLoadingData('Descargando datos de las obras.');
                                 const responseSites = await getInfo.getSites(setProgress, setDisableButtons);
-                                //console.log(responseSites)
+                                console.log(responseSites)
                                 setTimeout(async () => {
                                     if(responseSites) {
                                         setLoadingData('Descargando datos de las máquinas.')
@@ -40,9 +40,12 @@ export default async (
                                                 setProgress(100)
                                                 const getMachines = await getMachinesList();
                                                 if(getMachines) {
-                                                    download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
+                                                    setTimeout(() => {
+                                                        setOpenLoader(false)
+                                                    }, 1000);
+                                                    //download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
                                                     setLastActualization()
-                                                }
+                                                } 
                                             }else{
                                                 setOpenLoader(false)
                                             }
@@ -73,14 +76,21 @@ export default async (
                                         const responseTrucks = await getTrucksList();
                                         console.log(responseTrucks)
                                         setTimeout(async() => {
+                                            
+                                            setLastActualization()
+                                            setProgress(100)
                                             if(responseTrucks) {
                                                 setLoadingData('Descargando lista de las máquinas de las obras.')
                                                 setProgress(100)
                                                 const getMachines = await getMachinesList();
-                                                if(getMachines) {
-                                                    download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
+                                                 if(getMachines) {
+                                                    //download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
                                                     setLastActualization()
-                                                }
+                                                    setTimeout(() => {
+                                                        setOpenLoader(false)
+                                                    }, 1000);
+                                                } 
+                                                setLastActualization()
                                             }else{
                                                 setOpenLoader(false)
                                             }

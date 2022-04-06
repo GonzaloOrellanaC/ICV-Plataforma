@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Grid } from '@material-ui/core'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes, notificationsRoutes } from '../../routes'
-import { trucksDatabase, machinesDatabase, machinesImagesDatabase, imageDatabase } from '../../indexedDB'
+import { trucksDatabase, machinesDatabase, machinesImagesDatabase, imageDatabase, pautasDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import './style.css'
 import getInfo from './getInfo'
@@ -102,7 +102,7 @@ const WelcomePage = () => {
         return () => setCancel(false);
     }, [cancel]);
 
-    const init = () => {
+    const init = async () => {
         readData(
             setOpenLoader,
             setLoadingData,

@@ -111,11 +111,11 @@ const MachinesListPage = ({route}) => {
                                     </Toolbar>
                                 </div>
                             </div>
-                            <div style={{width: '100%', paddingLeft: 20, height: 40, textAlign: 'center'}}>
+                            {/* <div style={{width: '100%', paddingLeft: 20, height: 40, textAlign: 'center'}}>
                                 <button style={{height: 30, borderRadius: 20, position: 'relative', right: 10, paddingLeft: 30, paddingRight: 30}} onClick={() => openCloseModal()}>
                                     <strong>{`Ver modelo 3D de ${machine.type} ${machine.brand} ${machine.model}`}</strong>
                                 </button>
-                            </div>
+                            </div> */}
                             <List style={{width: '100vw', marginRight: 11, overflowY: 'scroll', maxHeight: '70vh', paddingLeft: 20, paddingRight: 20}}>
                             {
                                 machinesList.map((machine, i) => {
