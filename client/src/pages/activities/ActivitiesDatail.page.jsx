@@ -118,7 +118,6 @@ const ActivitiesDetailPage = () => {
                 }
                 if(n == (item.length - 1)) {
                     if(index == (group.length - 1)) {
-                        setLoading(false)
                         if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
                             sendToNext(state, reportAssigned)
                         }else{
@@ -178,16 +177,20 @@ const ActivitiesDetailPage = () => {
                 }
                 const emails = await getExecutivesSapEmail(report.level);
                 report.emailsToSend = emails;
-                const generateLink=`/activities/${id}`
-                const r = await reportsRoutes.editReportFromAudit(report, generateLink)
-                console.log(r)
-                if(r) {
-                    setLoading(false)
-                    setTimeout(() => {
+                console.log(report)
+                setTimeout(async () => {
+                    const generateLink=`/activities/${id}`
+                    const r = await reportsRoutes.editReportFromAudit(report, generateLink)
+                    console.log(r)
+                    if(r) {
                         alert('Información enviada')
-                        history.goBack()
-                    }, 500);
-                }
+                        setTimeout(() => {
+                            setLoading(false)
+                            history.goBack()
+                        }, 500);
+                    }
+                }, 1000);
+                /*  */
             }
         }else{
             alert('Orden no se encuantra finalizada. Revise e intente nuevamente.')

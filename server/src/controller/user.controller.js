@@ -22,11 +22,11 @@ const createUser = async  (req, res, next) => {
                 res.status(200).json({ user: registerUser, email: 'Not sended' })
             }
         }else{
-            return res.status(400).end({message: 'Error al guardar usuario'})
+            res.status(400).end({message: 'Error al guardar usuario'})
         }
         //return res.status(200).json({ user: registerUser.generateJWT() })
     } catch (error) {
-        return res.status(400).end(error.message)
+        res.status(400).end(error.message)
     }
 }
 

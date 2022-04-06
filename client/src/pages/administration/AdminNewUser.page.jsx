@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
 import { Box, Card, Grid, Toolbar, IconButton, Button, Modal,  Fab } from '@material-ui/core'
 import { ArrowBackIos, Close } from '@material-ui/icons'
 import { useStylesTheme } from '../../config'
 import { CreateUser, PermissionUser } from '../../containers'
 import { useHistory, useParams } from 'react-router-dom'
-import { useLanguage } from '../../context'
 import { usersRoutes } from '../../routes'
-import { validate, clean, format, getCheckDigit } from 'rut.js';
+import { validate } from 'rut.js';
 import { LoadingModal } from '../../modals';
 import transformInfo from './transform-info'
 
@@ -84,18 +82,38 @@ const AdminNewUserPage = () => {
                         userData.confirmPassword = null;
                         setOpenLoader(true);
                         if(routingData === 'Nuevo usuario') {
-                            setLoadingData('Inscribiendo nuevo usuario');
-                            let userState = await usersRoutes.createUser(userData, userData.password);
-                            if(userState.status == 200) {
-                                setOpenLoader(false);
-                                openCloseModal()
+                            try{
+                                setLoadingData('Inscribiendo nuevo usuario');
+                                let userState = await usersRoutes.createUser(userData, userData.password);
+                                if(userState.status == 200) {
+                                    setOpenLoader(false)
+                                    openCloseModal()
+                                }else{
+                                    alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
+                                    setOpenLoader(false)
+                                    history.goBack()
+                                }
+                            } catch (err) {
+                                alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
+                                setOpenLoader(false)
+                                history.goBack()
                             }
                         }else if(routingData === 'Editar usuario') {
-                            setLoadingData('Editando usuario');
-                            let userState = await usersRoutes.editUser(userData);
-                            if(userState.status == 200) {
-                                setOpenLoader(false);
-                                openCloseModal()
+                            try{
+                                setLoadingData('Editando usuario');
+                                let userState = await usersRoutes.editUser(userData);
+                                if(userState.status == 200) {
+                                    setOpenLoader(false)
+                                    openCloseModal()
+                                }else{
+                                    alert('Error al editar usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
+                                    setOpenLoader(false)
+                                    history.goBack()
+                                }
+                            } catch (err) {
+                                alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
+                                setOpenLoader(false)
+                                history.goBack()
                             }
                         }
                         

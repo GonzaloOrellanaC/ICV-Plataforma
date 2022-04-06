@@ -169,7 +169,7 @@ const ReportDataDialog = ({open, handleClose, report, item, index, executionRepo
             </div>
           </div>
         </div>
-        <DialogActions>
+        <DialogActions style={{minWidth: 400}}>
           {/* <Button style={{color: '#B81E05'}} onClick={}>Cancelar</Button> */}
           <Button style={{backgroundColor: '#D5CC41', color: '#fff'}} onClick={() => {saveItem(index, false, item)}}>Guardar sin ejecutar</Button>
           <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {saveItem(index, true, item)}}>Guardar ejecutado</Button>
