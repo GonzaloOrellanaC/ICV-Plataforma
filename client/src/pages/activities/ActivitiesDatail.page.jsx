@@ -150,23 +150,27 @@ const ActivitiesDetailPage = () => {
                     report = JSON.parse(id);
                 }
                 report.level = report.level + 1
-                report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`;            
+                report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`; 
+                console.log(report)           
                 if(report.level == 1) {
                     report.emailing = "termino-orden-1";
                     report.endReport = Date.now();
                     report.endReport = report.endReport;
                     sendnotificationToManyUsers(report.emailing, report.idIndex)
+                    nextActivity(report)
                 }else if(report.level == 2) {
                     report.emailing = "termino-orden-2";
                     report.shiftManagerApprovedBy = localStorage.getItem('_id');
                     report.shiftManagerApprovedDate = Date.now();
                     sendnotificationToManyUsers(report.emailing, report.idIndex)
+                    nextActivity(report)
                 }else if(report.level == 3) {
                     report.emailing = "termino-orden-3";
                     report.state = 'Por cerrar'
                     report.chiefMachineryApprovedBy = localStorage.getItem('_id')
                     report.chiefMachineryApprovedDate = Date.now();
                     sendnotificationToManyUsers(report.emailing, report.idIndex)
+                    nextActivity(report)
                 }else if(report.level == 4) {
                     report.emailing = "termino-orden-4";
                     report.state = 'Completadas';
@@ -174,23 +178,8 @@ const ActivitiesDetailPage = () => {
                     report.dateClose = Date.now();
                     report.sapExecutiveApprovedBy = localStorage.getItem('_id')
                     sendnotificationToManyUsers(report.emailing, report.idIndex)
+                    nextActivity(report)
                 }
-                const emails = await getExecutivesSapEmail(report.level);
-                report.emailsToSend = emails;
-                console.log(report)
-                setTimeout(async () => {
-                    const generateLink=`/activities/${id}`
-                    const r = await reportsRoutes.editReportFromAudit(report, generateLink)
-                    console.log(r)
-                    if(r) {
-                        alert('Información enviada')
-                        setTimeout(() => {
-                            setLoading(false)
-                            history.goBack()
-                        }, 500);
-                    }
-                }, 1000);
-                /*  */
             }
         }else{
             alert('Orden no se encuantra finalizada. Revise e intente nuevamente.')
@@ -199,6 +188,24 @@ const ActivitiesDetailPage = () => {
                 setLoading(false)
             }, 1000);
         }
+    }
+
+    const nextActivity = async (report) => {
+        const emails = await getExecutivesSapEmail(report.level);
+        report.emailsToSend = emails;
+        console.log(report)
+        setTimeout(async () => {
+            const generateLink=`/activities/${id}`
+            const r = await reportsRoutes.editReportFromAudit(report, generateLink)
+            console.log(r)
+            if(r) {
+                alert('Información enviada')
+                setTimeout(() => {
+                    setLoading(false)
+                    history.goBack()
+                }, 500);
+            }
+        }, 1000);
     }
 
     const terminarjornada = async () => {
