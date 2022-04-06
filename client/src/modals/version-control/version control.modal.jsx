@@ -17,7 +17,11 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
-                        <strong>v.6.8</strong>
+                        <strong>v.1.0</strong>
+                        <li>
+                            Habilitado producción.
+                        </li>
+                        {/* <strong>v.6.8</strong>
                         <li>
                             (En ejecución) Reparación de PDF.
                         </li>
@@ -215,7 +219,7 @@ const VersionControlModal = ({open, closeModal}) => {
                         </li>
                         <li>
                             Los administradores pueden asignar obra al crear o editar usuarios. 
-                        </li>
+                        </li> */}
                 </div>
                 <Fab onClick={() => closeModal()} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>
                     <Close style={{color: '#ccc'}} />

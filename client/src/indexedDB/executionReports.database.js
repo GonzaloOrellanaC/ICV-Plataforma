@@ -63,7 +63,6 @@ const obtener = (clave, database) =>{
 }
 
 const actualizar = (data, database) =>{    
-    console.log(data)
     return new Promise(resolve => {
         try {
             const trasaccion = database.transaction(['Reports'],'readwrite')

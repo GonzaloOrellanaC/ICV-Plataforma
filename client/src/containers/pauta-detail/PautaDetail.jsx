@@ -361,7 +361,6 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         }
         checks[index] = true
         let checkedList = checks
-        console.log(checkedList)
         let checkedTrue = []
         let checkedFalse = []
         checkedList.map((check, i) => {

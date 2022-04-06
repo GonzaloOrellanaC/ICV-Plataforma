@@ -180,10 +180,13 @@ const ActivitiesDetailPage = () => {
                 report.emailsToSend = emails;
                 const generateLink=`/activities/${id}`
                 const r = await reportsRoutes.editReportFromAudit(report, generateLink)
-                setLoading(false)
+                console.log(r)
                 if(r) {
-                    alert('Información enviada')
-                    history.goBack()
+                    setLoading(false)
+                    setTimeout(() => {
+                        alert('Información enviada')
+                        history.goBack()
+                    }, 500);
                 }
             }
         }else{
