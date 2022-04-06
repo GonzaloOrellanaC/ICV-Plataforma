@@ -29,10 +29,10 @@ export default async (level) => {
                                     shiftManagers.forEach((s, x) => {
                                         emails.push(s.email)
                                         console.log(emails)
+                                        if(x == (shiftManagers.length - 1)) {
+                                            resolve(emails.toString())
+                                        }
                                     });
-                                    if(n == (shiftManagers.length - 1)) {
-                                        resolve(emails.toString())
-                                    }
                                 }
                             })
                         }else if(level == 2) {
