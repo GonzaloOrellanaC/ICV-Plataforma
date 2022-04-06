@@ -152,26 +152,26 @@ const ActivitiesDetailPage = () => {
                 report.level = report.level + 1
                 report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`; 
                 console.log(report)           
-                if(report.level == 1) {
+                if(report.level === 1) {
                     report.emailing = "termino-orden-1";
                     report.endReport = Date.now();
                     report.endReport = report.endReport;
                     sendnotificationToManyUsers(report.emailing, report.idIndex)
                     nextActivity(report)
-                }else if(report.level == 2) {
+                }else if(report.level === 2) {
                     report.emailing = "termino-orden-2";
                     report.shiftManagerApprovedBy = localStorage.getItem('_id');
                     report.shiftManagerApprovedDate = Date.now();
                     sendnotificationToManyUsers(report.emailing, report.idIndex)
                     nextActivity(report)
-                }else if(report.level == 3) {
+                }else if(report.level === 3) {
                     report.emailing = "termino-orden-3";
                     report.state = 'Por cerrar'
                     report.chiefMachineryApprovedBy = localStorage.getItem('_id')
                     report.chiefMachineryApprovedDate = Date.now();
                     sendnotificationToManyUsers(report.emailing, report.idIndex)
                     nextActivity(report)
-                }else if(report.level == 4) {
+                }else if(report.level === 4) {
                     report.emailing = "termino-orden-4";
                     report.state = 'Completadas';
                     report.enabled = false;
