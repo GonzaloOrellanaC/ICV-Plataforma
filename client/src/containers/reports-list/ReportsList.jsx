@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Grid} from '@material-ui/core'
 import { machinesRoutes } from '../../routes'
 import { AssignReportModal, PdfModal, ReviewReportModal } from '../../modals'
 import './style.css'
 import { dateSimple } from "../../config"
+import { machinesDatabase } from "../../indexedDB"
 
 const ReportsList = ({list, reloadData}) => {
     const [ reportData, setReportData ] = useState(null)
@@ -11,6 +12,7 @@ const ReportsList = ({list, reloadData}) => {
     const [ openModalState, setOpenModalState ] = useState(false)
     const [ openReviewModalState, setOpenReviewModalState ] = useState(false)
     const [ openPdfModal , setOpenPdfModal ] = useState(false)
+    const [ lista, setLista ] = useState([])
 
     const openModal = (report) => {
         setReportData(report)
@@ -39,21 +41,53 @@ const ReportsList = ({list, reloadData}) => {
         setReportDataReview(report)
         setOpenReviewModalState(true)
     }
-    
-    list.forEach((item, i) => {
-        item.date = dateSimple(item.datePrev)
-        item.end = dateSimple(item.endReport)
-        item.init = dateSimple(item.dateInit)
-        machinesRoutes.getMachineByEquid(item.machine).then(data => {
-            item.hourMeter = (Number(data.data[0].hourMeter)/3600000)
-        })
-    })
 
+    const getMachineTypeByEquid = (item) => {
+        return new Promise(async  resolve => {
+            let db = await machinesDatabase.initDbMachines();
+            const machines = await machinesDatabase.consultar(db.database);
+            let machineFiltered = machines.filter(m => { if(item === m.equid) {return m}});
+            resolve(
+                {
+                    number: machineFiltered[0].equ,
+                    model: machineFiltered[0].model
+                }
+            ) 
+        })
+    }
+    
+    
     const closePdfModal = () => {
         setOpenPdfModal(false)
     }
+    
 
-    const lista = list.reverse()
+    useEffect(() => {
+        setLista([])
+        let l = []
+        list.forEach(async (item, i) => {
+            item.date = dateSimple(item.datePrev)
+            item.end = dateSimple(item.endReport)
+            item.init = dateSimple(item.dateInit)
+            machinesRoutes.getMachineByEquid(item.machine).then(data => {
+                console.log(data.data[0].hourMeter)
+                item.hourMeter = (Number(data.data[0].hourMeter)/3600000)
+            })
+            let data = await getMachineTypeByEquid(item.machine)
+            item.number = data.number
+            item.model = data.model
+            /* getMachineTypeByEquid(item.machine).then(data => {
+                item.number = data.number
+                item.model = data.model
+            }) */
+            l.push(item)
+            if(i == (list.length - 1)) {
+                setLista(l)
+            } 
+        })
+    }, [list])
+    
+
 
     return(
         <div style={{width: '100%'}} /* className='root' */>
@@ -80,7 +114,7 @@ const ReportsList = ({list, reloadData}) => {
                     <p > <strong>Responsable</strong> </p>
                 </Grid>
                 <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                    <p > <strong>Obra</strong> </p>
+                    <p > <strong>Máquina</strong> </p>
                 </Grid>
                 <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                     <p > <strong>Acción</strong> </p>
@@ -98,6 +132,9 @@ const ReportsList = ({list, reloadData}) => {
             }
             {
                 lista.map((item, i) => {
+                    /* //console.log(item)
+                    let m = await getMachineTypeByEquid(item.machine)
+                    console.log(m) */
                     return(
                         <Grid container key={i} style={{width: '100%'}}>
                             <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
@@ -113,7 +150,7 @@ const ReportsList = ({list, reloadData}) => {
                                 <p> {item.end} </p>
                             </Grid>
                             <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                <p> {item.hourMeter} </p>
+                                <p> {item.hourMeter} hrs </p>
                             </Grid>
                             <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
                                 <p> {item.idIndex} </p>
@@ -127,7 +164,7 @@ const ReportsList = ({list, reloadData}) => {
                             </Grid>
                             }
                             <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                <p> <a title={item.siteName}>{item.site}</a> </p>
+                                <p> {item.model} {item.number} </p>
                             </Grid>
                     
                             <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>

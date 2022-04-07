@@ -4,6 +4,7 @@ import { Button, Grid, Link, makeStyles, TextField } from '@material-ui/core'
 import { useAuth, useLanguage } from '../../context'
 import { authRoutes } from '../../routes'
 import { useHistory } from 'react-router-dom';
+import { LoadingModal } from '../../modals';
 
 
 const useStyles = makeStyles(theme => ({
@@ -19,6 +20,7 @@ const ResetPassword = () => {
     const { dictionary } = useLanguage()
     const { login } = useAuth()
     const [email, setEmail] = useState('')
+    const [loading, setLoading] = useState(false)
 
     const classes = useStyles();
     const history = useHistory();
@@ -31,6 +33,7 @@ const ResetPassword = () => {
     }
 
     const handleSubmit = async (event) => {
+        setLoading(true)
         try{
             event.preventDefault()
             let forgotPasswordState = await requestNewPassword();
@@ -38,9 +41,11 @@ const ResetPassword = () => {
             if(forgotPasswordState.data.status) {
                 if(forgotPasswordState.data.status === 'no-email') {
                     alert(forgotPasswordState.data.message);
+                    setLoading(false)
                 }
             }else{
                 alert(forgotPasswordState.data.message);
+                setLoading(false)
                 history.replace('/')
             }
         }catch (err) {
@@ -88,6 +93,9 @@ const ResetPassword = () => {
                     </Grid>
                 </Grid>
             </form>
+            {
+                loading && <LoadingModal open={loading} loadingData={'Solicitando restablecer contraseña'} withProgress={false}/>
+            }
         </Grid>
     )
 }

@@ -75,28 +75,29 @@ const client = new ApolloClient({
     
 
 const OnApp = () => {
-    const { isAuthenticated, loading } = useAuth();
-    //console.log(userData)
+    const { loading } = useAuth()
+    const isAuthenticated = localStorage.getItem('isauthenticated')==='true'
+    const isNotAuthenticated = (localStorage.getItem('isauthenticated')==='false')||!localStorage.getItem('isauthenticated')
     useEffect(() => {
         if(isAuthenticated) {
-            let go = true;
+            let go = true
             window.addEventListener('online', async () => {
                 
             });
             window.addEventListener('offline', () => {
-                go = true;
+                go = true
             });
         }
     }, [])
     return (
         <div style={{fontFamily: 'Roboto'}}>
             {isAuthenticated && <Route path={['/']}>
-                    {isAuthenticated && !loading && <Navbar/>} {isAuthenticated && !loading && <Header />}
+            {isAuthenticated && !loading && <Navbar/>} {isAuthenticated && !loading && <Header />}
                 </Route>}
             <Switch>
-                {!isAuthenticated && <Route exact path={['/reset-password']} render={() => (<ResetPasswordPage />)}/>}
-                {!isAuthenticated && <Route exact path={['/restore-password/:id']} render={() => (<RestorePasswordPage />)}/>}
-                {!isAuthenticated && <Route path={['/']} render={() => (<LoginPage />)}/>}
+                {isNotAuthenticated && <Route exact path={['/reset-password']} render={() => (<ResetPasswordPage />)}/>}
+                {isNotAuthenticated && <Route exact path={['/restore-password/:id']} render={() => (<RestorePasswordPage />)}/>}
+                {isNotAuthenticated && <Route path={['/']} render={() => (<LoginPage />)}/>}
                 {loading && <Route path={['/']} render={() => (<LoadingPage />)}/>}
                 <Route exact path={['/', '/welcome']} render={() => (
                     <WelcomePage />

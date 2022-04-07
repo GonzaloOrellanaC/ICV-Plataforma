@@ -66,6 +66,8 @@ const RestorePassword = ({id}) => {
                 authRoutes.restorePassword(password, token).then(data => {
                     alert('Contraseña cambiada con éxito');
                     history.push('/');
+                }).catch(err => {
+                    alert('Error al crear contraseña. El correo utilizado está vencido. Revise si le ha llegado un correo nuevo con la solicitud de restauración de contraseña actualizado o espere un máximo de 10 minutos más. Si el error persiste, contacte al administrador.')
                 })
                 /* setAlertData('Contraseña debe contar con al menos 6 carácteres.') */
             }else{
