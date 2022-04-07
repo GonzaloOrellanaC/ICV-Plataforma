@@ -3,7 +3,7 @@ import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme }
 import { ArrowBackIos } from '@material-ui/icons'
 import { date, reportPriority, saveReport, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
-import { machinesDatabase } from '../../indexedDB'
+import { machinesDatabase, reportsDatabase } from '../../indexedDB'
 import getAssignments from './getAssignemt'
 
 const ActivitiesPage = () => {
@@ -18,7 +18,7 @@ const ActivitiesPage = () => {
     const isMedium = useMediaQuery(theme.breakpoints.down('md')) 
     const isSmall = useMediaQuery(theme.breakpoints.down('sm')) 
 
-    useEffect(() => {
+    useEffect(async () => {
         let go = true;
         if(navigator.onLine) {
             getAssignments().then((data) => {
@@ -40,7 +40,6 @@ const ActivitiesPage = () => {
                     }
                     if(i == (data.length - 1)) {
                         let rs = data.filter((report) => {if(report.enabled) {return report}});
-                        //console.log(rs)
                         let assign = new Array()
                         let prioritaryAssign = new Array()
                         rs.map((element, index) => {
@@ -51,7 +50,9 @@ const ActivitiesPage = () => {
                                 assign.push(element)
                             }
                             if(index == (rs.length - 1)) {
-                                setAssignments(assign)
+                                console.log(assign)
+                                writeDatabaseReports(assign.concat(prioritaryAssign))
+                                setAssignments(assign.reverse())
                                 setPrioritaryAssignments(prioritaryAssign)
                             }
                         })
@@ -59,10 +60,41 @@ const ActivitiesPage = () => {
                 })
             })
         }else{
-            
+            const db = await reportsDatabase.initDbReports()
+            const {database} = db
+            let dataList = new Array()
+            dataList = await reportsDatabase.consultar(database)
+            setAssignments(dataList.reverse())
         }
         return () => go = false;
     }, [])
+
+    const writeDatabaseReports = async (assign = new Array()) => {
+        const db = await reportsDatabase.initDbReports()
+        const {database} = db
+        let dataList = new Array()
+        dataList = await reportsDatabase.consultar(database)
+        console.log(dataList)
+        dataList.map((e, i) => {
+            reportsDatabase.eliminar(e.idIndex, database)
+            if(i == (dataList.length - 1)) {
+                assign.map(async (a, i) => {
+                    await reportsDatabase.actualizar(a, database)
+                })
+            }
+        })
+
+        /* return new Promise(async resolve => {
+            const state = await reportsDatabase.removerTodo('Documentation')
+            if(state) {
+                const db = await reportsDatabase.initDbReports()
+                const {database} = db
+                assign.map(async (a, i) => {
+                    await reportsDatabase.actualizar(a, database)
+                })
+            }
+        }) */
+    }
 
     const goToDetail = (element) => {
         history.push(`/assignment/${element.idIndex}`)
@@ -225,7 +257,8 @@ const ActivitiesPage = () => {
                                                     borderStyle: 'solid', 
                                                     borderWidth: 1, 
                                                     borderColor: '#CCC',
-                                                    marginBottom: 10
+                                                    marginBottom: 10,
+                                                    backgroundColor: element.endReport ? '#f2f2f2' : '#fff'
                                                 }
                                             }>
                                                 <Grid container>
@@ -254,7 +287,15 @@ const ActivitiesPage = () => {
                                                         <p style={{fontSize: 12}}> {element.end} </p>
                                                     </Grid>}
                                                     <Grid item lg={1} md={1} sm={4} xs={3} style={{width: '100%', textAlign: 'center', paddingRight: 20}}>
-                                                        <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
+                                                        <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>
+                                                            {
+                                                                element.endReport 
+                                                                ? 
+                                                                'Ver'
+                                                                : 
+                                                                ((localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') ? 'Ejecutar' : 'Ver')
+                                                            }
+                                                        </Button>
                                                     </Grid>
                                                     {/* <Grid item lg={1} md={1} sm={4} xs={3}>
                                                         <div style={{width: '100%', textAlign: 'center', paddingRight: 20, marginTop: 10}}>

@@ -17,6 +17,7 @@ const ReportDataDialog = ({open, handleClose, report, item, index, executionRepo
   const [openLoadingModal, setOpenLoadinModal] = useState(false)
 
   useEffect(() => {
+    console.log(executionReport)
     if(item.messages) {
       setMessages(item.messages)
       setTimeout(() => {
@@ -82,6 +83,7 @@ const ReportDataDialog = ({open, handleClose, report, item, index, executionRepo
   const saveItem = (index, state, item) => {
     if(messages.length > 0) {
       save(index, state, item)
+      executionReport.offLineGuard = Date.now()
       handleClose()
     }else{
       alert('Debe dejar un comentario')

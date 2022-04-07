@@ -65,6 +65,17 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         })
     }
 
+    const getExecutionReportFromDb = (id) => {
+        return new Promise(async resolve => {
+            const db = await executionReportsDatabase.initDb()
+            const {database} = db
+            let resList = new Array()
+            resList = await executionReportsDatabase.consultar(database)
+            const resFiltered = resList.filter(item => {if(item.reportId === id) {return item}})
+            resolve(resFiltered[0])
+        })
+    }
+
     const openDialog = (item, index) => {
         setIndex(index)
         setItem(item)
@@ -155,64 +166,80 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
     const readData = async () => {
         let groupD
         let executionReportData
+        let executionReportDataElement
+        let executionReportDataElementGuard
         if(navigator.onLine) {
-            let executionReportDataFromCloud = await getExecutionReportData()
-            executionReportData = executionReportDataFromCloud
-            if(reportAssigned.testMode) {
-                if(executionReportData.group) {
-                    console.log('Existe grupo')
-                    setGroup(executionReportData.group)
-                    setGroupData(Object.keys(executionReportData.group), executionReportData.group, true)
-                    setExecutionReport(executionReportData)
-                    saveExecutionReport(executionReportData, reportAssigned)
+            executionReportDataElement = await getExecutionReportData()
+            executionReportDataElementGuard = await getExecutionReportFromDb(reportAssigned._id)
+            console.log(executionReportDataElement, executionReportDataElementGuard)
+            if(executionReportDataElement.offLineGuard) {
+                if(executionReportDataElementGuard) {
+                    if(executionReportDataElementGuard.offLineGuard) {
+                        if(executionReportDataElementGuard.offLineGuard > executionReportDataElement.offLineGuard) {
+                            executionReportData = executionReportDataElementGuard
+                        }else{
+                            executionReportData = executionReportDataElement
+                        }
+                    }else{
+                        executionReportData = executionReportDataElement
+                    }
                 }else{
-                    console.log('Grupo no existe')
-                    groupD = pauta.struct.reduce((r, a) => {
-                        r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
-                        return r
-                    }, {})
-                    setGroup(groupD)
-                    executionReportData.group = groupD
-                    setGroupData(Object.keys(groupD), groupD, true)
-                    executionReportsRoutes.saveExecutionReport(executionReportData)
-                    setExecutionReport(executionReportData)
-                    saveExecutionReport(executionReportData, reportAssigned)
+                    executionReportData = executionReportDataElement
                 }
             }else{
-                if(executionReportData.group) {
-                    setGroup(executionReportData.group)
-                    setGroupData(Object.keys(executionReportData.group), executionReportData.group)
-                    setExecutionReport(executionReportData)
-                    saveExecutionReport(executionReportData, reportAssigned)
+                if(executionReportDataElementGuard) {
+                    if(executionReportDataElementGuard.offLineGuard) {
+                        executionReportData = executionReportDataElementGuard
+                    }else{
+                        executionReportData = executionReportDataElement
+                    }
                 }else{
-                    groupD = pauta.struct.reduce((r, a) => {
-                        r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
-                        return r
-                    }, {})
-                    setGroup(groupD)
-                    executionReportData.group = groupD
-                    setGroupData(Object.keys(groupD), groupD)
-                    executionReportsRoutes.saveExecutionReport(executionReportData)
-                    setExecutionReport(executionReportData)
-                    saveExecutionReport(executionReportData, reportAssigned)
+                    executionReportData = executionReportDataElement
                 }
             }
         }else{
-            let executionReportList = new Array()
-            executionReportList = await getExecutionReport(reportAssigned._id) //executionReportsDatabase.consultar(exDb.database)
-            let executionR = executionReportList.filter(r => {if(r._id === executionReportData._id) {return r}})
-            if(executionR.length > 0) {
-                executionReportData = executionR[0]
-                groupD = executionReportData.group
+            executionReportDataElement = await getExecutionReportFromDb(reportAssigned._id)
+            executionReportData = executionReportDataElement
+        }
+        console.log(executionReportData)
+        if(reportAssigned.testMode) {
+            if(executionReportData.group) {
+                console.log('Existe grupo')
+                setGroup(executionReportData.group)
+                setGroupData(Object.keys(executionReportData.group), executionReportData.group, true)
+                setExecutionReport(executionReportData)
+                saveExecutionReport(executionReportData, reportAssigned)
+            }else{
+                console.log('Grupo no existe')
+                groupD = pauta.struct.reduce((r, a) => {
+                    r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
+                    return r
+                }, {})
+                setGroup(groupD)
+                executionReportData.group = groupD
+                setGroupData(Object.keys(groupD), groupD, true)
+                executionReportsRoutes.saveExecutionReport(executionReportData)
+                setExecutionReport(executionReportData)
+                saveExecutionReport(executionReportData, reportAssigned)
+            }
+        }else{
+            if(executionReportData.group) {
+                setGroup(executionReportData.group)
+                setGroupData(Object.keys(executionReportData.group), executionReportData.group)
+                setExecutionReport(executionReportData)
+                saveExecutionReport(executionReportData, reportAssigned)
             }else{
                 groupD = pauta.struct.reduce((r, a) => {
                     r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
                     return r
                 }, {})
+                setGroup(groupD)
+                executionReportData.group = groupD
+                setGroupData(Object.keys(groupD), groupD)
+                executionReportsRoutes.saveExecutionReport(executionReportData)
+                setExecutionReport(executionReportData)
+                saveExecutionReport(executionReportData, reportAssigned)
             }
-            setGroup(groupD)
-            setGroupData(Object.keys(groupD), groupD)
-            setExecutionReport(executionReportData)
         }
     }
 
@@ -424,14 +451,14 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                     <div style={{width: '10%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Personal Necesario</strong> </p>
                     </div>
-                    <div style={{width: '20%', marginLeft: 5}}>
+                    <div style={{width: '12%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Descripcion De Tarea</strong> </p>
                     </div>
                     <div style={{width: '25%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Observaciones</strong> </p>
                     </div>
                     <div style={{width: '11%', marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>Part Number</strong> </p>
+                        <p style={{margin: 0}}> <strong>N° Parte a Utilizar</strong> </p>
                     </div>
                     <div style={{width: '7%', textAlign: 'center'}}>
                         <p style={{margin: 0}}> <strong>Cantidad a utilizar</strong> </p>
@@ -440,9 +467,12 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                         <p style={{margin: 0}}> <strong>Cantidad Utilizada</strong> </p>
                     </div>
                     <div style={{width: '5%', textAlign: 'center'}}>
+                        <p style={{margin: 0}}> <strong>Tipo Rpto</strong> </p>
+                    </div>
+                    <div style={{width: '5%', textAlign: 'center'}}>
                         <p style={{margin: 0}}> <strong>Ejecutar Tarea</strong> </p>
                     </div>
-                    <div style={{width: '15%', paddingLeft: 10, textAlign: 'left'}}>
+                    <div style={{width: '13%', paddingLeft: 10, textAlign: 'left'}}>
                         <p style={{margin: 0}}> <strong>Estado</strong> </p>
                     </div>
                 </ListItem>
@@ -454,7 +484,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                                     <div style={{width: '10%', marginLeft: 5 }}>
                                         {e.workteamdesc}    
                                     </div>
-                                    <div style={{width: '20%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    <div style={{width: '12%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {e.taskdesc}  
                                     </div>
                                     <div style={{width: '25%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
@@ -469,12 +499,15 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                                     <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {(e.unidad === '*') ? <p>N/A</p> : <p> {e.unidadData ? e.unidadData : '______'} {e.unidad}</p>}
                                     </div>
+                                    <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                        {(e.idtypeutlPartnumber === '*') ? <p>N/A</p> : <p> {e.idtypeutlPartnumber}</p>}
+                                    </div>
                                     <div style={{width: '5%', textAlign: 'center'}}>
                                         <IconButton style={{width: '5%', textAlign: 'center'}} onClick={()=>{/* setOpenWriteActivity(true) */openDialog(e, n); setIndexActivity(n)}}>
                                             <FontAwesomeIcon icon={iconToItemDetail}/>
                                         </IconButton>
                                     </div>
-                                    <div style={{width: '15%', textAlign: 'center'}}>
+                                    <div style={{width: '13%', textAlign: 'center'}}>
                                         <Checkbox checked={checks[n]} disabled style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} />
                                         {e.messages && <IconButton disabled><FontAwesomeIcon icon={faCommentDots} /></IconButton>}
                                         {!e.messages && <IconButton disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faCommentDots} /></IconButton>}

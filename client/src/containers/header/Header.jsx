@@ -81,10 +81,10 @@ const Header = () => {
                 })
             }
             window.addEventListener('online', () => {
-                // console.log('Became online'); setIfHavNetwork(true);
+                setIfHavNetwork(true);
             });
             window.addEventListener('offline', () => {
-                // console.log('Became offline'); setIfHavNetwork(false);
+                setIfHavNetwork(false);
                 addNotification({
                     icon: logoNotification,
                     title: 'Alerta',
@@ -100,17 +100,6 @@ const Header = () => {
                     alert("Para recibir mensajes desde la aplicación debe permitir notificaciones")
                 }
             })
-            //setTimeout(() => {
-                /*addNotification({
-                    icon: logoNotification,
-                    title: 'Warning',
-                    subtitle: 'This is a subtitle',
-                    message: 'This is a very long message',
-                    theme: 'red',
-                    onClick: () => openPage(),
-                    native: true // when using native, your OS will handle theming.
-                });*/
-            //}, 1000);
         }
     }, [])
 

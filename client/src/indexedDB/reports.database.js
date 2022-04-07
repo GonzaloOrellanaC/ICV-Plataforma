@@ -49,14 +49,17 @@ const agregar = (data, database) => {
 }
 
 const obtener = (clave, database) =>{
-    const trasaccion = database.transaction(['Reports'],'readonly')
-    const coleccionObjetos = trasaccion.objectStore('Reports')
-    const conexion = coleccionObjetos.get(clave)
+    console.log(clave)
+    return new Promise(resolve => {
+        const trasaccion = database.transaction(['Reports'],'readonly')
+        const coleccionObjetos = trasaccion.objectStore('Reports')
+        const conexion = coleccionObjetos.get(clave)
 
-    conexion.onsuccess = (e) =>{
-
-    }
-    
+        conexion.onsuccess = (e) =>{
+            console.log(e.target)
+            resolve(e.target.result)
+        }
+    })    
 }
 
 const actualizar = (data, database) =>{  
@@ -88,8 +91,26 @@ const eliminar = (clave, database) =>{
     const conexion = coleccionObjetos.delete(clave)
 
     conexion.onsuccess = () =>{
-        consultar()
+        //consultar()
     }
+}
+
+const removerTodo = (databaseName) => {
+    return new Promise(resolve => {
+        let req = indexedDB.deleteDatabase(databaseName)
+        req.onsuccess = function () {
+            console.log("Deleted database successfully");
+            resolve(true)
+        };
+        req.onerror = function () {
+            console.log("Couldn't delete database");
+            resolve(false)
+        };
+        req.onblocked = function () {
+            console.log("Couldn't delete database due to the operation being blocked");
+            resolve(false)
+        };
+    })
 }
 
 const consultar = (database) =>{
@@ -114,5 +135,6 @@ export default {
     obtener,
     actualizar,
     eliminar,
+    removerTodo,
     consultar
 }

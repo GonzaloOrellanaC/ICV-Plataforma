@@ -25,7 +25,7 @@ const ActivitiesDetailPage = () => {
     const [ loadingMessage, setLoadingMessage ] = useState(false)
     const [ indexGroup, setIndexGroup] = useState([])
 
-    useEffect(() => {
+    useEffect(async () => {
         if(navigator.onLine) {
             reportsRoutes.getReportByIndex(id).then(r => {
                 let report = r.data
@@ -51,31 +51,57 @@ const ActivitiesDetailPage = () => {
                 }
             })
         }else{
-
-        }       
+            const db = await reportsDatabase.initDbReports()
+            const {database} = db
+            const list = await reportsDatabase.consultar(database)
+            console.log(list)
+            const reportFiltered = list.filter(item => {if(Number(item.idIndex) == id){return item}})
+            console.log(reportFiltered)
+            let report = reportFiltered[0]
+            console.log(report)
+            getPauta(report);
+            if(!report.level) {
+                report.level = 0
+            }
+            setReportAssigned(report);
+            setReportLevel(report.level);
+            let myReportLevel;
+            if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+                myReportLevel = 0;
+            }else if(localStorage.getItem('role') === 'shiftManager') {
+                myReportLevel = 1;
+            }else if(localStorage.getItem('role') === 'chiefMachinery') {
+                myReportLevel = 2;
+            }else if(localStorage.getItem('role') === 'sapExecutive') {
+                myReportLevel = 3;
+            };
+            if(myReportLevel === report.level) {
+                setCanEdit(true)
+            }
+        }
     }, [])
 
     const getPauta = async (r) => {
         let report = r;
         let db = await pautasDatabase.initDbPMs();
-        let pautaIdpm = r.idPm;
-        if(db) {
-            setReportAssignment(report.usersAssigned[0]);
-            let pautas = await pautasDatabase.consultar(db.database);
-            let pautaFiltered = pautas.filter((info) => { 
-                if(
-                    (info.typepm === report.guide)&&(report.idPm===info.idpm)||
-                    (info.typepm === report.guide)&&(pautaIdpm===info.idpm)
-                    ) {
-                        return info
-                    }});
-            const state = await saveExecutionReport(pautaFiltered[0], report)
-            console.log(state)
-            setPauta(pautaFiltered[0]);
-            setTimeout(async () => {
-                const element = await getExecutionReport(report._id)
-            }, 2000);
-        }
+        let pautaIdpm = r.idPm
+        setReportAssignment(report.usersAssigned[0]);
+        let pautas = await pautasDatabase.consultar(db.database);
+        let pautaFiltered = pautas.filter((info) => { 
+            if(
+                (info.typepm === report.guide)&&(report.idPm===info.idpm)||
+                (info.typepm === report.guide)&&(pautaIdpm===info.idpm)
+                ) {
+                    return info
+                }});
+        const state = await saveExecutionReport(pautaFiltered[0], report)
+        console.log(state)
+        console.log(pautaFiltered[0])
+        setPauta(pautaFiltered[0]);
+        /* setTimeout(async () => {
+            const element = await getExecutionReport(report._id)
+            console.log(element)
+        }, 2000); */
     }
 
     const setProgress = (value) => {

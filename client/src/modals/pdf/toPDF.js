@@ -218,6 +218,7 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
         group = Object.values(executionReportData[0].group)
     }
     let docDefinition = {
+        pageOrientation: 'landscape',
         content: [
             {
                 columns: [

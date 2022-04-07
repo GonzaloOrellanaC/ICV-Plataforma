@@ -196,23 +196,28 @@ const Navbar = () => {
     };
 
     useEffect(() => {
-        const socket = io()
         if(cancel) {
-            //socket.emit('isConnected', {message: 'Hello!!', userId: localStorage.getItem('_id')})
-            socket.on(`test_${localStorage.getItem('_id')}`, data => {
-                alert(data.message)
-            })
-            socket.on(`notification_${localStorage.getItem('_id')}`, data => {
-                addNotification({
-                    icon: logoNotification,
-                    title: data.title,
-                    subtitle: data.subtitle,
-                    message: data.message,
-                    theme: 'red',
-                    duration: 5000,
-                    native: true // when using native, your OS will handle theming.
+            window.addEventListener('online', () => {
+                const socket = io()
+                socket.on(`test_${localStorage.getItem('_id')}`, data => {
+                    alert(data.message)
+                })
+                socket.on(`notification_${localStorage.getItem('_id')}`, data => {
+                    addNotification({
+                        icon: logoNotification,
+                        title: data.title,
+                        subtitle: data.subtitle,
+                        message: data.message,
+                        theme: 'red',
+                        duration: 5000,
+                        native: true // when using native, your OS will handle theming.
+                    })
                 })
             })
+            window.addEventListener('offline', () => {
+                
+            })
+            
             if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive')) {
                 setDisableButtonsNoSAP(false);
             }
