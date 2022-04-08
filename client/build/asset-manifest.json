@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.78792348.chunk.css",
-    "main.js": "/static/js/main.ee913a9a.chunk.js",
-    "main.js.map": "/static/js/main.ee913a9a.chunk.js.map",
+    "main.js": "/static/js/main.c61b6f82.chunk.js",
+    "main.js.map": "/static/js/main.c61b6f82.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.8c2ef0f2.js",
     "runtime-main.js.map": "/static/js/runtime-main.8c2ef0f2.js.map",
     "static/css/2.a3c5fc7b.chunk.css": "/static/css/2.a3c5fc7b.chunk.css",
@@ -20,6 +20,7 @@
     "static/media/Iniciar sesión-1.0c206597.png": "/static/media/Iniciar sesión-1.0c206597.png",
     "static/media/Logologo_icv_1.054cafd3.svg": "/static/media/Logologo_icv_1.054cafd3.svg",
     "static/media/App.css": "/static/media/Raleway-Regular.9ade142e.ttf",
+    "static/media/check.f24c812a.png": "/static/media/check.f24c812a.png",
     "static/media/slick-theme.css": "/static/media/slick.c94f7671.ttf",
     "static/media/slider_home_01.0b665994.jpg": "/static/media/slider_home_01.0b665994.jpg"
   },
@@ -28,6 +29,6 @@
     "static/css/2.a3c5fc7b.chunk.css",
     "static/js/2.49f9c99d.chunk.js",
     "static/css/main.78792348.chunk.css",
-    "static/js/main.ee913a9a.chunk.js"
+    "static/js/main.c61b6f82.chunk.js"
   ]
 }

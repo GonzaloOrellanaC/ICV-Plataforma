@@ -1,6 +1,8 @@
-import { dateSimple, dateWithTime, environment, getExecutionReportData, getSignById, getUserNameById, time } from "../../config";
+import { dateSimple, dateWithTime, environment, getExecutionReportData, getSignById, getUserNameById, imageToBase64, time } from "../../config";
 import { pdfMakeRoutes } from "../../routes";
 import logo from '../../assets/logo_icv_gris.png';
+import check from '../../assets/check.png'
+import noCheck from '../../assets/no_check.png'
 
 let imagesList = new Array;
 
@@ -12,7 +14,7 @@ const createTable = ( groupKeys = new Array, group = new Array) => {
                 {
                     style: 'title',
                     table: {
-                        widths: [50, 50, 100, 100, '*'],
+                        widths: [50, 50, 130, 170, 50, 50, 30, '*', 35],
                         body: 
                             await createSubTables(element, groupKeys[index], index),
                     }
@@ -22,6 +24,14 @@ const createTable = ( groupKeys = new Array, group = new Array) => {
                 resolve(arrayTable)
             }
         })
+    })
+}
+
+const getImage = (imageUrl) => {
+    return new Promise(async resolve => {
+        const response = await fetch(imageUrl)
+        const imageBlob = await response.blob()
+        resolve(imageBlob)
     })
 }
 
@@ -66,7 +76,7 @@ const createImagesTables = () => {
             let textContent = {
                 width: 150,
                 alignment: 'center',
-                text: 'Comentario id: ' + element.id + '\n\ "' + element.commit + '"' + '\n\ Imágen: ' + dateWithTime(element.id) + '\n\ Usuario: ' + element.userName + '\n\ ',
+                text: 'Comentario id: ' + element.id + '\n\ "' + element.content + '"' + '\n\ Imágen: ' + dateWithTime(element.id) + '\n\ Usuario: ' + element.userName + '\n\ ',
             }
             
             imageColumns.push(imageContent);
@@ -97,7 +107,9 @@ const createImagesTables = () => {
     })
 }
 
-const createSubTables = (list = new Array, index = new String, indexNumber = new Number) => {
+const createSubTables = async (list = new Array, index = new String, indexNumber = new Number) => {
+    const imageCheck = await getImage(check)
+    const noImageCheck = await getImage(noCheck)
     let pageBreak;
     if(indexNumber == 0) {
         pageBreak = 'none'
@@ -107,7 +119,7 @@ const createSubTables = (list = new Array, index = new String, indexNumber = new
     let table = [
         [
             {
-                colSpan: 5, 
+                colSpan: 9, 
                 border: [true, true, true, true],
                 text: index,
                 fillColor: '#DADADA',
@@ -116,11 +128,15 @@ const createSubTables = (list = new Array, index = new String, indexNumber = new
             {},
             {},
             {},
+            {},
+            {},
+            {},
+            {},
             {}
         ]
     ];
     return new Promise(resolve => {
-        list.forEach((e, i) => {
+        list.forEach(async (e, i) => {
             let commit;
             let date;
             let timeData;
@@ -166,6 +182,11 @@ const createSubTables = (list = new Array, index = new String, indexNumber = new
                     timeData = time(e.messages[0].id)
                 }
             }
+            if(e.isWarning) {
+                e.image = await imageToBase64(noImageCheck)
+            }else{
+                e.image = await imageToBase64(imageCheck)
+            }
             
             table.push([ 
                 {
@@ -186,7 +207,24 @@ const createSubTables = (list = new Array, index = new String, indexNumber = new
                 },
                 {
                     fontSize: 8,
+                    text: (e.partnumberUtl === '*') ? 'N/A' : e.partnumberUtl
+                },
+                {
+                    fontSize: 8,
+                    text: e.unidadData ? `${e.unidadData} ${e.unidad}` : 'N/A'
+                },
+                {
+                    fontSize: 8,
+                    text: (e.idtypeutlPartnumber === '*') ? 'N/A' : `${e.idtypeutlPartnumber}`
+                },
+                {
+                    fontSize: 8,
                     text: commit
+                },
+                {
+                    alignment: 'center',
+                    image: e.image,
+                    width: 15
                 }
             ])
             if(i == (list.length - 1)) {
@@ -198,7 +236,7 @@ const createSubTables = (list = new Array, index = new String, indexNumber = new
 
 export default async (reportData, machineData, stopPrintingLoad, fileName) => {
     const admin = await getUserNameById(reportData.createdBy)
-    const adminSign = await getSignById(reportData.createdBy)
+    //const adminSign = await getSignById(reportData.createdBy)
     const chiefMachineryName = await getUserNameById(reportData.chiefMachineryApprovedBy)
     const chiefMachinerySign = await getSignById(reportData.chiefMachineryApprovedBy)
     const shiftManagerName = await getUserNameById(reportData.shiftManagerApprovedBy)
@@ -311,9 +349,9 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
             {
                 style: 'title',
                 table: {
-                    widths: [50, 50, 100, 100, '*'],
+                    widths: [50, 50, 130, 170, 50, 50, 30, '*', 35],
                     body: [
-                        ['Fecha', 'Personal Necesario', 'Descripción de la tarea', 'Observaciones', 'Comentarios']
+                        ['Fecha', 'Personal Necesario', 'Descripción de la tarea', 'Observaciones', 'N° Parte Utilizado', 'Cantidad Utilizada', 'Tipo Rpto', 'Comentarios', 'Trabajo Realizado']
                     ]
                 },
                 layout: {
@@ -324,10 +362,12 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
             {
                 columns: [
                     {
+                        pageBreak: 'before',
                         text: 'Responsables: ',
                         margin: [0, 50, 0, 0],
                     },
                     {
+                        pageBreak: 'before',
                         alignment: 'right',
                         margin: [0, 50, 0, 0],
                         width: '*',
@@ -337,31 +377,31 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
             },
             {
                 columns: [
-                    {
+                    /* {
                         alignment: 'center',
                         margin: [0, 100, 0, 10],
                         width: 125,
 			            height: 100,
                         image: adminSign
-                    },
+                    }, */
                     {
                         alignment: 'center',
                         margin: [0, 100, 0, 10],
-                        width: 125,
+                        width: 200,
 			            height: 100,
                         image: chiefMachinerySign
                     },
                     {
                         alignment: 'center',
                         margin: [0, 100, 0, 10],
-                        width: 125,
+                        width: 200,
 			            height: 100,
                         image: shiftManagerSign
                     },
                     {
                         alignment: 'center',
                         margin: [0, 100, 0, 10],
-                        width: 125,
+                        width: 200,
 			            height: 100,
                         image: executionUserSign
                     },
@@ -369,34 +409,34 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
             },
             {
                 columns: [
-                    {
+                    /* {
                         alignment: 'center',
                         margin: [0, 10, 0, 200],
                         width: '*',
                         text: admin + '\n\ Ejecutivo SAP'
-                    },
+                    }, */
                     {
                         alignment: 'center',
                         margin: [0, 10, 0, 200],
-                        width: '*',
+                        width: 200,
                         text: chiefMachineryName + '\n\ Jefe de Maquinaria'
                     },
                     {
                         alignment: 'center',
                         margin: [0, 10, 0, 200],
-                        width: '*',
+                        width: 200,
                         text: shiftManagerName + '\n\ Jefe de Turno'
                     },
                     {
                         alignment: 'center',
                         margin: [0, 10, 0, 200],
-                        width: '*',
+                        width: 200,
                         text: executionUser + '\n\ Técnico Inspección o Mantenimiento'
                     },
                 ]
             },
             {
-                margin: [0, 10, 0, 200],
+                margin: [0, 10, 0, 100],
                 text: `Descargado desde https://mantencion.icv.cl`
             },
              await createImagesTables()
@@ -449,6 +489,7 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
         stopPrintingLoad()
     }).catch(err => {
         alert('Error al descargar PDF');
+        console.log(err)
         stopPrintingLoad()
     })
     

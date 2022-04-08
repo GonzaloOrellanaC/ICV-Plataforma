@@ -16,6 +16,8 @@ const createPdf = (req, res) => {
 		res.send(binary);
 	    }, (error) => {
 		res.send('ERROR:' + error);
+    }, (error) => {
+        res.send('Error' + error)
     })
     
 

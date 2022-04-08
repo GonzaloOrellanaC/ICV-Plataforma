@@ -13,17 +13,19 @@ import { Close } from "@material-ui/icons";
 const PdfModal = ({open, reportData, close}) => {
 
     const [ machineData, setMachineData ] = useState();
-    const [ fileName, setFileName ] = useState('');
+    const [ fileName, setFileName ] = useState(null);
     const [ printing, setPrinting ] = useState(false)
 
     useEffect(async() => {
+        console.log(reportData)
         setMachineData(await getMachineData(reportData.machine));
         setFileName(`Orden_de_trabajo_${reportData.idIndex}_aprobado`)
-    }, [])
+    }, [reportData])
 
     const stopPrintingLoad = () => {
         setPrinting(false);
         close()
+        setFileName(null)
     }
 
     const changeName = (value) => {
@@ -40,6 +42,7 @@ const PdfModal = ({open, reportData, close}) => {
             alert('Error al descargar. Cerrando ventana.')
             setPrinting(true)
             close()
+            setFileName(null)
         }
     }
     return(
