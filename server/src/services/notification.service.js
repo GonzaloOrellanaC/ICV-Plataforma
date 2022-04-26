@@ -1,6 +1,12 @@
 import { Notification } from '../models'
 
 const createNotification = (data) => {
+    let historyData;
+    if(data.historyData){
+        historyData = data.historyData
+    }else{
+        historyData = null
+    }
     let notificationData = {
         userId: data.id,
         from: data.from,
@@ -8,7 +14,8 @@ const createNotification = (data) => {
         subtitle: data.subtitle,
         message: data.message,
         state: false,
-        url: data.url
+        url: data.url,
+        historyData: data.historyData
     }
     console.log(notificationData)
     return new Promise(resolve => {

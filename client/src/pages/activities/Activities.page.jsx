@@ -160,7 +160,12 @@ const ActivitiesPage = () => {
                                             </Grid>
                                             <Grid item lg={1} md={1} sm={1} xs={1}>
                                                 <div style={{width: '100%', textAlign: 'center'}}>
-                                                    <p style={{fontSize: 12, fontWeight: 'bold'}}>ID</p>
+                                                    <p style={{fontSize: 12, fontWeight: 'bold'}}>SAP ID</p>
+                                                </div>
+                                            </Grid>
+                                            <Grid item lg={1} md={1} sm={1} xs={1}>
+                                                <div style={{width: '100%', textAlign: 'center'}}>
+                                                    <p style={{fontSize: 12, fontWeight: 'bold'}}>N° OT</p>
                                                 </div>
                                             </Grid>
                                             {!isSmall && <Grid item lg={2} md={1} sm={3}>
@@ -220,6 +225,11 @@ const ActivitiesPage = () => {
                                                     </Grid>
                                                     <Grid item lg={1} md={1} sm={1} xs={1}>
                                                         <div style={{width: '100%', textAlign: 'center'}}>
+                                                            <p style={{fontSize: 12}}>{element.sapId}</p>
+                                                        </div>
+                                                    </Grid>
+                                                    <Grid item lg={1} md={1} sm={1} xs={1}>
+                                                        <div style={{width: '100%', textAlign: 'center'}}>
                                                             <p style={{fontSize: 12}}>{element.idIndex}</p>
                                                         </div>
                                                     </Grid>
@@ -274,6 +284,11 @@ const ActivitiesPage = () => {
                                                     </Grid>
                                                     <Grid item lg={1} md={1} sm={1} xs={1}>
                                                         <div style={{width: '100%', textAlign: 'center'}}>
+                                                            <p style={{fontSize: 12}}>{element.sapId}</p>
+                                                        </div>
+                                                    </Grid>
+                                                    <Grid item lg={1} md={1} sm={1} xs={1}>
+                                                        <div style={{width: '100%', textAlign: 'center'}}>
                                                             <p style={{fontSize: 12}}>{element.idIndex}</p>
                                                         </div>
                                                     </Grid>
@@ -289,7 +304,7 @@ const ActivitiesPage = () => {
                                                     <Grid item lg={1} md={1} sm={4} xs={3} style={{width: '100%', textAlign: 'center', paddingRight: 20}}>
                                                         <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>
                                                             {
-                                                                element.endReport 
+                                                                (element.level && (element.level > 0))
                                                                 ? 
                                                                 'Ver'
                                                                 : 

@@ -14,7 +14,7 @@ export default (server) => {
     io.on('connection', (socket) => {
         socket.on('isConnected', (data) => {
             console.log('Activado!!!', data)
-        });
+        })
         socket.on('test_user', (data) => {
             console.log('Get data......', data)
             io.emit(`test_${data.id}`, {message: data.message})
@@ -105,6 +105,85 @@ export default (server) => {
                     subtitle: data.title, 
                     message: data.message
                 }
+                io.emit(`notification_${user._id}`, {title: data.title, subtitle: data.title, message: data.message})
+                NotificationService.createNotification(notificationToSave)
+            })
+        })
+        socket.on('rechazo-orden-0', async (data) => {
+            console.log(data)
+            const admins = await UserServices.getUserByRole('admin')
+            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
+            const shiftManagers = await UserServices.getUserByRole('shiftManager')
+            const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
+            const userOperator = await UserServices.getUser(data.uid)
+            const all = admins.concat(sapExecutives.concat(shiftManagers.concat(chiefMachineries.concat(userOperator))))
+            all.forEach((user) => {
+                console.log('Se crea notificación a '+user._id)
+                let notificationToSave = {
+                    id: user._id.toString(),
+                    from: data.from,
+                    url: data.url,
+                    title: data.title, 
+                    subtitle: data.title, 
+                    message: data.message,
+                    historyData: {
+                        userId: data.uid,
+                        dataType: 'rechazo'
+                    }
+                }
+                console.log(`notification_${user._id}`)
+                io.emit(`notification_${user._id}`, {title: data.title, subtitle: data.title, message: data.message})
+                NotificationService.createNotification(notificationToSave)
+            })
+        })
+        socket.on('rechazo-orden-1', async (data) => {
+            console.log(data)
+            const admins = await UserServices.getUserByRole('admin')
+            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
+            const shiftManagers = await UserServices.getUserByRole('shiftManager')
+            const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
+            const all = admins.concat(sapExecutives.concat(shiftManagers.concat(chiefMachineries/* .concat(userOperator) */)))
+            all.forEach((user) => {
+                console.log('Se crea notificación a '+user._id)
+                let notificationToSave = {
+                    id: user._id.toString(),
+                    from: data.from,
+                    url: data.url,
+                    title: data.title, 
+                    subtitle: data.title, 
+                    message: data.message,
+                    historyData: {
+                        userId: data.uid,
+                        dataType: 'rechazo'
+                    }
+                }
+                console.log(`notification_${user._id}`)
+                io.emit(`notification_${user._id}`, {title: data.title, subtitle: data.title, message: data.message})
+                NotificationService.createNotification(notificationToSave)
+            })
+        })
+        socket.on('rechazo-orden-2', async (data) => {
+            console.log(data)
+            const admins = await UserServices.getUserByRole('admin')
+            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
+            const shiftManagers = await UserServices.getUserByRole('shiftManager')
+            const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
+            const all = admins.concat(sapExecutives.concat(shiftManagers.concat(chiefMachineries.concat(userOperator))))
+            all.forEach((user) => {
+                console.log('Se crea notificación a '+user._id)
+                let notificationToSave = {
+                    id: user._id.toString(),
+                    from: data.from,
+                    url: data.url,
+                    title: data.title, 
+                    subtitle: data.title, 
+                    message: data.message,
+                    historyData: {
+                        userId: data.uid,
+                        dataType: 'rechazo'
+                    }
+                }
+                console.log(`notification_${user._id}`)
                 io.emit(`notification_${user._id}`, {title: data.title, subtitle: data.title, message: data.message})
                 NotificationService.createNotification(notificationToSave)
             })

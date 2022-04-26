@@ -134,6 +134,19 @@ export const styleModal = {
     p: 4,
 };
 
+export const styleModalLogo = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 300,
+    height: 300,
+    bgcolor: 'transparent',
+    boxShadow: 10,
+    p: 4,
+    textAlign: 'center'
+};
+
 export const styleInternalMessageModal = {
     fontFamily: 'Raleway',
     position: 'absolute',

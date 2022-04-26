@@ -24,6 +24,17 @@ const NotificationsSchema = new Schema(
         },
         url: {
             type: Schema.Types.String,
+        },
+        historyData: {
+            userId: {
+                type: Schema.Types.ObjectId
+            },
+            dataType: {
+                type: Schema.Types.String
+            },
+            message: {
+                type: Schema.Types.String
+            }
         }
     },
     {

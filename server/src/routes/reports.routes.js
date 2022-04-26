@@ -15,6 +15,7 @@ router.post('/getReportByState', ReportsService.getReportByState)
 router.post('/getReportsByUser', ReportsService.getReportsByUser)
 router.post('/findMyAssignations', ReportsService.findMyAssignations)
 router.post('/getReportByIdpm', ReportsService.getReportByIdpm)
+router.post('/getReportByEquid', ReportsService.getReportByEquid)
 router.post('/getReportsByDateRange', ReportsService.getReportsByDateRange)
 
 

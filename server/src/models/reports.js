@@ -87,6 +87,10 @@ const ReportShema = new Schema({
     },
     testMode: {
         type: Schema.Types.Boolean
+    },
+    history: {
+        type: Schema.Types.Array,
+        default: []
     }
 },
 {

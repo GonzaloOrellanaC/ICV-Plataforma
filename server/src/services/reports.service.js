@@ -23,9 +23,7 @@ const createReport = async (req, res) => {
 }
 
 const editReport = async (req, res) => {
-    const { body } = req
-    console.log('Edición reporte =>>>>>', body)
-    
+    const { body } = req    
     if (!body.report) {
         throw new Error(errorMsg.missingParameters)
     }else{
@@ -37,7 +35,6 @@ const editReport = async (req, res) => {
             res.json(err);
         }
     }
-    
 }
 
 const editReportFromAudit = async (req, res) => {
@@ -228,6 +225,18 @@ const getReportByIdpm = async (req, res) => {
     res.send(pmResponse.data)
 }
 
+const getReportByEquid = async (req, res) => {
+    const { body : { equid } } = req
+    console.log(equid)
+    try {
+        Reports.find({ machine: equid }, (err, reports) => {
+            res.json(reports)
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 const countTotalReports = () => {
     return new Promise(resolve => {
         Reports.find({}, (err, reports) => {
@@ -250,5 +259,6 @@ export default {
     getReportsByUser,
     findMyAssignations,
     getReportByIdpm,
+    getReportByEquid,
     getReportsByDateRange
 }

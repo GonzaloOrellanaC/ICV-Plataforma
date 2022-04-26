@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { Toolbar, ListItem, IconButton, Grid } from "@material-ui/core";
-import { faArrowUp, faInfoCircle, faPen, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle, faPen, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, useHistory } from 'react-router-dom';
 import { usersRoutes } from '../../routes';
 import { changeTypeUser } from '../../config';
 import { UserListDataModal } from '../../modals'
-import { io } from "socket.io-client";
 
 const UsersList = ({height, hableButton}) => {
     const [ usuarios, setUsuarios ] = useState([])
@@ -16,8 +15,6 @@ const UsersList = ({height, hableButton}) => {
     const [ checked, setCheck ] = useState(false);
     const [ permissionsReports, setPermissionsReports ] = useState([]);
     const [ permissionsUsers, setPermissionsUsers ] = useState([])
-
-    const history = useHistory()
 
     const handleChange = (event) => {
         setCheck(event.target.checked);
@@ -84,24 +81,9 @@ const UsersList = ({height, hableButton}) => {
         fontSize: 14
     }
 
-    const sendTest = (_id) => {
-        console.log(_id)
-        const socket = io()
-        socket.emit('test_user', {message: 'Envío de alerta desde el administrador.', id: _id})
-    }
-
     return (
         <div style={{height: height}}>
             <div style={{height: height}}>
-                {/* <Toolbar style={{width: '100%'}}>
-                    <h1>Administrar usuarios</h1>
-                    <Link to="/new-users">
-                        <button disabled={!hableButton} style={{position: 'absolute', right: 20, width: 171, height: 38, borderRadius: 23, fontSize: 16}}>
-                            <FontAwesomeIcon icon={faUser} style={{marginRight: 10}}/>
-                            Crear usuario
-                        </button>
-                    </Link>
-                </Toolbar> */}
                 <Grid container spacing={5}>
                     <Grid item xs={12} sm={12} md={8} lg={8}>
                         <Toolbar style={{width: '100%'}}>
@@ -149,6 +131,7 @@ const UsersList = ({height, hableButton}) => {
                     hableButton && <div style={{overflowY: 'auto', height: '53vh'}}>
                     {
                         usuarios.map((e, n) => {
+                            console.log(e.sites)
                             if(!e.imageUrl) {
                                 e.imageUrl = '../assets/no-profile-image.png'
                             }
@@ -187,19 +170,16 @@ const UsersList = ({height, hableButton}) => {
                                             </p>
                                         }
                                     </div>
-                                    <IconButton onClick={() => openModal(e, n)}>
+                                    <IconButton title="Información del usuario" onClick={() => openModal(e, n)}>
                                         <FontAwesomeIcon icon={faInfoCircle}/>
                                     </IconButton>
                                     <Link to={`/edit-user/${e._id}`}>
-                                        <IconButton>
+                                        <IconButton title="Editar usuario">
                                             <FontAwesomeIcon icon={faPen}/>
                                         </IconButton>
                                     </Link>
-                                    <IconButton onClick={()=>{deleteUser(e._id, e.name, e.lastName, e.role)}}>
+                                    <IconButton title="Borrar usuario" onClick={()=>{deleteUser(e._id, e.name, e.lastName, e.role)}}>
                                         <FontAwesomeIcon icon={faTrash}/>
-                                    </IconButton>
-                                    <IconButton onClick={()=>{sendTest(e._id)}}>
-                                        <FontAwesomeIcon icon={faArrowUp}/>
                                     </IconButton>
                                 </ListItem>
                             )

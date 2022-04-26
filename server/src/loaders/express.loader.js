@@ -50,6 +50,8 @@ export default async () => {
         directives: {
             connectSrc: [
                 "'self'",
+                'data:',
+                'https:',
                 'blob:',
                 environment.storageApi.url
             ],
@@ -73,6 +75,7 @@ export default async () => {
                 "'self'",
                 'data:',
                 'blob:',
+                'https:',
                 environment.storageApi.url
             ],
             workerSrc: [

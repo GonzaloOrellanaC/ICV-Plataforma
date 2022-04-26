@@ -10,6 +10,7 @@ import { ReportsList } from '../../containers';
 import { useHistory } from 'react-router-dom';
 import { sitesDatabase } from '../../indexedDB';
 import { getWeekReports, useStylesTheme } from '../../config';
+import { LoadingLogoModal } from '../../modals';
 
 const ReportsPage = () => {
     const [ inspecciones, setInspecciones ] = useState([]);
@@ -22,6 +23,7 @@ const ReportsPage = () => {
     const [ list, setList ] = useState([]);
     const [ vista, setVista ] = useState(true);
     const [ cancel, setCancel ] = useState(true);
+    const [ loading, setLoading ] = useState(false)
 
     const history = useHistory()
     const classes = useStylesTheme();
@@ -42,6 +44,7 @@ const ReportsPage = () => {
     }, [cancel]);
 
     const initPage = async () => {
+        setLoading(true)
         let daysOfThisWeek = getWeekReports();
         let completesInspections = await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Inspección');
         let completesManteinances = await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Mantención');
@@ -98,6 +101,7 @@ const ReportsPage = () => {
             }
             if(i == (Mantenciones.length - 1)) {
                 setMantenciones(Mantenciones)
+                setLoading(false)
             }
         })
         if(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive') {
@@ -245,6 +249,9 @@ const ReportsPage = () => {
                         !vista && <div style={{height: 'calc(100% - 50px)', display: 'block', overflowY: 'auto'}}>
                             <ReportsList list={list} reloadData={reloadData}/>
                         </div>
+                    }
+                    {
+                        loading && <LoadingLogoModal open={loading} />
                     }
                 </Grid>
             </Grid>

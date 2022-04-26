@@ -1,14 +1,17 @@
 import React, { useState, useEffect, ReactDOM } from 'react';
-import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button } from '@material-ui/core'
-import { ArrowBackIos } from '@material-ui/icons'
+import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button, Icon, SvgIcon } from '@material-ui/core'
+import { ArrowBackIos, Close } from '@material-ui/icons'
 import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, saveExecutionReport, useStylesTheme } from '../../config'
 import { useHistory, useParams } from 'react-router-dom'
 import { pautasDatabase, executionReportsDatabase, reportsDatabase } from '../../indexedDB'
 import { PautaDetail } from '../../containers'
 import { executionReportsRoutes, reportsRoutes } from '../../routes'
-import { LoadingModal, ReportCommitModal } from '../../modals'
+import { LoadingLogoModal, LoadingModal, ReportCommitModal, ReportMessagesModal } from '../../modals'
 import { SocketConnection } from '../../connections';
 import sendnotificationToManyUsers from './sendnotificationToManyUsers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock, faPaperPlane, faComment } from '@fortawesome/free-solid-svg-icons';
+import fileCircleXMark from './fileCircleXMark'
 
 const ActivitiesDetailPage = () => {
     const classes = useStylesTheme();
@@ -16,6 +19,7 @@ const ActivitiesDetailPage = () => {
     const {id} = useParams();
     const [ pauta, setPauta ] = useState();
     const [ progress, resutProgress ] = useState(0)
+    const [ itemProgress, resultThisItemProgress ] = useState(0)
     const [ reportAssignment, setReportAssignment ] = useState()
     const [ reportLevel, setReportLevel ] = useState()
     const [ canEdit, setCanEdit ] = useState()
@@ -24,12 +28,22 @@ const ActivitiesDetailPage = () => {
     const [ loading, setLoading ] = useState(false)
     const [ loadingMessage, setLoadingMessage ] = useState(false)
     const [ indexGroup, setIndexGroup] = useState([])
+    const [ loadingLogo, setLoadingLogo ] = useState(false)
+    const [ canSendReport, setCanSendReport ] = useState(false)
+    const [ canRejectReport, setCanRejectReport ] = useState(false)
+    const [ messageType, setMessageType ] = useState()
+    const [ openMessagesModal, setOpenMessagesModal ] = useState(false)
 
     useEffect(async () => {
+        if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+            setCanSendReport(false)
+        }else{
+            setCanSendReport(true)
+        }
+        setLoadingLogo(true)
         if(navigator.onLine) {
             reportsRoutes.getReportByIndex(id).then(r => {
                 let report = r.data
-                //console.log(report)
                 getPauta(report);
                 if(!report.level) {
                     report.level = 0
@@ -48,6 +62,7 @@ const ActivitiesDetailPage = () => {
                 };
                 if(myReportLevel === report.level) {
                     setCanEdit(true)
+                    setCanRejectReport(true)
                 }
             })
         }else{
@@ -97,11 +112,10 @@ const ActivitiesDetailPage = () => {
         const state = await saveExecutionReport(pautaFiltered[0], report)
         console.log(state)
         console.log(pautaFiltered[0])
-        setPauta(pautaFiltered[0]);
-        /* setTimeout(async () => {
-            const element = await getExecutionReport(report._id)
-            console.log(element)
-        }, 2000); */
+        setPauta(pautaFiltered[0])
+        setTimeout(() => {
+            setLoadingLogo(false)
+        }, 1000)
     }
 
     const setProgress = (value) => {
@@ -110,7 +124,6 @@ const ActivitiesDetailPage = () => {
 
     const endReport = async () => {
         if(navigator.onLine) {
-            setLoading(true)
             if(localStorage.getItem('role') === 'sapExecutive') {
                 setLoadingMessage('Cerrando OT...')
             }else{
@@ -136,6 +149,17 @@ const ActivitiesDetailPage = () => {
         }
     }
 
+    const rejectReport = async () => {
+        if(navigator.onLine) {
+            setMessageType('rejectReport')
+            setOpenReportCommitModal(true)
+            /* setLoadingMessage('Enviando estado...')
+            sendToBack() */
+        }else{
+            alert('Dispositivo no está conectado a internet. Conecte a una red e intente nuevamente')
+        }
+    }
+
     const sendDataToRead = (group = new Array(), state = new Boolean()) => {
         group.map((item, index) => {
             item.map((i, n) => {
@@ -144,11 +168,12 @@ const ActivitiesDetailPage = () => {
                 }
                 if(n == (item.length - 1)) {
                     if(index == (group.length - 1)) {
-                        if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+                        responseMessage()
+                        /* if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
                             sendToNext(state, reportAssigned)
                         }else{
                             responseMessage()
-                        }
+                        } */
                     }
                 }
             })
@@ -158,17 +183,23 @@ const ActivitiesDetailPage = () => {
     const getResponseState = (state, report) => {
         if(state) {
             setLoading(true)
-            sendToNext(state, report)
+            if(messageType === 'rejectReport') {
+                sendToBack(report)
+            } else if (messageType === 'sendReport') {
+                sendToNext(state, report)
+            }
         }
     }
 
     const responseMessage = () => {
+        setMessageType('sendReport')
         setOpenReportCommitModal(true);
     }
 
     const sendToNext = async (okToSend, reportData) => {
         if(okToSend) {
             if(confirm('Se enviará información. ¿Desea confirmar?')) {
+                setLoading(true)
                 let report
                 if(reportData) {
                     report = reportData;
@@ -176,8 +207,12 @@ const ActivitiesDetailPage = () => {
                     report = JSON.parse(id);
                 }
                 report.level = report.level + 1
-                report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`; 
-                console.log(report)           
+                report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`
+                /* report.history.push({
+                    id: Date.now(),
+                    userSendingData: localStorage.getItem('_id'),
+                    type: 'sending-to-next-level'
+                }) */
                 if(report.level === 1) {
                     console.log('Iniciando envío nivel 1')
                     report.emailing = "termino-orden-1";
@@ -244,6 +279,8 @@ const ActivitiesDetailPage = () => {
                 } else {
                     alert('Error al leer los niveles del reporte. Debe ser reparado por el administrador del servicio.')
                 }
+            }else{
+                setLoading(false)
             }
         }else{
             alert('Orden no se encuantra finalizada. Revise e intente nuevamente.')
@@ -251,6 +288,56 @@ const ActivitiesDetailPage = () => {
             setTimeout(() => {
                 setLoading(false)
             }, 1000);
+        }
+    }
+
+    const sendToBack = async (report) => {
+        setLoading(true)
+        let ejecutor = new String()
+        if(localStorage.getItem('role')==='shiftManager') {
+            ejecutor = 'ejecutor'
+        }else if(localStorage.getItem('role')==='chiefMachinery') {
+            ejecutor = 'jefe de turno'
+        }else if(localStorage.getItem('role')==='sapExecutive') {
+            ejecutor = 'jefe de maquinaria'
+        }
+        if(confirm(`Devolverá la información al ${ejecutor}. ¿Desea confirmar?`)) {
+            //let report = reportAssigned
+            report.level = report.level - 1
+            report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`
+            if(report.level === 0) {
+                report.emailing = "rechazo-orden-0";
+                sendnotificationToManyUsers(report.emailing, report.idIndex, report.history[report.history.length - 1].userSendingData)
+                let res = await reportsRoutes.editReport(report)
+                if(res) {
+                    setTimeout(() => {
+                        setLoading(false)
+                        history.goBack()
+                    }, 1000);
+                }
+            }else if(report.level === 1) {
+                report.emailing = "rechazo-orden-1";
+                sendnotificationToManyUsers(report.emailing, report.idIndex, report.history[report.history.length - 1].userSendingData)
+                let res = await reportsRoutes.editReport(report)
+                if(res) {
+                    setTimeout(() => {
+                        setLoading(false)
+                        history.goBack()
+                    }, 1000);
+                }
+            }else if(report.level === 2) {
+                report.emailing = "rechazo-orden-2";
+                sendnotificationToManyUsers(report.emailing, report.idIndex, report.history[report.history.length - 1].userSendingData)
+                let res = await reportsRoutes.editReport(report)
+                if(res) {
+                    setTimeout(() => {
+                        setLoading(false)
+                        history.goBack()
+                    }, 1000);
+                }
+            } else {
+                alert('Error al leer los niveles del reporte. Debe ser reparado por el administrador del servicio.')
+            }
         }
     }
 
@@ -276,6 +363,10 @@ const ActivitiesDetailPage = () => {
         })
     }
 
+    const backActivity = (report) => {
+
+    }
+ 
     const terminarjornada = async () => {
         if(navigator.onLine) {
             setLoading(true)
@@ -326,6 +417,14 @@ const ActivitiesDetailPage = () => {
         setOpenReportCommitModal(false)
     }
 
+    const openMessages = () => {
+        setOpenMessagesModal(true)
+    }
+
+    const closeMessages = () => {
+        setOpenMessagesModal(false)
+    }
+
     return (
         <Box height='80vh'>
             <Grid className={classes.pageRoot} container spacing={0}>
@@ -346,17 +445,23 @@ const ActivitiesDetailPage = () => {
                                         
                                         <div style={{position: 'absolute', right: 10, width: '50%', textAlign: 'right'}}>
                                             <div style={{width: '100%', position: 'relative', right: 10, display: 'block'}}>
-                                                <div style={{float: 'right', width: '40%', marginTop: 10, textAlign: 'left'}}>
-                                                    <LinearProgress variant="determinate" value={progress} style={{width: '100%'}}/>
-                                                    <p>{progress.toFixed(0)}%</p>
-                                                </div>
+                                                {/* {
+                                                    ((localStorage.getItem('role') !== 'inspectionWorker')||(localStorage.getItem('role') !== 'maintenceOperator')) && <div style={{float: 'right', width: '40%', marginTop: 0, textAlign: 'right', marginRight: 20}}>
+                                                        {canEdit && <Button variant="contained" color={'secondary'} style={{ borderRadius: 50 }} onClick={()=>{endReport()}}>
+                                                            Rechazar OT
+                                                        </Button>}
+                                                        {!canEdit && <Button disabled={true} variant="contained" color={'secondary'} style={{ borderRadius: 50 }}>
+                                                            Rechazar OT
+                                                        </Button>}
+                                                    </div>
+                                                }
                                                 {
-                                                    (localStorage.getItem('role') != 'sapExecutive') && <div style={{float: 'right', width: '40%', marginTop: 10, textAlign: 'right', marginRight: 20}}>
+                                                    (localStorage.getItem('role') != 'sapExecutive') && <div style={{float: 'right', width: '40%', marginTop: 0, textAlign: 'right', marginRight: 20}}>
                                                         {canEdit && <Button variant="contained" color={'primary'} style={{ borderRadius: 50 }} onClick={()=>{endReport()}}>
-                                                            Enviar
+                                                            Enviar OT
                                                         </Button>}
                                                         {!canEdit && <Button disabled={true} variant="contained" color={'primary'} style={{ borderRadius: 50 }}>
-                                                            Enviar
+                                                            Enviar OT
                                                         </Button>}
                                                     </div>
                                                 }
@@ -369,34 +474,78 @@ const ActivitiesDetailPage = () => {
                                                             Cerrar Orden
                                                         </Button>}
                                                     </div>
-                                                }
+                                                } */}
                                             </div>
                                         </div>
                                     </Toolbar>
                                 </div>
                             </div>
-                            <div style={{width: '98%'}}>
-                                {
-                                    pauta && <PautaDetail height={'calc(100vh - 380px)'} reportAssigned={reportAssigned} pauta={pauta} reportLevel={reportLevel} reportAssignment={reportAssignment} setProgress={setProgress} setIndexGroupToSend={setIndexGroup}/>
-                                }
-                            </div>
+                            <Grid container>
+                                <Grid xl={10} md={10}>
+                                    <div style={{padding: 20}}>
+                                        {
+                                            pauta && <PautaDetail 
+                                                height={'calc(100vh - 360px)'} 
+                                                reportAssigned={reportAssigned} 
+                                                pauta={pauta} 
+                                                reportLevel={reportLevel} 
+                                                reportAssignment={reportAssignment} 
+                                                setProgress={setProgress} 
+                                                setIndexGroupToSend={setIndexGroup}
+                                                resultThisItemProgress={resultThisItemProgress}
+                                                />
+                                        }
+                                    </div>
+                                </Grid>
+                                <Grid xl={2} md={2}>
+                                    <div style={{marginTop: 20, padding: 20, backgroundColor: '#F9F9F9', borderRadius: 10, height: '98%'}}>
+                                        <div style={{textAlign: 'center', width: '100%'}}>
+                                            <h2 style={{margin: 0}}>OT {id}</h2>
+                                            <p style={{margin: 0}}>Tipo de pauta: <br /> <strong>{pauta && pauta.typepm}</strong></p>
+                                            <p style={{backgroundColor: 'red', color: 'white', marginBottom: 0}}><strong>{reportAssigned && reportAssigned.testMode ? 'Modo test' : ''}</strong></p>
+                                        </div>
+                                        <h3 style={{textAlign: 'center'}}>Avance en esta hoja</h3>
+                                        <LinearProgress variant="determinate" value={progress} style={{width: '100%'}}/>
+                                        <p style={{textAlign: 'center'}}>{progress.toFixed(0)}%</p>
+                                        <h3 style={{textAlign: 'center'}}>Avance total</h3>
+                                        <LinearProgress variant="determinate" value={itemProgress} style={{width: '100%'}}/>
+                                        <p style={{textAlign: 'center'}}>{itemProgress.toFixed(0)}%</p>
+                                        {(localStorage.getItem('role') != 'sapExecutive') && <Button disabled={!canEdit} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{endReport()}}>
+                                            <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Enviar OT
+                                        </Button>}
+                                        {(localStorage.getItem('role') === 'sapExecutive') && <Button disabled={!canEdit} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{endReport()}}>
+                                            <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Cerrar OT
+                                        </Button>
+                                        }
+                                        {!((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) && 
+                                        <Button disabled={!canSendReport || !canRejectReport} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{rejectReport()}}>
+                                            <Close />
+                                            Rechazar OT
+                                        </Button>}
+                                        {(((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator'))&&(reportLevel===0)) && <Button onClick={()=>{terminarjornada()}} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
+                                            <FontAwesomeIcon icon={faClock} style={{marginRight: 10}} /> Terminar Jornada
+                                        </Button>}
+                                        <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{openMessages()}}>
+                                            <FontAwesomeIcon icon={faComment} style={{marginRight: 10}} /> Mensajes de flujo
+                                        </Button>
+                                    </div>
+                                </Grid>
+                            </Grid>
                             {
-                                openReportCommitModal && <ReportCommitModal open={openReportCommitModal} closeModal={closeCommitModal} report={reportAssigned} getResponseState={getResponseState} />
-                            } 
-                            <div style={{width: '98%', marginTop: 20, textAlign: 'right'}}>
-                                {(((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) && canEdit) && <Button variant="contained" color={'primary'} style={{ borderRadius: 50 }} onClick={()=>{terminarjornada()}}>
-                                    Terminar Jornada
-                                </Button>}
-                                {((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) && !canEdit && <Button disabled variant="contained" color={'primary'} style={{ borderRadius: 50 }}>
-                                    Terminar Jornada
-                                </Button>}
-                            </div>
+                                openReportCommitModal && <ReportCommitModal open={openReportCommitModal} closeModal={closeCommitModal} report={reportAssigned} getResponseState={getResponseState} messageType={messageType}/>
+                            }
+                            {
+                                openMessagesModal && <ReportMessagesModal open={openMessagesModal} close={closeMessages} report={reportAssigned} />
+                            }
                         </Grid>
                     </Card>
                 </Grid>
             </Grid>
             {
                 <LoadingModal open={loading} withProgress={false} loadingData={loadingMessage} />
+            }
+            {
+                loadingLogo && <LoadingLogoModal open={loadingLogo} />
             }
         </Box>
     )

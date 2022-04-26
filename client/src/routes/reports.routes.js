@@ -67,6 +67,12 @@ export default {
         };
         return axios.post('/reports/findMyAssignations', requestBody);
     },
+    getReportByEquid: (equid) => {
+        const requestBody = {
+            equid
+        };
+        return axios.post('/reports/getReportByEquid', requestBody);
+    },
     getReportByIdpm: (idpm) => {
         const requestBody = {
             idpm

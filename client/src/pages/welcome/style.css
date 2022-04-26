@@ -23,6 +23,7 @@
     background-color: #F9F9F9; 
     border-radius: 20px; 
     text-transform: none;
+    border-color: transparent;
 }
 
 .notificaciones-texto{

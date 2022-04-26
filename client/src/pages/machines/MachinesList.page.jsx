@@ -26,6 +26,7 @@ const MachinesListPage = ({route}) => {
     }
 
     const goToMachineDetail = (machineData) => {
+        console.log(machineData)
         const newMachine = {
             id: machine.id,
             brand: machine.brand,
@@ -34,7 +35,7 @@ const MachinesListPage = ({route}) => {
             type: machine.type,
             machineData: JSON.stringify(machineData)
         }
-        history.push(`machine-detail/${JSON.stringify(newMachine)}`)
+        history.push(`machine-detail/${machineData.equid/* JSON.stringify(newMachine) */}`)
     }
 
     const readAllMachinesFromIndexedDB = (model) => {
@@ -50,6 +51,7 @@ const MachinesListPage = ({route}) => {
         } */
         machinesDatabase.initDbMachines().then(db => {
             machinesDatabase.consultar(db.database).then(readAllMachines => {
+                console.log(readAllMachines)
                 setMachinesList(
                     readAllMachines
                     .filter(machine => {if(machine.model === model) { return machine}})
@@ -68,6 +70,7 @@ const MachinesListPage = ({route}) => {
         machinesDatabase.initDbMachines().then(db => {
             machinesDatabase.consultar(db.database).then(readAllMachines => {
                 if(cancel) return
+                console.log(readAllMachines)
                 setMachinesList(
                     readAllMachines
                     .filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
@@ -139,7 +142,7 @@ const MachinesListPage = ({route}) => {
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={3} lg={3}>
                                                     <div style={{padding: 10}}>
-                                                    <p style={{marginTop: 5, marginBottom: 5}}>Horómetro Actual: {machine.hourMeter}</p>
+                                                    <p style={{marginTop: 5, marginBottom: 5}}>Horómetro Actual: {Number(machine.hourMeter)/3600000}</p>
                                                     <p style={{marginTop: 5, marginBottom: 5}}>Número Interno: {machine.equ}</p>
                                                     <p style={{marginTop: 5, marginBottom: 5}}>Serie motor: {machine.enginesnr}</p>
                                                     </div>

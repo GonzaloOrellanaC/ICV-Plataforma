@@ -13,7 +13,7 @@ import {
 import { Close } from '@material-ui/icons';
 import { styleInternalMessageModal } from '../../config';
 
-const ReportCommitModal = ({open, report, closeModal, getResponseState}) => {
+const ReportCommitModal = ({open, report, closeModal, getResponseState, messageType}) => {
     const [ message, setMessage ] = useState('');
 
     useEffect(() => {
@@ -22,7 +22,19 @@ const ReportCommitModal = ({open, report, closeModal, getResponseState}) => {
 
     const sendMessage = () => {
         if(message.length > 1) {
-            if(!report.level || report.level == 0) {
+            const historyType = messageType==='rejectReport' ? 'reject-to-previous-level' : 'sending-to-next-level'
+            /* if(messageType === 'rejectReport') {
+                historyType = 'reject-to-previous-level'
+            } else if (messageType === 'sendReport') {
+                historyType = 'sending-to-next-level'
+            } */
+            report.history.push({
+                id: Date.now(),
+                userSendingData: localStorage.getItem('_id'),
+                type: historyType,
+                message: message
+            })
+            /* if(!report.level || report.level == 0) {
                 //report.shiftManagerApprovedCommit = message;
             }else if(report.level == 1) {
                 report.shiftManagerApprovedCommit = message;
@@ -30,7 +42,7 @@ const ReportCommitModal = ({open, report, closeModal, getResponseState}) => {
                 report.chiefMachineryApprovedCommit = message;
             }else if(report.level == 3) {
                 report.sapExecutiveApprovedCommit = message;
-            };
+            }; */
             //console.log(report.shiftManagerApprovedCommit)
             closeModal();
             getResponseState(true, report)
@@ -64,7 +76,7 @@ const ReportCommitModal = ({open, report, closeModal, getResponseState}) => {
                     </Grid>
                     <Grid item xl={4} md={6} sm={8} xs={12}>
                     <div>
-                        <h1>Comentarios de la revisión.</h1>
+                        <h1>Deje un comentario.</h1>
                         <br />
                         <TextareaAutosize 
                         aria-label="empty textarea"

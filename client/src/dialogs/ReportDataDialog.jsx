@@ -1,4 +1,4 @@
-import { faArrowRight, faArrowUp, faCamera } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faArrowUp, faCamera, faImage } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Slide, Switch, TextField} from '@material-ui/core'
 import { Close } from '@material-ui/icons';
@@ -6,6 +6,8 @@ import { useEffect, forwardRef, useState } from 'react';
 import { dateSimple, dateWithTime, imageToBase64, uploadImage } from '../config';
 import { LoadingModal } from '../modals';
 import ImageDialog from './ImageDialog';
+import {isMobile} from 'react-device-detect'
+import InputTextDialog from './InputTextDialog';
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -15,9 +17,9 @@ const ReportDataDialog = ({open, handleClose, report, item, index, executionRepo
   const [openImageDialog, setOpenImageDialog] = useState(false)
   const [imagePreview, setImagePreview] = useState('')
   const [openLoadingModal, setOpenLoadinModal] = useState(false)
+  const [openInputTextDialog, setOpenInputTextDialog] = useState(false)
 
   useEffect(() => {
-    console.log(executionReport)
     if(item.messages) {
       setMessages(item.messages)
       setTimeout(() => {
@@ -98,6 +100,17 @@ const ReportDataDialog = ({open, handleClose, report, item, index, executionRepo
   const handleCloseImage = () => {
     setOpenImageDialog(false)
   }
+
+  const handleCloseText = () => {
+    setOpenInputTextDialog(false)
+  }
+
+  const disable = () => {
+    document.onkeydown =  (e) =>
+      {
+        return false
+      }
+  }
   
   return (
       <Dialog
@@ -120,7 +133,8 @@ const ReportDataDialog = ({open, handleClose, report, item, index, executionRepo
           <Grid item xl={3}>
             <div style={{marginLeft: 24, marginBottom: 16}}>
               <h3>Total utilizado</h3>
-              <TextField id="standard-basic" label={item.unidad} variant="standard" type='number' value={item.unidadData} onChange={(e)=>changeUnidad(e.target.value)}/>
+              {!isMobile && <TextField id="standard-basic" label={item.unidad} variant="standard" type='number' value={item.unidadData} onChange={(e)=>changeUnidad(e.target.value)}/>}
+              {isMobile && <TextField id="standard-basic" label={item.unidad} variant="standard" type='number' value={item.unidadData} />}
             </div>
           </Grid>
         </Grid>}
@@ -155,11 +169,16 @@ const ReportDataDialog = ({open, handleClose, report, item, index, executionRepo
             <div style={{width: '100%', height: 50, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#ccc', position: 'absolute', bottom: 0, left: 0, paddingLeft: 10, paddingRight: 10}}>
               <form>
                 <div style={{width: '70%', float: 'left'}}>
-                  <textarea value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onChange={(e) => {inputMessage(e.target.value)}}/>
+                  {
+                    !isMobile && <textarea value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onChange={(e) => {inputMessage(e.target.value)}}/>
+                  }
+                  {
+                    isMobile && <textarea id="mobileTextArea" value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onClick={()=>{setOpenInputTextDialog(true); document.getElementById('mobileTextArea').blur()}} />
+                  }
                 </div>
                 <div style={{width: '30%', float: 'right', textAlign: 'right'}}>
                   <IconButton onClick={() => upImage()}>
-                    <FontAwesomeIcon icon={faCamera} />
+                    <FontAwesomeIcon icon={faImage} />
                   </IconButton>
                   <IconButton onClick={() => saveMessage()}>
                     <FontAwesomeIcon icon={faArrowRight} />
@@ -178,6 +197,9 @@ const ReportDataDialog = ({open, handleClose, report, item, index, executionRepo
         </DialogActions>
         {
           openImageDialog && <ImageDialog open={openImageDialog} image={imagePreview} handleClose={handleCloseImage}/>
+        }
+        {
+          openInputTextDialog && <InputTextDialog open={openInputTextDialog} handleClose={handleCloseText} saveMessage={saveMessage} message={message} inputMessage={inputMessage}/>
         }
         {
           openLoadingModal && <LoadingModal open={openLoadingModal} withProgress={false} loadingData={'Cargando imágen'}/>

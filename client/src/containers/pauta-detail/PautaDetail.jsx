@@ -13,7 +13,7 @@ import { executionReportsRoutes, reportsRoutes } from "../../routes"
 import { compareExecutionReport, getExecutionReport, saveExecutionReport } from "../../config"
 import { ReportDataDialog } from '../../dialogs'
 
-const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignment, reportLevel, setIndexGroupToSend}) => {
+const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignment, reportLevel, setIndexGroupToSend, resultThisItemProgress}) => {
 
     //Pestañas
     const [ gruposKeys, setGruposKeys ] = useState([])
@@ -45,8 +45,16 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
     const [ item, setItem ] = useState()
     const [ index, setIndex ] = useState()
     const [ iconToItemDetail, setIconToItemDetail ] = useState(faPen)
+
+    const [ descriptionWidth, setDescriptionWith ] = useState('12%')
+    const [ obsWidth, setObsWith ] = useState('20%')
     
     useEffect(() => {
+        console.log(pauta)
+        if(pauta.action === 'Inspección') {
+            setDescriptionWith('30%')
+            setObsWith('30%')
+        }
         readData()
         if((localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator')) {
             setIconToItemDetail(faPen)
@@ -206,7 +214,9 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
             if(executionReportData.group) {
                 console.log('Existe grupo')
                 setGroup(executionReportData.group)
+                console.log(executionReportData.group)
                 setGroupData(Object.keys(executionReportData.group), executionReportData.group, true)
+                setTotalProgress(executionReportData.group)
                 setExecutionReport(executionReportData)
                 saveExecutionReport(executionReportData, reportAssigned)
             }else{
@@ -216,8 +226,10 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                     return r
                 }, {})
                 setGroup(groupD)
+                console.log(groupD)
                 executionReportData.group = groupD
                 setGroupData(Object.keys(groupD), groupD, true)
+                setTotalProgress(groupD)
                 executionReportsRoutes.saveExecutionReport(executionReportData)
                 setExecutionReport(executionReportData)
                 saveExecutionReport(executionReportData, reportAssigned)
@@ -226,6 +238,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
             if(executionReportData.group) {
                 setGroup(executionReportData.group)
                 setGroupData(Object.keys(executionReportData.group), executionReportData.group)
+                setTotalProgress(executionReportData.group)
                 setExecutionReport(executionReportData)
                 saveExecutionReport(executionReportData, reportAssigned)
             }else{
@@ -234,13 +247,36 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                     return r
                 }, {})
                 setGroup(groupD)
+                console.log(groupD)
                 executionReportData.group = groupD
                 setGroupData(Object.keys(groupD), groupD)
+                setTotalProgress(executionReportData.group)
                 executionReportsRoutes.saveExecutionReport(executionReportData)
                 setExecutionReport(executionReportData)
                 saveExecutionReport(executionReportData, reportAssigned)
             }
         }
+    }
+
+    const setTotalProgress = (data) => {
+        let list = []
+        let isCheckedList = []
+        let noIsCheckedList = []
+        Object.values(data).map((item, i) => {
+            list = list.concat(item)
+            if(i == (Object.values(data).length - 1)) {
+                list.map((el, number) => {
+                    if (el.isChecked) {
+                        isCheckedList.push(true)
+                    } else {
+                        noIsCheckedList.push(false)
+                    }
+                    if (number == (list.length - 1)) {
+                        resultThisItemProgress((isCheckedList.length * 100) / noIsCheckedList.length)
+                    }
+                })
+            }
+        })
     }
 
     const handleContent = (gruposKeys, element) => {
@@ -383,6 +419,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
     }
 
     const save = async (index, state, item) => {
+        setTotalProgress(executionReport.group)
         if(!reportAssigned.dateInit) {
             reportAssigned.dateInit = Date.now()
         }
@@ -451,29 +488,29 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                     <div style={{width: '10%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Personal Necesario</strong> </p>
                     </div>
-                    <div style={{width: '12%', marginLeft: 5}}>
+                    <div style={{width: descriptionWidth, marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Descripcion De Tarea</strong> </p>
                     </div>
-                    <div style={{width: '25%', marginLeft: 5}}>
+                    <div style={{width: obsWidth, marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>Observaciones</strong> </p>
                     </div>
-                    <div style={{width: '11%', marginLeft: 5}}>
+                    {(pauta.action === 'Mantención') && <div style={{width: '11%', marginLeft: 5}}>
                         <p style={{margin: 0}}> <strong>N° Parte a Utilizar</strong> </p>
-                    </div>
-                    <div style={{width: '7%', textAlign: 'center'}}>
+                    </div>}
+                    {(pauta.action === 'Mantención') && <div style={{width: '7%', textAlign: 'center'}}>
                         <p style={{margin: 0}}> <strong>Cantidad a utilizar</strong> </p>
-                    </div>
-                    <div style={{width: '7%', textAlign: 'center'}}>
+                    </div>}
+                    {(pauta.action === 'Mantención') && <div style={{width: '7%', textAlign: 'center'}}>
                         <p style={{margin: 0}}> <strong>Cantidad Utilizada</strong> </p>
-                    </div>
-                    <div style={{width: '5%', textAlign: 'center'}}>
+                    </div>}
+                    {(pauta.action === 'Mantención') && <div style={{width: '5%', textAlign: 'center'}}>
                         <p style={{margin: 0}}> <strong>Tipo Rpto</strong> </p>
-                    </div>
+                    </div>}
                     <div style={{width: '5%', textAlign: 'center'}}>
                         <p style={{margin: 0}}> <strong>Ejecutar Tarea</strong> </p>
                     </div>
-                    <div style={{width: '13%', paddingLeft: 10, textAlign: 'left'}}>
-                        <p style={{margin: 0}}> <strong>Estado</strong> </p>
+                    <div style={{width: '15%', paddingLeft: 10, textAlign: 'left'}}>
+                        <p style={{margin: 0, marginLeft: 50}}> <strong>Estado</strong> </p>
                     </div>
                 </ListItem>
                 {contentData && <div style={{height: height, overflowY: 'scroll'}}>
@@ -484,30 +521,30 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                                     <div style={{width: '10%', marginLeft: 5 }}>
                                         {e.workteamdesc}    
                                     </div>
-                                    <div style={{width: '12%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    <div style={{width: descriptionWidth, marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {e.taskdesc}  
                                     </div>
-                                    <div style={{width: '25%', marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    <div style={{width: obsWidth, marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {e.obs01}  
                                     </div>
-                                    <div style={{width: '11%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    {(pauta.action === 'Mantención') && <div style={{width: '11%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {(e.partnumberUtl === '*') ? <p>N/A</p> : <p>{e.partnumberUtl}</p>}  
-                                    </div>
-                                    <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    </div>}
+                                    {(pauta.action === 'Mantención') && <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {(e.unidad === '*') ? <p>N/A</p> : <p> {e.cantidad} {e.unidad}</p>}
-                                    </div>
-                                    <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    </div>}
+                                    {(pauta.action === 'Mantención') && <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {(e.unidad === '*') ? <p>N/A</p> : <p> {e.unidadData ? e.unidadData : '______'} {e.unidad}</p>}
-                                    </div>
-                                    <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
+                                    </div>}
+                                    {(pauta.action === 'Mantención') && <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
                                         {(e.idtypeutlPartnumber === '*') ? <p>N/A</p> : <p> {e.idtypeutlPartnumber}</p>}
-                                    </div>
+                                    </div>}
                                     <div style={{width: '5%', textAlign: 'center'}}>
                                         <IconButton style={{width: '5%', textAlign: 'center'}} onClick={()=>{/* setOpenWriteActivity(true) */openDialog(e, n); setIndexActivity(n)}}>
                                             <FontAwesomeIcon icon={iconToItemDetail}/>
                                         </IconButton>
                                     </div>
-                                    <div style={{width: '13%', textAlign: 'center'}}>
+                                    <div style={{width: '15%', textAlign: 'center', marginLeft: 20}}>
                                         <Checkbox checked={checks[n]} disabled style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} />
                                         {e.messages && <IconButton disabled><FontAwesomeIcon icon={faCommentDots} /></IconButton>}
                                         {!e.messages && <IconButton disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faCommentDots} /></IconButton>}

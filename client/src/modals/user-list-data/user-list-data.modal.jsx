@@ -43,7 +43,7 @@ const UserListDataModal = ({open, userModal, handleChange, checked, permissionsR
                         </ListItem>
                     </div>
                 </div>
-                <div style={{width: '100%'}}>
+                {/* <div style={{width: '100%'}}>
                     <p><strong>Permisos y accesos</strong></p>
                     <div style={{minHeight: '16.5vw', borderRadius: 12, borderWidth: 1, borderStyle: 'solid', borderColor: '#C4C4C4', backgroundColor: '#F1F1F1'}}>
                         <div style={{margin: 10, padding: 10, width: '45%', float: 'left'}}>
@@ -73,7 +73,7 @@ const UserListDataModal = ({open, userModal, handleChange, checked, permissionsR
                             }
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <div style={{width: '100%', height: '5vh', margin: 10}}>
                     <button style={{
                         width: 189, 
