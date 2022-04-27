@@ -1,4 +1,4 @@
-import { dateSimple, dateWithTime, environment, getExecutionReportData, getSignById, getUserNameById, imageToBase64, time } from "../../config";
+import { date, dateSimple, dateWithTime, environment, getExecutionReportData, getSignById, getUserNameById, imageToBase64, time } from "../../config";
 import { pdfMakeRoutes } from "../../routes";
 import logo from '../../assets/logo_icv_gris.png';
 import check from '../../assets/check.png'
@@ -21,6 +21,68 @@ const createTable = ( groupKeys = new Array, group = new Array) => {
                 },
             );
             if(index == (group.length - 1)) {
+                resolve(arrayTable)
+            }
+        })
+    })
+}
+
+const crateHistoryTable = ( history = new Array ) => {
+    let arrayTable = []
+    return new Promise(resolve => {
+        history.sort((a, b) => {
+            return a.id - b.id
+        })
+        history.forEach(async (data, index) => {
+            if (index == 0) {
+                arrayTable.push(
+                    {
+                        pageBreak: 'before',
+                        text: 'Historial de la OT\n\n',
+                        fontSize: 16,
+                        bold: true
+                    }
+                )
+            }
+            arrayTable.push(
+                {
+                    text: [
+                        `${data.name ? data.name : await getUserNameById(data.userSendingData)}\n`,
+                    ],
+                    bold: true,
+                    fontSize: 8
+                },
+                {
+                    text: [
+                        `Fecha: ${date(data.id).toLowerCase()}\n`,
+                    ],
+                    fontSize: 8
+                },
+                {
+                    text: [
+                        'Estado: ' + `${(data.type === "sending-to-next-level") ? 'Enviado' : 'Rechazado'}\n`,
+                    ],
+                    color: `${(data.type === "sending-to-next-level") ? '#81E508' : '#852F07'}`,
+                    fontSize: 8
+                },
+                {
+                    text: 'Mensaje: \n',
+                    fontSize: 8
+                },
+                {
+                    text: [
+                        {
+                            text: `${data.message}\n`,
+                            italics: true
+                        }
+                    ],
+                    fontSize: 8
+                },
+                {
+                    text: '.................................\n'
+                }
+            )
+            if(index == (history.length - 1)) {
                 resolve(arrayTable)
             }
         })
@@ -359,6 +421,7 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
                 }
             },
             await createTable(groupKeys, group),
+            (reportData.history.length > 0) ? await crateHistoryTable(reportData.history) : {},
             {
                 columns: [
                     {
@@ -389,21 +452,21 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
                         margin: [0, 100, 0, 10],
                         width: 200,
 			            height: 100,
-                        image: chiefMachinerySign
+                        image: chiefMachinerySign ? chiefMachinerySign : null
                     },
                     {
                         alignment: 'center',
                         margin: [0, 100, 0, 10],
                         width: 200,
 			            height: 100,
-                        image: shiftManagerSign
+                        image: shiftManagerSign ? shiftManagerSign : null
                     },
                     {
                         alignment: 'center',
                         margin: [0, 100, 0, 10],
                         width: 200,
 			            height: 100,
-                        image: executionUserSign
+                        image: executionUserSign ? executionUserSign : null
                     },
                 ]
             },
@@ -435,10 +498,10 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
                     },
                 ]
             },
-            {
-                margin: [0, 10, 0, 100],
+            /* {
+                margin: [0, 10, 0, 10],
                 text: `Descargado desde https://mantencion.icv.cl`
-            },
+            }, */
              await createImagesTables()
         ],
         styles: {
@@ -471,6 +534,12 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
                 bold: 'true',
                 alignment: 'center'
             },
+            historial: {
+                margin: [0, 5, 0, 15],
+                fontSize: 10,
+                bold: true,
+                alignment: 'justify'
+            },
             tableHeader: {
                 bold: true,
                 fontSize: 13,
@@ -479,6 +548,7 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
         },
     };
 
+    console.log(docDefinition)
     
     pdfMakeRoutes.createPdf(docDefinition).then(data=> {
         const linkSource = data.data;
