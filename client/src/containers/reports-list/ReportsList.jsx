@@ -88,6 +88,22 @@ const ReportsList = ({list, reloadData}) => {
     }, [list])
     
 
+    const levelToState = (level, usersAssigned) => {
+        if((level==0 || !level) && (usersAssigned.length > 0)) {
+            return 'Ejecutando Operario'
+        } else if((level==0 || !level) && (usersAssigned.length == 0)) {
+            return 'Sin Asignar'
+        } else if (level==1) {
+            return 'Revisión Supervisor'
+        } else if (level==2) {
+            return 'Revisión J. Maquinaria'
+        } else if (level==3) {
+            return 'Revisión SAP'
+        } else if (level==4) {
+            return 'Terminado'
+        }
+    }
+
 
     return(
         <div style={{width: '100%'}} /* className='root' */>
@@ -108,7 +124,10 @@ const ReportsList = ({list, reloadData}) => {
                     <p > <strong>Horómetro</strong> </p>
                 </Grid>
                 <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
-                    <p > <strong>ID#</strong> </p>
+                    <p > <strong>N° OT</strong> </p>
+                </Grid>
+                <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                    <p > <strong>Estado</strong> </p>
                 </Grid>
                 <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
                     <p > <strong>Responsable</strong> </p>
@@ -116,7 +135,7 @@ const ReportsList = ({list, reloadData}) => {
                 <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
                     <p > <strong>Máquina</strong> </p>
                 </Grid>
-                <Grid item style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
+                <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
                     <p > <strong>Acción</strong> </p>
                 </Grid>
             </Grid>
@@ -132,6 +151,7 @@ const ReportsList = ({list, reloadData}) => {
             }
             {
                 lista.map((item, i) => {
+                    console.log(item)
                     /* //console.log(item)
                     let m = await getMachineTypeByEquid(item.machine)
                     console.log(m) */
@@ -155,6 +175,11 @@ const ReportsList = ({list, reloadData}) => {
                             <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
                                 <p> {item.idIndex} </p>
                             </Grid>
+                            <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
+                                <div style={{textAlign: 'center'}}>
+                                    <p> {levelToState(item.level, item.usersAssigned)} </p>
+                                </div>
+                            </Grid>
                             {item.enabled ? 
                             <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
                                 <p> <button onClick={()=>openModal(item)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
@@ -167,10 +192,10 @@ const ReportsList = ({list, reloadData}) => {
                                 <p> {item.model} {item.number} </p>
                             </Grid>
                     
-                            <Grid item style={{textAlign: 'center', width: '15%', marginLeft: 5}}>
+                            <Grid item style={{textAlign: 'center', width: '5%', marginLeft: 5}}>
                                 <p> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
                                 {!item.enabled &&
-                                    <p> <button  onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Descargar PDF</button> </p>
+                                    <p> <button  onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
                                 }
                             </Grid>
                         </Grid>

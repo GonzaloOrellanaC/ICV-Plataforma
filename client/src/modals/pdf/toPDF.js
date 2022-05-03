@@ -440,13 +440,6 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
             },
             {
                 columns: [
-                    /* {
-                        alignment: 'center',
-                        margin: [0, 100, 0, 10],
-                        width: 125,
-			            height: 100,
-                        image: adminSign
-                    }, */
                     {
                         alignment: 'center',
                         margin: [0, 100, 0, 10],
@@ -472,12 +465,6 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
             },
             {
                 columns: [
-                    /* {
-                        alignment: 'center',
-                        margin: [0, 10, 0, 200],
-                        width: '*',
-                        text: admin + '\n\ Ejecutivo SAP'
-                    }, */
                     {
                         alignment: 'center',
                         margin: [0, 10, 0, 200],
@@ -498,10 +485,6 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
                     },
                 ]
             },
-            /* {
-                margin: [0, 10, 0, 10],
-                text: `Descargado desde https://mantencion.icv.cl`
-            }, */
              await createImagesTables()
         ],
         styles: {

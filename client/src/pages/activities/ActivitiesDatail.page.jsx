@@ -163,12 +163,17 @@ const ActivitiesDetailPage = () => {
     const sendDataToRead = (group = new Array(), state = new Boolean()) => {
         group.map((item, index) => {
             item.map((i, n) => {
+                // console.log(i.isChecked)
                 if(!i.isChecked) {
                     state = false
                 }
                 if(n == (item.length - 1)) {
                     if(index == (group.length - 1)) {
-                        responseMessage()
+                        if (state) {
+                            responseMessage()
+                        } else {
+                            alert('Debe completar la pauta totalmente para enviar a revisión.')
+                        }
                         /* if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
                             sendToNext(state, reportAssigned)
                         }else{
@@ -362,10 +367,6 @@ const ActivitiesDetailPage = () => {
             }, 1000);
         })
     }
-
-    const backActivity = (report) => {
-
-    }
  
     const terminarjornada = async () => {
         if(navigator.onLine) {
@@ -442,41 +443,6 @@ const ActivitiesDetailPage = () => {
                                         <h1 style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
                                             Actividades Asignadas / Detalle / OT {id} <strong>{reportAssigned && reportAssigned.testMode ? 'Modo test' : ''}</strong>
                                         </h1>
-                                        
-                                        <div style={{position: 'absolute', right: 10, width: '50%', textAlign: 'right'}}>
-                                            <div style={{width: '100%', position: 'relative', right: 10, display: 'block'}}>
-                                                {/* {
-                                                    ((localStorage.getItem('role') !== 'inspectionWorker')||(localStorage.getItem('role') !== 'maintenceOperator')) && <div style={{float: 'right', width: '40%', marginTop: 0, textAlign: 'right', marginRight: 20}}>
-                                                        {canEdit && <Button variant="contained" color={'secondary'} style={{ borderRadius: 50 }} onClick={()=>{endReport()}}>
-                                                            Rechazar OT
-                                                        </Button>}
-                                                        {!canEdit && <Button disabled={true} variant="contained" color={'secondary'} style={{ borderRadius: 50 }}>
-                                                            Rechazar OT
-                                                        </Button>}
-                                                    </div>
-                                                }
-                                                {
-                                                    (localStorage.getItem('role') != 'sapExecutive') && <div style={{float: 'right', width: '40%', marginTop: 0, textAlign: 'right', marginRight: 20}}>
-                                                        {canEdit && <Button variant="contained" color={'primary'} style={{ borderRadius: 50 }} onClick={()=>{endReport()}}>
-                                                            Enviar OT
-                                                        </Button>}
-                                                        {!canEdit && <Button disabled={true} variant="contained" color={'primary'} style={{ borderRadius: 50 }}>
-                                                            Enviar OT
-                                                        </Button>}
-                                                    </div>
-                                                }
-                                                {
-                                                    (localStorage.getItem('role') === 'sapExecutive') && <div style={{float: 'right', width: '40%', marginTop: 10, textAlign: 'right', marginRight: 20}}>
-                                                        {canEdit && <Button variant="contained" color={'primary'} style={{ borderRadius: 50 }} onClick={()=>{endReport()}}>
-                                                            Cerrar Orden
-                                                        </Button>}
-                                                        {!canEdit && <Button disabled={true} variant="contained" color={'primary'} style={{ borderRadius: 50 }}>
-                                                            Cerrar Orden
-                                                        </Button>}
-                                                    </div>
-                                                } */}
-                                            </div>
-                                        </div>
                                     </Toolbar>
                                 </div>
                             </div>

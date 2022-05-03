@@ -11,25 +11,47 @@ import InputTextDialog from './InputTextDialog';
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
-const ReportDataDialog = ({open, handleClose, report, item, index, executionReport, gruposKeys, indexActivity, indexGroup, save, setChecks}) => {
+const ReportDataDialog = (
+  {
+    open,
+    handleClose,
+    report,
+    item,
+    index,
+    executionReport,
+    gruposKeys,
+    indexActivity,
+    indexGroup,
+    save,
+    setChecks
+  }
+  ) => {
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
+  const [unidad, setUnidad] = useState()
   const [openImageDialog, setOpenImageDialog] = useState(false)
   const [imagePreview, setImagePreview] = useState('')
   const [openLoadingModal, setOpenLoadinModal] = useState(false)
   const [openInputTextDialog, setOpenInputTextDialog] = useState(false)
 
+  /* if(item.unidadData) {
+    console.log(item.unidadData)
+    setUnidad(item.unidadData)
+  } */
+
   useEffect(() => {
+    setUnidad(item.unidadData)
     if(item.messages) {
       setMessages(item.messages)
       setTimeout(() => {
         document.getElementById('commits').scrollTop = document.getElementById('commits').scrollHeight
-      }, 50);
+      }, 100);
     }
   }, [])
 
   const changeUnidad = (value) => {
-    item.unidadData = value
+    console.log(value)
+    setUnidad(value)
   }
 
   const inputMessage = (value) => {
@@ -83,6 +105,7 @@ const ReportDataDialog = ({open, handleClose, report, item, index, executionRepo
   }
 
   const saveItem = (index, state, item) => {
+    item.unidadData = unidad
     if(messages.length > 0) {
       save(index, state, item)
       executionReport.offLineGuard = Date.now()
@@ -133,8 +156,7 @@ const ReportDataDialog = ({open, handleClose, report, item, index, executionRepo
           <Grid item xl={3}>
             <div style={{marginLeft: 24, marginBottom: 16}}>
               <h3>Total utilizado</h3>
-              {!isMobile && <TextField id="standard-basic" label={item.unidad} variant="standard" type='number' value={item.unidadData} onChange={(e)=>changeUnidad(e.target.value)}/>}
-              {isMobile && <TextField id="standard-basic" label={item.unidad} variant="standard" type='number' value={item.unidadData} />}
+              <TextField id="standard-basic" label={item.unidad} variant="standard" type='number' value={unidad} onChange={(e)=>{changeUnidad(e.target.value)}}/>
             </div>
           </Grid>
         </Grid>}
