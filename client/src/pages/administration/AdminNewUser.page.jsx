@@ -6,7 +6,7 @@ import { CreateUser, PermissionUser } from '../../containers'
 import { useHistory, useParams } from 'react-router-dom'
 import { usersRoutes } from '../../routes'
 import { validate } from 'rut.js';
-import { LoadingModal } from '../../modals';
+import { LoadingLogoModal, LoadingModal } from '../../modals';
 import transformInfo from './transform-info'
 
 const styleModal = {
@@ -63,9 +63,46 @@ const AdminNewUserPage = () => {
         }
     }, [])
 
-    const saveUser = () => {
+    const saveUser = async () => {
         let userData = JSON.parse(localStorage.getItem('userDataToSave'));
-        let permisosReportes = JSON.parse(localStorage.getItem('listaPermisosReportes'));
+        userData.confirmPassword = null;
+        setOpenLoader(true);
+        if(routingData === 'Nuevo usuario') {
+            try{
+                setLoadingData('Inscribiendo nuevo usuario');
+                let userState = await usersRoutes.createUser(userData, userData.password);
+                if(userState.status == 200) {
+                    setOpenLoader(false)
+                    openCloseModal()
+                }else{
+                    alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
+                    setOpenLoader(false)
+                    history.goBack()
+                }
+            } catch (err) {
+                alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
+                setOpenLoader(false)
+                history.goBack()
+            }
+        }else if(routingData === 'Editar usuario') {
+            try{
+                setLoadingData('Editando usuario');
+                let userState = await usersRoutes.editUser(userData);
+                if(userState.status == 200) {
+                    setOpenLoader(false)
+                    openCloseModal()
+                }else{
+                    alert('Error al editar usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
+                    setOpenLoader(false)
+                    history.goBack()
+                }
+            } catch (err) {
+                alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
+                setOpenLoader(false)
+                history.goBack()
+            }
+        }
+        /* let permisosReportes = JSON.parse(localStorage.getItem('listaPermisosReportes'));
         let permisosUsuarios = JSON.parse(localStorage.getItem('listaPermisosUsuarios'));
         permisosReportes.forEach( (permisoReporte, index) => {
             if(!permisoReporte.isChecked) {
@@ -120,12 +157,20 @@ const AdminNewUserPage = () => {
                     }
                 })
             }
-        });
+        }); */
     }
 
     const editUser = () => {
-        let userData = JSON.parse(localStorage.getItem('userDataToSave'));
-        let permisosReportes = JSON.parse(localStorage.getItem('listaPermisosReportes'));
+        setOpenLoader(true)
+        setTimeout(async() => {
+            let userData = JSON.parse(localStorage.getItem('userDataToSave'))
+            let userState = await usersRoutes.editUser(userData, id)
+            if(userState) {
+                openCloseModal()
+                setOpenLoader(false)
+            }
+        }, 1000);
+        /* let permisosReportes = JSON.parse(localStorage.getItem('listaPermisosReportes'));
         let permisosUsuarios = JSON.parse(localStorage.getItem('listaPermisosUsuarios'));
         permisosReportes.forEach( (permisoReporte, index) => {
             if(!permisoReporte.isChecked) {
@@ -146,7 +191,7 @@ const AdminNewUserPage = () => {
                     }
                 })
             }
-        });
+        }); */
     }
 
     const deleteData = () => {
@@ -297,7 +342,8 @@ const AdminNewUserPage = () => {
                                     </Fab>
                                 </Box>
                             </Modal>
-                            <LoadingModal open={openLoader} loadingData={loadingData} withProgress={false}/>
+                            {/* <LoadingModal open={openLoader} loadingData={loadingData} withProgress={false}/> */}
+                            <LoadingLogoModal open={openLoader} />
                         </div>
                     </Card>
                 </Grid>

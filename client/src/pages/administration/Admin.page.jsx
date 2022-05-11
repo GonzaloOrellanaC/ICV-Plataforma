@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton, Button } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
-import { useStylesTheme } from '../../config'
+import { checkDisableButtonNotSuperAdmin, useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
 import { useHistory } from 'react-router-dom'
 import { useLanguage } from '../../context'
 
 const AdminPage = () => {
-    const classes = useStylesTheme();
+    const classes = useStylesTheme()
     const history = useHistory()
+    const disable = checkDisableButtonNotSuperAdmin()
     return (
         <Box height='100%'>
             <Grid className={classes.pageRoot} container spacing={0}>
@@ -31,8 +32,11 @@ const AdminPage = () => {
                             </div>
                         </Grid>
                         <Grid container alignItems='center' justifyContent='center'>
-                            <Grid item xs={12} sm={12} md={6} lg={3}>
+                            <Grid item xs={12} sm={12} md={6} lg={3} style={{padding: 10}}>
                                 <CardButton variant='users'/>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={3} style={{padding: 10}}>
+                                <CardButton variant='roles' disableButton={disable}/>
                             </Grid>
                             {/* <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                                 

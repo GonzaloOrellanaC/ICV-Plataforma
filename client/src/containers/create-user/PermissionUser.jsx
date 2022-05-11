@@ -24,7 +24,7 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
     useEffect(() => {
         setUserData(JSON.parse(localStorage.getItem('userDataToSave')))
         setObra(JSON.parse(JSON.parse(localStorage.getItem('userDataToSave')).sites).descripcion)
-        getPermisos();
+        /* getPermisos(); */
         renameUserType();
     }, []);
 
@@ -98,49 +98,51 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
                     {/* <div style={{marginRight: 10, width: '100%'}}> */}
                         {
                             userData &&
-                            <Grid item xl={3} md={4} style={{ padding: 20, marginRight: 0, backgroundColor: '#F9F9F9', borderRadius: 20, overflowY: 'auto'}}>
-                                <h2>Datos del usuario</h2>
+                            <Grid item xl={12} md={12} style={{ padding: 20, marginRight: 0, backgroundColor: '#F9F9F9', borderRadius: 20, overflowY: 'auto'}}>
+                                <div style={{textAlign: 'center'}}>
+                                    <h2>Resumen del usuario</h2>
 
-                                <div style={{width: '100%', marginBottom: 15}}>
-                                    <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>RUT</p>
-                                    <p style={{margin: 0, fontSize: 16}}>{userData.rut}</p>
+                                    <div style={{width: '100%', marginBottom: 15}}>
+                                        <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>RUT</p>
+                                        <p style={{margin: 0, fontSize: 16}}>{userData.rut}</p>
+                                    </div>
+
+                                    <div style={{width: '100%', marginBottom: 15}}>
+                                        <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Nombre y Apellido</p>
+                                        <p style={{margin: 0, fontSize: 16}}>{userData.name} {userData.lastName}</p>
+                                    </div>
+
+                                    <div style={{width: '100%', marginBottom: 15}}>
+                                        <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Tipo de usuario</p>
+                                        {
+                                            userType &&
+                                            <p style={{margin: 0, fontSize: 16}}>{userType}</p>
+                                        }
+                                    </div>
+
+                                    <div style={{width: '100%', marginBottom: 15}}>
+                                        <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Obra</p>
+                                        <p style={{margin: 0, fontSize: 16}}>{obra}</p>
+                                    </div>
+
+                                    <div style={{width: '100%', marginBottom: 15}}>
+                                        <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Correo electrónico</p>
+                                        <p style={{margin: 0, fontSize: 16}}>{userData.email}</p>
+                                    </div>
+
+                                    <div style={{width: '100%', marginBottom: 15}}>
+                                        <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Teléfono</p>
+                                        <p style={{margin: 0, fontSize: 16}}>+56 {userData.phone}</p>
+                                    </div>
+
+                                    { (typeDisplay === 'Nuevo usuario') && <div style={{width: '100%', marginBottom: 15}}>
+                                        <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Contraseña</p>
+                                        <p style={{margin: 0, fontSize: 16}}>{userData.password} {/* <IconButton style={{fontSize: 16, padding: 2}}><FontAwesomeIcon icon={faEyeSlash} /></IconButton> */} </p>
+                                    </div>}
                                 </div>
-
-                                <div style={{width: '100%', marginBottom: 15}}>
-                                    <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Nombre y Apellido</p>
-                                    <p style={{margin: 0, fontSize: 16}}>{userData.name} {userData.lastName}</p>
-                                </div>
-
-                                <div style={{width: '100%', marginBottom: 15}}>
-                                    <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Tipo de usuario</p>
-                                    {
-                                        userType &&
-                                        <p style={{margin: 0, fontSize: 16}}>{userType}</p>
-                                    }
-                                </div>
-
-                                <div style={{width: '100%', marginBottom: 15}}>
-                                    <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Obra</p>
-                                    <p style={{margin: 0, fontSize: 16}}>{obra}</p>
-                                </div>
-
-                                <div style={{width: '100%', marginBottom: 15}}>
-                                    <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Correo electrónico</p>
-                                    <p style={{margin: 0, fontSize: 16}}>{userData.email}</p>
-                                </div>
-
-                                <div style={{width: '100%', marginBottom: 15}}>
-                                    <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Teléfono</p>
-                                    <p style={{margin: 0, fontSize: 16}}>+56 {userData.phone}</p>
-                                </div>
-
-                                { (typeDisplay === 'Nuevo usuario') && <div style={{width: '100%', marginBottom: 15}}>
-                                    <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Contraseña</p>
-                                    <p style={{margin: 0, fontSize: 16}}>{userData.password} <IconButton style={{fontSize: 16, padding: 2}}><FontAwesomeIcon icon={faEyeSlash} /></IconButton> </p>
-                                </div>}
                             </Grid>
                         }
-                        <Grid item  xl={9} md={8} style={{paddingLeft: 20, height: '100%', borderLeftColor: '#C4C4C4', borderLeftWidth: 1, borderLeftStyle: 'solid'}}>
+                        {/* <Grid item  xl={9} md={8} style={{paddingLeft: 20, height: '100%', borderLeftColor: '#C4C4C4', borderLeftWidth: 1, borderLeftStyle: 'solid'}}>
                             <div style={{ padding: 20, width: '100%'}}>
                                 <h2>Admininstrar permisos</h2>
                                 <div style={{float: 'left', width: '45%'}}>
@@ -238,7 +240,7 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
                                     }
                                 </div>
                             </div>
-                        </Grid>
+                        </Grid> */}
                     {/* </div> */}
                 {/* </Grid> */}
             </Grid>

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Button, makeStyles } from '@material-ui/core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faClipboardList, faTools, faUserCog, faUsers, faListAlt, faTruck } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faClipboardList, faTools, faUserCog, faUsers, faListAlt, faTruck, faListOl } from '@fortawesome/free-solid-svg-icons'
 import { useLanguage } from '../../context'
 import { useHistory } from 'react-router-dom'
 
@@ -59,6 +59,8 @@ const CardButton = ({ variant, disableButton }) => {
             return (<FontAwesomeIcon icon={faUserCog} size='4x' className={classes.iconButton}/>)
         case 'users':
             return (<FontAwesomeIcon icon={faUsers} size='4x' className={classes.iconButton}/>)
+        case 'roles':
+            return (<FontAwesomeIcon icon={faListOl} size='4x' className={classes.iconButton}/>)
         }
     }
     const handleTypeText = () => {
@@ -77,6 +79,8 @@ const CardButton = ({ variant, disableButton }) => {
             return dictionary.welcome.administrationButton
         case 'users':
             return dictionary.admin.adminUsersButton
+        case 'roles':
+            return dictionary.roles.rolesUsersButton
         }
     }
 
@@ -92,7 +96,7 @@ const CardButton = ({ variant, disableButton }) => {
 }
 
 CardButton.propTypes = {
-    variant: PropTypes.oneOf(['inspection', 'assignment', 'machines', 'maintenance', 'reports', 'configuration', 'administration', 'users'])
+    variant: PropTypes.oneOf(['inspection', 'assignment', 'machines', 'maintenance', 'reports', 'configuration', 'administration', 'users', 'roles'])
 }
 
 export default CardButton

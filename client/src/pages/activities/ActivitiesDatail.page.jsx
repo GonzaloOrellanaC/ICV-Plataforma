@@ -159,12 +159,13 @@ const ActivitiesDetailPage = () => {
             }
         }else{
             setLoadingLogo(true)
+            console.log(reportAssigned.testMode)
             if(reportAssigned.testMode) {
                 let groupFiltered = []
                 indexGroup.map((g, i) => {
                     groupFiltered.push(executionReportData.data.group[g.data])
                     if(i == (indexGroup.length - 1)) {
-                        sendDataToRead(group, state, false)
+                        sendDataToRead(groupFiltered, state, false)
                     }
                 })
             }else{
@@ -203,6 +204,9 @@ const ActivitiesDetailPage = () => {
                 console.log(i.isChecked)
                 if(!i.isChecked) {
                     state = false
+                }
+                if(reportAssigned.testMode) {
+                    console.log(i)
                 }
                 if(n == (item.length - 1)) {
                     if(index == (group.length - 1)) {

@@ -224,7 +224,7 @@ const getSitesList = (setDisableButtons) => {
     return new Promise(resolve => {
         apiIvcRoutes.getSites()
         .then(data => {
-            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
+            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin')) {
                 localStorage.setItem('sitio', JSON.stringify(data.data[0]));
                 setTimeout(() => {
                     setDisableButtons(false)

@@ -53,7 +53,8 @@ export const AuthProvider = (props) => {
                         localStorage.setItem('lastName', userDataToSave.lastName);
                         localStorage.setItem('_id', userDataToSave._id);
                         localStorage.setItem('role', userDataToSave.role);
-                        if(userDataToSave.role === 'admin' || userDataToSave.role === 'sapExecutive') {
+                        //if(userDataToSave.role === 'admin' || userDataToSave.role === 'sapExecutive') {
+                        if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
                             localStorage.setItem('isAdmin', true);
                             setAdmin(true)
                         }else{

@@ -24,6 +24,9 @@
     "admin": {
         "adminUsersButton": "Usuarios"
     },
+    "roles": {
+        "rolesUsersButton": "Roles"
+    },
     "machines": {
         "title": "Selecciona tipo de máquina"
     },

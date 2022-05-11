@@ -91,14 +91,15 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
             let userList = new Array();
             let users = new Array();
             userList = response.data;
-            userList.forEach((user, index) => {
+            console.log(userList)
+            userList.forEach((user, index) => {/* 
                 let permissionsReports = new Array();
                 permissionsReports = user.permissionsReports
                 if(permissionsReports.length > 0) {
-                    if(permissionsReports[1].isChecked) {
+                    if(permissionsReports[1].isChecked) { */
                         users.push(user);
-                    }
-                }
+                    /* }
+                } */
                 if(index == (userList.length - 1)) {
                     setOperarios(users)
                 }
@@ -173,6 +174,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                     <option value={""}>Seleccionar operario</option>
                     {
                         operarios.filter(user => {
+                            console.log(user)
                             if(reportType ==='Inspección') {
                                 if(user.role==='inspectionWorker') {
                                     return user

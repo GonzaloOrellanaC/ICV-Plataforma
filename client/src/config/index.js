@@ -22,6 +22,7 @@ import getSignById from './getSignById'
 import time from './time'
 import reportPriority from './reportPriority'
 import saveReport from './saveReport'
+import checkDisableButtonNotSuperAdmin from './checkDisableButtonNotSuperAdmin'
 export {
     theme,
     getUserNameById,
@@ -56,5 +57,6 @@ export {
     getSignById,
     time,
     reportPriority,
-    saveReport
+    saveReport,
+    checkDisableButtonNotSuperAdmin
 }

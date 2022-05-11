@@ -288,11 +288,11 @@ const CreateReports = () => {
                                     </Toolbar>
                                 </div>
                             </div>
-                            <Grid container className='form-container'>
-                                <Grid item lg={6}>
+                            <Grid container>
+                                <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
                                     <div style={{width: '100%'}}>
                                         <FormControl>
-                                            <p>N° OT</p>
+                                            <p style={{margin: 5}}>N° OT</p>
                                             <input 
                                             disabled 
                                             value={idIndex} 
@@ -305,7 +305,7 @@ const CreateReports = () => {
                                     </div>
                                     <div style={{width: '100%'}}>
                                         <FormControl>
-                                            <p>ID SAP</p>
+                                            <p style={{margin: 5}}>ID SAP</p>
                                             <input 
                                             value={sapId} 
                                             onChange={(e)=>{setSapId(e.target.value)}} 
@@ -318,7 +318,7 @@ const CreateReports = () => {
                                     </div>
                                     <div style={{width: '100%'}}>
                                         <FormControl>
-                                            <p>Fecha Inicio Programado</p>
+                                            <p style={{margin: 5}}>Fecha Inicio Programado</p>
                                             <input 
                                             value={date} 
                                             onChange={(e)=>{setDate(e.target.value)}} 
@@ -332,7 +332,7 @@ const CreateReports = () => {
                                     </div>
                                     <div style={{width: '100%'}}>
                                         <FormControl>
-                                            <p>Fecha Término Programado</p>
+                                            <p style={{margin: 5}}>Fecha Término Programado</p>
                                             <input 
                                             value={dateEnd} 
                                             onChange={(e)=>{setDateEnd(e.target.value)}} 
@@ -346,7 +346,7 @@ const CreateReports = () => {
                                         </FormControl>
                                     </div>
                                     <div style={{width: '100%'}}>
-                                    <p>Seleccionar tipo de reporte</p>
+                                    <p style={{margin: 5}}>Seleccionar tipo de reporte</p>
                                         <FormControl>
                                             <select 
                                                 onBlur={()=>saveReportData(true)}
@@ -365,7 +365,7 @@ const CreateReports = () => {
                                     </div>
                                     <div style={{width: '100%'}}>
                                         <FormControl >
-                                            <p>Seleccionar modelo de máquina</p>
+                                            <p style={{margin: 5}}>Seleccionar modelo de máquina</p>
                                             <select 
                                                 onBlur={()=>saveReportData(true)}
                                                 className={classes.inputsStyle} 
@@ -386,12 +386,11 @@ const CreateReports = () => {
                                             </select>
                                         </FormControl>
                                     </div>
-                                    
-                                </Grid>
-                                <Grid item lg={6}>
+                                </Grid>        
+                                <Grid item xl={6} lg={6} md={6} sm={12} xs={12} >
                                     <div style={{width: '100%'}}>
                                         <FormControl >
-                                            <p>Seleccionar Pauta  {(disablePautas && changed) && <b>ESPERE...</b>}</p>
+                                            <p style={{margin: 0}}>Seleccionar Pauta  {(disablePautas && changed) && <b>ESPERE...</b>}</p>
                                             <select 
                                                 disabled={disablePautas}
                                                 onBlur={()=>saveReportData()} 
@@ -410,7 +409,7 @@ const CreateReports = () => {
                                                         )
                                                     })
                                                 }
-                                                 {
+                                                {
                                                     (pautas.length == 0) && <option> Selección no cuenta con pautas. </option>
                                                 } 
                                             </select>

@@ -58,26 +58,31 @@ const environment = {
         },
         {
             id: 1,
+            name: 'Administrador',
+            dbName: 'admin'
+        },
+        {
+            id: 2,
             name: 'Ejecutivo SAP',
             dbName: 'sapExecutive'
         },
         {
-            id: 2,
+            id: 3,
             name: 'Operario de Inspección',
             dbName: 'inspectionWorker'
         },
         {
-            id: 3,
+            id: 4,
             name: 'Operario de Mantención',
             dbName: 'maintenceOperator'
         },
         {
-            id: 4,
+            id: 5,
             name: 'Jefe de turno - Inspección y Mantención',
             dbName: 'shiftManager'
         },
         {
-            id: 5,
+            id: 6,
             name: 'Jefe de maquinaria',
             dbName: 'chiefMachinery'
         }

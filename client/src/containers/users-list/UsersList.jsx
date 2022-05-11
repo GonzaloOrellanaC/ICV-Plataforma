@@ -128,7 +128,7 @@ const UsersList = ({height, hableButton}) => {
                 </div>
 
                 {
-                    hableButton && <div style={{overflowY: 'auto', height: '53vh'}}>
+                    hableButton && <div style={{overflowY: 'auto', height: 'calc(100vh - 350px)'}}>
                     {
                         usuarios.map((e, n) => {
                             console.log(e.sites)

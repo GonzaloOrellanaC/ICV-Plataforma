@@ -14,7 +14,8 @@ import { reportsRoutes, usersRoutes } from '../../routes';
 import { dateWithTime } from '../../config';
 import { LoadingLogoModal } from '../loadings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faArrowCircleLeft, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { useHistory } from 'react-router-dom';
 
 const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
     //console.log(report);
@@ -28,6 +29,7 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
     const [ userChiefMachineryName, setChiefMachineryName ] = useState('')
     const [ userSapExecutiveName, setUserSapExecutiveName ] = useState('')
     const [ loadingDelete, setLoadingDelete ] = useState(false)
+    const history = useHistory()
 
     const setUserToReport = async (userId) => {
         if(userId === '') {
@@ -159,50 +161,60 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
                     </Grid>
                 </Grid>
                 <Grid container>
-
                     <Grid item md={6} xs={12} sm={12} lg={6} >
-                    <div style={{marginTop: 30, width: '100%'}}>
+                        <div style={{marginTop: 30, width: '100%'}}>
 
-                    <div style={{width: '100%', height: 59}}>
-                        <label>Pauta asignada a: <b>{userAssignedName.length > 1 ? userAssignedName : 'Sin asignación'}</b></label>
-                    </div>
-                    <div style={{width: '100%', height: 59}}>
-                        <label>Jefe de turno revisor: <b>{userShiftManagerName.length > 1 ? userShiftManagerName : 'Sin información'}</b></label>
-                    </div>
-                    <div style={{width: '100%', height: 59}}>
-                        <label>Jefe de maquinaria revisor: <b>{userChiefMachineryName.length > 1 ? userChiefMachineryName : 'Sin información'}</b></label>
-                    </div>
-                    <div style={{width: '100%', height: 59}}>
-                        <label>Ejecutivo SAP revisor: <b>{userSapExecutiveName.length > 1 ? userSapExecutiveName : 'Sin información'}</b></label>
-                    </div>
-                    </div>
+                        <div style={{width: '100%', height: 59}}>
+                            <label>Pauta asignada a: <b>{userAssignedName.length > 1 ? userAssignedName : 'Sin asignación'}</b></label>
+                        </div>
+                        <div style={{width: '100%', height: 59}}>
+                            <label>Jefe de turno revisor: <b>{userShiftManagerName.length > 1 ? userShiftManagerName : 'Sin información'}</b></label>
+                        </div>
+                        <div style={{width: '100%', height: 59}}>
+                            <label>Jefe de maquinaria revisor: <b>{userChiefMachineryName.length > 1 ? userChiefMachineryName : 'Sin información'}</b></label>
+                        </div>
+                        <div style={{width: '100%', height: 59}}>
+                            <label>Ejecutivo SAP revisor: <b>{userSapExecutiveName.length > 1 ? userSapExecutiveName : 'Sin información'}</b></label>
+                        </div>
+                        </div>
 
                     </Grid>
                     <Grid item>
-                    <div style={{marginTop: 30, width: '100%'}}>
-
-                    <div style={{width: '100%', height: 59}}>
-                        <label>Creado: <b>{dateWithTime(report.createdAt)}</b></label>
-                    </div>
-                    <div style={{width: '100%', height: 59}}>
-                        <label>Inicio: <b>{(dateWithTime(report.dateInit) === 'Sin información') ? 'No inicado' : dateWithTime(report.dateInit)}</b></label>
-                    </div>
-                    <div style={{width: '100%', height: 59}}>
-                        <label>Finalizado: <b>{(dateWithTime(report.endReport) === 'Sin información') ? 'No finalizado' : dateWithTime(report.endReport)}</b></label>
-                    </div>
-                    <div style={{width: '100%', height: 59}}>
-                        <label>Cerrado: <b>{(dateWithTime(report.dateClose) === 'Sin información') ? 'No cerrado' : dateWithTime(report.dateClose)}</b></label>
-                    </div>
-                    </div>
-
+                        <div style={{marginTop: 30, width: '100%'}}>
+                            <div style={{width: '100%', height: 59}}>
+                                <label>Creado: <b>{dateWithTime(report.createdAt)}</b></label>
+                            </div>
+                            <div style={{width: '100%', height: 59}}>
+                                <label>Inicio: <b>{(dateWithTime(report.dateInit) === 'Sin información') ? 'No inicado' : dateWithTime(report.dateInit)}</b></label>
+                            </div>
+                            <div style={{width: '100%', height: 59}}>
+                                <label>Finalizado: <b>{(dateWithTime(report.endReport) === 'Sin información') ? 'No finalizado' : dateWithTime(report.endReport)}</b></label>
+                            </div>
+                            <div style={{width: '100%', height: 59}}>
+                                <label>Cerrado: <b>{(dateWithTime(report.dateClose) === 'Sin información') ? 'No cerrado' : dateWithTime(report.dateClose)}</b></label>
+                            </div>
+                        </div>
                     </Grid>
+
                     <div style={{width: '100%', textAlign: 'right'}}>
-                        <button style={{ height: 50 , width: '100%', backgroundColor: 'red', color: '#fff', fontSize: 20 }} onClick={()=>{removeOt()}}> <strong> <FontAwesomeIcon icon={faTrash} /> Borrar OT {idIndex} </strong> </button>
+                        
                     </div>
                     {
                         loadingDelete && <LoadingLogoModal open={loadingDelete} />
                     }
 
+                </Grid>
+                <Grid container>
+                    <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                        <div style={{padding: 10}}>
+                            <button style={{ height: 50 , width: '100%', backgroundColor: 'green', color: '#fff', fontSize: 20 }} onClick={()=>{history.push(`/assignment/${idIndex}`)}}> <strong> <FontAwesomeIcon icon={faArrowCircleLeft} /> Revisar OT {idIndex} </strong> </button>
+                        </div>
+                    </Grid>
+                    <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                        <div style={{padding: 10}}>
+                            <button style={{ height: 50 , width: '100%', backgroundColor: 'red', color: '#fff', fontSize: 20 }} onClick={()=>{removeOt()}}> <strong> <FontAwesomeIcon icon={faTrash} /> Borrar OT {idIndex} </strong> </button>
+                        </div>
+                    </Grid>
                 </Grid>
                 {/* <Grid container>
                     <div>

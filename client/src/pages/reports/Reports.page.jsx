@@ -4,7 +4,7 @@ import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 import { machinesRoutes, reportsRoutes } from '../../routes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircle, faClipboardList } from '@fortawesome/free-solid-svg-icons';
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useHistory } from 'react-router-dom';
@@ -145,14 +145,31 @@ const ReportsPage = () => {
                         <h1 style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
                             Ordenes
                         </h1>
-                        <Button onClick={()=>{history.push('/reports/create-report')}} title='Nuevo reporte' style={{position: 'absolute', right: 10, color: '#333'}}>
-                            Nueva orden
-                        </Button>
+                        <button 
+                            onClick={()=>{history.push('/reports/create-report')}} 
+                            title='Nuevo reporte' 
+                            style={
+                                {
+                                    position: 'absolute', 
+                                    right: 10, 
+                                    color: '#fff',
+                                    backgroundColor: '#be2e26',
+                                    paddingTop: 10,
+                                    paddingBottom: 10,
+                                    paddingLeft: 20,
+                                    paddingRight: 20,
+                                    borderRadius: 20,
+                                    borderColor: 'transparent'
+                                }
+                            }
+                        >
+                            <FontAwesomeIcon icon={faClipboardList} style={{marginRight: 10}}/> Nueva orden
+                        </button>
                     </Toolbar>
                 </div>
             </div>
             <Grid container>
-                <Grid item xs={12} sm={12} md={5} lg={3} xl={2}>
+                <Grid item xs={12} sm={12} md={5} lg={3} xl={3}>
                     <div className='menu-card'>
                         <h3>Inspecciones</h3>
                         <div style={{float: 'left', width: 'calc(45%)', marginRight: 5, padding: 10, backgroundColor: '#fff', borderRadius: 10}}>
@@ -180,7 +197,7 @@ const ReportsPage = () => {
                                             <FontAwesomeIcon icon={faCircle} size='2x' style={{marginRight: 10}} color={e.color}/>
                                         </Grid>
                                         <Grid item style={{width: '30%'}}>
-                                            <p style={{margin: 0}}>{e.name}</p>
+                                            <p style={{margin: 0, fontSize: 12}}>{e.name}</p>
                                         </Grid>
                                         <Grid item style={{width: '15%'}}>
                                             <Chip label={e.number} style={{marginLeft: 10, marginRight: 10}} />
@@ -221,7 +238,7 @@ const ReportsPage = () => {
                                             <FontAwesomeIcon icon={faCircle} size='2x' style={{marginRight: 10}} color={e.color}/>
                                         </Grid>
                                         <Grid item style={{width: '30%'}}>
-                                            <p style={{margin: 0}}>{e.name}</p>
+                                            <p style={{margin: 0, fontSize: 12}}>{e.name}</p>
                                         </Grid>
                                         <Grid item style={{width: '15%'}}>
                                             <Chip label={e.number} style={{marginLeft: 10, marginRight: 10}} />
@@ -236,7 +253,7 @@ const ReportsPage = () => {
                         </div>
                     </div>
                 </Grid>
-                <Grid item xs={12} sm={12} md={7} lg={9} xl={10}>
+                <Grid item xs={12} sm={12} md={7} lg={9} xl={9}>
                     {
                         vista && <div>
                             <img style={{margin: 0, position: 'absolute', top: '50%', left: 'calc(100%/1.53)', msTransform: 'translateY(-50%)', transform: 'translateY(-50%)'}} src="../../assets/icons/Arrow.svg" alt="" />

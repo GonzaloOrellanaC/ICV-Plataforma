@@ -2,10 +2,12 @@ import AdminPage from './Admin.page'
 import AdminUsersPage from './AdminUsers.Page'
 import AdminNewUserPage from './AdminNewUser.page'
 import UserProfilePage from './UserProfile.page'
+import RolesPage from './Roles.page'
 
 export {
     AdminPage,
     AdminUsersPage,
     AdminNewUserPage,
-    UserProfilePage
+    UserProfilePage,
+    RolesPage
 }

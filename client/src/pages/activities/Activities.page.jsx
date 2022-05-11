@@ -169,17 +169,17 @@ const ActivitiesPage = () => {
                                                     <p style={{fontSize: 12, fontWeight: 'bold'}}>SAP ID</p>
                                                 </div>
                                             </Grid>
-                                            <Grid item xl={1} lg={1} md={1} sm={2} xs={3}>
+                                            <Grid item xl={2} lg={2} md={2} sm={2} xs={3}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold'}}>Inicio programado</p>
                                             </Grid>
-                                            <Grid item l={1} lg={1} md={1} sm={2} xs={2}>
+                                            <Grid item l={2} lg={2} md={2} sm={2} xs={2}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold'}}>Inicio ejecución</p>
                                             </Grid>
-                                            {!isSmall && <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Término ejecución</p>
-                                            </Grid>}
-                                            {!isSmall && <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
+                                            {!isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold'}}>Término programado</p>
+                                            </Grid>}
+                                            {!isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Término ejecución</p>
                                             </Grid>}
                                             <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'center'}}>Máquina</p>
@@ -235,21 +235,21 @@ const ActivitiesPage = () => {
                                                             <p style={{fontSize: 12}}>{element.sapId}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item xl={1} lg={1} md={1} sm={2} xs={3}>
+                                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={3}>
                                                         <div style={{width: '100%', textAlign: 'left'}}>
                                                             <p style={{fontSize: 12}}>{element.dateFormat}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
+                                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={2}>
                                                         <p style={{fontSize: 12}}>{element.init}</p>
                                                     </Grid>
-                                                    { !isSmall && <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                        <p style={{fontSize: 12}}> {element.end} </p>
-                                                    </Grid>}
-                                                    { !isSmall && <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
+                                                    { !isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
                                                         <p style={{fontSize: 12}}> {date(element.endPrev)} </p>
                                                     </Grid>}
-                                                    <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
+                                                    { !isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
+                                                        <p style={{fontSize: 12}}> {element.end} </p>
+                                                    </Grid>}
+                                                    <Grid item xl={1} lg={1} md={1} sm={2} xs={2}>
                                                         <p style={{fontSize: 12, textAlign: 'center'}}> {element.machineType} {element.getMachine.model} N°: {element.getMachine.number} </p>
                                                     </Grid>
                                                     <Grid item xl={1} lg={1} md={1} sm={1} xs={1} style={{width: '100%', textAlign: 'center', paddingRight: 20}}>
@@ -303,19 +303,19 @@ const ActivitiesPage = () => {
                                                             <p style={{fontSize: 12}}>{element.sapId}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item xl={1} lg={1} md={1} sm={2} xs={3}>
+                                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={3}>
                                                         <div style={{width: '100%', textAlign: 'left'}}>
                                                             <p style={{fontSize: 12}}>{element.dateFormat}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item xl={1} lg={1} md={1} sm={2} xs={2}>
+                                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={2}>
                                                         <p style={{fontSize: 12}}>{element.init}</p>
                                                     </Grid>
-                                                    { !isSmall && <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                        <p style={{fontSize: 12}}> {element.end} </p>
-                                                    </Grid>}
-                                                    { !isSmall && <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
+                                                    { !isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
                                                         <p style={{fontSize: 12}}> {date(element.endPrev)} </p>
+                                                    </Grid>}
+                                                    { !isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
+                                                        <p style={{fontSize: 12}}> {element.end} </p>
                                                     </Grid>}
                                                     <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
                                                         <p style={{fontSize: 12, textAlign: 'center'}}> {element.machineType} {element.getMachine.model} <br /> N°: {element.getMachine.number} </p>

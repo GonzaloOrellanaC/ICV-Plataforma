@@ -303,9 +303,9 @@ const Navbar = () => {
                                 </IconButton>
                             </div>}
                             {!disableButtonNoSAP && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Reportes'>
+                                <IconButton onClick={closeSideBar} title='Ordenes de Trabajo'>
                                     <Link to='/reports' className={classes.sideButtons} style={{ color: (path.includes('/reports')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
-                                        <FontAwesomeIcon icon={faClipboardList}/> {navBarOpen ?  ' Reportes' : ''}
+                                        <FontAwesomeIcon icon={faClipboardList}/> {navBarOpen ?  ' Ordenes de Trabajo' : ''}
                                     </Link>
                                 </IconButton>
                             </div>}

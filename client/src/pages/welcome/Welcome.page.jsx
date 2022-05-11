@@ -11,20 +11,21 @@ import readData from './readData'
 import Files from './3dFiles'
 import { useHistory } from 'react-router-dom'
 import { dateWithTime, imageToBase64 } from '../../config'
-import addNotification from 'react-push-notification';
+import addNotification from 'react-push-notification'
 
 const WelcomePage = () => {
     const [ date, setDate ] = useState('')
     const [ hora, setHora ] = useState('')
-    const [ openLoader, setOpenLoader ] = useState(false);
-    const [ openVersion, setOpenVersion ] = useState(false);
+    const [ openLoader, setOpenLoader ] = useState(false)
+    const [ openVersion, setOpenVersion ] = useState(false)
     const [ progress, setProgress ] = useState(0)
     const [ loadingData, setLoadingData ] = useState('')
     const [ disableButton, setDisableButtons ] = useState(true)
-    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true);
-    const [ disableIfNoMaintenance, setDisableIfNoMaintenance ] = useState(false);
-    const [ disableIfNoInspection, setDisableIfNoInspection ] = useState(false);
-    const [ network, setIfHavNetwork ] = useState(true);
+    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true)
+    const [ disableButtonNoAdmin, setDisableButtonNoAdmin ] = useState(true)
+    const [ disableIfNoMaintenance, setDisableIfNoMaintenance ] = useState(false)
+    const [ disableIfNoInspection, setDisableIfNoInspection ] = useState(false)
+    const [ network, setIfHavNetwork ] = useState(true)
     const [ elementsReadyToSend, setElementsReadyToSend ] = useState([])
 
     ////Notificaciones
@@ -33,17 +34,17 @@ const WelcomePage = () => {
 
     const [ cancel, setCancel ] = useState(true)
  
-    const history = useHistory();
+    const history = useHistory()
 
     window.addEventListener('online', () => {
-        setIfHavNetwork(true);
+        setIfHavNetwork(true)
         let last = Number(localStorage.getItem('timeOffline'))
-        let now = Date.now();
+        let now = Date.now()
         if(now < (last + 21600000)) {
             localStorage.setItem('revisado', true)
             localStorage.removeItem('timeOffline')
         }
-    });
+    })
 
     const buttonClick = () => {
         addNotification({
@@ -52,20 +53,20 @@ const WelcomePage = () => {
             message: 'This is a very long message',
             theme: 'darkblue',
             //native: true // when using native, your OS will handle theming.
-        });
-    };
+        })
+    }
 
     window.addEventListener('offline', () => {
-        setIfHavNetwork(false);
+        setIfHavNetwork(false)
         if(!localStorage.getItem('timeOffline')) {
             setTimeOffline(Date.now())
         }
-    });
+    })
 
     const setTimeOffline = (timestamp) => {
-        localStorage.setItem('timeOffline', timestamp);
+        localStorage.setItem('timeOffline', timestamp)
         localStorage.setItem('revisado', false)
-    };
+    }
 
     const setLastActualization = () => {
         localStorage.setItem('ultimaActualizacion', Date.now())
@@ -76,10 +77,10 @@ const WelcomePage = () => {
         let data2 = await readyToSendReportsDatabase.consultar(db.database)
         /* setElementsReadyToSend(data) */
         notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
-            let lista = new Array();
-            lista = data.data.reverse();
+            let lista = new Array()
+            lista = data.data.reverse()
             if(lista.length > 0) {
-                setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt));
+                setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt))
                 if(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
                     if(data2.length > 0) {
                         setNotificaciones2('Existen ' + data2.length + ' Ordenes de trabajo listos a enviar.')
@@ -91,27 +92,27 @@ const WelcomePage = () => {
         })
         if(cancel) {
             init()
-            var xhr = new XMLHttpRequest();
+            var xhr = new XMLHttpRequest()
             xhr.onload = async () => {
-                let reader = new FileReader();
+                let reader = new FileReader()
                 reader.onload = async () => {
-                    let dbImages = await imageDatabase.initDb();
+                    let dbImages = await imageDatabase.initDb()
                     if(dbImages) {
                         let image = {
                             name: 'no-image-profile',
                             data: reader.result.replace("data:", "")
                         }
-                        await imageDatabase.actualizar(image, dbImages.database);
+                        await imageDatabase.actualizar(image, dbImages.database)
                     }
                 }
-                reader.readAsDataURL(xhr.response);
+                reader.readAsDataURL(xhr.response)
             }
-            xhr.open('GET', '../assets/no-profile-image.png');
-            xhr.responseType = 'blob';
-            xhr.send();
+            xhr.open('GET', '../assets/no-profile-image.png')
+            xhr.responseType = 'blob'
+            xhr.send()
         }
-        return () => setCancel(false);
-    }, [cancel]);
+        return () => setCancel(false)
+    }, [cancel])
 
     const init = async () => {
         readData(
@@ -124,96 +125,97 @@ const WelcomePage = () => {
             setDisableButtons, 
             setOpenVersion,
             network
-        );
+        )
         readDataSite(
             setDisableButtons,
             setNotificaciones2,
             setDisableButtonsNoSAP,
             setDisableIfNoMaintenance,
             setDisableIfNoInspection,
+            setDisableButtonNoAdmin,
             setHora,
             setDate
-        );
+        )
     }
 
     const getMachinesList = () => {
         return new Promise(async resolve => {
-            let machines = [];
-            machines = await getAllMachines();
-            let db = await machinesDatabase.initDbMachines();
+            let machines = []
+            machines = await getAllMachines()
+            let db = await machinesDatabase.initDbMachines()
             if(db) {
                 machines.forEach(async (machine, index) => {
-                    machine.id = index;
-                    await machinesDatabase.actualizar(machine, db.database);
+                    machine.id = index
+                    await machinesDatabase.actualizar(machine, db.database)
                     if(index === (machines.length - 1)) {
-                        const response = await machinesDatabase.consultar(db.database);
+                        const response = await machinesDatabase.consultar(db.database)
                         if(response) {
                             getInfo.getPautasInstepctList(setProgress, response)
                             resolve(response)
                         }
                     } 
-                });
+                })
             }
         })
     }
 
     const getMachinesList_ = () => {
-            let machines = Files;
-            console.log(machines);
+            let machines = Files
+            console.log(machines)
     }
 
     const getTrucksList = () => {
         return new Promise(async resolve => {
-            let machines = [];
-            machines = await getMachines();
+            let machines = []
+            machines = await getMachines()
             console.log(machines)
-            let db = await trucksDatabase.initDbMachines();
+            let db = await trucksDatabase.initDbMachines()
             console.log(db)
             if(db) {
                 machines.forEach(async (fileName, index) => {
                     console.log(fileName)
-                    fileName.id = index;
-                    var xhr = new XMLHttpRequest();
+                    fileName.id = index
+                    var xhr = new XMLHttpRequest()
                     xhr.onload = async () => {
-                        let reader = new FileReader();
+                        let reader = new FileReader()
                         reader.onload = async () => {
-                            let dbToImages = await machinesImagesDatabase.initDbMachinesImages();
+                            let dbToImages = await machinesImagesDatabase.initDbMachinesImages()
                             if(dbToImages) {
                                 let image = {
                                     id: index,
                                     data: reader.result.replace("data:", "")
                                 }
-                                await machinesImagesDatabase.actualizar(image, dbToImages.database);
+                                await machinesImagesDatabase.actualizar(image, dbToImages.database)
                                 
                             }
-                            let i = await trucksDatabase.actualizar(fileName, db.database);
+                            let i = await trucksDatabase.actualizar(fileName, db.database)
                             /*if(fileName.image) {
                                 
                                 
                             } */
                         }
-                        reader.readAsDataURL(xhr.response);
+                        reader.readAsDataURL(xhr.response)
                         
                         if(index == (machines.length - 1)) {
-                            let respuestaConsulta = await consultTrucks(machines);
+                            let respuestaConsulta = await consultTrucks(machines)
                             console.log(respuestaConsulta)
                             resolve(respuestaConsulta)
                         }
                     }
-                    xhr.open('GET', `/assets/${fileName.model}.png`);
-                    xhr.responseType = 'blob';
-                    xhr.send();
-                });
+                    xhr.open('GET', `/assets/${fileName.model}.png`)
+                    xhr.responseType = 'blob'
+                    xhr.send()
+                })
             }
         })
     }
 
     const consultTrucks = (machines) => {
         return new Promise(async resolve=>{
-            let database = await trucksDatabase.initDbMachines();
-            let respuestaConsulta;
+            let database = await trucksDatabase.initDbMachines()
+            let respuestaConsulta
             do {
-                respuestaConsulta = await trucksDatabase.consultar(database.database);
+                respuestaConsulta = await trucksDatabase.consultar(database.database)
             }
             while (respuestaConsulta.length < machines.length)
             if(respuestaConsulta.length === machines.length) {
@@ -244,7 +246,7 @@ const WelcomePage = () => {
     }
 
     const removeAccents = (str) => {
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     }
 
     const closeModal = () => {
@@ -295,7 +297,7 @@ const WelcomePage = () => {
                             <CardButton variant='reports' disableButton={disableButtonNoSAP}/>
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={3}>
-                            <CardButton variant='administration' disableButton={disableButtonNoSAP}/>
+                            <CardButton variant='administration' disableButton={disableButtonNoAdmin}/>
                         </Grid>
                         
                 </Grid>

@@ -42,7 +42,7 @@ import {
     InternalMessagesPage,
     NotificationsPage
 } from './pages';
-import { UserProfilePage } from './pages/administration'
+import { RolesPage, UserProfilePage } from './pages/administration'
 import { Notifications } from 'react-push-notification';
 
 /* import history from './history'
@@ -251,6 +251,13 @@ const OnApp = () => {
                     <Switch>
                         <Route exact path='/new-users'>
                             <NoPermissionPage route={'new-users'}/>
+                        </Route>
+                    </Switch>
+                </Route>}
+                {(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'superAdmin') ) && <Route path={['/roles']}>
+                    <Switch>
+                        <Route exact path='/roles'>
+                            <RolesPage route={'roles'}/>
                         </Route>
                     </Switch>
                 </Route>}

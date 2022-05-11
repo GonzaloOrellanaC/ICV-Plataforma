@@ -1,6 +1,8 @@
 export const changeTypeUser = (userType) => {
-    if(userType === 'superAdmin' || userType === 'admin' || userType === '') {
+    if(userType === 'superAdmin') {
         return 'Super Administrador'
+    }else if(userType === 'admin') {
+        return 'Administrador'
     }else if(userType === 'sapExecutive') {
         return 'Ejecutivo SAP'
     }else if(userType === 'inspectionWorker') {
@@ -17,6 +19,8 @@ export const changeTypeUser = (userType) => {
 export const returnTypeUser = (userType) => {
     if(userType === 'Super Administrador') {
         return 'superAdmin'
+    }else if(userType === 'admin') {
+        return 'Administrador'
     }else if(userType === 'Ejecutivo SAP') {
         return 'sapExecutive'
     }else if(userType === 'Operario de Inspección') {

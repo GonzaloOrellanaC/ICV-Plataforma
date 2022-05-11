@@ -24,7 +24,7 @@ const ac = new AccessControl()
  */
 const initAccessControl = async () => {
     try {
-        const findRoles = await Roles.findOne({ name: environment.roles[0].name });
+        const findRoles = await Roles.find({})//await Roles.findOne({ name: environment.roles[0].name });
         const adminResult = await getAdminExist();
         const findSites = await getSites();
         if(findSites.length == 0) {
@@ -38,6 +38,7 @@ const initAccessControl = async () => {
                 let roleCreated = await createRole(role.name, role.dbName);
                 if(roleCreated) {
                     let result = `${role.name} created`;
+                    console.log(result)
                 }
                 if(index == (environment.roles.length - 1)) {
                     environment.permisos.forEach(async (permiso, i) => {
@@ -47,6 +48,19 @@ const initAccessControl = async () => {
                         }
                         if(i == (environment.permisos.length - 1)) {
                             
+                        }
+                    })
+                }
+            })
+        } else if (findRoles.length < environment.roles.length) {
+            findRoles.forEach(async (r, i) => {
+                await deleteRole(r._id)
+                if(i == (findRoles.length - 1)) {
+                    environment.roles.forEach(async (role, index) => {
+                        let roleCreated = await createRole(role.name, role.dbName);
+                        if(roleCreated) {
+                            let result = `${role.name} created`;
+                            console.log(result)
                         }
                     })
                 }
@@ -80,7 +94,7 @@ const createAdminDefault = async () => {
 const getAdminExist = () => {
     try{
         return new Promise(async resolve => {
-            let adminExist = await UserServices.getUserByRole('admin');
+            let adminExist = await UserServices.getUserByRole('superAdmin');
             resolve(adminExist);
         })
     } catch (err) {
@@ -209,8 +223,17 @@ const updateRole = async (roleId, newResources) => {
  * @param {*} roleId ID of the role to delete in DB
  * //@returns PermissionRoles, the deleted permission role document
  */
-/* const deleteRole = async (roleId) => {
+const deleteRole = async (roleId) => {
     try {
+        const deleted = await Roles.findByIdAndDelete(roleId)
+        if (!deleted) {
+            throw new Error(errorMsg.roleNotFound)
+        }
+        return deleted
+    } catch (error) {
+        throw new Error(error.message)
+    }
+    /* try {
         const deleted = await PermissionRoles.findByIdAndDelete(roleId)
         if (!deleted) {
             throw new Error(errorMsg.roleNotFound)
@@ -220,15 +243,15 @@ const updateRole = async (roleId, newResources) => {
     } catch (error) {
         // Add error message to be sent
         throw new Error(error.message)
-    }
-} */
+    } */
+} 
 
 export default {
     ac,
     check,
     initAccessControl,
     createRole,
-    //deleteRole,
+    deleteRole,
     updateRole,
     //updateAccessControl
 }

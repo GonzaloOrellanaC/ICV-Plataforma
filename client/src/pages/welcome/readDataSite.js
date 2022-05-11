@@ -9,6 +9,7 @@ export default (
     setDisableButtonsNoSAP,
     setDisableIfNoMaintenance,
     setDisableIfNoInspection,
+    setDisableButtonNoAdmin,
     setHora,
     setDate,
      ) => {
@@ -17,9 +18,14 @@ export default (
         }else{
             
         }
-        if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
-            setDisableButtonsNoSAP(false);
-        }else{
+        if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin')) {
+            setDisableButtonNoAdmin(false)
+        }else {
+            
+        }
+        if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive')) {
+            setDisableButtonsNoSAP(false)
+        } else {
             //setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.')
             /* if(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
                 if(elementsReadyToSend.length > 0) {
