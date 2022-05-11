@@ -3,7 +3,7 @@ import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button, Icon, Svg
 import { ArrowBackIos, Close } from '@material-ui/icons'
 import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, saveExecutionReport, useStylesTheme } from '../../config'
 import { useHistory, useParams } from 'react-router-dom'
-import { pautasDatabase, executionReportsDatabase, reportsDatabase } from '../../indexedDB'
+import { pautasDatabase, executionReportsDatabase, reportsDatabase, readyToSendReportsDatabase } from '../../indexedDB'
 import { PautaDetail } from '../../containers'
 import { executionReportsRoutes, reportsRoutes } from '../../routes'
 import { LoadingLogoModal, LoadingModal, ReportCommitModal, ReportMessagesModal } from '../../modals'
@@ -33,8 +33,21 @@ const ActivitiesDetailPage = () => {
     const [ canRejectReport, setCanRejectReport ] = useState(false)
     const [ messageType, setMessageType ] = useState()
     const [ openMessagesModal, setOpenMessagesModal ] = useState(false)
+    const [ smActivated, setSmActivated ] = useState(false)
 
     useEffect(async () => {
+        window.addEventListener('resize', (ev) => {
+            if(ev.target.outerHeight > ev.target.outerWidth) {
+                setSmActivated(true)
+            }else {
+                setSmActivated(false)
+            }
+        }, true)
+        if(window.screen.height > window.screen.width) {
+            setSmActivated(true)
+        } else {
+            setSmActivated(false)
+        }
         if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
             setCanSendReport(false)
         }else{
@@ -123,29 +136,55 @@ const ActivitiesDetailPage = () => {
     }
 
     const endReport = async () => {
+        let group = new Array()
+        let state = true;
+        const executionReportData = await getExecutionReport(reportAssigned._id)
+        group = Object.values(executionReportData.data.group)
         if(navigator.onLine) {
             if(localStorage.getItem('role') === 'sapExecutive') {
                 setLoadingMessage('Cerrando OT...')
             }else{
                 setLoadingMessage('Enviando estado...')
             }
-            let group = new Array()
-            const executionReportData = await getExecutionReport(reportAssigned._id)
-            let state = true;
             if(reportAssigned.testMode) {
                 let groupFiltered = []
                 indexGroup.map((g, i) => {
                     groupFiltered.push(executionReportData.data.group[g.data])
                     if(i == (indexGroup.length - 1)) {
-                        sendDataToRead(groupFiltered, state)
+                        sendDataToRead(groupFiltered, state, true)
                     }
                 })
             }else{
-                group = Object.values(executionReportData.data.group)
-                sendDataToRead(group, state)
+                sendDataToRead(group, state, true)
             }
         }else{
-            alert('Dispositivo no está conectado a internet. Conecte a una red e intente nuevamente')
+            setLoadingLogo(true)
+            if(reportAssigned.testMode) {
+                let groupFiltered = []
+                indexGroup.map((g, i) => {
+                    groupFiltered.push(executionReportData.data.group[g.data])
+                    if(i == (indexGroup.length - 1)) {
+                        sendDataToRead(group, state, false)
+                    }
+                })
+            }else{
+                sendDataToRead(group, state, false)
+            }
+            
+        }
+    }
+
+    const saveDataLocal = async () => {
+        alert('Dispositivo no está conectado a internet. Conecte a una red e intente nuevamente. Estado de la OT cambia a "Listo para enviar"')
+        reportAssigned.readyToSend = true
+        let db = await  readyToSendReportsDatabase.initDb()
+        let state = await readyToSendReportsDatabase.actualizar(reportAssigned, db.database)
+        if(state) {
+            history.goBack()
+            setLoadingLogo(false)
+        } else {
+            setLoadingLogo(false)
+            alert('Error al intentar guardar el estado de avance sin conexión. Intente nuevamente. De continuar el problema, contactar a la administración.')
         }
     }
 
@@ -153,26 +192,31 @@ const ActivitiesDetailPage = () => {
         if(navigator.onLine) {
             setMessageType('rejectReport')
             setOpenReportCommitModal(true)
-            /* setLoadingMessage('Enviando estado...')
-            sendToBack() */
         }else{
             alert('Dispositivo no está conectado a internet. Conecte a una red e intente nuevamente')
         }
     }
 
-    const sendDataToRead = (group = new Array(), state = new Boolean()) => {
+    const sendDataToRead = (group = new Array(), state = new Boolean(), send = new Boolean()) => {
         group.map((item, index) => {
             item.map((i, n) => {
-                // console.log(i.isChecked)
+                console.log(i.isChecked)
                 if(!i.isChecked) {
                     state = false
                 }
                 if(n == (item.length - 1)) {
                     if(index == (group.length - 1)) {
                         if (state) {
-                            responseMessage()
+                            console.log(state, send)
+                            if( send ) {
+                                responseMessage()
+                            } else {
+                                console.log('Enviando en desconexzión')
+                                saveDataLocal()
+                            }
                         } else {
                             alert('Debe completar la pauta totalmente para enviar a revisión.')
+                            setLoadingLogo(false)
                         }
                         /* if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
                             sendToNext(state, reportAssigned)
@@ -211,6 +255,10 @@ const ActivitiesDetailPage = () => {
                 }else{
                     report = JSON.parse(id);
                 }
+                console.log(report)
+                let db = await readyToSendReportsDatabase.initDb()
+                let response = await readyToSendReportsDatabase.eliminar(report.idIndex, db.database)
+                console.log(response)
                 report.level = report.level + 1
                 report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`
                 /* report.history.push({
@@ -447,11 +495,11 @@ const ActivitiesDetailPage = () => {
                                 </div>
                             </div>
                             <Grid container>
-                                <Grid xl={10} md={10}>
+                                <Grid item xl={10} md={10} sm={12}>
                                     <div style={{padding: 20}}>
                                         {
                                             pauta && <PautaDetail 
-                                                height={'calc(100vh - 360px)'} 
+                                                height={smActivated ? 'calc(100vh - 850px)' :'calc(100vh - 360px)'} 
                                                 reportAssigned={reportAssigned} 
                                                 pauta={pauta} 
                                                 reportLevel={reportLevel} 
@@ -463,19 +511,20 @@ const ActivitiesDetailPage = () => {
                                         }
                                     </div>
                                 </Grid>
-                                <Grid xl={2} md={2}>
+                                <Grid item xl={2} md={2} sm={12}>
                                     <div style={{marginTop: 20, padding: 20, backgroundColor: '#F9F9F9', borderRadius: 10, height: '98%'}}>
                                         <div style={{textAlign: 'center', width: '100%'}}>
                                             <h2 style={{margin: 0}}>OT {id}</h2>
                                             <p style={{margin: 0}}>Tipo de pauta: <br /> <strong>{pauta && pauta.typepm}</strong></p>
                                             <p style={{backgroundColor: 'red', color: 'white', marginBottom: 0}}><strong>{reportAssigned && reportAssigned.testMode ? 'Modo test' : ''}</strong></p>
                                         </div>
-                                        <h3 style={{textAlign: 'center'}}>Avance en esta hoja</h3>
+                                        <h4 style={{textAlign: 'center'}}>Avance en esta hoja: {progress.toFixed(0)}%</h4>
                                         <LinearProgress variant="determinate" value={progress} style={{width: '100%'}}/>
-                                        <p style={{textAlign: 'center'}}>{progress.toFixed(0)}%</p>
-                                        <h3 style={{textAlign: 'center'}}>Avance total</h3>
+                                        {/* <p style={{textAlign: 'center'}}>{progress.toFixed(0)}%</p> */}
+                                        <h4 style={{textAlign: 'center'}}>Avance total: {itemProgress.toFixed(0)}%</h4>
                                         <LinearProgress variant="determinate" value={itemProgress} style={{width: '100%'}}/>
-                                        <p style={{textAlign: 'center'}}>{itemProgress.toFixed(0)}%</p>
+                                        {/* <p style={{textAlign: 'center'}}>{itemProgress.toFixed(0)}%</p> */}
+                                        <br />
                                         {(localStorage.getItem('role') != 'sapExecutive') && <Button disabled={!canEdit} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{endReport()}}>
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Enviar OT
                                         </Button>}
@@ -491,7 +540,7 @@ const ActivitiesDetailPage = () => {
                                         {(((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator'))&&(reportLevel===0)) && <Button onClick={()=>{terminarjornada()}} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
                                             <FontAwesomeIcon icon={faClock} style={{marginRight: 10}} /> Terminar Jornada
                                         </Button>}
-                                        <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{openMessages()}}>
+                                        <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 0}} onClick={()=>{openMessages()}}>
                                             <FontAwesomeIcon icon={faComment} style={{marginRight: 10}} /> Mensajes de flujo
                                         </Button>
                                     </div>

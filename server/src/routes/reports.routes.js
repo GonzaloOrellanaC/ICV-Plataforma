@@ -17,6 +17,8 @@ router.post('/findMyAssignations', ReportsService.findMyAssignations)
 router.post('/getReportByIdpm', ReportsService.getReportByIdpm)
 router.post('/getReportByEquid', ReportsService.getReportByEquid)
 router.post('/getReportsByDateRange', ReportsService.getReportsByDateRange)
+router.get('/getTotalReportsToIndex', ReportsService.getTotalReportsToIndex)
+
 
 
 export default router

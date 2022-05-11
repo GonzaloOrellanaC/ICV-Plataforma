@@ -5,6 +5,7 @@ import { environment } from "./src/config";
 import { Socket } from "./src/controller";
 import { databaseLoader, expressLoader } from "./src/loaders";
 import { AccessControlServices } from "./src/services";
+import reportsService from "./src/services/reports.service";
 
 const startServer = async () => {
     /* Conexión a MongoDB  */
@@ -23,6 +24,8 @@ const startServer = async () => {
     if (app) {
         console.log("Ok APP");
     }
+
+    //reportsService.getAllReports()
 
     /* Solo se ejecuta en producción */
     console.info("The server is in production mode");

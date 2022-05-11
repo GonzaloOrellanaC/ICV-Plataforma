@@ -1,13 +1,15 @@
-import { faArrowRight, faArrowUp, faCamera, faImage } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Slide, Switch, TextField} from '@material-ui/core'
-import { Close } from '@material-ui/icons';
-import { useEffect, forwardRef, useState } from 'react';
-import { dateSimple, dateWithTime, imageToBase64, uploadImage } from '../config';
-import { LoadingModal } from '../modals';
-import ImageDialog from './ImageDialog';
+import { faArrowRight, faArrowUp, faImage } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Slide, Switch, TextField } from '@material-ui/core'
+import { Close } from '@material-ui/icons'
+import { useEffect, forwardRef, useState } from 'react'
+import { dateSimple, dateWithTime, imageToBase64, uploadImage } from '../config'
+import { CameraModal, LoadingModal } from '../modals'
+import ImageDialog from './ImageDialog'
+import ImageAstDialog from './ImageAstDialog'
 import {isMobile} from 'react-device-detect'
-import InputTextDialog from './InputTextDialog';
+import InputTextDialog from './InputTextDialog'
+import Webcam from "react-webcam"
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -30,19 +32,40 @@ const ReportDataDialog = (
   const [messages, setMessages] = useState([])
   const [unidad, setUnidad] = useState()
   const [openImageDialog, setOpenImageDialog] = useState(false)
+  const [openImageAstDialog, setOpenImageAstDialog] = useState(false)
   const [imagePreview, setImagePreview] = useState('')
   const [openLoadingModal, setOpenLoadinModal] = useState(false)
   const [openInputTextDialog, setOpenInputTextDialog] = useState(false)
-
-  /* if(item.unidadData) {
-    console.log(item.unidadData)
-    setUnidad(item.unidadData)
-  } */
+  const [openCamera, setOpenCamera] = useState(false)
+  const [astList, setAstList] = useState([])
+  const [ast, setAst] = useState(false)
+  const [totalMessagesWithPictures, setPicturesOfItem] = useState(1)
+  const [indexKey, setIndexKey] = useState()
 
   useEffect(() => {
+    console.log(executionReport)
+    gruposKeys.map((k, n) => {
+      if(k.data === indexGroup) {
+        setIndexKey(n)
+      }
+    })
+    if(executionReport.astList) {
+      setAstList(executionReport.astList)
+    }
+    console.log(item)
     setUnidad(item.unidadData)
     if(item.messages) {
       setMessages(item.messages)
+      const total = []
+      item.messages.forEach((m, i) => {
+        if (m.urlBase64) {
+          total.push(m)
+        }
+        if (i == (item.messages.length - 1)) {
+          console.log(total.length)
+          setPicturesOfItem(total.length + 1)
+        }
+      })
       setTimeout(() => {
         document.getElementById('commits').scrollTop = document.getElementById('commits').scrollHeight
       }, 100);
@@ -68,7 +91,15 @@ const ReportDataDialog = (
       let res = await imageToBase64(file)
       setTimeout(() => {
         if(res) {
-          saveMessage(res, `Imagen ${Date.now()}`)
+          if (ast) {
+            astList.push({
+              id: Date.now(),
+              image: res
+            })
+            executionReport.astList = astList
+          } else {
+            saveMessage(res, `Imagen ${Date.now()}`)
+          }
           setOpenLoadinModal(false)
         }
       }, 1000);
@@ -76,6 +107,7 @@ const ReportDataDialog = (
 }
 
   const saveMessage = (image, messagePicture) => {
+    console.log(totalMessagesWithPictures)
     if(message !== ''||messagePicture) {
       if(image) {
         item.haveClip = true
@@ -88,6 +120,7 @@ const ReportDataDialog = (
       }
       let messageData = {
         id: Date.now(),
+        namePicture: image ? `${indexKey}_Pregunta_${index + 1}_Foto_${totalMessagesWithPictures}` : null,
         content: m,
         name: `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`,
         user: localStorage.getItem('_id'),
@@ -100,6 +133,9 @@ const ReportDataDialog = (
       setMessage('')
       setTimeout(() => {
         document.getElementById('commits').scrollTop = document.getElementById('commits').scrollHeight
+        if(image) {
+          setPicturesOfItem(totalMessagesWithPictures + 1)
+        }
       }, 50);
     }
   }
@@ -120,12 +156,24 @@ const ReportDataDialog = (
     setOpenImageDialog(true)
   }
 
+  const openCameraToAst = () => {
+    setOpenCamera(true)
+  }
+
+  const closeCamera = () => {
+    setOpenCamera(false)
+  }
+
   const handleCloseImage = () => {
     setOpenImageDialog(false)
   }
 
   const handleCloseText = () => {
     setOpenInputTextDialog(false)
+  }
+
+  const handleCloseAstImage = () => {
+    setOpenImageAstDialog(false)
   }
 
   const disable = () => {
@@ -151,6 +199,9 @@ const ReportDataDialog = (
           <DialogContentText id="alert-dialog-slide-description" style={{whiteSpace: 'pre-line'}}>
             {item.obs01} <br />
           </DialogContentText>
+          {
+            (item.taskdesc.match('Confección de ART o AST')) && <button style={{ width: 200, borderRadius: 20, borderColor: '#ccc' }} onClick={() => {setOpenImageAstDialog(true)}}> Total imágenes AST: <strong>{astList.length}</strong> </button>
+          }
         </DialogContent>
         {(item.unidad !== '*') && <Grid container>
           <Grid item xl={3}>
@@ -158,6 +209,25 @@ const ReportDataDialog = (
               <h3>Total utilizado</h3>
               <TextField id="standard-basic" label={item.unidad} variant="standard" type='number' value={unidad} onChange={(e)=>{changeUnidad(e.target.value)}}/>
             </div>
+          </Grid>
+          <Grid item xl={2} lg={2} md={2} sm={2}>
+            <div /* style={{marginLeft: 24, marginBottom: 16}} */>
+              <p>Nro Parte: {item.partnumberUtl}</p>
+            </div>
+          </Grid>
+          <Grid item xl={4} lg={4} md={4} sm={4}>
+            <Grid container>
+              <Grid item xl={6} lg={6} md={6} sm={6}>
+                <div /* style={{marginLeft: 24, marginBottom: 16}} */>
+                  <p>Cant. Utilizar: <br /> {item.cantidad} {item.unidad}</p>
+                </div>
+              </Grid>
+              <Grid item xl={6} lg={6} md={6} sm={6}>
+                <div /* style={{marginLeft: 24, marginBottom: 16}} */>
+                  <p>Tipo Rpto: {item.idtypeutlPartnumber}</p>
+                </div>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>}
         <div style={{paddingLeft: 24, paddingRight: 24, marginBottom: 50}}>
@@ -195,11 +265,11 @@ const ReportDataDialog = (
                     !isMobile && <textarea value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onChange={(e) => {inputMessage(e.target.value)}}/>
                   }
                   {
-                    isMobile && <textarea id="mobileTextArea" value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onClick={()=>{setOpenInputTextDialog(true); document.getElementById('mobileTextArea').blur()}} />
+                    isMobile && <textarea id="mobileTextArea" value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onChange={(e) => {console.log(e.target.value)}} onClick={()=>{setOpenInputTextDialog(true); document.getElementById('mobileTextArea').blur()}} />
                   }
                 </div>
                 <div style={{width: '30%', float: 'right', textAlign: 'right'}}>
-                  <IconButton onClick={() => upImage()}>
+                  <IconButton onClick={() => {upImage(); setAst(false)}}>
                     <FontAwesomeIcon icon={faImage} />
                   </IconButton>
                   <IconButton onClick={() => saveMessage()}>
@@ -213,7 +283,7 @@ const ReportDataDialog = (
           </div>
         </div>
         <DialogActions style={{minWidth: 400}}>
-          {/* <Button style={{color: '#B81E05'}} onClick={}>Cancelar</Button> */}
+          {(item.taskdesc.match('Confección de ART o AST')) && <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {upImage(); setAst(true)}}><FontAwesomeIcon style={{marginRight: 10}} icon={faArrowUp} /> AST / ART</Button>}
           <Button style={{backgroundColor: '#D5CC41', color: '#fff'}} onClick={() => {saveItem(index, false, item)}}>Guardar sin ejecutar</Button>
           <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {saveItem(index, true, item)}}>Guardar ejecutado</Button>
         </DialogActions>
@@ -221,10 +291,16 @@ const ReportDataDialog = (
           openImageDialog && <ImageDialog open={openImageDialog} image={imagePreview} handleClose={handleCloseImage}/>
         }
         {
+          openImageAstDialog && <ImageAstDialog open={openImageAstDialog} images={astList} handleClose={handleCloseAstImage}/>
+        }
+        {
           openInputTextDialog && <InputTextDialog open={openInputTextDialog} handleClose={handleCloseText} saveMessage={saveMessage} message={message} inputMessage={inputMessage}/>
         }
         {
           openLoadingModal && <LoadingModal open={openLoadingModal} withProgress={false} loadingData={'Cargando imágen'}/>
+        }
+        {
+          openCamera && <CameraModal open={openCamera} handleClose={closeCamera} astList={astList} />
         }
       </Dialog>
       )

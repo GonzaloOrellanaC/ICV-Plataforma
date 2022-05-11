@@ -10,7 +10,7 @@ export default (
     setDisableIfNoMaintenance,
     setDisableIfNoInspection,
     setHora,
-    setDate
+    setDate,
      ) => {
         if(localStorage.getItem('sitio')) {
             setDisableButtons(false)
@@ -20,7 +20,14 @@ export default (
         if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'sapExecutive')) {
             setDisableButtonsNoSAP(false);
         }else{
-            setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.');
+            //setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.')
+            /* if(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
+                if(elementsReadyToSend.length > 0) {
+                    setNotificaciones2('Existen ' + elementsReadyToSend.length + ' Ordenes de trabajo listos a enviar.')
+                }else{
+                    
+                }
+            } */
             if(localStorage.getItem('role') === 'maintenceOperator') {
                 setDisableIfNoMaintenance(false)
             }else{

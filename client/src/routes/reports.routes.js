@@ -86,5 +86,8 @@ export default {
             reportType
         };
         return axios.post('/reports/getReportsByDateRange', requestBody);
+    },
+    getTotalReportsToIndex: () => {
+        return axios.get('/reports/getTotalReportsToIndex')
     }
 }

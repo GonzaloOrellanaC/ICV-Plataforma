@@ -152,7 +152,7 @@ const ReportsPage = () => {
                 </div>
             </div>
             <Grid container>
-                <Grid item xs={12} sm={12} md={5} lg={4} xl={3}>
+                <Grid item xs={12} sm={12} md={5} lg={3} xl={2}>
                     <div className='menu-card'>
                         <h3>Inspecciones</h3>
                         <div style={{float: 'left', width: 'calc(45%)', marginRight: 5, padding: 10, backgroundColor: '#fff', borderRadius: 10}}>
@@ -236,7 +236,7 @@ const ReportsPage = () => {
                         </div>
                     </div>
                 </Grid>
-                <Grid item xs={12} sm={12} md={7} lg={8} xl={9}>
+                <Grid item xs={12} sm={12} md={7} lg={9} xl={10}>
                     {
                         vista && <div>
                             <img style={{margin: 0, position: 'absolute', top: '50%', left: 'calc(100%/1.53)', msTransform: 'translateY(-50%)', transform: 'translateY(-50%)'}} src="../../assets/icons/Arrow.svg" alt="" />

@@ -88,9 +88,16 @@ const ReportShema = new Schema({
     testMode: {
         type: Schema.Types.Boolean
     },
+    deleted: {
+        type: Schema.Types.Boolean,
+        default: false
+    },
     history: {
         type: Schema.Types.Array,
         default: []
+    },
+    readyToSend: {
+        type: Schema.Types.Boolean
     }
 },
 {

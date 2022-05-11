@@ -167,14 +167,15 @@ const CreateReports = () => {
     }
 
     const readReports = async () => {
-        let reports = await reportsRoutes.getAllReports();
+        let reports = await reportsRoutes.getTotalReportsToIndex();
+        console.log(reports)
         setIdIndex(reports.data.length)
     }
 
     useEffect(() => {
-        readTrucks();
-        activateIfEdit(id);
-        formatDateToDay();
+        readTrucks()
+        activateIfEdit(id)
+        formatDateToDay()
     }, [])
 
     const formatDateToDay = () => { 
@@ -291,7 +292,7 @@ const CreateReports = () => {
                                 <Grid item lg={6}>
                                     <div style={{width: '100%'}}>
                                         <FormControl>
-                                            <p>#ID</p>
+                                            <p>N° OT</p>
                                             <input 
                                             disabled 
                                             value={idIndex} 

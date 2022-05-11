@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css" 
 import "slick-carousel/slick/slick-theme.css"
-import { Button, ListItem, IconButton, Checkbox } from "@material-ui/core"
+import { Button, ListItem, IconButton, Checkbox, Grid, Hidden } from "@material-ui/core"
 import CircleCheckedFilled from '@material-ui/icons/CheckCircle'
 import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked'
 import { faEye, faPen, faPaperclip, faCommentDots } from "@fortawesome/free-solid-svg-icons"
@@ -484,74 +484,86 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 </Slider>
             </div>
             <div>
-                <ListItem>
-                    <div style={{width: '10%', marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>Personal Necesario</strong> </p>
-                    </div>
-                    <div style={{width: descriptionWidth, marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>Descripcion De Tarea</strong> </p>
-                    </div>
-                    <div style={{width: obsWidth, marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>Observaciones</strong> </p>
-                    </div>
-                    {(pauta.action === 'Mantención') && <div style={{width: '11%', marginLeft: 5}}>
-                        <p style={{margin: 0}}> <strong>N° Parte a Utilizar</strong> </p>
-                    </div>}
-                    {(pauta.action === 'Mantención') && <div style={{width: '7%', textAlign: 'center'}}>
-                        <p style={{margin: 0}}> <strong>Cantidad a utilizar</strong> </p>
-                    </div>}
-                    {(pauta.action === 'Mantención') && <div style={{width: '7%', textAlign: 'center'}}>
-                        <p style={{margin: 0}}> <strong>Cantidad Utilizada</strong> </p>
-                    </div>}
-                    {(pauta.action === 'Mantención') && <div style={{width: '5%', textAlign: 'center'}}>
-                        <p style={{margin: 0}}> <strong>Tipo Rpto</strong> </p>
-                    </div>}
-                    <div style={{width: '5%', textAlign: 'center'}}>
-                        <p style={{margin: 0}}> <strong>Ejecutar Tarea</strong> </p>
-                    </div>
-                    <div style={{width: '15%', paddingLeft: 10, textAlign: 'left'}}>
-                        <p style={{margin: 0, marginLeft: 50}}> <strong>Estado</strong> </p>
-                    </div>
-                </ListItem>
+                <Grid container>
+                    <Grid item xl={'auto'} md={'auto'}>
+                        <p style={{margin: 0, textAlign: 'center', width: 30}}> <strong>N°</strong> </p>
+                    </Grid>
+                    <Grid item xl={1} md={1}>
+                        <p style={{margin: 0, textAlign: 'center'}}> <strong>Personal <br /> Necesario</strong> </p>
+                    </Grid>
+                    <Grid item xl={'auto'} md={'auto'}>
+                        <p style={{margin: 0, textAlign: 'center', width: 150}}> <strong>Descripcion De Tarea</strong> </p>
+                    </Grid>
+                    <Grid item xl={(pauta.action === 'Mantención') ? 3 : 5} md={(pauta.action === 'Mantención') ? 3 : 5} sm={4}>
+                        <p style={{margin: 0, textAlign: 'center'}}> <strong>Observaciones</strong> </p>
+                    </Grid>
+                    <Hidden mdDown>
+                        {(pauta.action === 'Mantención') && <Grid item xl={'auto'} md={'auto'}>
+                            <p style={{margin: 0, textAlign: 'center', width: 100}}> <strong>N° Parte <br /> a Utilizar</strong> </p>
+                        </Grid>}
+                        {(pauta.action === 'Mantención') && <Grid item xl={'auto'} md={'auto'}>
+                            <p style={{margin: 0, textAlign: 'center', width: 100}}> <strong>Cantidad <br /> a utilizar</strong> </p>
+                        </Grid>}
+                        {(pauta.action === 'Mantención') && <Grid item xl={'auto'} md={'auto'}>
+                            <p style={{margin: 0, textAlign: 'center', width: 60}}> <strong>Cantidad <br /> Utilizada</strong> </p>
+                        </Grid>}
+                        {(pauta.action === 'Mantención') && <Grid item xl={1} md={1}>
+                            <p style={{margin: 0, textAlign: 'center', width: 100}}> <strong>Tipo <br /> Rpto</strong> </p>
+                        </Grid>}
+                    </Hidden>
+                    <Grid item xl={1} md={'auto'}>
+                        <p style={{margin: 0, textAlign: 'center', width: 50}}> <strong>Ejecutar <br /> Tarea</strong> </p>
+                    </Grid>
+                    <Grid item xl={1} md={1}>
+                        <p style={{margin: 0, textAlign: 'center'}}> <strong>Estado</strong> </p>
+                    </Grid>
+                </Grid>
                 {contentData && <div style={{height: height, overflowY: 'scroll'}}>
                     {
                         contentData.map((e, n) => {
                             return(
-                                <ListItem key={n} style={well}>
-                                    <div style={{width: '10%', marginLeft: 5 }}>
-                                        {e.workteamdesc}    
-                                    </div>
-                                    <div style={{width: descriptionWidth, marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
-                                        {e.taskdesc}  
-                                    </div>
-                                    <div style={{width: obsWidth, marginLeft: 5 , overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
-                                        {e.obs01}  
-                                    </div>
-                                    {(pauta.action === 'Mantención') && <div style={{width: '11%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
-                                        {(e.partnumberUtl === '*') ? <p>N/A</p> : <p>{e.partnumberUtl}</p>}  
-                                    </div>}
-                                    {(pauta.action === 'Mantención') && <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
-                                        {(e.unidad === '*') ? <p>N/A</p> : <p> {e.cantidad} {e.unidad}</p>}
-                                    </div>}
-                                    {(pauta.action === 'Mantención') && <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
-                                        {(e.unidad === '*') ? <p>N/A</p> : <p> {e.unidadData ? e.unidadData : '______'} {e.unidad}</p>}
-                                    </div>}
-                                    {(pauta.action === 'Mantención') && <div style={{width: '7%', textAlign: 'center', overflowY: 'scroll', textOverflow: 'ellipsis', maxHeight: '100%'}}>
-                                        {(e.idtypeutlPartnumber === '*') ? <p>N/A</p> : <p> {e.idtypeutlPartnumber}</p>}
-                                    </div>}
-                                    <div style={{width: '5%', textAlign: 'center'}}>
-                                        <IconButton style={{width: '5%', textAlign: 'center'}} onClick={()=>{/* setOpenWriteActivity(true) */openDialog(e, n); setIndexActivity(n)}}>
-                                            <FontAwesomeIcon icon={iconToItemDetail}/>
-                                        </IconButton>
-                                    </div>
-                                    <div style={{width: '15%', textAlign: 'center', marginLeft: 20}}>
+                                <Grid key={n} container style={{borderBottomStyle: 'solid', borderBottomWidth: 1, borderBottomColor: '#ccc'}}>
+                                    <Grid item xl={'auto'} md={'auto'}>
+                                        <p style={{fontSize: 12, padding: 5, margin: 0, textAlign: 'center', width: 30}}> <strong>{n+1}.-</strong> </p>
+                                    </Grid>
+                                    <Grid item xl={1} md={1}>
+                                        <p style={{fontSize: 12, padding: 5, margin: 0, textAlign: 'center'}}> {e.workteamdesc}   </p>
+                                    </Grid>
+                                    <Grid item xl={'auto'} md={'auto'}>
+                                        <p style={{fontSize: 12, padding: 5, margin: 0, textAlign: 'left', width: 150}}> {e.taskdesc} </p>
+                                    </Grid>
+                                    <Grid item xl={(pauta.action === 'Mantención') ? 3 : 5} md={(pauta.action === 'Mantención') ? 3 : 5} sm={4}>
+                                        <p style={{fontSize: 12, padding: 5, margin: 0, textAlign: 'justify'}}> {e.obs01} </p>
+                                    </Grid>
+                                    <Hidden mdDown>
+                                        {(pauta.action === 'Mantención') && <Grid item xl={'auto'} md={'auto'}>
+                                            {(e.partnumberUtl === '*') ? <p style={{fontSize: 12, padding: 5, margin: 0, textAlign: 'center', width: 100}}>N/A</p> : <p style={{padding: 5, margin: 0, textAlign: 'center', width: 100}}>{e.partnumberUtl}</p>}
+                                        </Grid>}
+                                        {(pauta.action === 'Mantención') && <Grid item xl={'auto'} md={'auto'}>
+                                            {(e.unidad === '*') ? <p style={{fontSize: 12, padding: 5, margin: 0, textAlign: 'center', width: 100}}>N/A</p> : <p style={{padding: 5, margin: 0, textAlign: 'center', width: 100}}> {e.cantidad} {e.unidad}</p>}
+                                        </Grid>}
+                                        {(pauta.action === 'Mantención') && <Grid item xl={'auto'} md={'auto'}>
+                                            {(e.unidad === '*') ? <p style={{fontSize: 12, padding: 5, margin: 0, textAlign: 'center', width: 60}}>N/A</p> : <p style={{padding: 5, margin: 0, textAlign: 'center', width: 60}}> {e.unidadData ? e.unidadData : '___'} {e.unidad}</p>}
+                                        </Grid>}
+                                        {(pauta.action === 'Mantención') && <Grid item xl={1} md={1}>
+                                            {(e.idtypeutlPartnumber === '*') ? <p style={{fontSize: 12, padding: 5, margin: 0, textAlign: 'center', width: 100}}>N/A</p> : <p style={{padding: 5, margin: 0, textAlign: 'center', width: 100}}> {e.idtypeutlPartnumber}</p>}
+                                        </Grid>}
+                                    </Hidden>
+                                    <Grid item xl={1} md={'auto'}>
+                                        <div style={{textAlign: 'center', width: 60}}>
+                                            <IconButton style={{width: '5%', textAlign: 'center'}} onClick={()=>{openDialog(e, n); setIndexActivity(n)}}>
+                                                <FontAwesomeIcon icon={iconToItemDetail}/>
+                                            </IconButton>
+                                        </div>
+                                    </Grid>
+                                    <Grid item xl={1} md={1}>
                                         <Checkbox checked={checks[n]} disabled style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} />
-                                        {e.messages && <IconButton disabled><FontAwesomeIcon icon={faCommentDots} /></IconButton>}
-                                        {!e.messages && <IconButton disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faCommentDots} /></IconButton>}
-                                        {e.haveClip && <IconButton disabled><FontAwesomeIcon icon={faPaperclip} /></IconButton>}
-                                        {!e.haveClip && <IconButton disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faPaperclip} /></IconButton>}
-                                    </div>
-                                </ListItem>
+                                        {e.messages && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon icon={faCommentDots} /></IconButton>}
+                                        {!e.messages && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faCommentDots} /></IconButton>}
+                                        {e.haveClip && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon icon={faPaperclip} /></IconButton>}
+                                        {!e.haveClip && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faPaperclip} /></IconButton>}
+                                    </Grid>
+                                </Grid>
                             )
                         })
                     }   

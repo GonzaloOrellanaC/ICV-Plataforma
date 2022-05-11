@@ -108,9 +108,24 @@ const deleteReport = async (req, res) => {
 
 const getReports = (req, res) => {
     try {
-        Reports.find({}, (err, reports) => {
+        Reports.find({deleted: false}, (err, reports) => {
             //console.log('Reportes: ', reports)
             res.json(reports)
+        });
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+const getAllReports = () => {
+    try {
+        Reports.find({}, (err, reports) => {
+            reports.forEach(async r => {
+                //console.log(r)
+                r.deleted = false
+                const res = await Reports.findByIdAndUpdate(r._id, r, {new: false, timestamps: false})
+                console.log('Respuesta: ', res)
+            })
         });
     } catch (err) {
         console.log(err)
@@ -132,7 +147,7 @@ const getReportsByDateRange = (req, res) => {
     console.log(dateInit, dateEnd)
     let reportType = body.reportType;
     try {
-        Reports.find({ dateClose: { $gte: new Date(dateInit) , $lt: new Date(dateEnd) },  reportType: reportType }, (err, reports) => {
+        Reports.find({ deleted: false, dateClose: { $gte: new Date(dateInit) , $lt: new Date(dateEnd) },  reportType: reportType }, (err, reports) => {
             if(err) {
                 console.log('El error es: ', err)
             }
@@ -149,7 +164,7 @@ const getReportByIndex = (req, res) => {
     const { body } = req;
     const { indexNumber } = body;
     try {
-        Reports.findOne({idIndex: indexNumber}, (err, report) => {
+        Reports.findOne({deleted: false, idIndex: indexNumber}, (err, report) => {
             //console.log('Reportes', reports);
             res.json(report)
         })
@@ -175,7 +190,7 @@ const getReportByState = (req, res) => {
     const { body } = req;
     //console.log(body)
     try {
-        Reports.find({ state: body.state, reportType: body.reportType }, (err, reports) => {
+        Reports.find({ deleted: false, state: body.state, reportType: body.reportType }, (err, reports) => {
 
             res.json(reports)
         })
@@ -189,7 +204,7 @@ const getReportsByUser = (req, res) => {
 
     let reportList = new Array()
     try {
-        Reports.find({}, (err, reports) => {
+        Reports.find({ deleted: false }, (err, reports) => {
             reports.forEach((report, i) => {
                 if(report.usersAssigned[0] === body.userId ) {
                     reportList.push(report)
@@ -210,7 +225,7 @@ const findMyAssignations = (req, res) => {
     //console.log(body);
     //let reportList = new Array()
     try {
-        Reports.find({usersAssigned: [body.userId]}, (err, reports) => {
+        Reports.find({deleted: false, usersAssigned: [body.userId]}, (err, reports) => {
             res.json(reports)
         })
     } catch (err) {
@@ -229,7 +244,7 @@ const getReportByEquid = async (req, res) => {
     const { body : { equid } } = req
     console.log(equid)
     try {
-        Reports.find({ machine: equid }, (err, reports) => {
+        Reports.find({ deleted: false, machine: equid }, (err, reports) => {
             res.json(reports)
         })
     } catch (err) {
@@ -243,6 +258,17 @@ const countTotalReports = () => {
             resolve(reports.length)
         })
     })
+}
+
+const getTotalReportsToIndex = (req, res) => {
+    try {
+        Reports.find({}, (err, reports) => {
+            //console.log('Reportes: ', reports)
+            res.json(reports)
+        });
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 
@@ -260,5 +286,7 @@ export default {
     findMyAssignations,
     getReportByIdpm,
     getReportByEquid,
-    getReportsByDateRange
+    getReportsByDateRange,
+    getAllReports,
+    getTotalReportsToIndex
 }

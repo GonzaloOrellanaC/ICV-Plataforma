@@ -43,6 +43,32 @@
   color: #61dafb;
 }
 
+.MuiDialogContent-root.dialog-content-ast {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  /* margin: 0 !important;
+  padding-top: 0 !important; 
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important; */
+}
+
+.slider-images {
+  /* height: 100vh;
+  margin: 0;
+  width: 100%; */
+}
+
+.slick-slide {
+  width: 100%;
+  text-align: center;
+}
+
+.slick-slide img {
+  display: inherit !important;
+  height: 100vh;
+}
+
 .border-color-primary {
   border-style: solid;
   border-width: 2px;

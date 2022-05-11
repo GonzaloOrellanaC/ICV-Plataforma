@@ -27,6 +27,24 @@ const createTable = ( groupKeys = new Array, group = new Array) => {
     })
 }
 
+const createAstImages = (astList) => {
+    let arrayTable = []
+    return new Promise(resolve => {
+        astList.forEach((e, i) => {
+            arrayTable.push(
+                {
+                    image: e.image,
+                    width: 700,
+                    height: 500
+                }
+            )
+            if(i == (astList.length - 1)) {
+                resolve(arrayTable)
+            }
+        })
+    })
+}
+
 const crateHistoryTable = ( history = new Array ) => {
     let arrayTable = []
     return new Promise(resolve => {
@@ -131,12 +149,12 @@ const createImagesTables = () => {
                 numberTop = numberTop + numberTop
             }
             let imageContent = {
-                width: 150,
+                width: 300,
                 alignment: 'center',
                 image: element.urlBase64
             }
             let textContent = {
-                width: 150,
+                width: 300,
                 alignment: 'center',
                 text: 'Comentario id: ' + element.id + '\n\ "' + element.content + '"' + '\n\ Imágen: ' + dateWithTime(element.id) + '\n\ Usuario: ' + element.userName + '\n\ ',
             }
@@ -306,6 +324,7 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
     const executionUser = await getUserNameById(reportData.usersAssigned[0])
     const executionUserSign = await getSignById(reportData.usersAssigned[0])
     const executionReportData = await getExecutionReportData(reportData)
+    console.log(executionReportData)
     let groupKeys
     let group
     if(reportData.testMode) {
@@ -485,7 +504,8 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
                     },
                 ]
             },
-             await createImagesTables()
+            await createAstImages(executionReportData[0].astList),
+            await createImagesTables()
         ],
         styles: {
             imageTables: {

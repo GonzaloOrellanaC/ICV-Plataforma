@@ -25,7 +25,7 @@ const ImageDialog = ({handleClickOpen, open, handleClose, image}) => {
                     <Close />
                     </IconButton>
                 <div style={{padding: 30, textAlign: 'center', height: '100vh'}}>
-                    <img src={image} height={'100%'} style={{maxWidth: '100%', maxHeight: '100%'}}  />
+                    <img src={image} height={'100%'} /* style={{maxWidth: '100%', maxHeight: '100%'}} */  />
                 </div>
             </Dialog>
         </div>

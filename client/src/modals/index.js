@@ -9,6 +9,7 @@ import { PdfModal } from './pdf';
 import { InternalMessageModal } from './internalMessage';
 import { ReportCommitModal } from './reportCommit';
 import { ReportMessagesModal } from './reportMessages';
+import { CameraModal } from "./camera"
 
 export {
     AssignReportModal,
@@ -24,5 +25,6 @@ export {
     PdfModal,
     InternalMessageModal,
     ReportCommitModal,
-    ReportMessagesModal
+    ReportMessagesModal,
+    CameraModal
 }

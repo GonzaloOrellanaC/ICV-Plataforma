@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Grid } from '@material-ui/core'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes, notificationsRoutes } from '../../routes'
-import { trucksDatabase, machinesDatabase, machinesImagesDatabase, imageDatabase, pautasDatabase } from '../../indexedDB'
+import { trucksDatabase, machinesDatabase, machinesImagesDatabase, imageDatabase, pautasDatabase, readyToSendReportsDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import './style.css'
 import getInfo from './getInfo'
@@ -25,6 +25,7 @@ const WelcomePage = () => {
     const [ disableIfNoMaintenance, setDisableIfNoMaintenance ] = useState(false);
     const [ disableIfNoInspection, setDisableIfNoInspection ] = useState(false);
     const [ network, setIfHavNetwork ] = useState(true);
+    const [ elementsReadyToSend, setElementsReadyToSend ] = useState([])
 
     ////Notificaciones
     const [ notificaciones1, setNotificaciones1 ] = useState('Sin notificaciones')
@@ -71,11 +72,21 @@ const WelcomePage = () => {
     }
 
     useEffect(async() => {
+        let db = await readyToSendReportsDatabase.initDb()
+        let data2 = await readyToSendReportsDatabase.consultar(db.database)
+        /* setElementsReadyToSend(data) */
         notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
             let lista = new Array();
             lista = data.data.reverse();
             if(lista.length > 0) {
                 setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt));
+                if(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
+                    if(data2.length > 0) {
+                        setNotificaciones2('Existen ' + data2.length + ' Ordenes de trabajo listos a enviar.')
+                    }else{
+                        setNotificaciones2('Sin OT listas a enviar')
+                    }
+                }
             }
         })
         if(cancel) {
@@ -263,9 +274,13 @@ const WelcomePage = () => {
                         </button>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={4}>
-                        <div className='notificaciones alertas'>
+                        <button className='notificaciones alertas' onClick={() => history.push('/assignment')}>
+                            {
+                                (localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') &&
+                                <p className='notificaciones-texto'> <b>OT Listas a enviar:</b> </p>
+                            }
                             <p className='notificaciones-texto'> {notificaciones2}</p>
-                        </div>
+                        </button>
                     </Grid>
                 </Grid>
                 <br />

@@ -5,12 +5,16 @@ import {
     Toolbar,
     Fab,
     Grid,
+    Button,
 
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { getUserNameById, styleModalReport } from '../../config';
 import { reportsRoutes, usersRoutes } from '../../routes';
 import { dateWithTime } from '../../config';
+import { LoadingLogoModal } from '../loadings';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
     //console.log(report);
@@ -23,6 +27,7 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
     const [ userShiftManagerName, setUserShiftManagerName ] = useState('')
     const [ userChiefMachineryName, setChiefMachineryName ] = useState('')
     const [ userSapExecutiveName, setUserSapExecutiveName ] = useState('')
+    const [ loadingDelete, setLoadingDelete ] = useState(false)
 
     const setUserToReport = async (userId) => {
         if(userId === '') {
@@ -105,6 +110,17 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
 
         return ok = false
     }, [])
+
+    const removeOt = () => {
+        if(confirm(`Se borrará la OT ${report.idIndex}. Su eliminación será permanente. ¿Desea continuar?`)) {
+            setLoadingDelete(true)
+            report.deleted = true
+            reportsRoutes.editReport(report).then(() => {
+                setLoadingDelete(false)
+                location.reload()
+            })
+        }
+    }
     
     return(
         <Modal
@@ -180,6 +196,12 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
                     </div>
 
                     </Grid>
+                    <div style={{width: '100%', textAlign: 'right'}}>
+                        <button style={{ height: 50 , width: '100%', backgroundColor: 'red', color: '#fff', fontSize: 20 }} onClick={()=>{removeOt()}}> <strong> <FontAwesomeIcon icon={faTrash} /> Borrar OT {idIndex} </strong> </button>
+                    </div>
+                    {
+                        loadingDelete && <LoadingLogoModal open={loadingDelete} />
+                    }
 
                 </Grid>
                 {/* <Grid container>
