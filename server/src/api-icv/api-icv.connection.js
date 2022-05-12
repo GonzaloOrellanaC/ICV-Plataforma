@@ -25,6 +25,7 @@ import { machinesOfProject, machinesListPms } from '../files'
 const leerPautas = (req, res) => {
     let listaPMsConcat = [];
     let i = 0;
+    console.log('leer pautas')
     leerPauta(i, machinesListPms, listaPMsConcat, res);
 }
 
@@ -35,6 +36,7 @@ const leerPauta = async (i, machinesListPms, listaPMsConcat, res) => {
         let pIDPM = machinesListPms[i].pIDPM;
         const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`);
         const listaPMs =  await response.json();
+        console.log(listaPMs)
         listaPMsConcat = listaPMsConcat.concat(listaPMs.data);
         i = i + 1;
         leerPauta(i, machinesListPms, listaPMsConcat, res)
@@ -52,6 +54,7 @@ const getHeaderPauta = async (req, res) => {
 
 const getStructsPauta = async (req, res) => {
     const {body} = req;
+    console.log(body)
     const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${body.idpm}&pTypePm=${body.typepm}`);
     const headers = await response3.json();
     if(headers) {

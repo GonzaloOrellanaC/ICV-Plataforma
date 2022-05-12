@@ -48,7 +48,9 @@ const getReportExecutionFromId = (reportId) => {
 }
 
 const descargarPautas = (setProgress) => {
-    setProgress(0)
+    if(setProgress) {
+        setProgress(0)
+    }
     return new Promise(async resolve => {
         const pautas = await getPautas();
         console.log('Pautas: ', pautas)
@@ -56,7 +58,7 @@ const descargarPautas = (setProgress) => {
             pautas.forEach(async (pauta, number ) => {
                 console.log(pauta)
                 let progressNumber = 0;
-                let everyProgress1 = (100 / pautas.length) / 3;        
+                let everyProgress1 = (100 / pautas.length) / 2;        
                 const response = await getHeader(pauta);
                 pauta.header = response;
                 console.log(pauta.header)
@@ -68,22 +70,30 @@ const descargarPautas = (setProgress) => {
                 }
                 if(number == (pautas.length - 1)) {
                     progressNumber = progressNumber + everyProgress1;
-                    setProgress(progressNumber)
+                    if(setProgress) {
+                        setProgress(progressNumber)
+                    }
                     pautas.forEach(async (pa, n) => {
                         progressNumber = progressNumber + everyProgress1;
-                        setProgress(progressNumber)
-                        const res = await getStructs(pa)
-                        pa.struct = res;
+                        if(setProgress) {
+                            setProgress(progressNumber)
+                        }
+                        /* const res = await getStructs(pa)
+                        pa.struct = res; */
                         //console.log(pa);
                         if(n == (pautas.length - 1)) {
                             const db = await pautasDatabase.initDbPMs();
                             if(db) {
                                 pautas.forEach(async (p, i) => {
                                     progressNumber = progressNumber + everyProgress1;
-                                    setProgress(progressNumber)
+                                    if(setProgress) {
+                                        setProgress(progressNumber)
+                                    }
                                     await pautasDatabase.actualizar(p, db.database);
                                     if(i == (pautas.length - 1)) {
-                                        setProgress(100)
+                                        if(setProgress) {
+                                            setProgress(100)
+                                        }
                                         resolve({
                                             progress: 100,
                                             state: true

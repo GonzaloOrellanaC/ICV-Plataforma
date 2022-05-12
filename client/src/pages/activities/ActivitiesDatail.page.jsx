@@ -1,17 +1,18 @@
 import React, { useState, useEffect, ReactDOM } from 'react';
 import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button, Icon, SvgIcon } from '@material-ui/core'
 import { ArrowBackIos, Close } from '@material-ui/icons'
-import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, saveExecutionReport, useStylesTheme } from '../../config'
+import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, getinfo, saveExecutionReport, useStylesTheme } from '../../config'
 import { useHistory, useParams } from 'react-router-dom'
 import { pautasDatabase, executionReportsDatabase, reportsDatabase, readyToSendReportsDatabase } from '../../indexedDB'
 import { PautaDetail } from '../../containers'
-import { executionReportsRoutes, reportsRoutes } from '../../routes'
+import { executionReportsRoutes, reportsRoutes, apiIvcRoutes } from '../../routes'
 import { LoadingLogoModal, LoadingModal, ReportCommitModal, ReportMessagesModal } from '../../modals'
 import { SocketConnection } from '../../connections';
 import sendnotificationToManyUsers from './sendnotificationToManyUsers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faPaperPlane, faComment } from '@fortawesome/free-solid-svg-icons';
 import fileCircleXMark from './fileCircleXMark'
+import apiIcvRoutes from '../../routes/api-icv.routes';
 
 const ActivitiesDetailPage = () => {
     const classes = useStylesTheme();
@@ -110,25 +111,32 @@ const ActivitiesDetailPage = () => {
     }, [])
 
     const getPauta = async (r) => {
-        let report = r;
         let db = await pautasDatabase.initDbPMs();
+        let report = r;
         let pautaIdpm = r.idPm
         setReportAssignment(report.usersAssigned[0]);
         let pautas = await pautasDatabase.consultar(db.database);
+        console.log(pautas)
         let pautaFiltered = pautas.filter((info) => { 
             if(
                 (info.typepm === report.guide)&&(report.idPm===info.idpm)||
                 (info.typepm === report.guide)&&(pautaIdpm===info.idpm)
                 ) {
                     return info
-                }});
-        const state = await saveExecutionReport(pautaFiltered[0], report)
-        console.log(state)
-        console.log(pautaFiltered[0])
-        setPauta(pautaFiltered[0])
-        setTimeout(() => {
-            setLoadingLogo(false)
-        }, 1000)
+                }})
+        console.log(pautaFiltered)
+        apiIcvRoutes.getStructsPauta2(pautaFiltered[0].idpm, pautaFiltered[0].typepm)
+        .then(data=> {
+            pautaFiltered[0].struct = data.data
+            console.log(pautaFiltered[0])
+            setPauta(pautaFiltered[0])
+            setTimeout(() => {
+                setLoadingLogo(false)
+            }, 1000)
+        })
+        .catch(err=>{
+            console.log(err)
+        })
     }
 
     const setProgress = (value) => {

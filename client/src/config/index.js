@@ -23,6 +23,9 @@ import time from './time'
 import reportPriority from './reportPriority'
 import saveReport from './saveReport'
 import checkDisableButtonNotSuperAdmin from './checkDisableButtonNotSuperAdmin'
+import getPautasInspectList from './getPautasInspectList'
+import getPautasMaitenanceList from './getPautasMaitenanceList'
+import getinfo from './getInfo'
 export {
     theme,
     getUserNameById,
@@ -58,5 +61,8 @@ export {
     time,
     reportPriority,
     saveReport,
-    checkDisableButtonNotSuperAdmin
+    checkDisableButtonNotSuperAdmin,
+    getPautasInspectList,
+    getPautasMaitenanceList,
+    getinfo
 }

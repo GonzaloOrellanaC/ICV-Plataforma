@@ -36,6 +36,7 @@ export default {
         return axios.get('icv/getPautas')
     },
     getHeaderPauta: ({idpm, typepm}) => {
+        console.log(idpm, typepm)
         const requestBody = {
             idpm, typepm
         }
@@ -45,6 +46,14 @@ export default {
         const requestBody = {
             idpm, typepm
         }
+        console.log(requestBody)
         return axios.post('icv/getStructsPauta', requestBody)
+    },
+    getStructsPauta2: (idpm, typepm) => {
+        const requestBody = {
+            idpm, typepm
+        }
+        console.log(requestBody)
+        return axios.post('/icv/getStructsPauta', requestBody)
     }
 }
