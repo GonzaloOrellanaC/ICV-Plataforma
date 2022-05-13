@@ -79,25 +79,14 @@ const ActivitiesPage = () => {
         let dataList = new Array()
         dataList = await reportsDatabase.consultar(database)
         console.log(dataList)
-        dataList.map((e, i) => {
-            reportsDatabase.eliminar(e.idIndex, database)
+        dataList.map(async (e, i) => {
+            await reportsDatabase.eliminar(e.idDatabase, database)
             if(i == (dataList.length - 1)) {
                 assign.map(async (a, i) => {
                     await reportsDatabase.actualizar(a, database)
                 })
             }
         })
-
-        /* return new Promise(async resolve => {
-            const state = await reportsDatabase.removerTodo('Documentation')
-            if(state) {
-                const db = await reportsDatabase.initDbReports()
-                const {database} = db
-                assign.map(async (a, i) => {
-                    await reportsDatabase.actualizar(a, database)
-                })
-            }
-        }) */
     }
 
     const goToDetail = (element) => {

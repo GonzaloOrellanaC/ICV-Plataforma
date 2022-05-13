@@ -132,50 +132,48 @@ const createImagesTables = () => {
     let imageColumns = [];
     let textColumns = [];
     let table = {
-        widths: [250, 250],
-        height: [200, 200],
+        widths: [350, 350],
+        height: [300, 300],
         body: []
     }
     let number = 0;
     let numberTop = 2;
     return new Promise(resolve => {
         imagesList.forEach((element, index) => {
+            console.log(element)
             if((index) == numberTop) {
                 table.body[number] = imageColumns;
                 table.body[number + 1] = textColumns;
                 imageColumns = [];
-                textColumns = [];            
+                textColumns = []; 
                 number = numberTop
                 numberTop = numberTop + numberTop
             }
             let imageContent = {
-                width: 300,
+                width: 350,
                 alignment: 'center',
                 image: element.urlBase64
             }
             let textContent = {
-                width: 300,
+                width: 350,
                 alignment: 'center',
-                text: 'Comentario id: ' + element.id + '\n\ "' + element.content + '"' + '\n\ Imágen: ' + dateWithTime(element.id) + '\n\ Usuario: ' + element.userName + '\n\ ',
+                text: 'Comentario id: ' + element.id + '\n\ "' + element.namePicture + '"' + '\n\ Imágen: ' + dateWithTime(element.id) + '\n\ Usuario: ' + element.name + '\n\ \n\ \n\ \n\ __________________',
             }
-            
-            imageColumns.push(imageContent);
-            textColumns.push(textContent);
-            
+            imageColumns.push(imageContent)
+            textColumns.push(textContent)
             if(index == (imagesList.length - 1)) {
                 if( (imagesList.length%2) == 1 ) {
                     imageColumns.push({})
                     textColumns.push({})
                 }
-                table.body[number] = imageColumns;
-                table.body[number + 1] = textColumns;
-                //console.log(table)
-                imageArrayColumns[1].table = table;
-                imageColumns = [];
-                textColumns = [];
+                table.body[number] = imageColumns
+                table.body[number + 1] = textColumns
+                imageArrayColumns[1].table = table
+                imageColumns = []
+                textColumns = []
                 table = {
-                    widths: [250, 250],
-                    height: [200, 200],
+                    widths: [300, 300, 300],
+                    height: [300, 300, 300],
                     body: []
                 }
                 number = 0;
@@ -201,7 +199,7 @@ const createSubTables = async (list = new Array, index = new String, indexNumber
             {
                 colSpan: 9, 
                 border: [true, true, true, true],
-                text: index,
+                text: `${indexNumber}.- ${index}`,
                 fillColor: '#DADADA',
                 pageBreak: pageBreak
             },
@@ -221,7 +219,6 @@ const createSubTables = async (list = new Array, index = new String, indexNumber
             let date;
             let timeData;
             if(e.writeCommits) {
-                //console.log(e.writeCommits);
                 if(e.writeCommits.length > 0) {
                     e.writeCommits.forEach((commitItem, index) => {
                         if(commitItem.urlBase64) {
@@ -233,7 +230,6 @@ const createSubTables = async (list = new Array, index = new String, indexNumber
                 date = dateSimple(e.writeCommits[0].id)
                 timeData = time(e.writeCommits[0].id)
             }else if(e.readCommits){
-                //console.log(e.readCommits);
                 if(e.readCommits.length > 0) {
                     e.readCommits.forEach((commitItem, index) => {
                         if(commitItem.urlBase64) {
@@ -324,7 +320,6 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
     const executionUser = await getUserNameById(reportData.usersAssigned[0])
     const executionUserSign = await getSignById(reportData.usersAssigned[0])
     const executionReportData = await getExecutionReportData(reportData)
-    console.log(executionReportData)
     let groupKeys
     let group
     if(reportData.testMode) {
@@ -504,7 +499,7 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
                     },
                 ]
             },
-            await createAstImages(executionReportData[0].astList),
+            executionReportData[0].astList ? await createAstImages(executionReportData[0].astList) : {},
             await createImagesTables()
         ],
         styles: {
@@ -550,8 +545,6 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
             }
         },
     };
-
-    console.log(docDefinition)
     
     pdfMakeRoutes.createPdf(docDefinition).then(data=> {
         const linkSource = data.data;

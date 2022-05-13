@@ -53,6 +53,7 @@
         "react-webcam": "^7.0.1",
         "rut.js": "^2.1.0",
         "socket.io-client": "^4.4.1",
+        "swiper": "^8.1.4",
         "web-vitals": "^0.2.4",
         "workbox-background-sync": "^5.1.4",
         "workbox-broadcast-update": "^5.1.4",

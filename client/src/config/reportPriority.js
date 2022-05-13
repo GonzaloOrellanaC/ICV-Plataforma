@@ -3,7 +3,7 @@ export default (level, role) => {
         return true
     }else if(level == 2 && role === 'chiefMachinery') {
         return true
-    }else if(level == 3 && role === 'sapExecutive') {
+    }else if(level == 3 && (role === 'sapExecutive' || role === 'admin')) {
         return true
     }else{
         return false

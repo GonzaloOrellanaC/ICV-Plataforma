@@ -16,7 +16,6 @@ const initDbReports = () => {
                 }
             )
         }
-    
         conexion.onupgradeneeded = (e) =>{
             db = e.target.result;
             const coleccionObjetos = db.createObjectStore('Reports',{
@@ -32,9 +31,7 @@ const initDbReports = () => {
                     }
                 )
             }
-            
         }
-    
         conexion.onerror = (error) =>{
             resolve(error)
         }
@@ -86,13 +83,20 @@ const actualizar = (data, database) =>{
 }
 
 const eliminar = (clave, database) =>{      
-    const trasaccion = database.transaction(['Reports'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('Reports')
-    const conexion = coleccionObjetos.delete(clave)
+    return new Promise(resolve => {
+        const trasaccion = database.transaction(['Reports'],'readwrite')
+        const coleccionObjetos = trasaccion.objectStore('Reports')
+        const conexion = coleccionObjetos.delete(clave)
 
-    conexion.onsuccess = () =>{
-        //consultar()
-    }
+        conexion.onsuccess = () =>{
+            console.log('borrado')
+            resolve(true)
+        }
+
+        conexion.onerror = () => {
+            resolve(false)
+        }
+    })
 }
 
 const removerTodo = (databaseName) => {

@@ -9,7 +9,7 @@ import { faEye, faPen, faPaperclip, faCommentDots } from "@fortawesome/free-soli
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ReadActivityModal, WriteActivityModal } from '../../modals'
 import { executionReportsDatabase } from "../../indexedDB"
-import { executionReportsRoutes, reportsRoutes } from "../../routes"
+import { apiIvcRoutes, executionReportsRoutes, reportsRoutes } from "../../routes"
 import { compareExecutionReport, getExecutionReport, saveExecutionReport } from "../../config"
 import { ReportDataDialog } from '../../dialogs'
 
@@ -221,6 +221,9 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 saveExecutionReport(executionReportData, reportAssigned)
             }else{
                 console.log('Grupo no existe')
+                const data = await apiIvcRoutes.getStructsPauta2(pauta.idpm, pauta.typepm)
+                console.log(data.data)
+                pauta.struct = data.data
                 groupD = pauta.struct.reduce((r, a) => {
                     r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
                     return r
