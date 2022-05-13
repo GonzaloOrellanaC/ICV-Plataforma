@@ -63,7 +63,6 @@ const PmsPage = () => {
                 resolve(data.data)
             })
             .catch(err => {
-                console.log('Error', err)
             })
         })
     }

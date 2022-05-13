@@ -19,7 +19,6 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
     const [ data, setData ] = useState('');
     const [ closeType, setCloseType ] = useState(false)
     const [ userAssigned, setUserAssigned ] = useState()
-    console.log(usersAssigned)
     const setUserToReport = async (userId) => {
         if(userId === '') {
             let usersAssigned = new Array();
@@ -91,7 +90,6 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
             let userList = new Array();
             let users = new Array();
             userList = response.data;
-            console.log(userList)
             userList.forEach((user, index) => {/* 
                 let permissionsReports = new Array();
                 permissionsReports = user.permissionsReports
@@ -112,7 +110,6 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         setUserAssigned(usersAssigned[0])
         setCloseType(false)
         getUsers();
-        //console.log(report)
         if(state === 'Asignar') {
             setColorState('#DE4343');
         }else if(state === 'En proceso') {
@@ -174,7 +171,6 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                     <option value={""}>Seleccionar operario</option>
                     {
                         operarios.filter(user => {
-                            console.log(user)
                             if(reportType ==='Inspección') {
                                 if(user.role==='inspectionWorker') {
                                     return user
@@ -185,7 +181,6 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                                 }
                             }
                         }).map((user, i) => {
-                            //console.log(user)
                             return(
                                 <option key={i} value={user._id}>{`${user.name} ${user.lastName}`}</option>
                             )

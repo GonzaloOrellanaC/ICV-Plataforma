@@ -22,18 +22,15 @@ export default async (
                     setTimeout(async () => {
                         setLoadingData('Descargando pautas de mantenimiento e inspección.');
                         const estadoDescargaPautas = await getInfo.descargarPautas(setProgress);
-                        console.log(estadoDescargaPautas)
                         if(estadoDescargaPautas.state) {
                             setTimeout( async () => {
                                 setLoadingData('Descargando datos de las obras.');
                                 const responseSites = await getInfo.getSites(setProgress, setDisableButtons);
-                                console.log(responseSites)
                                 setTimeout(async () => {
                                     if(responseSites) {
                                         setLoadingData('Descargando datos de las máquinas.')
                                         setProgress(65)
                                         const responseTrucks = await getTrucksList();
-                                        console.log(responseTrucks)
                                         setTimeout(async() => {
                                             if(responseTrucks) {
                                                 setLoadingData('Descargando lista de las máquinas de las obras.')
@@ -58,13 +55,8 @@ export default async (
                         }
                     }, 500);
                 }else{
-                    /* setLoadingData('Actualizando asignaciones.');
-                    const assignMentResolve = await getInfo.getAssignments(setProgress);
-                    console.log(assignMentResolve)
-                    if(assignMentResolve) { */
                         setLoadingData('Descargando pautas de mantenimiento e inspección.');
                         const estadoDescargaPautas = await getInfo.descargarPautas(setProgress);
-                        console.log(estadoDescargaPautas)
                         if(estadoDescargaPautas.state) {
                             setTimeout( async () => {
                                 setLoadingData('Descargando datos de las obras.');
@@ -74,7 +66,6 @@ export default async (
                                         setLoadingData('Descargando datos de las máquinas.')
                                         setProgress(65)
                                         const responseTrucks = await getTrucksList();
-                                        console.log(responseTrucks)
                                         setTimeout(async() => {
                                             
                                             setLastActualization()

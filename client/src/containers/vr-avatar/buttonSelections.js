@@ -1,5 +1,4 @@
 export default (value, machineModel) => {
-    console.log(value)
     if(machineModel === '793-F') {
         if(value === 'Sistema_direccion') {
             return [

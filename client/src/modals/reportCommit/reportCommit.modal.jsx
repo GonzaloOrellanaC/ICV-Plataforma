@@ -34,16 +34,6 @@ const ReportCommitModal = ({open, report, closeModal, getResponseState, messageT
                 type: historyType,
                 message: message
             })
-            /* if(!report.level || report.level == 0) {
-                //report.shiftManagerApprovedCommit = message;
-            }else if(report.level == 1) {
-                report.shiftManagerApprovedCommit = message;
-            }else if(report.level == 2) {
-                report.chiefMachineryApprovedCommit = message;
-            }else if(report.level == 3) {
-                report.sapExecutiveApprovedCommit = message;
-            }; */
-            //console.log(report.shiftManagerApprovedCommit)
             closeModal();
             getResponseState(true, report)
         }else{

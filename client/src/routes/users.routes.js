@@ -46,7 +46,6 @@ export default {
         const requestBody = {
             id
         }
-        console.log(requestBody)
         return axios.post('/users/getUserSign', requestBody)
     }
 }

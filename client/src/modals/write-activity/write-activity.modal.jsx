@@ -128,7 +128,6 @@ const WriteActivityModal = ({open, closeWriteModal, activity, onlyClose, reportI
     }
 
     const saveSate = () => {
-        console.log(commits)
         if(commits.length > commitsLength) {
             if(confirm('Guardar avance')) {
                 activity.isChecked = true;

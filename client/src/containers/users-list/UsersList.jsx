@@ -131,7 +131,6 @@ const UsersList = ({height, hableButton}) => {
                     hableButton && <div style={{overflowY: 'auto', height: 'calc(100vh - 350px)'}}>
                     {
                         usuarios.map((e, n) => {
-                            console.log(e.sites)
                             if(!e.imageUrl) {
                                 e.imageUrl = '../assets/no-profile-image.png'
                             }

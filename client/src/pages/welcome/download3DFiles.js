@@ -89,7 +89,6 @@ export default async (setProgress, setOpenLoader, setLoadingData, setOpenVersion
 
     let db = await FilesToStringDatabase.initDb3DFiles();
     let consulta = await FilesToStringDatabase.consultar(db.database);
-    console.log(consulta)
     if(consulta.length > 0) {
         setLoadingData(`Modelos 3D descargados.`)
         setTimeout(() => {

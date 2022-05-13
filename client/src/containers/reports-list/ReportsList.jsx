@@ -70,19 +70,13 @@ const ReportsList = ({list, reloadData}) => {
             item.end = dateSimple(item.endReport)
             item.init = dateSimple(item.dateInit)
             machinesRoutes.getMachineByEquid(item.machine).then(data => {
-                console.log(data.data[0].hourMeter)
                 item.hourMeter = (Number(data.data[0].hourMeter)/3600000)
             })
             let data = await getMachineTypeByEquid(item.machine)
             item.number = data.number
             item.model = data.model
-            /* getMachineTypeByEquid(item.machine).then(data => {
-                item.number = data.number
-                item.model = data.model
-            }) */
             l.push(item)
             if(i == (list.length - 1)) {
-                console.log(l)
                 setLista(l)
             } 
         })
@@ -152,10 +146,6 @@ const ReportsList = ({list, reloadData}) => {
             }
             {
                 lista.map((item, i) => {
-                    console.log(item)
-                    /* //console.log(item)
-                    let m = await getMachineTypeByEquid(item.machine)
-                    console.log(m) */
                     return(
                         <Grid container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>

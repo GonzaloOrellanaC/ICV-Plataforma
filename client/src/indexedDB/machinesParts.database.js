@@ -58,32 +58,10 @@ const agregar = (data, database) => {
         }
 
         conexion.onerror = (err) => {
-            console.log(err)
             resolve(false)
         }
     })
 }
-
-
-
-/* const agregarPor = (data, database) => {
-    return new Promise(resolve => {
-        const trasaccion = database.transaction(['MachinesPartsList'],'readwrite')
-        const coleccionObjetos = trasaccion.objectStore('MachinesPartsList')
-        const conexion = coleccionObjetos.add(data);
-        conexion.onsuccess = async () =>{
-            let consultarData = await consultar(database);
-            if(consultarData) {
-                resolve(true)
-            }
-        }
-
-        conexion.onerror = (err) => {
-            console.log(err)
-            resolve(false)
-        }
-    })
-} */
 
 const obtener = (clave, database) =>{
     return new Promise(result => {

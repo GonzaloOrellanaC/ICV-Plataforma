@@ -133,7 +133,6 @@ const ActivitiesDetailPage = () => {
         let state = true
         const db = await executionReportsDatabase.initDb()
         const data = await executionReportsDatabase.consultar(db.database)
-        /* console.log(await getExecutionReport(reportAssigned._id)) */
         const executionReportFiltered = data.filter((execution) => {
                                             if(execution.reportId === reportAssigned._id) {
                                                 return execution

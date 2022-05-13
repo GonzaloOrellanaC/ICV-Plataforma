@@ -26,8 +26,6 @@ const IAModal = ({open, closeModal}) => {
     const [ ready, setReady ] = useState(false);
 
     useEffect(() => {
-        //console.log(stateModel);
-        //console.log(statePreview);
         let cancel = false;
         if(cancel) return;
         tf.loadGraphModel(weights).then(m => {
@@ -46,14 +44,12 @@ const IAModal = ({open, closeModal}) => {
                 //if(cancel) return;
                 setStateModel(m);
                 setTimeout(() => {
-                    console.log(accepted)
                     setStatePreview(accepted[0].preview || links[0]);
                 }, 2000);
             });
         }else{
             setOpen(true)
             setTimeout(() => {
-                console.log(accepted)
                 setStatePreview(accepted[0].preview || links[0]);
             }, 2000);
         }
@@ -100,7 +96,6 @@ const IAModal = ({open, closeModal}) => {
                 stateModel.executeAsync(input).then(res => {
                     closeModalLoading();
                     setReady(true);
-                    console.log(res)
                     const font = "16px sans-serif";
                     ctx.font = font;
                     ctx.textBaseline = "top";
@@ -142,7 +137,6 @@ const IAModal = ({open, closeModal}) => {
                         ctx.fillText(klass + ":" + score, x1, y1);
                     }
                 }).catch(err=> {
-                    console.log(err);
                     setOpen(false);
                     alert('Se detecta que la máquina no está completa en la imágen. Por favor aléjese de la máquina para que el sistema logre identificar todas las partes.')
                 })

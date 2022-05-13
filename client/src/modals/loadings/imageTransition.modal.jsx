@@ -7,9 +7,6 @@ import {
 import { styleImageTransitionModal } from '../../config';
 
 const ImageTransitiongModal = ({open, imagePath}) => {
-
-    console.log(imagePath)
-
     return(
         <Modal
             open={open}

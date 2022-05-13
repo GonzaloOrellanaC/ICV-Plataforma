@@ -82,7 +82,6 @@ const NotificationsPage = () => {
                             <div style={{height: 'calc(100vh - 220px)', overflowY: 'auto'}}>
                             {
                                 notifications.map((item, index) => {
-                                    console.log(item)
                                     return (
                                         <ListItem key={index} style={{backgroundColor: item.state ? '#fff' : '#F9F9F9'}}>
                                             <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>

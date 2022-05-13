@@ -18,7 +18,6 @@ import { faArrowCircleLeft, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useHistory } from 'react-router-dom';
 
 const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
-    //console.log(report);
     const [ operarios, setOperarios ] = useState([]);
     const [ colorState, setColorState ] = useState();
     const { idIndex, guide, state, siteName, usersAssigned, sapId } = report;
@@ -73,8 +72,6 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
                     }
                 }
                 if(index == (userList.length - 1)) {
-                    //console.log(users);
-                    //console.log(usersAssigned);
                     users.forEach((u, i) => {
                         if(u._id === usersAssigned[0]) {
                             setUserAssignedName(u.name + ' ' + u.lastName);
@@ -99,7 +96,6 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
             setUserSapExecutiveName(user)
         })
         getUsers();
-        //console.log(report)
         if(state === 'Asignar') {
             setColorState('#DE4343');
         }else if(state === 'En proceso') {

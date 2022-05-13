@@ -50,7 +50,6 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
     const [ obsWidth, setObsWith ] = useState('20%')
     
     useEffect(() => {
-        console.log(pauta)
         if(pauta.action === 'Inspección') {
             setDescriptionWith('30%')
             setObsWith('30%')
@@ -67,7 +66,6 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         return new Promise(resolve => {
             executionReportsRoutes.getExecutionReportById(reportAssigned)
             .then(data => {
-                //console.log(data)
                 resolve(data.data[0])
             })
         })
@@ -179,7 +177,6 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         if(navigator.onLine) {
             executionReportDataElement = await getExecutionReportData()
             executionReportDataElementGuard = await getExecutionReportFromDb(reportAssigned._id)
-            console.log(executionReportDataElement, executionReportDataElementGuard)
             if(executionReportDataElement.offLineGuard) {
                 if(executionReportDataElementGuard) {
                     if(executionReportDataElementGuard.offLineGuard) {
@@ -209,27 +206,21 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
             executionReportDataElement = await getExecutionReportFromDb(reportAssigned._id)
             executionReportData = executionReportDataElement
         }
-        console.log(executionReportData)
         if(reportAssigned.testMode) {
             if(executionReportData.group) {
-                console.log('Existe grupo')
                 setGroup(executionReportData.group)
-                console.log(executionReportData.group)
                 setGroupData(Object.keys(executionReportData.group), executionReportData.group, true)
                 setTotalProgress(executionReportData.group)
                 setExecutionReport(executionReportData)
                 saveExecutionReport(executionReportData, reportAssigned)
             }else{
-                console.log('Grupo no existe')
                 const data = await apiIvcRoutes.getStructsPauta2(pauta.idpm, pauta.typepm)
-                console.log(data.data)
                 pauta.struct = data.data
                 groupD = pauta.struct.reduce((r, a) => {
                     r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
                     return r
                 }, {})
                 setGroup(groupD)
-                console.log(groupD)
                 executionReportData.group = groupD
                 setGroupData(Object.keys(groupD), groupD, true)
                 setTotalProgress(groupD)
@@ -250,7 +241,6 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                     return r
                 }, {})
                 setGroup(groupD)
-                console.log(groupD)
                 executionReportData.group = groupD
                 setGroupData(Object.keys(groupD), groupD)
                 setTotalProgress(executionReportData.group)
@@ -316,7 +306,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         })
     }
 
-    const closeModal = async (isOnlyClose) => {
+    /* const closeModal = async (isOnlyClose) => {
         let group_ = executionReport.group
         if(!reportAssigned.dateInit) {
             reportAssigned.dateInit = Date.now()
@@ -399,7 +389,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
     const well = {
         borderRadius: 10,
         boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)'
-    }
+    } */
       
     const SampleArrow = (props) => {
         const { className, style, onClick } = props

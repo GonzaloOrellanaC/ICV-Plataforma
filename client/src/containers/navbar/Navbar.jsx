@@ -212,7 +212,6 @@ const Navbar = () => {
                     //alert(data.message)
                 })
                 socket.on(`notification_${localStorage.getItem('_id')}`, data => {
-                    console.log(data)
                     addNotification({
                         icon: logoNotification,
                         title: data.title,

@@ -68,7 +68,6 @@ const download3DFile = async (n, files, setProgress, setOpenLoader, setLoadingDa
             }, 1000);
         }, 1000);
     }else{
-        console.log(files[number]);
         const { model, brand, type, name } = files[number];
         setLoadingData(`Descargando modelo 3D de ${name}, ${brand} ${model}`)
         let res = await fetch(`${environment.storageURL}${files[number].url}`);

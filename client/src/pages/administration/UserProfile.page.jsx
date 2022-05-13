@@ -19,18 +19,11 @@ const UserProfilePage = ({route}) => {
             usersRoutes.getAllUsers().then(async users => {
                 let usersList = new Array();
                 usersList = users.data;
-                let me = usersList.filter(u => { console.log(u._id, _id);if(u._id === _id){return u}});
-                console.log(me)
+                let me = usersList.filter(u => {if(u._id === _id){return u}});
                 if(!me[0].imageUrl) {
                     me[0].imageUrl = '../assets/no-profile-image.png'
-                    /* let dbImage = await imageDatabase.initDb()
-                    let pImages = new Array()
-                    pImages = await imageDatabase.consultar(dbImage.database)
-                    let image = pImages.filter(image =>{if(image.name === 'no-image-profile') {return image}})
-                    me[0].imageUrl = 'data:'+image[0].data */
                 }
                 setUserData(me[0]);
-                console.log(me[0])
                 let list = usersList.filter(u => {if((u._id != _id)&&(u.role != 'admin')){return u}});
                 setUsers(list);
             })

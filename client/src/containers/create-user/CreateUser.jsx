@@ -125,7 +125,6 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
                 document.getElementById('phone').className = 'isInvalid';
             }
         }
-        console.log(userData)
         localStorage.setItem('userDataToSave', JSON.stringify(userData));
     }
 
@@ -149,13 +148,9 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
     const classes = useStyles();
 
     const uploadImageProfile = async (file) => {
-        console.log(file)
         let image = await imageToBase64(file);
-        setImageUrl(image);
+        setImageUrl(image)
         saveUserData(image)
-        /* azureStorageRoutes.uploadImageProfile(file, localStorage.getItem('_id')).then(res => {
-            console.log(res)
-        }) */
     }
 
     const openFile = () => {
@@ -170,7 +165,6 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
     useEffect(() => {
         let cancel = true;
         let userDataToContinue = localStorage.getItem('userDataToSave');
-        console.log(uData)
         _init(
             uData, 
             setOpen, 
@@ -326,7 +320,7 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
                             <div style={{float: 'left', width: '30%'}}>
                                 <FormControl fullWidth>
                                     <p>Número de teléfono</p>
-                                    <input autoComplete="off" required className="inputClass" id="phone" minLength={9} onBlur={()=>saveUserData()} onInput={(e)=>{e.target.value = e.target.value.slice(0, 9); console.log(e.target.value)}} onChange={(e)=>setPhone(e.target.value)} value={phone} /*className={classes.inputsStyle}*/ placeholder="999998888" type="phone" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <input autoComplete="off" required className="inputClass" id="phone" minLength={9} onBlur={()=>saveUserData()} onInput={(e)=>{e.target.value = e.target.value.slice(0, 9)}} onChange={(e)=>setPhone(e.target.value)} value={phone} /*className={classes.inputsStyle}*/ placeholder="999998888" type="phone" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
                         </div> 

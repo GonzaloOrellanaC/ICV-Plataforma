@@ -140,7 +140,6 @@ const createImagesTables = () => {
     let numberTop = 2;
     return new Promise(resolve => {
         imagesList.forEach((element, index) => {
-            console.log(element)
             if((index) == numberTop) {
                 table.body[number] = imageColumns;
                 table.body[number + 1] = textColumns;
@@ -555,7 +554,6 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
         stopPrintingLoad()
     }).catch(err => {
         alert('Error al descargar PDF');
-        console.log(err)
         stopPrintingLoad()
     })
     

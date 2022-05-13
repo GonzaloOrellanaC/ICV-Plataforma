@@ -5,7 +5,6 @@ export default {
         const requestBody = {
             pdfContent
         }
-        console.log(requestBody)
         return axios.post('/pdf-maker/createPdf', requestBody)
     }
 }

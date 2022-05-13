@@ -21,10 +21,8 @@ const getAssignments = (setProgress) => {
             setProgress(progressNumber)
             report.idDatabase = i;
             getReportExecutionFromId(report._id);
-            console.log(i, reps.length)
             if(i == (reps.length - 1)) {
                 setProgress(100)
-                console.log(true)
                 setTimeout(() => {
                     resolve(true)
                 }, 100);
@@ -55,15 +53,12 @@ const descargarPautas = (setProgress) => {
         const dbInit = await pautasDatabase.initDbPMs()
         const data = await pautasDatabase.consultar(dbInit.database)
         const pautas = data
-        console.log('Pautas: ', pautas)
         if(pautas) {
             pautas.forEach(async (pauta, number ) => {
-                console.log(pauta)
                 let progressNumber = 0;
                 let everyProgress1 = (100 / pautas.length) / 3;        
                 const response = await getHeader(pauta);
                 pauta.header = response;
-                console.log(pauta.header)
                 pauta.id = number;
                 if(pauta.typepm === 'Pauta de Inspección') {
                     pauta.action = 'Inspección'
@@ -82,7 +77,6 @@ const descargarPautas = (setProgress) => {
                         }
                         const res = await getStructs(pa)
                         pa.struct = res;
-                        //console.log(pa);
                         if(n == (pautas.length - 1)) {
                             const db = await pautasDatabase.initDbPMs();
                             if(db) {
@@ -173,12 +167,9 @@ const getPautas = () => {
     return new Promise(resolve => {
         apiIvcRoutes.getPautas()
         .then(data => {
-            console.log(data.data)
             resolve(data.data)
         })
         .catch(err => {
-            console.log(err)
-            //console.log('Error', err)
         })
     })
 }
@@ -190,7 +181,6 @@ const getHeader = (pauta) => {
             resolve(data.data)
         })
         .catch(err => {
-            //console.log('Error', err)
         })
     })
 }
@@ -202,7 +192,6 @@ const getStructs = (pauta) => {
             resolve(data.data)
         })
         .catch(err => {
-            //console.log('Error', err)
         })
     })
 }
@@ -245,7 +234,6 @@ const getSitesList = (setDisableButtons) => {
             resolve(data.data)
         })
         .catch(err => {
-            //console.log('Error', err)
         })
     })
 }

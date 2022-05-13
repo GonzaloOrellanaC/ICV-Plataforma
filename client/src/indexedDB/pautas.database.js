@@ -64,7 +64,6 @@ const consultarPorDato = (dato, database) =>{
         const coleccionObjetos = trasaccion.objectStore('pautas')
         const conexion = coleccionObjetos.openCursor()
         conexion.onsuccess = (e) =>{
-            console.log(e.target.result.value)
         }
     })
 }

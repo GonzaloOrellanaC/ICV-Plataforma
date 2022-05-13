@@ -47,7 +47,6 @@ const CreateReports = () => {
     const history = useHistory();
 
     const {id} = useParams();
-    //console.log(id)
 
     const saveReportData = async (activate) => {
         if(activate) {
@@ -110,7 +109,6 @@ const CreateReports = () => {
             alert('Falta información')
         }else{
             let reportState = await reportsRoutes.createReport(report);
-            console.log(reportState);
             let reportData = {
                 reportId: reportState.data._id,
                 createdBy: localStorage.getItem('_id')
@@ -168,7 +166,6 @@ const CreateReports = () => {
 
     const readReports = async () => {
         let reports = await reportsRoutes.getTotalReportsToIndex();
-        console.log(reports)
         setIdIndex(reports.data.length)
     }
 
@@ -202,10 +199,8 @@ const CreateReports = () => {
 
     const activateIfEdit = async (id) => {
         const pautasData = await readPautas();
-        //console.log(id)
         if((id)) {
             const report = JSON.parse(id);
-            console.log(report)
             let pIndex = settingTypePautaWithReturn(report.reportType);
             setPautaIndex(pIndex)
             setIdIndex(report.idIndex);
@@ -216,7 +211,6 @@ const CreateReports = () => {
             setDisableMaquinas(false);
             if(navigator.onLine) {
                 apiIvcRoutes.getPautas().then(data => {
-                    console.log(data.data)
                 })
             }
             let db = await machinesDatabase.initDbMachines();
@@ -231,11 +225,6 @@ const CreateReports = () => {
                 report.guide.testMode = false
             }
             setPauta(report.guide);
-            /* if(report.sapId) {
-                setSapId(report.sapId);
-            }else{
-                setSapId('N/I')
-            } */
             setDisablePautas(false);
             let machinesList = listaMaquinas.filter((m) => {if(m.model === machine[0].model) { return machine } });
             const machineFromDb = await apiIvcRoutes.getMachineByEquid(machine[0].equid);
@@ -253,10 +242,8 @@ const CreateReports = () => {
     const deleteReport = () => {
         if(id) {
             if(confirm('Se borrará el reporte permanentemente. ¿Desea continuar?')) {
-                console.log(JSON.parse(id));
                 reportsRoutes.deleteReport(JSON.parse(id)._id).then(res=>{
                     alert('Reporte eliminado.')
-                    console.log(res);
                     history.goBack();
                 })
             }

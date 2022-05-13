@@ -17,7 +17,6 @@ const PdfModal = ({open, reportData, close}) => {
     const [ printing, setPrinting ] = useState(false)
 
     useEffect(async() => {
-        console.log(reportData)
         setMachineData(await getMachineData(reportData.machine));
         setFileName(`Orden_de_trabajo_${reportData.idIndex}_aprobado`)
     }, [reportData])
@@ -33,9 +32,7 @@ const PdfModal = ({open, reportData, close}) => {
     }
     
     const print = () => {
-        console.log('Iniciando descarga de PDF')
         try{
-            console.log('Descargando...')
             toPDF(reportData, machineData[0], stopPrintingLoad, fileName);
             setPrinting(true)
         }catch (err) {

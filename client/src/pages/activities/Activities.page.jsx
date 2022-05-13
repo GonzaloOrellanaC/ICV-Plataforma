@@ -54,7 +54,6 @@ const ActivitiesPage = () => {
                                 assign.push(element)
                             }
                             if(index == (rs.length - 1)) {
-                                console.log(assign)
                                 writeDatabaseReports(assign.concat(prioritaryAssign))
                                 setAssignments(assign.reverse())
                                 setPrioritaryAssignments(prioritaryAssign)
@@ -78,7 +77,6 @@ const ActivitiesPage = () => {
         const {database} = db
         let dataList = new Array()
         dataList = await reportsDatabase.consultar(database)
-        console.log(dataList)
         dataList.map(async (e, i) => {
             await reportsDatabase.eliminar(e.idDatabase, database)
             if(i == (dataList.length - 1)) {

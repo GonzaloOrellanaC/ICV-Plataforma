@@ -43,7 +43,6 @@ const ReportDataDialog = (
   const [indexKey, setIndexKey] = useState()
 
   useEffect(() => {
-    console.log(executionReport)
     gruposKeys.map((k, n) => {
       if(k.data === indexGroup) {
         setIndexKey(n)
@@ -52,7 +51,6 @@ const ReportDataDialog = (
     if(executionReport.astList) {
       setAstList(executionReport.astList)
     }
-    console.log(item)
     setUnidad(item.unidadData)
     if(item.messages) {
       setMessages(item.messages)
@@ -62,7 +60,6 @@ const ReportDataDialog = (
           total.push(m)
         }
         if (i == (item.messages.length - 1)) {
-          console.log(total.length)
           setPicturesOfItem(total.length + 1)
         }
       })
@@ -73,7 +70,6 @@ const ReportDataDialog = (
   }, [])
 
   const changeUnidad = (value) => {
-    console.log(value)
     setUnidad(value)
   }
 
@@ -104,10 +100,9 @@ const ReportDataDialog = (
         }
       }, 1000);
     }
-}
+  }
 
   const saveMessage = (image, messagePicture) => {
-    console.log(totalMessagesWithPictures)
     if(message !== ''||messagePicture) {
       if(image) {
         item.haveClip = true
@@ -126,7 +121,6 @@ const ReportDataDialog = (
         user: localStorage.getItem('_id'),
         urlBase64: image
       }
-      console.log(messageData)
       messages.push(messageData)
       setMessages(messages)
       item.messages = messages

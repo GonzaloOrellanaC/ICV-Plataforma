@@ -64,13 +64,11 @@ const consultarPorDato = (dato, database) =>{
         const coleccionObjetos = trasaccion.objectStore('reportesListos')
         const conexion = coleccionObjetos.openCursor()
         conexion.onsuccess = (e) =>{
-            console.log(e.target.result.value)
         }
     })
 }
 
 const actualizar = (data, database) =>{
-    console.log(data)
     return new Promise(resolve => {
         try {
             const trasaccion = database.transaction(['reportesListos'],'readwrite')
@@ -78,12 +76,10 @@ const actualizar = (data, database) =>{
             const conexion = coleccionObjetos.put(data)
             
             conexion.onsuccess = () =>{
-                console.log(conexion)
                 resolve(true)
             }
         
         } catch (err) {
-            console.log(err)
             resolve(false)
         }
     })
@@ -96,11 +92,9 @@ const eliminar = (clave, database) =>{
             const coleccionObjetos = trasaccion.objectStore('reportesListos')
             const conexion = coleccionObjetos.delete(Number(clave))
             conexion.onsuccess = () =>{
-                console.log(conexion)
                 resolve(true)
             }
         } catch (error) {
-            console.log(error)
             resolve(false)
         }
     })

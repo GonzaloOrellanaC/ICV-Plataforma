@@ -16,7 +16,6 @@ export const AuthProvider = (props) => {
      useEffect(() => {
         if (data?.self) {
             setUserData(data.self)
-            //console.log(data?.self)
         }
         if(!data) {
 
@@ -45,7 +44,6 @@ export const AuthProvider = (props) => {
                 authRoutes.login(email, password)
                 .then(response => {
                     let userDataToSave = response.data;
-                    console.log(userDataToSave)
                     if(response.data.enabled) {
                         localStorage.setItem('email', userDataToSave.email);
                         localStorage.setItem('fullName', userDataToSave.fullName);
@@ -53,7 +51,6 @@ export const AuthProvider = (props) => {
                         localStorage.setItem('lastName', userDataToSave.lastName);
                         localStorage.setItem('_id', userDataToSave._id);
                         localStorage.setItem('role', userDataToSave.role);
-                        //if(userDataToSave.role === 'admin' || userDataToSave.role === 'sapExecutive') {
                         if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
                             localStorage.setItem('isAdmin', true);
                             setAdmin(true)
@@ -81,7 +78,6 @@ export const AuthProvider = (props) => {
                 })
                 .catch(error => {
                     alert('Error de autenticación: '+error);
-                    console.log(error)
                     setIsAuthenticated(false);
                     localStorage.setItem('isauthenticated', false);
                 })

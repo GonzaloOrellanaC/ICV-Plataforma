@@ -206,7 +206,6 @@ const AdminNewUserPage = () => {
         if(user) {
             if(user.rut) {
                 if(validate(user.rut)) {
-                    //console.log(user);
                     let phone = new String()
                     phone = user.phone;
                     if(user.phone) {

@@ -95,9 +95,8 @@ const Header = () => {
                 })
             });
             Notification.requestPermission().then((res) => {
-                console.log(res)
                 if(res === 'denied' || res === 'default') {
-                    alert("Para recibir mensajes desde la aplicación debe permitir notificaciones")
+                    
                 }
             })
         }

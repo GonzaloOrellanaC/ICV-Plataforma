@@ -36,7 +36,6 @@ const CameraModal = ({open, handleClose, astList}) => {
                         <IconButton
                             onClick={() => {
                                 const imageSrc = getScreenshot();
-                                console.log(imageSrc)
                                 astList.push({
                                     id: Date.now(),
                                     image: imageSrc

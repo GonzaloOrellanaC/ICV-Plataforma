@@ -13,7 +13,6 @@ export default (
     if(userDataToContinue) {
         setTimeout(() => {
             let data = JSON.parse(userDataToContinue);
-            console.log(data)
             if(data.rut) {
                 setRut(data.rut)
             }

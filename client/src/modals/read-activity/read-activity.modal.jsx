@@ -50,8 +50,6 @@ const ReadActivityModal = ({open, closeModal, activity, onlyClose, reportId, rep
             id: Date.now(),
             commit: commit
         }
-
-        console.log(obj)
         
         if(commit.length > 0) {
             let arr = commits;
@@ -125,7 +123,6 @@ const ReadActivityModal = ({open, closeModal, activity, onlyClose, reportId, rep
 
     const saveSate = () => {
         if(commits.length > commitsLength) {
-            console.log(commits)
             if(confirm('Guardar avance')) {
                 activity.isChecked = true;
                 closeModal();

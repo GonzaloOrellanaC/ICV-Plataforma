@@ -61,7 +61,6 @@ const obtener = (clave, database) =>{
 }
 
 const actualizar = (data, database) =>{   
-    console.log(data) 
     return new Promise(resolve => {
         try{
             const trasaccion = database.transaction(['Machines'],'readwrite')
@@ -70,7 +69,6 @@ const actualizar = (data, database) =>{
             
             conexion.onsuccess = () =>{
                 consultar(database).then(d=> {
-                    console.log(d)
                 })
                 resolve(true)
             }

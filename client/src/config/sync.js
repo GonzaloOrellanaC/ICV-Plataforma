@@ -23,7 +23,6 @@ export default () => {
             let db = await executionReportsDatabase.initDb();
             let response = new Array();
             response = await executionReportsDatabase.consultar(db.database);
-            console.log(response);
             response.forEach(async (report, index) => {
                 await executionReportsRoutes.saveExecutionReport(report);
                 if(index ==(response.length - 1)) {

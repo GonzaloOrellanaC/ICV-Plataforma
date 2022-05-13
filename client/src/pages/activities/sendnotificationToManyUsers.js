@@ -33,13 +33,6 @@ export default (emailing, idIndex, uid) => {
         url = '/assignment'
         subtitle = `Se requiere ajuste de OT ${idIndex}`
     }
-    console.log(emailing,
-        `${localStorage.getItem('_id')}`,
-        'Ejecuciones OT',
-        subtitle,
-        message,
-        url,
-        uid)
     SocketConnection.sendnotificationToManyUsers(
         emailing,
         `${localStorage.getItem('_id')}`,

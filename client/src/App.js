@@ -49,10 +49,6 @@ import { Notifications } from 'react-push-notification';
  */
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
     if (networkError?.statusCode === 401) {
-        /* console.log(networkError)
-        console.log(`[Network error]: ${networkError.statusCode}`)
-        console.log(graphQLErrors)
-        console.log(response) */
     }else{
 
     }

@@ -98,11 +98,9 @@ const MVAvatar = ({machine}) => {
         })
 
         mv.addEventListener('click', (e) => {
-            //console.log(e)
         })
 
         mv.addEventListener('error', (err) => {
-            console.log(err)
         })
     }
 
@@ -121,13 +119,11 @@ const MVAvatar = ({machine}) => {
         setButtons([])
         setTimeout(() => {
             setTitle(changeName(element.name))
-            console.log(buttonSelections(element.name, machine.model))
             if(element.brand === 'CATERPILLAR') {
                 if (element.name === 'Preview_Con_Texturas') {
                     setProgress(0)
                     setOpenLoader(true)
                 }else{
-                    console.log(element.brand, element.model, element.name)
                     let imagePath = `../assets/transiciones/${element.brand}/${element.model}/Pantalla_de_carga_${element.name}.png`;
                     setImagePath(imagePath);
                     

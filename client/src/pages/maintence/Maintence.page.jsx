@@ -14,37 +14,7 @@ const MaintencePage = () => {
                 setMachineList(data.data)
             }
         })
-        /* apiIvcRoutes.getFiles().then(data => {
-            console.log(data)
-            if(data.data) {
-                setFileList(data.data);
-                console.log(fileList);
-                if(fileList.length > 0) {
-                    fileList.forEach(file => {
-                        apiIvcRoutes.getPMs(file)
-                        .then(data => {
-                            console.log(data)
-                        })
-                    })
-                } 
-            }
-        }) */
     }, [])
-
-    const readingData = () => {
-        /* apiIvcRoutes.getFiles().then(data => {
-            setFileList(data.data);
-            if(data.data) {
-                console.log(fileList);
-                fileList.forEach(file => {
-                    apiIvcRoutes.getPMs(file)
-                    .then(data => {
-                        console.log(data)
-                    })
-                }) 
-            }
-        }) */
-    }
 
     return(
         <Box>

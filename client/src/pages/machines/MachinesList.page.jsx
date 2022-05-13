@@ -26,7 +26,6 @@ const MachinesListPage = ({route}) => {
     }
 
     const goToMachineDetail = (machineData) => {
-        console.log(machineData)
         const newMachine = {
             id: machine.id,
             brand: machine.brand,
@@ -35,23 +34,12 @@ const MachinesListPage = ({route}) => {
             type: machine.type,
             machineData: JSON.stringify(machineData)
         }
-        history.push(`machine-detail/${machineData.equid/* JSON.stringify(newMachine) */}`)
+        history.push(`machine-detail/${machineData.equid}`)
     }
 
     const readAllMachinesFromIndexedDB = (model) => {
-        /* let db = await machinesDatabase.initDbMachines();
-        if(db) {
-            let readAllMachines = [] = await machinesDatabase.consultar(db.database);
-            console.log(readAllMachines);
-            setMachinesList(
-                readAllMachines
-                .filter(machine => {if(machine.model === model) { return machine}})
-                .sort((a, b) => {return a.equ - b.equ})
-            )
-        } */
         machinesDatabase.initDbMachines().then(db => {
             machinesDatabase.consultar(db.database).then(readAllMachines => {
-                console.log(readAllMachines)
                 setMachinesList(
                     readAllMachines
                     .filter(machine => {if(machine.model === model) { return machine}})
@@ -70,7 +58,6 @@ const MachinesListPage = ({route}) => {
         machinesDatabase.initDbMachines().then(db => {
             machinesDatabase.consultar(db.database).then(readAllMachines => {
                 if(cancel) return
-                console.log(readAllMachines)
                 setMachinesList(
                     readAllMachines
                     .filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
@@ -78,7 +65,6 @@ const MachinesListPage = ({route}) => {
                 )
             })
         })
-        /* readAllMachinesFromIndexedDB(JSON.parse(id).model); */
         if(!site) {
             history.goBack()
         }
