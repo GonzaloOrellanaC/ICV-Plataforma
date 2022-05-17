@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { Drawer, Grid, IconButton, makeStyles } from '@material-ui/core';
+import { CircularProgress, Drawer, Grid, IconButton, LinearProgress, makeStyles } from '@material-ui/core';
 import { Menu, Close } from '@material-ui/icons';
 import clsx from 'clsx';
 import logo from '../../assets/Logologo_icv_1.svg';
@@ -17,12 +17,14 @@ import {
     faComment,
     faTruck,
     faUser,
-    faCube} from '@fortawesome/free-solid-svg-icons';
+    faCube,
+    faTrash} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation } from '../../context';
 import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
 import { io } from "socket.io-client";
 import logoNotification from '../../assets/logo_icv_notification_push.png'
 import addNotification from 'react-push-notification';
+import { download3DFiles } from '../../config';
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -128,6 +130,9 @@ const Navbar = () => {
     const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false)
     const [ cancel, setCancel ] = useState(true)
     // 
+    const [ openDownload3D, setOpenDownload3D ] = useState(false)
+    const [ progressDownload3D, setProgressDownload3D ] = useState(0)
+    const [ loadingData3D, setLoadingData3D ] = useState('')
 
     const logout = async () => {
         if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
@@ -195,6 +200,22 @@ const Navbar = () => {
         window.location.replace('your_uri_scheme://');
     };
 
+    const clearAndLogout = () => {
+        if(confirm('Limpiará toda la data del sistema y cerrará la sesión. Una vez terminado vuelva a iniciar.')) {
+            window.indexedDB.databases().then((db) => {
+                console.log(db)
+                db.forEach((database, index) => {
+                    window.indexedDB.deleteDatabase(database.name)
+                    if(index == (db.length - 1)) {
+                        window.localStorage.clear();
+                        window.location.reload();
+                        removeDatabases();
+                    }
+                })
+            })
+        }
+    }
+
     useEffect(() => {
         if(cancel) {
             /* window.addEventListener('online', () => { */
@@ -244,6 +265,9 @@ const Navbar = () => {
                 }
             }, 1000);
         }
+        setOpenDownload3D(true)
+        localStorage.setItem('isLoading3D', 'ok')
+        download3DFiles(setProgressDownload3D, setOpenDownload3D, setLoadingData3D, null)
         return () => setCancel(false);
     }, [cancel])
 
@@ -357,6 +381,13 @@ const Navbar = () => {
                                     </div>
                                 </IconButton>
                             </div>
+                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar}  title='Limpiar Datos' onClickCapture={()=>{clearAndLogout()}}>
+                                    <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faTrash}/> {navBarOpen ?  ' Limpiar Datos' : ''}
+                                    </div>
+                                </IconButton>
+                            </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center',}}>
                                 <IconButton onClick={logout} title='Cerrar Sesión'>
                                     <div className={classes.sideButtons}>
@@ -371,6 +402,41 @@ const Navbar = () => {
                     {openInternalMessagesModal && <InternalMessageModal open={openInternalMessagesModal} closeModal={closeInternalMessageModal} />}
                 </div>
             </Drawer>
+            {
+                (navigator.onLine && openDownload3D) && 
+                <div style={
+                    {
+                        position: 'absolute', 
+                        bottom: 20, 
+                        right: 20, 
+                        width: 300, 
+                        paddingTop: 50, 
+                        paddingBottom: 40, 
+                        paddingLeft: 20, 
+                        paddingRight: 20,
+                        borderRadius: 20,
+                        backgroundColor: '#fff',
+                        borderColor: '#ccc',
+                        borderWidth: 1,
+                        borderStyle: 'solid',
+                        textAlign: 'center',
+                        zIndex: 2
+                    }
+                }>
+                    {
+                        !loadingData3D && <CircularProgress color='primary' />
+                    }
+                    {
+                        !loadingData3D && <p style={{margin: 0, marginTop: 10}}>Cargando datos...</p>
+                    }
+                    {
+                        loadingData3D && <LinearProgress variant="determinate" value={progressDownload3D} />
+                    }
+                    {
+                        loadingData3D && <p style={{margin: 0, marginTop: 10}}>{loadingData3D}</p>
+                    }
+                </div>
+            }
         </div>
     )
 }

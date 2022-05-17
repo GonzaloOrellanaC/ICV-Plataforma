@@ -2,7 +2,7 @@ import getInfo from './getInfo';
 import download3DFiles from './download3DFiles';
 import { FilesToStringDatabase } from '../../indexedDB';
 
-export default async (
+const readData = (
     setOpenLoader,
     setLoadingData,
     getTrucksList,
@@ -13,7 +13,8 @@ export default async (
     setOpenVersion,
     network
 ) => {
-    const revisarData = await getInfo.setIfNeedReadDataAgain(setDisableButtons);
+    return new Promise(async resolve => {
+        const revisarData = await getInfo.setIfNeedReadDataAgain(setDisableButtons);
         const userRole = localStorage.getItem('role');
         if(revisarData.state) {
             if(revisarData.data === 'full') {
@@ -39,16 +40,19 @@ export default async (
                                                 if(getMachines) {
                                                     setTimeout(() => {
                                                         setOpenLoader(false)
+                                                        resolve(true)
                                                     }, 1000);
                                                     //download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
                                                     setLastActualization()
                                                 } 
                                             }else{
                                                 setOpenLoader(false)
+                                                resolve(true)
                                             }
                                         }, 1000);
                                     }else{
                                         setOpenLoader(false)
+                                        resolve(true)
                                     }
                                 }, 1000);
                             }, 1000);
@@ -79,15 +83,18 @@ export default async (
                                                     setLastActualization()
                                                     setTimeout(() => {
                                                         setOpenLoader(false)
+                                                        resolve(true)
                                                     }, 1000);
                                                 } 
                                                 setLastActualization()
                                             }else{
                                                 setOpenLoader(false)
+                                                resolve(true)
                                             }
                                         }, 1000);
                                     }else{
                                         setOpenLoader(false)
+                                        resolve(true)
                                     }
                                 }, 1000);
                             }, 1000);
@@ -98,6 +105,10 @@ export default async (
                 
             }
         }else{
+            resolve(true)
             setOpenLoader(false)
         }
+    })
 }
+
+export default readData

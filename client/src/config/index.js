@@ -26,6 +26,7 @@ import checkDisableButtonNotSuperAdmin from './checkDisableButtonNotSuperAdmin'
 import getPautasInspectList from './getPautasInspectList'
 import getPautasMaitenanceList from './getPautasMaitenanceList'
 import getinfo from './getInfo'
+import download3DFiles from './download3DFiles'
 export {
     theme,
     getUserNameById,
@@ -64,5 +65,6 @@ export {
     checkDisableButtonNotSuperAdmin,
     getPautasInspectList,
     getPautasMaitenanceList,
-    getinfo
+    getinfo,
+    download3DFiles
 }

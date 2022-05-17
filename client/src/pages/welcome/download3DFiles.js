@@ -5,19 +5,29 @@ import Files from "./3dFiles";
 export default async (setProgress, setOpenLoader, setLoadingData, setOpenVersion) => {
 
     const download3DFile = async (n, files, db) => {
-            setLoadingData(`Modelos 3D deberán ser descargados.`)
+            if(setLoadingData) {
+                setLoadingData(`Modelos 3D deberán ser descargados.`)
+            }
             let number = Number(n);
             let newFiles = new Array();
             newFiles = files;
             if(number == (newFiles.length)) {
                 setTimeout(() => {
-                    setProgress(100);
-                    setLoadingData('Recursos descargados');
+                    if(setProgress) {
+                        setProgress(100)
+                    }
+                    if(setLoadingData) {
+                        setLoadingData('Recursos descargados')
+                    }
                     setTimeout(() => {
-                        setOpenLoader(false);
+                        if(setOpenLoader) {
+                            setOpenLoader(false)
+                        }
                         setTimeout(() => {
                             if(!localStorage.getItem('version')) {
-                                setOpenVersion(true)
+                                if(setOpenVersion) {
+                                    setOpenVersion(true)
+                                }
                                 localStorage.setItem('version', environment.version);
                             }
                         }, 500);
@@ -25,13 +35,17 @@ export default async (setProgress, setOpenLoader, setLoadingData, setOpenVersion
                 }, 1000);
             }else{
                 const { model, brand, type, name } = files[number];
-                setLoadingData(`Descargando modelo 3D de ${name}, ${brand} ${model}`)
+                if(setLoadingData) {
+                    setLoadingData(`Descargando modelo 3D de ${name}, ${brand} ${model}`)
+                }
                 let res = await fetch(`${environment.storageURL}${files[number].url}`);
                 const reader = res.body.getReader();
                 const contentLength = + res.headers.get('Content-Length');
                 let receivedLength = 0; // received that many bytes at the moment
                 let chunks = []; // array of received binary chunks (comprises the body)
-                setProgress(0);
+                if(setProgress) {
+                    setProgress(0)
+                }
                 setTimeout(async () => {
                     while (true) {
                         const ele = await reader.read();
@@ -56,7 +70,9 @@ export default async (setProgress, setOpenLoader, setLoadingData, setOpenVersion
                         }
                         chunks.push(ele.value);
                         receivedLength += ele.value.length;
-                        setProgress((100*receivedLength)/contentLength)
+                        if(setProgress) {
+                            setProgress((100*receivedLength)/contentLength)
+                        }
                     }
                 }, 1000);
             }
@@ -90,11 +106,17 @@ export default async (setProgress, setOpenLoader, setLoadingData, setOpenVersion
     let db = await FilesToStringDatabase.initDb3DFiles();
     let consulta = await FilesToStringDatabase.consultar(db.database);
     if(consulta.length > 0) {
-        setLoadingData(`Modelos 3D descargados.`)
+        if(setLoadingData) {
+            setLoadingData(`Modelos 3D descargados.`)
+        }
         setTimeout(() => {
-            setProgress(100);
+            if(setProgress) {
+                setProgress(100)
+            }
             setTimeout(() => {
-                setOpenLoader(false)
+                if(setOpenLoader) {
+                    setOpenLoader(false)
+                }
             }, 1000);
         }, 1000);
     }else {

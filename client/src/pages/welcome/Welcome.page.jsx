@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Grid } from '@material-ui/core'
+import { Grid, LinearProgress } from '@material-ui/core'
 import { CardButton } from '../../components/buttons'
 import { apiIvcRoutes, notificationsRoutes } from '../../routes'
 import { trucksDatabase, machinesDatabase, machinesImagesDatabase, imageDatabase, pautasDatabase, readyToSendReportsDatabase } from '../../indexedDB'
@@ -10,8 +10,9 @@ import readDataSite from './readDataSite'
 import readData from './readData'
 import Files from './3dFiles'
 import { useHistory } from 'react-router-dom'
-import { dateWithTime, imageToBase64 } from '../../config'
+import { dateWithTime, download3DFiles, imageToBase64 } from '../../config'
 import addNotification from 'react-push-notification'
+import { Download3DFilesDialog } from '../../dialogs'
 
 const WelcomePage = () => {
     const [ date, setDate ] = useState('')
@@ -33,6 +34,7 @@ const WelcomePage = () => {
     const [ notificaciones2, setNotificaciones2 ] = useState('Sin informaciones')
 
     const [ cancel, setCancel ] = useState(true)
+
  
     const history = useHistory()
 
@@ -73,6 +75,7 @@ const WelcomePage = () => {
     }
 
     useEffect(async() => {
+        /* setOpenDownload3D(true) */
         let db = await readyToSendReportsDatabase.initDb()
         let data2 = await readyToSendReportsDatabase.consultar(db.database)
         /* setElementsReadyToSend(data) */
@@ -298,6 +301,8 @@ const WelcomePage = () => {
             </div>
             <LoadingModal open={openLoader} progress={progress} loadingData={loadingData} withProgress={true}/>
             <VersionControlModal open={openVersion} closeModal={closeModal} />
+            
+            {/* <Download3DFilesDialog open={openDownload3D} /> */}
         </div>
     )
 }

@@ -21,7 +21,7 @@ const MachinesListPage = ({route}) => {
     const machine = JSON.parse(id);
     const openCloseModal = () => {
             setTimeout(() => {
-                setOpen(true)
+                (localStorage.getItem('isLoading3D') === 'nok') ? setOpen(true) : alert('Debe esperar el término de la descarga de los modelo s 3D.')
             }, 500);
     }
 
@@ -100,11 +100,11 @@ const MachinesListPage = ({route}) => {
                                     </Toolbar>
                                 </div>
                             </div>
-                            {/* <div style={{width: '100%', paddingLeft: 20, height: 40, textAlign: 'center'}}>
+                            <div style={{width: '100%', paddingLeft: 20, height: 40, textAlign: 'center'}}>
                                 <button style={{height: 30, borderRadius: 20, position: 'relative', right: 10, paddingLeft: 30, paddingRight: 30}} onClick={() => openCloseModal()}>
                                     <strong>{`Ver modelo 3D de ${machine.type} ${machine.brand} ${machine.model}`}</strong>
                                 </button>
-                            </div> */}
+                            </div>
                             <List style={{width: '100vw', marginRight: 11, overflowY: 'scroll', maxHeight: '70vh', paddingLeft: 20, paddingRight: 20}}>
                             {
                                 machinesList.map((machine, i) => {
@@ -146,23 +146,23 @@ const MachinesListPage = ({route}) => {
                             }
                             </List>
                             <div>
-                                    <Modal
-                                        open={open}
-                                        //close={!open}
-                                        //onClose={handleClose}
-                                        aria-labelledby="modal-modal-title"
-                                        aria-describedby="modal-modal-description"
-                                    >
-                                        <Box sx={styleModal3D/* {height: '100%', width: '70%', backgroundColor: '#333'} */}>
-                                            {/* <VRAvatar machine={machine}/> */} 
-                                            <MVAvatar machine={machine}/>
-                                            {/* <Test /> */}
-                                            <Fab onClick={() => closeModal()} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}} color="primary">
-                                                <Close />
-                                            </Fab>
-                                        </Box>
-                                        
-                                    </Modal>
+                                <Modal
+                                    open={open}
+                                    //close={!open}
+                                    //onClose={handleClose}
+                                    aria-labelledby="modal-modal-title"
+                                    aria-describedby="modal-modal-description"
+                                >
+                                    <Box sx={styleModal3D/* {height: '100%', width: '70%', backgroundColor: '#333'} */}>
+                                        {/* <VRAvatar machine={machine}/> */} 
+                                        <MVAvatar machine={machine}/>
+                                        {/* <Test /> */}
+                                        <Fab onClick={() => closeModal()} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}} color="primary">
+                                            <Close />
+                                        </Fab>
+                                    </Box>
+                                    
+                                </Modal>
                             </div>
                         </Grid>
                     </Card>

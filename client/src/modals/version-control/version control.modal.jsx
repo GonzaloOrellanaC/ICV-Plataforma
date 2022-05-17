@@ -17,6 +17,13 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.1.6</strong>
+                        <li>
+                            Se habilita vista 3D de máquinas. Solo cambión Caterpillar 793-F cuenta con etiquetas en las partes.
+                        </li>
+                        <li>
+                            Se habilita botón de borrado del sistema en caso de requerir limpiar la memoria.
+                        </li>
                         <strong>v.1.5</strong>
                         <li>
                             Se agrega elemento que permite borrar o cambiar la AST.
