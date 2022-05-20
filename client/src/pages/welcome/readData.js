@@ -11,7 +11,8 @@ const readData = (
     setLastActualization,
     setDisableButtons, 
     setOpenVersion,
-    network
+    network,
+    readyToLoad
 ) => {
     return new Promise(async resolve => {
         const revisarData = await getInfo.setIfNeedReadDataAgain(setDisableButtons);
@@ -41,6 +42,7 @@ const readData = (
                                                     setTimeout(() => {
                                                         setOpenLoader(false)
                                                         resolve(true)
+                                                        readyToLoad()
                                                     }, 1000);
                                                     //download3DFiles(setProgress, setOpenLoader, setLoadingData, setOpenVersion);
                                                     setLastActualization()
@@ -48,11 +50,13 @@ const readData = (
                                             }else{
                                                 setOpenLoader(false)
                                                 resolve(true)
+                                                readyToLoad()
                                             }
                                         }, 1000);
                                     }else{
                                         setOpenLoader(false)
                                         resolve(true)
+                                        readyToLoad()
                                     }
                                 }, 1000);
                             }, 1000);
@@ -84,17 +88,20 @@ const readData = (
                                                     setTimeout(() => {
                                                         setOpenLoader(false)
                                                         resolve(true)
+                                                        readyToLoad()
                                                     }, 1000);
                                                 } 
                                                 setLastActualization()
                                             }else{
                                                 setOpenLoader(false)
                                                 resolve(true)
+                                                readyToLoad()
                                             }
                                         }, 1000);
                                     }else{
                                         setOpenLoader(false)
                                         resolve(true)
+                                        readyToLoad()
                                     }
                                 }, 1000);
                             }, 1000);
@@ -107,6 +114,7 @@ const readData = (
         }else{
             resolve(true)
             setOpenLoader(false)
+            readyToLoad()
         }
     })
 }

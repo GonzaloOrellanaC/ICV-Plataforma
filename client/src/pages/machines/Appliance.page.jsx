@@ -3,14 +3,14 @@ import PropTypes from 'prop-types'
 import { Box, Card, Grid, makeStyles, Modal, Button, IconButton, Fab, Toolbar, LinearProgress } from '@material-ui/core'
 import { Close, ArrowBackIos } from '@material-ui/icons'
 import { useParams } from "react-router-dom";
-import { getUserNameById, useStylesTheme } from '../../config'
+import { getUserNameById, imageToBase64, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
 import { pautasDatabase, reportsDatabase } from '../../indexedDB';
 /* import { MVAvatar, PautaDetail } from '../../containers'; */
-import { machinesRoutes, reportsRoutes } from '../../routes';
+import { apiIvcRoutes, machinesRoutes, reportsRoutes } from '../../routes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
-import { ReportDetailDialog } from '../../dialogs';
+import { faCamera, faEye } from '@fortawesome/free-solid-svg-icons';
+import { ImageDialog, ReportDetailDialog } from '../../dialogs';
 import { LoadingModal } from '../../modals';
 import { LoadingLogoModal } from '../../modals';
 
@@ -22,6 +22,8 @@ const AppliancePage = ({ route }) => {
     const [ openDialog, setOpenDialog ] = useState(false)
     const [ report, setReport ] = useState({})
     const [ loading, setLoading ] = useState(false)
+    const [ openMachineImage, setOpenMachineImage ] = useState(false)
+    const [ machineImage, setMachineImage ] = useState('')
     let { id } = useParams();
     const [ machine, setMachine ] = useState({})
     let r = new String();
@@ -57,6 +59,8 @@ const AppliancePage = ({ route }) => {
                     }
                 })
             })
+        } else {
+            setLoading(false)
         }
     }, [])
 
@@ -85,6 +89,34 @@ const AppliancePage = ({ route }) => {
             setMantenciones(mantencionesCache.filter(mantencion => {if(mantencion.state===value) {return mantencion}}))
         }
     }
+
+    const openImg = (image) => {
+        setMachineImage(image)
+        setOpenMachineImage(true)
+    }
+
+    const closeImage = () => {
+        setOpenMachineImage(false)
+    }
+
+    const upImage = () => {
+        document.getElementById('fotoMaquina').click();
+    }
+    
+    const uploadImageReport = async (file) => {
+        if(file) {
+            setLoading(true)
+            let res = await imageToBase64(file)
+            setTimeout(() => {
+                if(res) {
+                    console.log(res)
+                    machine.image = res
+                    apiIvcRoutes.saveMachineDataById(machine)
+                    setLoading(false)
+                }
+            }, 1000);
+        }
+    }
     
     return (
         <Box height='100%'>
@@ -111,8 +143,13 @@ const AppliancePage = ({ route }) => {
                                     <div style={{width: '100%', textAlign: 'left', padding: 10}}>
                                         <div style={{padding: 15, borderTopLeftRadius: 20, borderEndStartRadius: 20, backgroundColor: '#F9F9F9', borderRadius: 10, minHeight: 400}}>
                                             <h3 style={{marginTop: 5, marginBottom: 5}}>{machine.type}</h3>
-                                            <div style={{position: 'relative', zIndex: '1', width: '100%', height: 180, backgroundColor: 'transparent', textAlign: 'center'}}>
-                                                <img src={`/assets/${machine.model}.png`} height={'100%'} id={'imageMachine'}/>
+                                            <div style={{/* position: 'relative', zIndex: '1',  */width: '100%', /* height: 180,  */backgroundColor: 'transparent', textAlign: 'center'}}>
+                                                <img src={machine.image ? machine.image : `/assets/${machine.model}.png`} height={180} id={'imageMachine'} onClick={()=>{openImg(machine.image ? machine.image : `/assets/${machine.model}.png`)}}/>
+                                                <br />
+                                                <button onClick={()=>{upImage()}}>
+                                                    <FontAwesomeIcon icon={faCamera} style={{marginRight: 10}} /> Cambiar imágen
+                                                </button>
+                                                <input autoComplete="off" type="file" id="fotoMaquina" accept="image/x-png,image/jpeg" onChange={(e)=>{uploadImageReport(e.target.files[0])}} hidden />
                                             </div>
                                             <div style={{width: '100%'}}>
                                                 <p style={{marginTop: 5, marginBottom: 5}} id={'machineData'}><b>Marca: </b> {machine.brand} </p>
@@ -203,6 +240,9 @@ const AppliancePage = ({ route }) => {
                                 }
                                 {
                                     loading && <LoadingLogoModal open={loading} />
+                                }
+                                {
+                                    openMachineImage && <ImageDialog open={openMachineImage} image={machineImage} handleClose={closeImage}/>
                                 }
                             </Grid>
                         </Grid>

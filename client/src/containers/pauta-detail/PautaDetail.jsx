@@ -214,7 +214,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 setExecutionReport(executionReportData)
                 saveExecutionReport(executionReportData, reportAssigned)
             }else{
-                const data = await apiIvcRoutes.getStructsPauta2(pauta.idpm, pauta.typepm)
+                let data = await apiIvcRoutes.getStructsPauta2(pauta.idpm, pauta.typepm)
                 pauta.struct = data.data
                 groupD = pauta.struct.reduce((r, a) => {
                     r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
@@ -236,6 +236,8 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 setExecutionReport(executionReportData)
                 saveExecutionReport(executionReportData, reportAssigned)
             }else{
+                let data = await apiIvcRoutes.getStructsPauta2(pauta.idpm, pauta.typepm)
+                pauta.struct = data.data
                 groupD = pauta.struct.reduce((r, a) => {
                     r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
                     return r

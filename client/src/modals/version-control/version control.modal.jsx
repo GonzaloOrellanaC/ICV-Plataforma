@@ -17,6 +17,10 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.1.7</strong>
+                        <li>
+                            Se posicionan etiquetas de Pala y Camión de acuerdo a indicaciones.
+                        </li>
                         <strong>v.1.6</strong>
                         <li>
                             Se habilita vista 3D de máquinas. Solo cambión Caterpillar 793-F cuenta con etiquetas en las partes.

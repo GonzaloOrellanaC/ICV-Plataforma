@@ -35,10 +35,10 @@ const getNotificationsById = (req, res) => {
     })
 }
 
-const actualiceNotificationState = (req, res) => {
+const actualiceNotificationState = async (req, res) => {
     const { _id, state } = req.body
-    console.log(id)
-    Notification.findByIdAndUpdate(_id, {state: state}, { new: true })
+    const notificaction = await Notification.findByIdAndUpdate(_id, {state: state})
+    res.send(notificaction)
 }
 
 export default {

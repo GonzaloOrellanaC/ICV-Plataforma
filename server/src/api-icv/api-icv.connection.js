@@ -151,6 +151,21 @@ const readMachinesFromDb = () => {
     })
 }
 
+/* Guardar datos de máquina */
+const saveMachineDataById = ( req, res ) => {
+    const { body } = req;
+    const machine = body.machine
+    console.log(machine)
+    Machine.findByIdAndUpdate(machine._id, machine, {new: false, timestamps: false}, (err, response) => {
+        console.log(response)
+        if(err) {
+            res.status(502).json({message: 'Error de lectura en Base de Datos'})
+            throw err
+        }
+        res.status(200).json(response)
+    })
+}
+
 /* Crear sitios para enviar a FRONT */
 const createSiteToSend = () => {
     return new Promise(async resolve => {
@@ -375,5 +390,6 @@ export default {
     editMachineToSend,
     leerPautas,
     getHeaderPauta,
-    getStructsPauta
+    getStructsPauta,
+    saveMachineDataById
 }

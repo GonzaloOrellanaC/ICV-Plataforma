@@ -130,9 +130,9 @@ const Navbar = () => {
     const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false)
     const [ cancel, setCancel ] = useState(true)
     // 
-    const [ openDownload3D, setOpenDownload3D ] = useState(false)
+/*     const [ openDownload3D, setOpenDownload3D ] = useState(false)
     const [ progressDownload3D, setProgressDownload3D ] = useState(0)
-    const [ loadingData3D, setLoadingData3D ] = useState('')
+    const [ loadingData3D, setLoadingData3D ] = useState('') */
 
     const logout = async () => {
         if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
@@ -140,7 +140,6 @@ const Navbar = () => {
             window.location.reload();
             removeDatabases();
         }
-        
     }
 
     const removeDatabases = async () => {
@@ -265,9 +264,6 @@ const Navbar = () => {
                 }
             }, 1000);
         }
-        setOpenDownload3D(true)
-        localStorage.setItem('isLoading3D', 'ok')
-        download3DFiles(setProgressDownload3D, setOpenDownload3D, setLoadingData3D, null)
         return () => setCancel(false);
     }, [cancel])
 
@@ -313,7 +309,7 @@ const Navbar = () => {
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Máquinas'>
-                                    <Link to='/machines' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path === '/machines') ? '#BE2E26' : '#FFFFFF' }}>
+                                    <Link to='/machines' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path.match('/machines')) ? '#BE2E26' : '#FFFFFF' }}>
                                         <FontAwesomeIcon icon={faTruck}/> {navBarOpen ?  ' Máquinas' : ''}
                                     </Link>
                                 </IconButton>
@@ -334,7 +330,7 @@ const Navbar = () => {
                             </div>}
                             {!disableButtonNoSAP && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Administración'>
-                                    <Link to='/administration' className={classes.sideButtons} style={{ color: (path.includes('/administration')||path.includes('/users')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                    <Link to='/administration' className={classes.sideButtons} style={{ color: (path.includes('/administration')||path.includes('/users')||path.includes('/edit-user')||path.includes('/new-users')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faUserCog}/> {navBarOpen ?  ' Administración' : ''}
                                     </Link>
                                 </IconButton>
@@ -402,7 +398,7 @@ const Navbar = () => {
                     {openInternalMessagesModal && <InternalMessageModal open={openInternalMessagesModal} closeModal={closeInternalMessageModal} />}
                 </div>
             </Drawer>
-            {
+            {/* {
                 (navigator.onLine && openDownload3D) && 
                 <div style={
                     {
@@ -436,7 +432,7 @@ const Navbar = () => {
                         loadingData3D && <p style={{margin: 0, marginTop: 10}}>{loadingData3D}</p>
                     }
                 </div>
-            }
+            } */}
         </div>
     )
 }

@@ -1,4 +1,5 @@
 export default (value, machineModel) => {
+    console.log(value, machineModel)
     if(machineModel === '793-F') {
         if(value === 'Sistema_direccion') {
             return [
@@ -414,7 +415,190 @@ export default (value, machineModel) => {
         }else{
             return []
         }
-    }else{
+    } else if (machineModel === 'PC5500') {
+        if(value === 'Chasis') {
+            return [
+                {
+                    title: 'Chasis',
+                    position: '0 3.1 -4',
+                    normal: '-0.7 -0.05 -0.69',
+                    orbit: '170deg 70deg 6.5m',
+                    target: '0m 3.1m -4m'
+                },
+                {
+                    title: 'Corona de Giro',
+                    position: '-1.75 2.1 -2',
+                    normal: '-0.7 -0.05 -0.69',
+                    orbit: '300deg 80deg 4m',
+                    target: '-1m 2.1m -2m'
+                },
+                {
+                    title: 'Bastidor',
+                    position: '-2 1.7 -2',
+                    normal: '-0.7 -0.05 -0.69',
+                    orbit: '300deg 70deg 4m',
+                    target: '-1m 1.7m -2m'
+                }
+            ]
+        } else if (value === 'Cabina') {
+            return [
+                {
+                    title: 'Controles de traslación',
+                    position: '2.2 4.85 0',
+                    normal: '0 -0.05 2',
+                    orbit: '-45deg 70deg 0.7m',
+                    target: '2.2m 4.85m -0.3m'
+                },
+                {
+                    title: 'Joystick 1',
+                    position: '2.45 5.2 -0.55',
+                    normal: '0 0.05 1',
+                    orbit: '10deg 60deg 1m',
+                    target: '2.45m 5.2m -0.7m',
+                },
+                {
+                    title: 'Joystick 2',
+                    position: '2.1 5.2 -0.55',
+                    normal: '0 0.05 1',
+                    orbit: '10deg 60deg 1m',
+                    target: '2.1m 5.2m -0.7m',
+                }
+            ]
+        } else if (value === 'Electrico') {
+            return [
+                {
+                    title: 'Gabinete eléctrico 1',
+                    position: '1.4 5.6 -4.6',
+                    normal: '0 -0.05 2',
+                    orbit: '-45deg 45deg 2m',
+                    target: '1.4m 5.3m -4.6m'
+                },
+                {
+                    title: 'Gabinete eléctrico 2',
+                    position: '-1.6 5.4 -4',
+                    normal: '0 -0.05 2',
+                    orbit: '-45deg 65deg 1m',
+                    target: '-1.6m 5.1m -4m'
+                },
+                {
+                    title: 'Gabinete eléctrico 3',
+                    position: '-2.1 5.4 -6',
+                    normal: '0.5 0.05 2',
+                    orbit: '80deg 65deg 2m',
+                    target: '-2.1m 5.1m -6m'
+                },
+                {
+                    title: 'Sala Eléctrica',
+                    position: '2.1 3.5 -1',
+                    normal: '-2 0.05 2',
+                    orbit: '-120deg 90deg 4m',
+                    target: '2.1m 3.5m -1m'
+                },
+                {
+                    title: 'Baterías',
+                    position: '2.2 2.6 -4.6',
+                    normal: '-2 0.05 2',
+                    orbit: '-100deg 70deg 3m',
+                    target: '2.1m 2m -4.6m'
+                }
+            ]
+        } else if (value === 'Estructura') {
+            return [
+                {
+                    title: 'Gabinete eléctrico 1',
+                    position: '1.4 5.6 -4.6',
+                    normal: '0 -0.05 2',
+                    orbit: '-45deg 45deg 2m',
+                    target: '1.4m 5.3m -4.6m'
+                },
+                {
+                    title: 'Gabinete eléctrico 2',
+                    position: '-1.6 5.4 -4',
+                    normal: '0 -0.05 2',
+                    orbit: '-45deg 65deg 1m',
+                    target: '-1.6m 5.1m -4m'
+                },
+                {
+                    title: 'Gabinete eléctrico 3',
+                    position: '-2.1 5.4 -6',
+                    normal: '0.5 0.05 2',
+                    orbit: '100deg 65deg 2m',
+                    target: '-2.1m 5.1m -6m'
+                },
+                {
+                    title: 'Tanques sistema AFEX',
+                    position: '-1.4 5.6 -5',
+                    normal: '-0.04 0.07 0.9',
+                    orbit: '0deg 65deg 4m',
+                    target: '-1.4m 5.1m -5m'
+                },
+                {
+                    title: 'Tubos de escape',
+                    position: '-1 6.1 -5',
+                    normal: '-0.04 0.07 0.9',
+                    orbit: '-45deg 65deg 4m',
+                    target: '-1m 5.7m -5m'
+                },
+                {
+                    title: 'Caja de filtros',
+                    position: '0.8 6.1 -4.7',
+                    normal: '-0.04 0.07 0.9',
+                    orbit: '45deg 65deg 4m',
+                    target: '0.8m 5.7m -4.7m'
+                },
+                {
+                    title: 'Bombas de engrase',
+                    position: '2 5.6 -5.5',
+                    normal: '-0.04 0.07 0.9',
+                    orbit: '45deg 65deg 4m',
+                    target: '2m 5.4m -5.5m'
+                },
+                {
+                    title: 'Tanques de grasa',
+                    position: '2 4.9 -5.5',
+                    normal: '-0.04 0.07 0.9',
+                    orbit: '45deg 65deg 4m',
+                    target: '2m 4.7m -5.5m'
+                }
+            ]
+        } else if (value === 'Implemento') {
+            return [
+                {
+                    title: 'Boom',
+                    position: '0 6.5 2',
+                    normal: '0.04 0.07 0.9',
+                    orbit: '90deg 90deg 6m',
+                    target: '0m 6.3m 2m'
+                },
+                {
+                    title: 'Stick',
+                    position: '0 5 6',
+                    normal: '0.04 0.07 0.9',
+                    orbit: '90deg 90deg 6m',
+                    target: '0m 4.7m 6m'
+                }
+            ]
+        } else if (value === 'Mando_de_giro') {
+            return [
+                {
+                    title: 'Corona de Giro',
+                    position: '-1.75 2.1 -2',
+                    normal: '-0.7 -0.05 -0.69',
+                    orbit: '300deg 80deg 4m',
+                    target: '-1m 2.1m -2m'
+                },
+                {
+                    title: 'Stick',
+                    position: '0 5 6',
+                    normal: '0.04 0.07 0.9',
+                    orbit: '90deg 90deg 6m',
+                    target: '0m 4.7m 6m'
+                }
+            ]
+        } else {
+            return []
+        }
+    } else {
         return []
     }
 }

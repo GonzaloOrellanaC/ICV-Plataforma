@@ -1,5 +1,5 @@
 /*  React */
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 /* GraphQL */
@@ -8,8 +8,8 @@ import { onError } from '@apollo/client/link/error'
 import { createUploadLink } from 'apollo-upload-client'
 
 /* Material UI */
-import { Box, CssBaseline, ThemeProvider } from '@material-ui/core'
-import { theme } from './config'
+import { Box, CircularProgress, CssBaseline, LinearProgress, ThemeProvider } from '@material-ui/core'
+import { theme, download3DFiles } from './config'
 
 import './App.css'
 import { AuthProvider, LanguageProvider, NavigationProvider, useAuth } from './context'
@@ -71,9 +71,19 @@ const client = new ApolloClient({
     
 
 const OnApp = () => {
+    const [ openDownload3D, setOpenDownload3D ] = useState(false)
+    const [ progressDownload3D, setProgressDownload3D ] = useState(0)
+    const [ loadingData3D, setLoadingData3D ] = useState('')
     const { loading } = useAuth()
     const isAuthenticated = localStorage.getItem('isauthenticated')==='true'
     const isNotAuthenticated = (localStorage.getItem('isauthenticated')==='false')||!localStorage.getItem('isauthenticated')
+    const readyToLoad = () => {
+        initLoad3D()
+    }
+    const initLoad3D = () => {
+        console.log('Iniciado 3D')
+        iniciarDescarga3D()
+    }
     useEffect(() => {
         if(isAuthenticated) {
             let go = true
@@ -84,11 +94,17 @@ const OnApp = () => {
                 go = true
             });
         }
+
     }, [])
+    const iniciarDescarga3D = () => {
+        setOpenDownload3D(true)
+        localStorage.setItem('isLoading3D', 'ok')
+        download3DFiles(setProgressDownload3D, setOpenDownload3D, setLoadingData3D, null)
+    }
     return (
         <div style={{fontFamily: 'Roboto'}}>
             {isAuthenticated && <Route path={['/']}>
-            {isAuthenticated && !loading && <Navbar/>} {isAuthenticated && !loading && <Header />}
+            {isAuthenticated && !loading && <Navbar iniciarDescarga3D={iniciarDescarga3D}/>} {isAuthenticated && !loading && <Header />}
                 </Route>}
             <Switch>
                 {isNotAuthenticated && <Route exact path={['/reset-password']} render={() => (<ResetPasswordPage />)}/>}
@@ -96,7 +112,7 @@ const OnApp = () => {
                 {isNotAuthenticated && <Route path={['/']} render={() => (<LoginPage />)}/>}
                 {loading && <Route path={['/']} render={() => (<LoadingPage />)}/>}
                 <Route exact path={['/', '/welcome']} render={() => (
-                    <WelcomePage />
+                    <WelcomePage readyToLoad={readyToLoad} />
                 )}/>
                 <Route path={['/divisions']}>
                     <Switch>
@@ -289,6 +305,41 @@ const OnApp = () => {
                     </Switch>
                 </Route>
             </Switch>
+            {
+                (navigator.onLine && openDownload3D) && 
+                <div style={
+                    {
+                        position: 'absolute', 
+                        bottom: 20, 
+                        right: 20, 
+                        width: 300, 
+                        paddingTop: 50, 
+                        paddingBottom: 40, 
+                        paddingLeft: 20, 
+                        paddingRight: 20,
+                        borderRadius: 20,
+                        backgroundColor: '#fff',
+                        borderColor: '#ccc',
+                        borderWidth: 1,
+                        borderStyle: 'solid',
+                        textAlign: 'center',
+                        zIndex: 2
+                    }
+                }>
+                    {
+                        !loadingData3D && <CircularProgress color='primary' />
+                    }
+                    {
+                        !loadingData3D && <p style={{margin: 0, marginTop: 10}}>Cargando datos...</p>
+                    }
+                    {
+                        loadingData3D && <LinearProgress variant="determinate" value={progressDownload3D} />
+                    }
+                    {
+                        loadingData3D && <p style={{margin: 0, marginTop: 10}}>{loadingData3D}</p>
+                    }
+                </div>
+            }
         </div>
     )
 }

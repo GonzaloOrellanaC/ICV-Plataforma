@@ -1,8 +1,9 @@
-import { Box, Card, Grid, IconButton, ListItem, makeStyles, Toolbar } from "@material-ui/core"
+import { Box, Button, Card, Grid, IconButton, ListItem, makeStyles, Toolbar } from "@material-ui/core"
 import { ArrowBackIos } from "@material-ui/icons"
 import { useEffect, useState } from "react"
 import { useHistory } from "react-router-dom"
 import { dateWithTime, useStylesTheme } from "../../config"
+import LoadingLogoModal from "../../modals/loadings/loading-logo.modal"
 import { notificationsRoutes } from "../../routes"
 /* const useStyles = makeStyles(theme => ({
     root: {
@@ -39,6 +40,7 @@ import { notificationsRoutes } from "../../routes"
 const NotificationsPage = () => {
 
     const [ notifications, setNotifications ] = useState([])
+    const [ openLoading, setOpenLoading ] = useState(false)
     const classes = useStylesTheme();
     const history = useHistory();
 
@@ -56,6 +58,17 @@ const NotificationsPage = () => {
         notificationsRoutes.actualiceNotificationState(notificationId)
     }
     
+    const todoLeido = () => {
+        setOpenLoading(true)
+        setTimeout(() => {
+            notifications.forEach((not, index) => {
+                notificationsRoutes.actualiceNotificationState(not._id)
+                if(index == (notifications.length - 1)) {
+                    setOpenLoading(false)
+                }
+            })
+        }, 1000);
+    }
 
     return (
         <Box height='100%'>
@@ -64,7 +77,7 @@ const NotificationsPage = () => {
                     <Card elevation={0} className={classes.pageCard}>
                         <Grid container alignItems='center' justifyContent='center'>
                             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
-                                <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
+                                <div style={{width: '100%', position: 'relative', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
                                         <IconButton onClick={() => setTimeout(() => {
                                             history.goBack()
@@ -75,6 +88,7 @@ const NotificationsPage = () => {
                                             Notificaciones
                                         </h1>
                                     </Toolbar>
+                                    <Button onClick={()=>{todoLeido()}} style={{position: 'absolute', right: 10, top: 10}}>Indicar Todo Leído</Button>
                                 </div>
                             </div>
                         </Grid>
@@ -109,7 +123,9 @@ const NotificationsPage = () => {
                                 })
                             }
                             </div>
-                            
+                            {
+                                openLoading && <LoadingLogoModal open={openLoading} />
+                            }
                         </Grid>
                     </Card>
                 </Grid>

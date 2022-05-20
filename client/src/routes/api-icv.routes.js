@@ -52,5 +52,11 @@ export default {
             idpm, typepm
         }
         return axios.post('/icv/getStructsPauta', requestBody)
+    },
+    saveMachineDataById: (machine) => {
+        const requestBody = {
+            machine
+        }
+        return axios.post('/machines/saveMachineDataById', requestBody)
     }
 }

@@ -7,6 +7,10 @@ const MachineSchema = new Schema({
         type: Schema.Types.String,
         required: true
     },
+    image: {
+        type: Schema.Types.String,
+        required: false
+    },
     equid: {
         type: Schema.Types.String,
         required: true

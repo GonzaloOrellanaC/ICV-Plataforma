@@ -6,6 +6,7 @@ import { styleModal3D, useStylesTheme } from '../../config';
 import { ArrowBackIos } from '@material-ui/icons';
 import { MVAvatar } from '../../containers';
 import { machinesDatabase } from '../../indexedDB';
+import { apiIvcRoutes } from '../../routes';
 
 const MachinesListPage = ({route}) => {  
     const [ routeData, setRouteData ] = useState('');
@@ -55,16 +56,27 @@ const MachinesListPage = ({route}) => {
 
     useEffect(() => {
         let cancel = false;
-        machinesDatabase.initDbMachines().then(db => {
-            machinesDatabase.consultar(db.database).then(readAllMachines => {
+        if(navigator.onLine) {
+            apiIvcRoutes.getAllMachines().then(machines => {
                 if(cancel) return
                 setMachinesList(
-                    readAllMachines
+                    machines.data
                     .filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
                     .sort((a, b) => {return a.equ - b.equ})
                 )
             })
-        })
+        } else {
+            machinesDatabase.initDbMachines().then(db => {
+                machinesDatabase.consultar(db.database).then(readAllMachines => {
+                    if(cancel) return
+                    setMachinesList(
+                        readAllMachines
+                        .filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
+                        .sort((a, b) => {return a.equ - b.equ})
+                    )
+                })
+            })
+        }
         if(!site) {
             history.goBack()
         }
@@ -108,11 +120,12 @@ const MachinesListPage = ({route}) => {
                             <List style={{width: '100vw', marginRight: 11, overflowY: 'scroll', maxHeight: '70vh', paddingLeft: 20, paddingRight: 20}}>
                             {
                                 machinesList.map((machine, i) => {
+                                    console.log(machine.image)
                                     return(
                                         
                                             <Grid key={i} container style={{minHeight: 148, marginBottom: 20, padding: 20, borderStyle: 'solid', borderWidth: 2, borderColor: '#CCC', borderRadius: 20}}>
                                                 <Grid item xs={12} sm={12} md={3} lg={2}>
-                                                    <img src="../assets/no-image.png" style={{height: 120, width: '100%', objectFit: 'cover'}} />
+                                                    <img src={machine.image ? machine.image : '../assets/no-image.png'} style={{height: 120, width: '100%', objectFit: 'cover'}} />
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={3} lg={2}>
                                                     <div style={{padding: 10}}>

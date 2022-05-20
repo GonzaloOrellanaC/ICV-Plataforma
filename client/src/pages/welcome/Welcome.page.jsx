@@ -14,7 +14,7 @@ import { dateWithTime, download3DFiles, imageToBase64 } from '../../config'
 import addNotification from 'react-push-notification'
 import { Download3DFilesDialog } from '../../dialogs'
 
-const WelcomePage = () => {
+const WelcomePage = ({readyToLoad}) => {
     const [ date, setDate ] = useState('')
     const [ hora, setHora ] = useState('')
     const [ openLoader, setOpenLoader ] = useState(false)
@@ -30,8 +30,8 @@ const WelcomePage = () => {
     const [ elementsReadyToSend, setElementsReadyToSend ] = useState([])
 
     ////Notificaciones
-    const [ notificaciones1, setNotificaciones1 ] = useState('Sin notificaciones')
-    const [ notificaciones2, setNotificaciones2 ] = useState('Sin informaciones')
+    const [ notificaciones1, setNotificaciones1 ] = useState('Sin notificaciones pendientes')
+    const [ notificaciones2, setNotificaciones2 ] = useState('Sin informaciones pendientes')
 
     const [ cancel, setCancel ] = useState(true)
 
@@ -83,7 +83,11 @@ const WelcomePage = () => {
             let lista = new Array()
             lista = data.data.reverse()
             if(lista.length > 0) {
-                setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt))
+                if(lista[0].state) {
+                    setNotificaciones1('Sin notificaciones pendientes')
+                } else {
+                    setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt))
+                }
                 if(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
                     if(data2.length > 0) {
                         setNotificaciones2('Existen ' + data2.length + ' Ordenes de trabajo listos a enviar.')
@@ -127,7 +131,8 @@ const WelcomePage = () => {
             setLastActualization, 
             setDisableButtons, 
             setOpenVersion,
-            network
+            network,
+            readyToLoad
         )
         readDataSite(
             setDisableButtons,

@@ -119,6 +119,7 @@ export default async (setProgressDownload3D, setOpenDownload3D, setLoadingData3D
             setTimeout(() => {
                 if(setOpenDownload3D) {
                     setOpenDownload3D(false)
+                    localStorage.setItem('isLoading3D', 'nok')
                 }
             }, 1000);
         }, 1000);
