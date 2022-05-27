@@ -60,6 +60,7 @@ const Header = () => {
     const [ network, setIfHavNetwork ] = useState(true);
     const [ openSign, setOpenSign ] = useState(false);
     const [ refCanvas, setRefCanvas ] = useState();
+    const [ cancel, setCancel ] = useState(true)
     let userData = {};
     const history = useHistory();
     userData.name = window.localStorage.getItem('name');
@@ -67,40 +68,42 @@ const Header = () => {
     if(window.localStorage.getItem('role')) {
         userData.role = changeTypeUser(window.localStorage.getItem('role'))
     }
-
-
     useEffect(() => {
-        if(isAuthenticated) {
-            if(navigator.onLine) {
-                usersRoutes.getUser(localStorage.getItem('_id')).then(data => {
-                    if(data.data) {
-                        if(!data.data.sign) {
-                            setOpenSign(true)
+        if (cancel) {
+            if(isAuthenticated) {
+                if(navigator.onLine) {
+                    usersRoutes.getUser(localStorage.getItem('_id')).then(data => {
+                        if(data.data) {
+                            if(!data.data.sign) {
+                                setOpenSign(true)
+                            }
                         }
+                    })
+                    /* SocketConnection.sendIsActive() */
+                }
+                window.addEventListener('online', () => {
+                    setIfHavNetwork(true);
+                });
+                window.addEventListener('offline', () => {
+                    setIfHavNetwork(false);
+                    addNotification({
+                        icon: logoNotification,
+                        title: 'Alerta',
+                        subtitle: 'Pérdida de conexión',
+                        message: 'El dispositivo no cuenta con conexión a internet.',
+                        theme: 'red',
+                        native: true // when using native, your OS will handle theming.
+                    })
+                });
+                Notification.requestPermission().then((res) => {
+                    if(res === 'denied' || res === 'default') {
+                        
                     }
                 })
             }
-            window.addEventListener('online', () => {
-                setIfHavNetwork(true);
-            });
-            window.addEventListener('offline', () => {
-                setIfHavNetwork(false);
-                addNotification({
-                    icon: logoNotification,
-                    title: 'Alerta',
-                    subtitle: 'Pérdida de conexión',
-                    message: 'El dispositivo no cuenta con conexión a internet.',
-                    theme: 'red',
-                    native: true // when using native, your OS will handle theming.
-                })
-            });
-            Notification.requestPermission().then((res) => {
-                if(res === 'denied' || res === 'default') {
-                    
-                }
-            })
         }
-    }, [])
+        return () => setCancel(false)
+    }, [cancel])
 
     const openPage = () => {
         window.open('http://localhost:3000')
@@ -122,7 +125,13 @@ const Header = () => {
     }
 
     const sendTestNotification = () => {
-        SocketConnection.sendnotificationToAllUsers('test', localStorage.getItem('_id'), 'Envío prueba', 'Todos los usuarios', 'Se envía notificación de prueba a todos los usuarios.')
+        SocketConnection.sendnotificationToAllUsers(
+            'test',
+            localStorage.getItem('_id'),
+            'Envío prueba',
+            'Todos los usuarios',
+            'Se envía notificación de prueba a todos los usuarios.'
+        )
     }
     
     if(isAuthenticated) {

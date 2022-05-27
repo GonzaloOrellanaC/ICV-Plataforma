@@ -27,6 +27,8 @@ import getPautasInspectList from './getPautasInspectList'
 import getPautasMaitenanceList from './getPautasMaitenanceList'
 import getinfo from './getInfo'
 import download3DFiles from './download3DFiles'
+import detectIf3DModelExist from './detectIf3DModelExist'
+import translateSubSystem from './translateSubSystem'
 export {
     theme,
     getUserNameById,
@@ -66,5 +68,7 @@ export {
     getPautasInspectList,
     getPautasMaitenanceList,
     getinfo,
-    download3DFiles
+    download3DFiles,
+    detectIf3DModelExist,
+    translateSubSystem
 }

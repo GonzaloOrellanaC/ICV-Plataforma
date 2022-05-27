@@ -109,10 +109,10 @@ const ReportsList = ({list, reloadData}) => {
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Fecha <br /> Prevista</strong> </p>
                 </Grid>
-                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Fecha <br /> Inicio</strong> </p>
                 </Grid>
-                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Fecha <br /> Término</strong> </p>
                 </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
@@ -124,7 +124,7 @@ const ReportsList = ({list, reloadData}) => {
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Estado</strong> </p>
                 </Grid>
-                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>
+                <Grid item xs={1} sm={1} md={2} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Responsable</strong> </p>
                 </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
@@ -154,10 +154,10 @@ const ReportsList = ({list, reloadData}) => {
                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center'}}> {item.date} </p>
                             </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                            <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center'}}> {item.init} </p>
                             </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                            <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center'}}> {item.end} </p>
                             </Grid>
                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
@@ -172,7 +172,7 @@ const ReportsList = ({list, reloadData}) => {
                                 </div>
                             </Grid>
                             {item.enabled ? 
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>
+                            <Grid item xs={1} sm={1} md={2} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center'}}> <button onClick={()=>openModal(item)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
                             </Grid> :
                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>

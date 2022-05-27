@@ -282,7 +282,7 @@ const AdminNewUserPage = () => {
                             <div style={{width: '100%', textAlign: 'left', padding: 10, overflowY: 'auto' }}>
                                 {
                                     (usageModule === 0) &&
-                                        <CreateUser width={'calc(100vw - 450px)'} height={'calc(100vh - 320px)'} typeDisplay={routingData} uData={userData} />
+                                        <CreateUser /* width={'calc(100vw - 450px)'} height={'calc(100vh - 320px)'} */ typeDisplay={routingData} uData={userData} />
                                 }
                                 {   (usageModule === 1) &&
                                         <PermissionUser width={'calc(100vw - 350px)'} height={'calc(100vh - 320px)'} typeDisplay={routingData} id={id} />

@@ -92,7 +92,7 @@ const ActivitiesPage = () => {
     }
 
     const getMachineTypeByEquid = (machine) => {
-        return new Promise(async  resolve => {
+        return new Promise(async resolve => {
             let db = await machinesDatabase.initDbMachines();
             if(db) {
                 const machines = await machinesDatabase.consultar(db.database);
@@ -237,7 +237,7 @@ const ActivitiesPage = () => {
                                                         <p style={{fontSize: 12}}> {element.end} </p>
                                                     </Grid>}
                                                     <Grid item xl={1} lg={1} md={1} sm={2} xs={2}>
-                                                        <p style={{fontSize: 12, textAlign: 'center'}}> {element.machineType} {element.getMachine.model} N°: {element.getMachine.number} </p>
+                                                        {element.getMachine.model && <p style={{fontSize: 12, textAlign: 'center'}}> {element.machineType} {element.getMachine.model} N°: {element.getMachine.number} </p>}
                                                     </Grid>
                                                     <Grid item xl={1} lg={1} md={1} sm={1} xs={1} style={{width: '100%', textAlign: 'center', paddingRight: 20}}>
                                                         <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
@@ -256,6 +256,7 @@ const ActivitiesPage = () => {
                                         </div>
                                     }
                                     {assignments.map((element, i) => {
+                                        console.log(element)
                                         element.readyToSend = false
                                         assignmentsReadyToSend.forEach((data) => {
                                             if(data.idIndex === element.idIndex) {

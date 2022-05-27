@@ -13,7 +13,7 @@ import { apiIvcRoutes, executionReportsRoutes, reportsRoutes } from "../../route
 import { compareExecutionReport, getExecutionReport, saveExecutionReport } from "../../config"
 import { ReportDataDialog } from '../../dialogs'
 
-const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignment, reportLevel, setIndexGroupToSend, resultThisItemProgress}) => {
+const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignment, reportLevel, setIndexGroupToSend, resultThisItemProgress, selectionItem}) => {
 
     //Pestañas
     const [ gruposKeys, setGruposKeys ] = useState([])
@@ -275,6 +275,8 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
     }
 
     const handleContent = (gruposKeys, element) => {
+        /* console.log(gruposKeys, element) */
+        selectionItem(element.data)
         setContentData([])
         gruposKeys.forEach((tab, index) => {
             tab.state = false

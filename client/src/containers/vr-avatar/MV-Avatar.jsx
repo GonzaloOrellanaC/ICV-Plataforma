@@ -1,57 +1,69 @@
-import '@google/model-viewer';
+import '@google/model-viewer'
 import './style.css'
-import { Box, Button, Drawer, Fab, IconButton } from '@material-ui/core';
-import { useEffect, useState } from 'react';
-import { LoadingModal } from '../../modals';
-import { FilesToStringDatabase, machinesPartsDatabase } from '../../indexedDB';
-import { Close, ControlCamera, Menu } from '@material-ui/icons';
-import buttonSelections from './buttonSelections';
+import { Box, Button, Drawer, Fab, IconButton } from '@material-ui/core'
+import { useEffect, useState } from 'react'
+import { LoadingModal } from '../../modals'
+import { FilesToStringDatabase, machinesPartsDatabase } from '../../indexedDB'
+import { Close, ControlCamera, Menu } from '@material-ui/icons'
+import buttonSelections from './buttonSelections'
+/* import { Joystick } from 'react-joystick-component' */
 
-const MVAvatar = ({machine}) => {
+const MVAvatar = ({machine, subSistem}) => {
 
-    const [ modelViewer, setModelViewer ] = useState();
-    const [ newMachine, setNewMachine ] = useState();
-    const [ progress, setProgress ] = useState(0);
-    const [ openLoader, setOpenLoader ] = useState(false);
-    const [ open, setOpen ] = useState(false);
-    const [ listaPartes, setListaPartes ] = useState([]);
-    const [ title, setTitle ] = useState('');
-    const [ isSelected, setIsSelected ] = useState('');
-    const [ imagePath, setImagePath ] = useState('');
+    const [ modelViewer, setModelViewer ] = useState()
+    const [ newMachine, setNewMachine ] = useState()
+    const [ progress, setProgress ] = useState(0)
+    const [ openLoader, setOpenLoader ] = useState(false)
+    const [ open, setOpen ] = useState(false)
+    const [ listaPartes, setListaPartes ] = useState([])
+    const [ title, setTitle ] = useState('')
+    const [ isSelected, setIsSelected ] = useState('')
+    const [ imagePath, setImagePath ] = useState('')
     const [ cameraOrbit, setCameraOrbit ] = useState("45deg 81deg 100m")
     const [ scale, setScale ] = useState("0.009 0.009 0.009")
     const [ cameraTarget, setCameraTarget ] = useState("auto auto auto")
     const [ isButton, setIsButton ] = useState(false)
-    const [ buttons, setButtons ] = useState([]);
+    const [ buttons, setButtons ] = useState([])
+    const [ x , setX ] = useState("auto")
+    const [ y , setY ] = useState("auto")
+    const [ z , setZ ] = useState("auto")
     //const [ machineModel, setMachineModel ] = useState()
 
     useEffect(() => {
         setButtons([])
-        initModelViewer()
-    }, []);
+        if(subSistem) {
+            initModelViewer()
+            const data = JSON.parse(subSistem)
+            setTimeout(() => {
+                openIfIsFromOT(data.name, data.brand, data.model, data.nameModel)
+            }, 500);
+        } else {
+            initModelViewer()
+        }
+    }, [])
 
     const readFileDatabase = async () => {
         setIsSelected('primary')
         setOpenLoader(true)
         setProgress(0)
-        const db = await FilesToStringDatabase.initDb3DFiles();
+        const db = await FilesToStringDatabase.initDb3DFiles()
         if(db) {
-            //let files = new Array();
-            let file = await FilesToStringDatabase.buscarPorNombreModelo(`Preview_${machine.model}`, db.database);
-            var json = file.data;
-            var blob = new Blob([json]);
-            var url = URL.createObjectURL(blob);
-            setNewMachine(url);
+            //let files = new Array()
+            let file = await FilesToStringDatabase.buscarPorNombreModelo(`Preview_${machine.model}`, db.database)
+            var json = file.data
+            var blob = new Blob([json])
+            var url = URL.createObjectURL(blob)
+            setNewMachine(url)
             setTitle(changeName('Preview'))
-        };
-        const machinesPartsDb = await machinesPartsDatabase.initDb();
+        }
+        const machinesPartsDb = await machinesPartsDatabase.initDb()
         if(machinesPartsDb) {
-            let readList = new Array();
-            readList = await machinesPartsDatabase.consultar(machinesPartsDb.database);
+            let readList = new Array()
+            readList = await machinesPartsDatabase.consultar(machinesPartsDb.database)
             readList.forEach((e, i) => {
-                e.isSelected = '';
+                e.isSelected = ''
             })
-            setListaPartes(readList.filter(item => { if((item.model === machine.model) && (item.name != 'Preview')) { return item }}));
+            setListaPartes(readList.filter(item => { if((item.model === machine.model) && (item.name != 'Preview')) { return item } else if (item.name === 'Eje'){} }))
         }
     }
 
@@ -79,22 +91,24 @@ const MVAvatar = ({machine}) => {
 
 
     const initModelViewer = async () => {
-        readFileDatabase();
+        if(!subSistem) {
+            readFileDatabase()
+        }
         setModelViewer(document.querySelector("model-viewer#machine"))
-        let mv = document.querySelector("model-viewer#machine");
+        let mv = document.querySelector("model-viewer#machine")
 
         mv.addEventListener('model-visibility', (e) => {
             
         })
         mv.addEventListener('load', () => {
             setOpenLoader(false)
-            mv.cameraControls = true;
-            document.getElementById('image').style.opacity = '0';
+            mv.cameraControls = true
+            document.getElementById('image').style.opacity = '0'
             setTimeout(() => {
-                document.getElementById('machine').style.opacity = '1';
-                document.getElementById('image').style.height = '0px';
-                document.getElementById('machine').style.height = '100%';
-            }, 2000);
+                document.getElementById('machine').style.opacity = '1'
+                document.getElementById('image').style.height = '0px'
+                document.getElementById('machine').style.height = '100%'
+            }, 2000)
         })
 
         mv.addEventListener('click', (e) => {
@@ -104,18 +118,19 @@ const MVAvatar = ({machine}) => {
         })
     }
 
-    const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)
     const handleDrawerOpen = () => {
-        setOpen(true);
-    };
+        setOpen(true)
+    }
     
     const handleDrawerClose = () => {
-        setOpen(false);
-    };
+        setOpen(false)
+    }
 
     const getNewElement =  (element, index) => {
-        handleDrawerClose();
-        setCenter();
+        console.log(element, index)
+        handleDrawerClose()
+        setCenter()
         setButtons([])
         setTimeout(() => {
             setTitle(changeName(element.name))
@@ -124,15 +139,15 @@ const MVAvatar = ({machine}) => {
                     setProgress(0)
                     setOpenLoader(true)
                 }else{
-                    let imagePath = `../assets/transiciones/${element.brand}/${element.model}/Pantalla_de_carga_${element.name}.png`;
-                    setImagePath(imagePath);
+                    let imagePath = `../assets/transiciones/${element.brand}/${element.model}/Pantalla_de_carga_${element.name}.png`
+                    setImagePath(imagePath)
                     
-                    document.getElementById('machine').style.opacity = '0';
+                    document.getElementById('machine').style.opacity = '0'
                     setTimeout(() => {
-                        document.getElementById('machine').style.height = '0px';
-                        document.getElementById('image').style.height = '80%';
-                        document.getElementById('image').style.opacity = '1';
-                    }, 500);
+                        document.getElementById('machine').style.height = '0px'
+                        document.getElementById('image').style.height = '80%'
+                        document.getElementById('image').style.opacity = '1'
+                    }, 500)
                 }
             }else{
                 setProgress(0)
@@ -145,44 +160,76 @@ const MVAvatar = ({machine}) => {
                     e.isSelected = 'primary'
                 }else{
                     e.isSelected = ''
-                };
+                }
                 if(i === (listaPartes.length - 1)) {
                     setListaPartes(listaPartes)
                 }
             })
             setTimeout(async() => {
-                let db = await FilesToStringDatabase.initDb3DFiles();
-                let data = await FilesToStringDatabase.buscarPorNombreModelo(element.nameModel, db.database);
-                var json = data.data;
-                var blob = new Blob([json]);
-                var url = URL.createObjectURL(blob);
-                setButtons(buttonSelections(element.name, machine.model));
-                setNewMachine(url);
-            }, 4000);
-        }, 1000);
+                let db = await FilesToStringDatabase.initDb3DFiles()
+                let data = await FilesToStringDatabase.buscarPorNombreModelo(element.nameModel, db.database)
+                var json = data.data
+                var blob = new Blob([json])
+                var url = URL.createObjectURL(blob)
+                console.log(machine.model)
+                setButtons(buttonSelections(element.name, machine.model))
+                setNewMachine(url)
+            }, 4000)
+        }, 1000)
+    }
+
+    const openIfIsFromOT = (name = new String(), brand = new String(), model = new String(), nameModel = new String()) => {
+        setTitle(changeName(name))
+        if(brand === 'CATERPILLAR') {
+            if (name === 'Preview_Con_Texturas') {
+                setProgress(0)
+                setOpenLoader(true)
+            }else{
+                let imagePath = `../assets/transiciones/${brand}/${model}/Pantalla_de_carga_${name}.png`
+                setImagePath(imagePath)
+                document.getElementById('machine').style.opacity = '0'
+                setTimeout(() => {
+                    document.getElementById('machine').style.height = '0px'
+                    document.getElementById('image').style.height = '80%'
+                    document.getElementById('image').style.opacity = '1'
+                }, 500)
+            }
+        }else{
+            setProgress(0)
+            setOpenLoader(true)
+        }
+        setTimeout(async() => {
+            let db = await FilesToStringDatabase.initDb3DFiles()
+            let data = await FilesToStringDatabase.buscarPorNombreModelo(nameModel, db.database)
+            var json = data.data
+            var blob = new Blob([json])
+            var url = URL.createObjectURL(blob)
+            setButtons(buttonSelections(name, model))
+            setNewMachine(url)
+        }, 4000)
     }
 
     const setCenter = () => {
         setCameraOrbit("45deg 81deg 100m")
         setScale("0.009 0.009 0.009")
-        setCameraTarget("auto auto auto")
+        setCameraTarget(`${x} ${y} ${z}`)
         setIsButton(false)
     }
 
     const setPreview = () => {
         setOpenLoader(true)
-        handleDrawerClose();
+        handleDrawerClose()
         setIsSelected('primary')
-        setProgress(0);
+        setProgress(0)
         setTimeout( () => {
-            readFileDatabase();
-        }, 1000);
+            readFileDatabase()
+        }, 1000)
     }
     
     return(
             
             <Box style={{height: '100%', width: '100%'}} id="box">
-                <Drawer 
+                {!subSistem && <Drawer 
                     sx={{
                         width: '30%',
                         backgroundColor: 'transparent'
@@ -200,7 +247,11 @@ const MVAvatar = ({machine}) => {
                     </div>
                     <div>
                     <div style={{width: '100%', textAlign: 'center'}}>
-                                    <Button color={isSelected} style={{width: '90%', marginBottom: 10}} variant="outlined" onClick={() => {setPreview()}}>
+                                    <Button
+                                        color={isSelected}
+                                        style={{width: '90%', marginBottom: 10}}
+                                        variant="outlined" onClick={() => {setPreview()}}
+                                    >
                                         <p>{changeName('Preview')}</p>
                                     </Button>
                                 </div>
@@ -209,7 +260,12 @@ const MVAvatar = ({machine}) => {
                                 
                                 return(
                                     <div key={index} style={{width: '100%', textAlign: 'center'}}>
-                                        <Button color={element.isSelected} style={{width: '90%', marginBottom: 10}} variant="outlined" onClick={() => {getNewElement(element, index)}}>
+                                        <Button
+                                            color={element.isSelected}
+                                            style={{width: '90%', marginBottom: 10}}
+                                            variant="outlined"
+                                            onClick={() => {getNewElement(element, index)}}
+                                        >
                                             <img 
                                             src="../assets/no-image.png" 
                                             style={{
@@ -228,7 +284,7 @@ const MVAvatar = ({machine}) => {
                         }
                     </div>
 
-                </Drawer>  
+                </Drawer>  }
                 
                 <img  src={imagePath} id="image" className='image' height={640} width={480}/>
                 <model-viewer
@@ -240,16 +296,20 @@ const MVAvatar = ({machine}) => {
                     scale={scale}
                     alt="A Material Picking Example"
                     touch-action="none" 
-                    min-field-of-view="45deg" 
+                    min-field-of-view="0deg" 
                     interpolation-decay="200" 
                     min-camera-orbit="auto auto 10%" 
-                    oncontextmenu="return false;"
+                    oncontextmenu="return false"
                 >
                        {
                            buttons.map((e, i) => {
                                return (
                                 <button 
-                                    onClick={()=>{setCameraOrbit(e.orbit); setCameraTarget(e.target); setIsButton(true)}}
+                                    onClick={()=>{
+                                        setCameraOrbit(e.orbit)
+                                        setCameraTarget(e.target)
+                                        setIsButton(true)
+                                    }}
                                     key={i}
                                     className="view-button" 
                                     slot={`hotspot-${i}`} 
@@ -273,8 +333,36 @@ const MVAvatar = ({machine}) => {
                         <h2 style={{color: 'white', fontFamily: 'Raleway'}}>{title}</h2>
                     </div>
                 </div>
+
+                {/* {
+                    newMachine && <div style={{position: 'absolute', bottom: 100, left: 100}}>
+                        <Joystick 
+                            throttle={10}
+                            size={100} 
+                            sticky={false} 
+                            baseColor="#ccc" 
+                            stickColor="#efefef"
+                            move={(e)=>{console.log(e); setX(e.y/5); setZ(e.x/5); setCameraTarget(`${x}m ${y}m ${z}m`)}}
+                            minDistance={5}
+                        ></Joystick>
+                    </div>
+                }
+
+                {
+                    newMachine && <div style={{position: 'absolute', bottom: 100, right: 100}}>
+                        <Joystick 
+                            throttle={10}
+                            size={100} 
+                            sticky={false} 
+                            baseColor="#ccc" 
+                            stickColor="#efefef"
+                            move={(e)=>{console.log(e); setY(e.y/5); setCameraTarget(`${x}m ${y}m ${z}m`)}}
+                            minDistance={5}
+                        ></Joystick>
+                    </div>
+                } */}
                     
-                {!open && <Fab 
+                {(!open && !subSistem) && <Fab 
                     onClick={() => handleDrawerOpen()} 
                     style={{
                         position: 'absolute', 

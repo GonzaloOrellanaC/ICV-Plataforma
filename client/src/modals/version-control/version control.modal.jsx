@@ -17,6 +17,13 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.1.8</strong>
+                        <li>
+                            Modelo 3D de subsistema desde la OT.
+                        </li>
+                        <li>
+                            Etiquetado de Pala y Camión.
+                        </li>
                         <strong>v.1.7</strong>
                         <li>
                             Se posicionan etiquetas de Pala y Camión de acuerdo a indicaciones.

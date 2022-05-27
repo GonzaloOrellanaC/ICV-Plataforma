@@ -17,15 +17,15 @@ const Files = [
             {
                 name: 'Chasis'
             },
-            {
+            /* {
                 name: 'Eje'
-            },
+            }, */
             {
                 name: 'Estructura'
             },
-            {
+            /* {
                 name: 'Frenos'
-            },
+            }, */
             {
                 name: 'Maza'
             },

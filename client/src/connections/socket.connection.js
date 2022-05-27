@@ -2,6 +2,11 @@ import { io } from "socket.io-client";
 
 const socket = io()
 
+const sendIsActive = () => {
+    console.log('Revisando')
+    socket.emit('isConnected', {id: localStorage.getItem('_id')})
+}
+
 const sendnotificationToUser = (notificationType, from, userId, title, subtitle, message, url) => {
     socket.emit(notificationType, {title: title, from: from, subtitle: subtitle, message: message, id: userId, url: url})
 }
@@ -15,6 +20,7 @@ const sendnotificationToAllUsers = (notificationType, from, title, subtitle, mes
 }
 
 export default {
+    sendIsActive,
     sendnotificationToUser,
     sendnotificationToManyUsers,
     sendnotificationToAllUsers

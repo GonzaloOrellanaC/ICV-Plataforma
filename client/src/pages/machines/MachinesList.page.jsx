@@ -120,7 +120,6 @@ const MachinesListPage = ({route}) => {
                             <List style={{width: '100vw', marginRight: 11, overflowY: 'scroll', maxHeight: '70vh', paddingLeft: 20, paddingRight: 20}}>
                             {
                                 machinesList.map((machine, i) => {
-                                    console.log(machine.image)
                                     return(
                                         
                                             <Grid key={i} container style={{minHeight: 148, marginBottom: 20, padding: 20, borderStyle: 'solid', borderWidth: 2, borderColor: '#CCC', borderRadius: 20}}>

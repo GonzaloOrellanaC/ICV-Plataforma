@@ -44,6 +44,7 @@ import {
 } from './pages';
 import { RolesPage, UserProfilePage } from './pages/administration'
 import { Notifications } from 'react-push-notification';
+import { SocketConnection } from './connections'
 
 /* import history from './history'
  */
@@ -86,6 +87,7 @@ const OnApp = () => {
     }
     useEffect(() => {
         if(isAuthenticated) {
+            SocketConnection.sendIsActive()
             let go = true
             window.addEventListener('online', async () => {
                 
@@ -95,7 +97,7 @@ const OnApp = () => {
             });
         }
 
-    }, [])
+    }, [isAuthenticated])
     const iniciarDescarga3D = () => {
         setOpenDownload3D(true)
         localStorage.setItem('isLoading3D', 'ok')

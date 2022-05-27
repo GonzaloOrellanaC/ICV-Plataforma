@@ -64,7 +64,10 @@ const NotificationsPage = () => {
             notifications.forEach((not, index) => {
                 notificationsRoutes.actualiceNotificationState(not._id)
                 if(index == (notifications.length - 1)) {
-                    setOpenLoading(false)
+                    notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
+                        setNotifications(data.data.reverse())
+                        setOpenLoading(false)
+                    })
                 }
             })
         }, 1000);

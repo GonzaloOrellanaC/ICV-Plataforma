@@ -1,7 +1,8 @@
 import socketIo from 'socket.io'
 import {NotificationService, UserServices} from '../services';
+import reportsService from '../services/reports.service';
 
-export default (server) => {
+export default async (server) => {
     console.log('Socket connection')
     const io = new socketIo.Server(server, {
         cors: {
@@ -10,10 +11,59 @@ export default (server) => {
             allowedHeaders: ["my-custom-header"],
             credentials: false
         },
-    });
+    })
+    /* const responseData1 = await reportsService.readIfReportIsOneDayToStart()
+    console.log(responseData1)
+    responseData1.forEach((report, index) => {
+
+    })
+    setTimeout(() => {
+        const responseData2 = await reportsService.readIfReportIsOneDayToStart()
+        // console.log(responseData2)
+        responseData2.forEach((report, index) => {
+
+        })
+        // io.emit()
+    }, 86400000); */
     io.on('connection', (socket) => {
-        socket.on('isConnected', (data) => {
+        console.log('On connections')
+        
+        socket.on('isConnected', async (data) => {
             console.log('Activado!!!', data)
+            const responseData1 = await reportsService.readIfReportIsOneDayToStart()
+            console.log(responseData1)
+            const list = []
+            responseData1.forEach((report, index) => {
+                report.usersAssigned.forEach((user, i) => {
+                    /* console.log(user === data.id) */
+                    if(user === data.id) {
+                        list.push(report)
+                    }
+                })
+                if(index === (responseData1.length - 1)) {
+                    console.log(list)
+                    if (list.length > 0) {
+                        let notificationToSave = {
+                            id: data.id.toString(),
+                            url: './assignment',
+                            title: `Aviso de inicio próximo de OT.`, 
+                            subtitle: `Debe ingresar próximamente.`, 
+                            message: `Existen ${list.length} OT a punto de iniciar.`
+                        }
+                        io.emit(`notification_${data.id}`, {title: notificationToSave.title, subtitle: notificationToSave.subtitle, message: notificationToSave.message})
+                        NotificationService.createNotification(notificationToSave)
+                    }
+                }
+                
+            })
+            /* setTimeout(() => {
+                const responseData2 = await reportsService.readIfReportIsOneDayToStart()
+                // console.log(responseData2)
+                responseData2.forEach((report, index) => {
+
+                })
+                // io.emit()
+            }, 86400000) */
         })
         socket.on('test_user', (data) => {
             console.log('Get data......', data)

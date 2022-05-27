@@ -147,7 +147,7 @@ const AppliancePage = ({ route }) => {
                                                 <img src={machine.image ? machine.image : `/assets/${machine.model}.png`} height={180} id={'imageMachine'} onClick={()=>{openImg(machine.image ? machine.image : `/assets/${machine.model}.png`)}}/>
                                                 <br />
                                                 <button onClick={()=>{upImage()}}>
-                                                    <FontAwesomeIcon icon={faCamera} style={{marginRight: 10}} /> Cambiar imágen
+                                                    <FontAwesomeIcon icon={faCamera} style={{marginRight: 10}} /> Cambiar imagen
                                                 </button>
                                                 <input autoComplete="off" type="file" id="fotoMaquina" accept="image/x-png,image/jpeg" onChange={(e)=>{uploadImageReport(e.target.files[0])}} hidden />
                                             </div>

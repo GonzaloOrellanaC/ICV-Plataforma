@@ -183,21 +183,37 @@ const Navbar = () => {
         setOpenInternalMessagesModal(false)
     }
 
-    const openCadAssistant = () => {
-        //window.location.replace('org.opencascade.cadassistant&hl=es&gl=US://')
-        /* var fallbackToStore = function() { */
-            //window.location.replace('market://details?id=org.opencascade.cadassistant');
-        /* };
-        var triggerAppOpen = function() {
-            openApp();
-            setTimeout(fallbackToStore, 250);
-        }; */
-    }
-
-    
-    var openApp = function() {
-        window.location.replace('your_uri_scheme://');
+    const isMobile = {
+        Android: function() {
+            return navigator.userAgent.match(/Android/i);
+        },
+        BlackBerry: function() {
+            return navigator.userAgent.match(/BlackBerry/i);
+        },
+        iOS: function() {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+        },
+        Opera: function() {
+            return navigator.userAgent.match(/Opera Mini/i);
+        },
+        Windows: function() {
+            return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
+        },
+        any: function() {
+            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+        },
+        other: function() {
+            return navigator.userAgent.match(/Mozilla/i) || navigator.userAgent.match(/AppleWebKit/i) || navigator.userAgent.match(/Chrome/i) || navigator.userAgent.match(/Safari/i)
+        }
     };
+
+    const openCadAssistant = () => {
+        if(isMobile.Android()) {
+            window.location.replace('market://details?id=org.opencascade.cadassistant')
+        } else {
+            alert('Su dispositivo no cuenta con el link a Cad Assistant')
+        }
+    }
 
     const clearAndLogout = () => {
         if(confirm('Limpiará toda la data del sistema y cerrará la sesión. Una vez terminado vuelva a iniciar.')) {
@@ -219,7 +235,7 @@ const Navbar = () => {
         if(cancel) {
             /* window.addEventListener('online', () => { */
                 const socket = io()
-                socket.on(`test_${localStorage.getItem('_id')}`, data => {
+                /* socket.on(`test_${localStorage.getItem('_id')}`, data => {
                     addNotification({
                         icon: logoNotification,
                         title: 'Test',
@@ -230,7 +246,7 @@ const Navbar = () => {
                         native: true // when using native, your OS will handle theming.
                     })
                     //alert(data.message)
-                })
+                }) */
                 socket.on(`notification_${localStorage.getItem('_id')}`, data => {
                     addNotification({
                         icon: logoNotification,

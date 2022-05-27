@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const CreateUser = ({width, height, typeDisplay, uData}) => {
+const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
 
     const [ tiposUsuarios, setTiposUsuarios ] = useState([]);
     const [ verPassword, setVerPassword ] = useState('password');
@@ -215,47 +215,62 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
     }, []);
 
     return (
-            <div style={{height: height, width: width}}>
+            <div style={{height: 'calc(100vh-100px)', width: '100%'}}>
                 {(typeDisplay === 'Nuevo usuario') && <Grid>
                     <div>
-                        <h2>Para enrolar nuevo usuario debe ingresar todos los datos.</h2>
+                        <h2>Para enrolar nuevo usuario debe ingresar todos los datos. <br /> Foto de perfil se podrá cargar una vez creado.</h2>
                     </div>
                 </Grid>}
-                <Grid container style={{padding: 0, marginLeft: 100}}>
-                    <Grid item style={{float: 'left', marginRight: 10}}>
-                        <p>Foto de perfil</p>
-                        <button style={{height: 224, width: 190, borderRadius: 8, objectFit: 'cover'}} onClick={()=>{ openFile();/* alert('No disponible.') */}}>
-                            {!imageUrl ? <div>
+                <Grid container>
+                    <Grid item xl={(typeDisplay === 'Nuevo usuario') ? 'auto' : 3} lg={(typeDisplay === 'Nuevo usuario') ? 'auto' : 3} md={12} sm={12} xs={12} hidden={(typeDisplay === 'Nuevo usuario') ? true : false}>
+                        <div style={{textAlign: 'center'}}>
+                            <p>Foto de perfil</p>
+                            <button style={{height: 224, width: 190, borderRadius: 8, objectFit: 'cover'}} onClick={()=>{ openFile();/* alert('No disponible.') */}}>
+                                {!imageUrl ? <div>
+                                    
+                                    <FontAwesomeIcon icon={faPaperclip} style={{fontSize: 18}}/>
+                                        <br />
+                                        <br />
+                                        CARGAR
+                                        <br />
+                                        FOTO
+                                    </div> : <img src={imageUrl} style={{objectFit: 'cover', width: '100%'}} height={'100%'}/>}
                                 
-                                <FontAwesomeIcon icon={faPaperclip} style={{fontSize: 18}}/>
-                                    <br />
-                                    <br />
-                                    CARGAR
-                                    <br />
-                                    FOTO
-                                </div> : <img src={imageUrl} style={{objectFit: 'cover', width: '100%'}} height={'100%'}/>}
-                            
-                        </button>
-                        <input autoComplete="off" type="file" id="profileImage" onChange={(e)=>{uploadImageProfile(e.target.files[0])}} hidden />
+                            </button>
+                            <input autoComplete="off" type="file" id="profileImage" onChange={(e)=>{uploadImageProfile(e.target.files[0])}} hidden />
+                        </div>
                     </Grid>
-                    <Grid style={{float: 'left', width:"75%", marginRight: 10, marginTop: 0}}>
-                        <div style={{width: '70vw', height: '12vh'}}>
-                            <div style={{float: 'left', marginRight: 10}}>
-                                <FormControl fullWidth>
+                    <Grid item xl={(typeDisplay === 'Nuevo usuario') ? 'auto' : 9} lg={(typeDisplay === 'Nuevo usuario') ? 'auto' : 9} md={12} sm={12} xs={12} /* style={{float: 'left', width:"75%", marginRight: 10, marginTop: 0}} */>
+                        <Grid container>
+                            <Grid item xl={4} lg={4} md={6} sm={12} xs={12}>
+                                <FormControl style={{width: '100%', paddingRight: 10}}>
                                     {/* <TextField id="outlined-basic" label="Rut" variant="outlined" /> */}
-                                    <p>RUT</p>
-                                    <input autoComplete="off" required id="rut" className="inputClass" type="text" minLength={11} maxLength={12} onBlur={()=>saveUserData()} onInput={(e)=>changeRut(e.target.value)} /* onChange={(e)=>{setRut(e.target.value)}} */ value={rut} /*className={classes.inputsStyle}*/ placeholder="11.222.333-K" style={{width: 293, height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <p style={{margin: 0, marginTop: 5}}>RUT</p>
+                                    <input 
+                                        autoComplete="off"
+                                        required
+                                        id="rut"
+                                        className="inputClass"
+                                        type="text"
+                                        minLength={11}
+                                        maxLength={12}
+                                        onBlur={()=>saveUserData()}
+                                        onInput={(e)=>changeRut(e.target.value)}
+                                        value={rut}
+                                        placeholder="11.222.333-K"
+                                        style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}}
+                                    />
                                 </FormControl>
-                            </div>
-                            <div style={{float: 'left'}}>
-                                <FormControl fullWidth>
-                                    <p>Tipo de usuario</p>
+                            </Grid>
+                            <Grid item xl={4} lg={4} md={6} sm={12} xs={12}>
+                                <FormControl style={{width: '100%', paddingRight: 10}}>
+                                    <p style={{margin: 0, marginTop: 5}}>Tipo de usuario</p>
                                     <select 
                                         onBlur={()=>saveUserData()} 
                                         required
                                         name="userType" 
                                         id="userType" 
-                                        style={{width: 248, height: 44, borderRadius: 10, fontSize: 20, marginRight: 10}}
+                                        style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, marginRight: 10}}
                                         onChange={(e)=> setUserType(e.target.value)}
                                         value={role} 
                                         className="inputClass"
@@ -270,16 +285,16 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
                                         }
                                     </select>
                                 </FormControl>
-                            </div>
-                            <div style={{float: 'left'}}>
-                                <FormControl fullWidth>
-                                    <p>Obra</p>
+                            </Grid>
+                            <Grid item xl={4} lg={4} md={12} sm={12} xs={12}>
+                                <FormControl style={{width: '100%', paddingRight: 10}}>
+                                    <p style={{margin: 0, marginTop: 5}}>Obra</p>
                                     <select 
                                         required 
                                         onBlur={()=>saveUserData()} 
                                         name="site" 
                                         id="site" 
-                                        style={{width: 548, height: 44, borderRadius: 10, fontSize: 20}}
+                                        style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}}
                                         onChange={(e)=> setSiteToUser(e.target.value)}
                                         value={userSite} 
                                         className="inputClass"
@@ -294,41 +309,103 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
                                         }
                                     </select>
                                 </FormControl>
-                            </div>
-                        </div>
-                        <div style={{width: '70vw', height: '12vh'}}>
+                            </Grid>
+                            <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                                <FormControl style={{width: '100%', paddingRight: 10}}>
+                                    <p style={{margin: 0, marginTop: 5}}>Nombre</p>
+                                    <input autoComplete="off" required className="inputClass" id="name" onBlur={()=>saveUserData()} onChange={(e)=>setName(e.target.value)} value={name} /*className={classes.inputsStyle}*/ placeholder="John" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                </FormControl>
+                            </Grid>
+                            <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                                <FormControl style={{width: '100%', paddingRight: 10}}>
+                                    <p style={{margin: 0, marginTop: 5}}>Apellido</p>
+                                    <input autoComplete="off" required className="inputClass" id="lastName" onBlur={()=>saveUserData()} onChange={(e)=>setLastName(e.target.value)} value={lastName} /*className={classes.inputsStyle}*/ placeholder="Doe" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                </FormControl>
+                            </Grid>
+                        {/* <div style={{width: '70vw', height: '12vh'}}>
                             <div style={{float: 'left', width: '45%', marginRight: 10}}>
                                 <FormControl fullWidth>
-                                    <p>Nombre</p>
-                                    <input autoComplete="off" required className="inputClass" id="name" onBlur={()=>saveUserData()} onChange={(e)=>setName(e.target.value)} value={name} /*className={classes.inputsStyle}*/ placeholder="John" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <p style={{margin: 0, marginTop: 5}}>Nombre</p>
+                                    <input autoComplete="off" required className="inputClass" id="name" onBlur={()=>saveUserData()} onChange={(e)=>setName(e.target.value)} value={name} placeholder="John" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
                             <div style={{float: 'left', width: '45%'}}>
                                 <FormControl fullWidth>
-                                    <p>Apellido</p>
-                                    <input autoComplete="off" required className="inputClass" id="lastName" onBlur={()=>saveUserData()} onChange={(e)=>setLastName(e.target.value)} value={lastName} /*className={classes.inputsStyle}*/ placeholder="Doe" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <p style={{margin: 0, marginTop: 5}}>Apellido</p>
+                                    <input autoComplete="off" required className="inputClass" id="lastName" onBlur={()=>saveUserData()} onChange={(e)=>setLastName(e.target.value)} value={lastName} placeholder="Doe" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
-                        </div> 
-                        <div style={{width: '70vw', height: '12vh'}}>
+                        </div>  */}
+                            <Grid item xl={8} lg={8} md={6} sm={12} xs={12}>
+                                <FormControl style={{width: '100%', paddingRight: 10}}>
+                                    <p style={{margin: 0, marginTop: 5}}>Correo electrónico</p>
+                                    <input autoComplete="off" required className="inputClass" id="email" onBlur={()=>saveUserData()} onChange={(e)=>setEmail(e.target.value)} value={email} /*className={classes.inputsStyle}*/ placeholder="nombre@correo.cl" type="email" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                </FormControl>
+                            </Grid>
+                            <Grid item xl={4} lg={4} md={6} sm={12} xs={12}>
+                                <FormControl style={{width: '100%', paddingRight: 10}}>
+                                    <p style={{margin: 0, marginTop: 5}}>Número de teléfono</p>
+                                    <input autoComplete="off" required className="inputClass" id="phone" minLength={9} onBlur={()=>saveUserData()} onInput={(e)=>{e.target.value = e.target.value.slice(0, 9)}} onChange={(e)=>setPhone(e.target.value)} value={phone} /*className={classes.inputsStyle}*/ placeholder="999998888" type="phone" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                </FormControl>
+                            </Grid>
+                        {/* <div style={{width: '70vw', height: '12vh'}}>
                             <div style={{float: 'left', width: '60%', marginRight: 10}}>
                                 <FormControl fullWidth>
-                                    <p>Correo electrónico</p>
-                                    <input autoComplete="off" required className="inputClass" id="email" onBlur={()=>saveUserData()} onChange={(e)=>setEmail(e.target.value)} value={email} /*className={classes.inputsStyle}*/ placeholder="nombre@correo.cl" type="email" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <p style={{margin: 0, marginTop: 5}}>Correo electrónico</p>
+                                    <input autoComplete="off" required className="inputClass" id="email" onBlur={()=>saveUserData()} onChange={(e)=>setEmail(e.target.value)} value={email} placeholder="nombre@correo.cl" type="email" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
                             <div style={{float: 'left', width: '30%'}}>
                                 <FormControl fullWidth>
-                                    <p>Número de teléfono</p>
-                                    <input autoComplete="off" required className="inputClass" id="phone" minLength={9} onBlur={()=>saveUserData()} onInput={(e)=>{e.target.value = e.target.value.slice(0, 9)}} onChange={(e)=>setPhone(e.target.value)} value={phone} /*className={classes.inputsStyle}*/ placeholder="999998888" type="phone" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <p style={{margin: 0, marginTop: 5}}>Número de teléfono</p>
+                                    <input autoComplete="off" required className="inputClass" id="phone" minLength={9} onBlur={()=>saveUserData()} onInput={(e)=>{e.target.value = e.target.value.slice(0, 9)}} onChange={(e)=>setPhone(e.target.value)} value={phone} placeholder="999998888" type="phone" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </div>
-                        </div> 
-                        {(typeDisplay === 'Nuevo usuario') && <div style={{width: '70vw', height: '12vh'}}>
-                            <div style={{float: 'left', width: '37%', marginRight: 10}}>
-                                <p>Contraseña</p>
-                                <div style={{float: 'left', width: '100%'}}>
+                        </div>  */}
+                        {
+                            (typeDisplay === 'Nuevo usuario') && <Grid container>
+                                <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                                <p style={{margin: 0, marginTop: 5}}>Contraseña</p>
+                                <div style={{float: 'left', width: '100%', paddingRight: 10}}>
                                     <input autoComplete="off" id="passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setPassword(e.target.value)} value={password} minLength={6} /*className={classes.inputsStyle}*/ placeholder="Min 6 carácteres" type={verPassword}
+                                        style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
+                                </div>
+                                <div style={{float: 'left', width: '1%', marginLeft: -50}}>
+                                    <IconButton style={{width: 40}} onClick={() => {cambiarVistaPassword()}}>
+                                        {
+                                            verPassword === 'password' && <FontAwesomeIcon icon={faEye}/>
+                                        }
+                                        {
+                                            verPassword === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
+                                        }
+                                    </IconButton>
+                                </div>
+                            </Grid>
+                            <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                                <p style={{margin: 0, marginTop: 5}}>Confirmar contraseña</p>
+                                <div style={{float: 'left', width: '100%', paddingRight: 10}}>
+                                    <input autoComplete="off" id="c_passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setConfirmPassword(e.target.value)} value={confirmPassword} minLength={6} /*className={classes.inputsStyle}*/ placeholder="Repita contraseña" type={verConfirmarPassword}
+                                        style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
+                                </div>
+                                <div style={{float: 'left', width: '1%', marginLeft: -50}}>
+                                    <IconButton style={{width: 40}} onClick={()=>{cambiarVistaConfirmarPassword()}}>
+                                        {
+                                            verConfirmarPassword === 'password' && <FontAwesomeIcon icon={faEye}/>
+                                        }
+                                        {
+                                            verConfirmarPassword === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
+                                        }
+                                    </IconButton>
+                                </div>
+                            </Grid>
+                            </Grid>
+                        }
+                        </Grid>
+                        {/* {(typeDisplay === 'Nuevo usuario') && <div style={{width: '70vw', height: '12vh'}}>
+                            <div style={{float: 'left', width: '37%', marginRight: 10}}>
+                                <p style={{margin: 0, marginTop: 5}}>Contraseña</p>
+                                <div style={{float: 'left', width: '100%'}}>
+                                    <input autoComplete="off" id="passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setPassword(e.target.value)} value={password} minLength={6} placeholder="Min 6 carácteres" type={verPassword}
                                         style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
                                 </div>
                                 <div style={{float: 'left', width: '1%', marginLeft: -50}}>
@@ -343,9 +420,9 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
                                 </div>
                             </div>
                             <div style={{float: 'left', width: '37%'}}>
-                                <p>Confirmar contraseña</p>
+                                <p style={{margin: 0, marginTop: 5}}>Confirmar contraseña</p>
                                 <div style={{float: 'left', width: '100%'}}>
-                                    <input autoComplete="off" id="c_passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setConfirmPassword(e.target.value)} value={confirmPassword} minLength={6} /*className={classes.inputsStyle}*/ placeholder="Repita contraseña" type={verConfirmarPassword}
+                                    <input autoComplete="off" id="c_passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setConfirmPassword(e.target.value)} value={confirmPassword} minLength={6} placeholder="Repita contraseña" type={verConfirmarPassword}
                                         style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
                                 </div>
                                 <div style={{float: 'left', width: '1%', marginLeft: -50}}>
@@ -362,7 +439,7 @@ const CreateUser = ({width, height, typeDisplay, uData}) => {
                         </div>
                         
                         
-                        }    
+                        }  */}   
                         {
                             passwordNoIguales && <div style={{width: '100%', textAlign: 'center'}}>
                                 <h3 style={{color: 'red'}}>Contraseñas no coinciden</h3>

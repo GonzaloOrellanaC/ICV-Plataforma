@@ -1,23 +1,21 @@
-import { ExecutionReport, Reports } from "../models";
+import { ExecutionReport, Reports } from "../models"
 import { environment } from '../config'
 const { error: errorMsg, success: successMsg } = environment.messages.services.user
 import fetch from 'node-fetch'
-import { EmailMailgunServices, EmailServices } from ".";
+import { EmailMailgunServices, EmailServices } from "."
 
 const createReport = async (req, res) => {
     const { body } = req
-    //console.log(body)
-    
     if (!body.report) {
         throw new Error(errorMsg.missingParameters)
     }else{
         body.report.idIndex = await countTotalReports()
-        const createReportState = new Reports(body.report);
+        const createReportState = new Reports(body.report)
         try{
             await createReportState.save()
-            res.json(createReportState);
+            res.json(createReportState)
         }catch(err) {
-            res.json(err);
+            res.json(err)
         } 
     }
 }
@@ -28,19 +26,17 @@ const editReport = async (req, res) => {
         throw new Error(errorMsg.missingParameters)
     }else{
         try{
-            const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report);
-            console.log('Respuesta edición reporte =>>>>>', editReportState);
+            const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
+            console.log('Respuesta edición reporte =>>>>>', editReportState)
             res.json(editReportState)
         }catch(err) {
-            res.json(err);
+            res.json(err)
         }
     }
 }
 
 const editReportFromAudit = async (req, res) => {
     const { body } = req
-    //'Edición reporte =>>>>>', body)
-    
     if (!body.report) {
         throw new Error(errorMsg.missingParameters)
     }else{
@@ -58,28 +54,16 @@ const editReportFromAudit = async (req, res) => {
                     EmailMailgunServices.sendEmailEndOfOrder('closeOrder', 4, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend, body.report.sapExecutiveApprovedCommit, `${environment.mailApi.domain}${body.generateLink}`)
                 }
             }
-            //body.report.idIndex = await countTotalReports()
-            const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report);
-            //console.log('Respuesta edición reporte =>>>>>', editReportState);
+            const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
             res.json(editReportState)
         }catch(err) {
-            res.json(err);
+            res.json(err)
         }
-        /* try{
-            await createReportState.save()
-            res.json(createReportState);
-        }catch(err) {
-            res.json(err);
-        }  */
     }
 }
 
 const deleteReport = async (req, res) => {
-    //console.log(req.body)
-    //console.log(req.query)
     const { id } = req.body
-    //console.log(id)
-    
     if (!id) {
         throw new Error(errorMsg.missingParameters)
     }else{
@@ -89,18 +73,18 @@ const deleteReport = async (req, res) => {
                 res.json({
                     message: 'Orden no encontrada'
                 })
-            };
-            const deleteExecution = await ExecutionReport.findOneAndDelete({reportId: id});
+            }
+            const deleteExecution = await ExecutionReport.findOneAndDelete({reportId: id})
             if (!deleteExecution) {
                 res.json({
                     message: 'Error en sistema'
                 })
-            };
+            }
             res.json({
                 message: 'Orden eliminada'
             })
         }catch(err) {
-            res.json(err);
+            res.json(err)
         }
     }
     
@@ -109,9 +93,8 @@ const deleteReport = async (req, res) => {
 const getReports = (req, res) => {
     try {
         Reports.find({deleted: false}, (err, reports) => {
-            //console.log('Reportes: ', reports)
             res.json(reports)
-        });
+        })
     } catch (err) {
         console.log(err)
     }
@@ -121,51 +104,64 @@ const getAllReports = () => {
     try {
         Reports.find({}, (err, reports) => {
             reports.forEach(async r => {
-                //console.log(r)
                 r.deleted = false
                 const res = await Reports.findByIdAndUpdate(r._id, r, {new: false, timestamps: false})
                 console.log('Respuesta: ', res)
             })
-        });
+        })
     } catch (err) {
         console.log(err)
     }
 }
 
 const getReportByGuide = (req, res) => {
-    const { body } = req;
-    //console.log(body);
+    const { body } = req
+}
+
+const readIfReportIsOneDayToStart = () => {
+    return new Promise(async resolve => {
+        const dateNow = Date.now()
+        const dateMax = Date.now() - (86400000 * 1)
+        const response = await Reports.find({deleted: false, enabled: true, datePrev: { $gte: new Date(dateMax), $lt: new Date(dateNow) }})
+        resolve(
+            response
+        )
+    })
+}
+
+const readIfReportIsStartingLate = () => {
+    return new Promise(async resolve => {
+        const dateNow = Date.now()
+        const dateMax = Date.now() + (86400000 * 1)
+        const response = await Reports.find({deleted: false, enabled: true, datePrev: { $gte: new Date(dateNow) , $lt: new Date(dateNow) }})
+        resolve(
+            response
+        )
+    })
 }
 
 const getReportsByDateRange = (req, res) => {
-    const { body } = req;
-    console.log(body);
-
-    //console.log(new Date(body.dateInit))
-    let dateInit = body.dateInit;
-    let dateEnd = body.dateEnd;
-    console.log(dateInit, dateEnd)
-    let reportType = body.reportType;
+    const { body } = req
+    let dateInit = body.dateInit
+    let dateEnd = body.dateEnd
+    let reportType = body.reportType
     try {
         Reports.find({ deleted: false, dateClose: { $gte: new Date(dateInit) , $lt: new Date(dateEnd) },  reportType: reportType }, (err, reports) => {
             if(err) {
                 console.log('El error es: ', err)
             }
-            console.log(reports);
             res.send(reports)
         })
     } catch (err) {
         console.log('ERRRRRRR',err)
-    }
-    
+    }   
 }
 
 const getReportByIndex = (req, res) => {
-    const { body } = req;
-    const { indexNumber } = body;
+    const { body } = req
+    const { indexNumber } = body
     try {
         Reports.findOne({deleted: false, idIndex: indexNumber}, (err, report) => {
-            //console.log('Reportes', reports);
             res.json(report)
         })
     } catch (err) {
@@ -174,11 +170,11 @@ const getReportByIndex = (req, res) => {
 }
 
 const getReportByType = (req, res) => {
-    const { body } = req;
+    const { body } = req
     //console.log(body)
     /* try {
         Reports.find({}, (err, reports) => {
-            console.log('Reportes', reports);
+            console.log('Reportes', reports)
             res.jason(reports)
         })
     } catch (err) {
@@ -187,8 +183,7 @@ const getReportByType = (req, res) => {
 }
 
 const getReportByState = (req, res) => {
-    const { body } = req;
-    //console.log(body)
+    const { body } = req
     try {
         Reports.find({ deleted: false, state: body.state, reportType: body.reportType }, (err, reports) => {
 
@@ -200,7 +195,7 @@ const getReportByState = (req, res) => {
 }
 
 const getReportsByUser = (req, res) => {
-    const { body } = req;
+    const { body } = req
 
     let reportList = new Array()
     try {
@@ -221,9 +216,7 @@ const getReportsByUser = (req, res) => {
 }
 
 const findMyAssignations = (req, res) => {
-    const { body } = req;
-    //console.log(body);
-    //let reportList = new Array()
+    const { body } = req
     try {
         Reports.find({deleted: false, usersAssigned: [body.userId]}, (err, reports) => {
             res.json(reports)
@@ -234,15 +227,14 @@ const findMyAssignations = (req, res) => {
 }
 
 const getReportByIdpm = async (req, res) => {
-    const { body : { idpm } } = req;
-    const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${idpm}`);
-    const pmResponse =  await response.json();
+    const { body : { idpm } } = req
+    const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${idpm}`)
+    const pmResponse =  await response.json()
     res.send(pmResponse.data)
 }
 
 const getReportByEquid = async (req, res) => {
     const { body : { equid } } = req
-    console.log(equid)
     try {
         Reports.find({ deleted: false, machine: equid }, (err, reports) => {
             res.json(reports)
@@ -263,9 +255,28 @@ const countTotalReports = () => {
 const getTotalReportsToIndex = (req, res) => {
     try {
         Reports.find({}, (err, reports) => {
-            //console.log('Reportes: ', reports)
             res.json(reports)
-        });
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+const countTotalReportsLength = (req, res) => {
+    try {
+        Reports.count({}, (err, result) => {
+            res.json(result)
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+const countTotalActivesReportsLength = (req, res) => {
+    try {
+        Reports.count({deleted: false}, (err, result) => {
+            res.json(result)
+        })
     } catch (err) {
         console.log(err)
     }
@@ -288,5 +299,8 @@ export default {
     getReportByEquid,
     getReportsByDateRange,
     getAllReports,
-    getTotalReportsToIndex
+    getTotalReportsToIndex,
+    countTotalReportsLength,
+    countTotalActivesReportsLength,
+    readIfReportIsOneDayToStart
 }

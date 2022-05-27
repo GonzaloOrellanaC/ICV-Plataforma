@@ -1,10 +1,10 @@
 import React, { useState, useEffect, ReactDOM } from 'react'
-import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button, } from '@material-ui/core'
+import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button, Modal, Fab } from '@material-ui/core'
 import { ArrowBackIos, Close } from '@material-ui/icons'
-import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, useStylesTheme } from '../../config'
+import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, getMachineData, useStylesTheme, detectIf3DModelExist, translateSubSystem, styleModal3D } from '../../config'
 import { useHistory, useParams } from 'react-router-dom'
 import { pautasDatabase, reportsDatabase, readyToSendReportsDatabase, executionReportsDatabase } from '../../indexedDB'
-import { PautaDetail } from '../../containers'
+import { MVAvatar, PautaDetail } from '../../containers'
 import { executionReportsRoutes, reportsRoutes } from '../../routes'
 import { LoadingLogoModal, LoadingModal, ReportCommitModal, ReportMessagesModal } from '../../modals'
 import { SocketConnection } from '../../connections'
@@ -33,6 +33,10 @@ const ActivitiesDetailPage = () => {
     const [ messageType, setMessageType ] = useState()
     const [ openMessagesModal, setOpenMessagesModal ] = useState(false)
     const [ smActivated, setSmActivated ] = useState(false)
+    const [ machineData, setMachineDtaa ] = useState()
+    const [ habilite3D, setHabilite3D ] = useState(false)
+    const [ subSistem, setSubSistem ] = useState()
+    const [ open3D, setOpen3D ] = useState(false)
 
     useEffect(async () => {
         window.addEventListener('resize', (ev) => {
@@ -56,10 +60,15 @@ const ActivitiesDetailPage = () => {
         if(navigator.onLine) {
             reportsRoutes.getReportByIndex(id).then(r => {
                 let report = r.data
+                console.log(report)
                 getPauta(report)
                 if(!report.level) {
                     report.level = 0
                 }
+                getMachineData(report.machine)
+                .then(data => {
+                    setMachineDtaa(data[0])
+                })
                 setReportAssigned(report)
                 setReportLevel(report.level)
                 let myReportLevel
@@ -126,6 +135,19 @@ const ActivitiesDetailPage = () => {
 
     const setProgress = (value) => {
         resutProgress(value)
+    }
+
+    const selectionItem = (value = new String) => {
+        const state = detectIf3DModelExist(value, machineData.model)
+        let system = {
+            name: translateSubSystem(value),
+            brand: machineData.brand,
+            model: machineData.model,
+            nameModel: `${translateSubSystem(value)}_${machineData.model}`
+        }
+        console.log(state)
+        setSubSistem(JSON.stringify(system))
+        setHabilite3D(state)
     }
 
     const endReport = async () => {
@@ -467,6 +489,10 @@ const ActivitiesDetailPage = () => {
         setOpenMessagesModal(false)
     }
 
+    const closeModal = () => {
+        setOpen3D(false)
+    }
+
     return (
         <Box height='80vh'>
             <Grid className={classes.pageRoot} container spacing={0}>
@@ -500,6 +526,7 @@ const ActivitiesDetailPage = () => {
                                                 setProgress={setProgress} 
                                                 setIndexGroupToSend={setIndexGroup}
                                                 resultThisItemProgress={resultThisItemProgress}
+                                                selectionItem={selectionItem}
                                                 />
                                         }
                                     </div>
@@ -510,6 +537,9 @@ const ActivitiesDetailPage = () => {
                                             <h2 style={{margin: 0}}>OT {id}</h2>
                                             <p style={{margin: 0}}>Tipo de pauta: <br /> <strong>{pauta && pauta.typepm}</strong></p>
                                             <p style={{backgroundColor: 'red', color: 'white', marginBottom: 0}}><strong>{reportAssigned && reportAssigned.testMode ? 'Modo test' : ''}</strong></p>
+                                            {machineData && <p style={{margin: 0}}>Máquina: {machineData.brand}, modelo {machineData.model}, N°{machineData.equ}</p>}
+                                            <br />
+                                            <Button variant="contained" disabled={!habilite3D} style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}} onClick={()=>{setOpen3D(true)}}><strong>3D</strong></Button>
                                         </div>
                                         <h4 style={{textAlign: 'center'}}>Avance en esta hoja: {progress.toFixed(0)}%</h4>
                                         <LinearProgress variant="determinate" value={progress} style={{width: '100%'}}/>
@@ -555,6 +585,26 @@ const ActivitiesDetailPage = () => {
             {
                 loadingLogo && <LoadingLogoModal open={loadingLogo} />
             }
+            {/* {
+                open3D && <MVAvatar subSistem={subSistem} />
+            } */}
+            <Modal
+                open={open3D}
+                //close={!open}
+                //onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={styleModal3D/* {height: '100%', width: '70%', backgroundColor: '#333'} */}>
+                    {/* <VRAvatar machine={machine}/> */} 
+                    <MVAvatar subSistem={subSistem} />
+                    {/* <Test /> */}
+                    <Fab onClick={() => closeModal()} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}} color="primary">
+                        <Close />
+                    </Fab>
+                </Box>
+                
+            </Modal>
         </Box>
     )
 }
