@@ -366,9 +366,9 @@ const Navbar = () => {
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Int. Artificial (Beta)' onClickCapture={()=>{toOpenIAModal()}}>
+                                <IconButton onClick={closeSideBar} title='Int. Artificial' onClickCapture={()=>{toOpenIAModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
-                                        <FontAwesomeIcon icon={faRobot}/> {navBarOpen ?  ' Int. Artificial (Beta)' : ''}
+                                        <FontAwesomeIcon icon={faRobot}/> {navBarOpen ?  ' Int. Artificial' : ''}
                                     </div>
                                 </IconButton>
                             </div>

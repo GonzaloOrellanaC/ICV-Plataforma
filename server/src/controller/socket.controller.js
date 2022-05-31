@@ -12,28 +12,13 @@ export default async (server) => {
             credentials: false
         },
     })
-    /* const responseData1 = await reportsService.readIfReportIsOneDayToStart()
-    console.log(responseData1)
-    responseData1.forEach((report, index) => {
-
-    })
-    setTimeout(() => {
-        const responseData2 = await reportsService.readIfReportIsOneDayToStart()
-        // console.log(responseData2)
-        responseData2.forEach((report, index) => {
-
-        })
-        // io.emit()
-    }, 86400000); */
     io.on('connection', (socket) => {
-        console.log('On connections')
-        
         socket.on('isConnected', async (data) => {
             console.log('Activado!!!', data)
             const responseData1 = await reportsService.readIfReportIsOneDayToStart()
             console.log(responseData1)
             const list = []
-            responseData1.forEach((report, index) => {
+            responseData1.forEach(async (report, index) => {
                 report.usersAssigned.forEach((user, i) => {
                     /* console.log(user === data.id) */
                     if(user === data.id) {
@@ -52,18 +37,30 @@ export default async (server) => {
                         }
                         io.emit(`notification_${data.id}`, {title: notificationToSave.title, subtitle: notificationToSave.subtitle, message: notificationToSave.message})
                         NotificationService.createNotification(notificationToSave)
+                        const user = await UserServices.getUser(data.id.toString())
+                        /* console.log(user.name, user.lastName) */
+                        const admins = await UserServices.getUserByRole('admin')
+                        const sapExecutives = await UserServices.getUserByRole('sapExecutive')
+                        const shiftManagers = await UserServices.getUserByRole('shiftManager')
+                        const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
+                        const all = admins.concat(sapExecutives.concat(shiftManagers.concat(chiefMachineries)))
+                        all.forEach((user) => {
+                            console.log('Se crea notificación a '+user._id)
+                            let notificationToSave = {
+                                id: user._id.toString(),
+                                url: './assignment',
+                                title: `Aviso de inicio próximo de OT.`, 
+                                subtitle: `Debe ingresar próximamente.`, 
+                                message: `${user.name} ${user.lastName} tiene ${list.length} OT a punto de iniciar.`
+                            }
+                            console.log(`notification_${user._id}`)
+                            io.emit(`notification_${user._id}`, {title: data.title, subtitle: data.subtitle, message: data.message})
+                            NotificationService.createNotification(notificationToSave)
+                        })
                     }
                 }
                 
             })
-            /* setTimeout(() => {
-                const responseData2 = await reportsService.readIfReportIsOneDayToStart()
-                // console.log(responseData2)
-                responseData2.forEach((report, index) => {
-
-                })
-                // io.emit()
-            }, 86400000) */
         })
         socket.on('test_user', (data) => {
             console.log('Get data......', data)
