@@ -1,7 +1,7 @@
 
 
 export default (time) => {
-    let day = new Date(time).getDay();
+    let day = new Date(time).getDay() + 1
     let dayName;
     if(day == 1) {
         dayName = 'Lunes'
@@ -15,10 +15,10 @@ export default (time) => {
         dayName = 'Viernes'
     }else if(day == 6) {
         dayName = 'Sabado'
-    }else if(day == 0) {
+    }else if(day == 7) {
         dayName = 'Domingo'
     }
-    let date = new Date(time).getDate();
+    let date = new Date(time).getUTCDate();
     let month = new Date(time).getMonth();
     let monthName
     if(month == 0) {

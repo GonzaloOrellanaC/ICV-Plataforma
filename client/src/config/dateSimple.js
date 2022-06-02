@@ -1,5 +1,5 @@
 export default (time) => {
-    let date = new Date(time).getDate();
+    let date = new Date(time).getUTCDate();
     let month = new Date(time).getMonth() + 1;
     let year = new Date(time).getFullYear();
     if(month < 10) {

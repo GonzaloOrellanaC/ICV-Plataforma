@@ -9,58 +9,57 @@ import getAssignments from './getAssignemt'
 const ActivitiesPage = () => {
     const classes = useStylesTheme();
     const history = useHistory();
-
     const [ assignments, setAssignments ] = useState([]);
     const [ prioritaryAssignments, setPrioritaryAssignments ] = useState([]);
     const [ assignmentsReadyToSend, setAssignmentsReadyToSend ] = useState([])
     const theme = useTheme();
-
-    /* const isLarge = useMediaQuery(theme.breakpoints.down('lg'))
-    const isMedium = useMediaQuery(theme.breakpoints.down('md')) */
     const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
 
     useEffect(async () => {
-        let go = true;
         let db = await  readyToSendReportsDatabase.initDb()
-        let data = await readyToSendReportsDatabase.consultar(db.database)
-        setAssignmentsReadyToSend(data)
+        let dataToSend = await readyToSendReportsDatabase.consultar(db.database)
+        setAssignmentsReadyToSend(dataToSend)
         if(navigator.onLine) {
             getAssignments().then((data) => {
-                data.forEach(async (report, i) => {
-                    if(report.guide === 'Pauta de Inspección') {
-                        report._guide = 'PI' 
-                    }else{
-                        report._guide = report.guide
-                    }
-                    report.priority = reportPriority(report.level, localStorage.getItem('role'))
-                    report.dateFormat = date(report.datePrev);
-                    report.end = date(report.endReport);
-                    report.init = date(report.dateInit);
-                    report.getMachine = await getMachineTypeByEquid(report.machine);
-                    if(report.getMachine.model === 'PC5500') {
-                        report.machineType = 'Pala'
-                    }else if(report.getMachine.model === '793-F') {
-                        report.machineType = 'Camión'
-                    }
-                    if(i == (data.length - 1)) {
-                        let rs = data.filter((report) => {if(report.enabled) {return report}});
-                        let assign = new Array()
-                        let prioritaryAssign = new Array()
-                        rs.map((element, index) => {
-                            saveReport(element)
-                            if(element.priority) {
-                                prioritaryAssign.push(element)
-                            }else{
-                                assign.push(element)
-                            }
-                            if(index == (rs.length - 1)) {
-                                writeDatabaseReports(assign.concat(prioritaryAssign))
-                                setAssignments(assign.reverse())
-                                setPrioritaryAssignments(prioritaryAssign)
-                            }
-                        })
-                    }
-                })
+                if(data) {
+                    data.forEach(async (report, i) => {
+                        if(report.guide === 'Pauta de Inspección') {
+                            report._guide = 'PI' 
+                        }else{
+                            report._guide = report.guide
+                        }
+                        report.priority = reportPriority(report.level, localStorage.getItem('role'))
+                        report.dateFormat = date(report.datePrev);
+                        report.end = date(report.endReport);
+                        report.init = date(report.dateInit);
+                        report.getMachine = await getMachineTypeByEquid(report.machine);
+                        report.modelMachine = report.getMachine.model
+                        report.numberMachine = report.getMachine.number
+                        if(report.getMachine.model === 'PC5500') {
+                            report.machineType = 'Pala'
+                        }else if(report.getMachine.model === '793-F') {
+                            report.machineType = 'Camión'
+                        }
+                        if(i == (data.length - 1)) {
+                            let rs = data.filter((report) => {if(report.enabled) {return report}});
+                            let assign = []
+                            let prioritaryAssign = []
+                            rs.map((element, index) => {
+                                saveReport(element)
+                                if(element.priority) {
+                                    prioritaryAssign.push(element)
+                                }else{
+                                    assign.push(element)
+                                }
+                                if(index == (rs.length - 1)) {
+                                    writeDatabaseReports(assign.concat(prioritaryAssign))
+                                    setAssignments(assign.reverse())
+                                    setPrioritaryAssignments(prioritaryAssign)
+                                }
+                            })
+                        }
+                    })
+                }
             })
         }else{
             const db = await reportsDatabase.initDbReports()
@@ -103,6 +102,8 @@ const ActivitiesPage = () => {
                         model: machineFiltered[0].model
                     })
                 }
+            } else {
+                resolve(null)
             }
         })
     }
@@ -192,7 +193,7 @@ const ActivitiesPage = () => {
                                             <h3 className='item-style'>Mis actividades pendientes</h3>
                                         </div>
                                     }
-                                    {(prioritaryAssignments.length > 0) && prioritaryAssignments.map((element, i) => {
+                                    {prioritaryAssignments && prioritaryAssignments.map((element, i) => {
                                         return(
                                             <div key={i}
                                                 className='border-color-primary item-style'
@@ -237,7 +238,7 @@ const ActivitiesPage = () => {
                                                         <p style={{fontSize: 12}}> {element.end} </p>
                                                     </Grid>}
                                                     <Grid item xl={1} lg={1} md={1} sm={2} xs={2}>
-                                                        {element.getMachine.model && <p style={{fontSize: 12, textAlign: 'center'}}> {element.machineType} {element.getMachine.model} N°: {element.getMachine.number} </p>}
+                                                        {element.modelMachine && <p style={{fontSize: 12, textAlign: 'center'}}> {element.machineType} {element.modelMachine} N°: {element.numberMachine} </p>}
                                                     </Grid>
                                                     <Grid item xl={1} lg={1} md={1} sm={1} xs={1} style={{width: '100%', textAlign: 'center', paddingRight: 20}}>
                                                         <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
@@ -255,7 +256,7 @@ const ActivitiesPage = () => {
                                             <h3>Otras asignaciones</h3>
                                         </div>
                                     }
-                                    {assignments.map((element, i) => {
+                                    {assignments && assignments.map((element, i) => {
                                         console.log(element)
                                         element.readyToSend = false
                                         assignmentsReadyToSend.forEach((data) => {
@@ -306,7 +307,7 @@ const ActivitiesPage = () => {
                                                         <p style={{fontSize: 12}}> {element.end} </p>
                                                     </Grid>}
                                                     <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                        {element.getMachine.model && <p style={{fontSize: 12, textAlign: 'center'}}> {element.machineType} {element.getMachine.model} <br /> N°: {element.getMachine.number} </p>}
+                                                        {element.modelMachine && <p style={{fontSize: 12, textAlign: 'center'}}> {element.machineType} {element.modelMachine} <br /> N°: {element.numberMachine} </p>}
                                                     </Grid>
                                                     <Grid item xl={1} lg={1} md={1} sm={1} xs={1} style={{width: '100%', textAlign: 'center', paddingRight: 20}}>
                                                         <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>
