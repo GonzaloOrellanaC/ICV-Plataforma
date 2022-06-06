@@ -67,6 +67,7 @@ const ActivitiesDetailPage = () => {
                 }
                 getMachineData(report.machine)
                 .then(data => {
+                    console.log(data[0])
                     setMachineDtaa(data[0])
                 })
                 setReportAssigned(report)
@@ -96,6 +97,11 @@ const ActivitiesDetailPage = () => {
             if(!report.level) {
                 report.level = 0
             }
+            getMachineData(report.machine)
+            .then(data => {
+                console.log(data[0])
+                setMachineDtaa(data[0])
+            })
             setReportAssigned(report)
             setReportLevel(report.level)
             let myReportLevel
@@ -111,6 +117,7 @@ const ActivitiesDetailPage = () => {
             if(myReportLevel === report.level) {
                 setCanEdit(true)
             }
+            console.log(report)
         }
     }, [])
 
@@ -137,7 +144,7 @@ const ActivitiesDetailPage = () => {
         resutProgress(value)
     }
 
-    const selectionItem = (value = new String) => {
+    const selectionItem = (value = new String()) => {
         const state = detectIf3DModelExist(value, machineData.model)
         let system = {
             name: translateSubSystem(value),

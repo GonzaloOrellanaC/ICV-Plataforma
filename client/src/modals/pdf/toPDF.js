@@ -184,7 +184,7 @@ const createImagesTables = () => {
     })
 }
 
-const createSubTables = async (list = new Array, index = new String, indexNumber = new Number) => {
+const createSubTables = async (list = new Array(), index = new String(), indexNumber = new Number()) => {
     const imageCheck = await getImage(check)
     const noImageCheck = await getImage(noCheck)
     let pageBreak;

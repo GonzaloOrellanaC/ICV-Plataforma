@@ -180,7 +180,7 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
  const sendEmailEndOfOrder = (typeEmail, numberType, fullNameWorker, language, orderNumber, email, message, link) => {
     return new Promise(async resolve => {
         try{            
-            let contextMail = new String
+            let contextMail = new String()
             if(numberType == 1) {
                 contextMail = 'termino de ejecución';
             }else if(numberType > 1 && numberType < 4){
