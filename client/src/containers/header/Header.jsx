@@ -57,7 +57,7 @@ const Header = () => {
     const classes = useStyles()
     const { navBarOpen } = useNavigation()
     const { isAuthenticated } = useAuth()
-    const [ network, setIfHavNetwork ] = useState(true);
+    const [ network, setIfHavNetwork ] = useState(false);
     const [ openSign, setOpenSign ] = useState(false);
     const [ refCanvas, setRefCanvas ] = useState();
     const [ cancel, setCancel ] = useState(true)
@@ -80,6 +80,11 @@ const Header = () => {
                         }
                     })
                     /* SocketConnection.sendIsActive() */
+                }
+                if (navigator.onLine) {
+                    setIfHavNetwork(true)
+                } else {
+                    setIfHavNetwork(false)
                 }
                 window.addEventListener('online', () => {
                     setIfHavNetwork(true);
