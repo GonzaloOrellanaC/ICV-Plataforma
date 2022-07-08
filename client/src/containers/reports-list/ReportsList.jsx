@@ -102,24 +102,24 @@ const ReportsList = ({list, reloadData}) => {
 
     return(
         <div style={{width: '100%', paddingLeft: 10, paddingRight: 10}} /* className='root' */>
-            <Grid container style={{width: '100%'}}>
+            <Grid container style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
+                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
+                    <p style={{textAlign: 'center'}}> <strong>N° OT</strong> </p>
+                </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Pauta</strong> </p>
                 </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Fecha <br /> Prevista</strong> </p>
                 </Grid>
-                <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Fecha <br /> Inicio</strong> </p>
                 </Grid>
-                <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Fecha <br /> Término</strong> </p>
                 </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Horómetro</strong> </p>
-                </Grid>
-                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
-                    <p style={{textAlign: 'center'}}> <strong>N° OT</strong> </p>
                 </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Estado</strong> </p>
@@ -131,7 +131,7 @@ const ReportsList = ({list, reloadData}) => {
                     <p style={{textAlign: 'center'}}> <strong>Máquina</strong> </p>
                 </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
-                    <p style={{textAlign: 'center'}}> <strong>Acción</strong> </p>
+                    <p style={{textAlign: 'left'}}> <strong>Acción</strong> </p>
                 </Grid>
             </Grid>
             {
@@ -149,22 +149,22 @@ const ReportsList = ({list, reloadData}) => {
                     return(
                         <Grid container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
+                                <p style={{textAlign: 'center'}}> {item.idIndex} </p>
+                            </Grid>
+                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center'}}> {item.guide} </p>
                             </Grid>
                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center'}}> {item.date} </p>
                             </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center'}}> {item.init} </p>
                             </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center'}}> {item.end} </p>
                             </Grid>
                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center'}}> {item.hourMeter} hrs </p>
-                            </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> {item.idIndex} </p>
                             </Grid>
                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                                 <div style={{textAlign: 'center'}}>
@@ -183,11 +183,16 @@ const ReportsList = ({list, reloadData}) => {
                                 <p style={{textAlign: 'center'}}> {item.model} {item.number} </p>
                             </Grid>
                     
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
-                                {!item.enabled &&
-                                    <p style={{textAlign: 'center'}}> <button  onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
-                                }
+                            <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>                                <Grid container>
+                                    <Grid item>
+                                        <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  
+                                    </Grid>
+                                    <Grid item>
+                                        {!item.enabled &&
+                                            <p style={{textAlign: 'center', marginLeft: 10}}> <button  onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
+                                        }
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Grid>
                     )

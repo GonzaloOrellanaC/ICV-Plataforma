@@ -21,7 +21,7 @@ const UsersSchema = new Schema({
             },
             message: props => `${props.value} it's not an email`
         },
-        required: true
+        required: false
     },
     name: {
         type: Schema.Types.String,

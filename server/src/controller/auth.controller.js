@@ -1,5 +1,9 @@
 import { environment } from '../config'
+import { Users } from '../models';
 import { EmailServices, UserServices } from '../services'
+
+/* Crypto */
+import crypto from 'crypto'
 
 const { error: errorMsg, success: successMsg } = environment.messages.controller.auth
 
@@ -16,6 +20,33 @@ const login = async (req, res, next) => {
             ...(environment.env === 'production' && { sameSite: 'strict' })
         })
         return res.status(200).json(authenticatedUser);
+    } catch (error) {
+        console.error(error.message)
+        return res.status(401).send(error.message)
+    }
+}
+
+const loginRut = async (req, res, next) => {
+    const { body: { user } } = req;
+    if (!user.rut || !user.password) {
+        return res.status(400).end(errorMsg.credentialsRequired)
+    }
+    try {
+        const userFind = await Users.findOne({rut: user.rut})
+        /* console.log(userFind) */
+        if (userFind) {
+            const hash = crypto.pbkdf2Sync(user.password, userFind.salt, 200000, 64, 'sha512').toString('hex')
+            console.log(hash)
+            if (userFind.hash === hash) {
+                console.log(true)
+                /* res.cookie('jwt', authenticatedUser.generateJWT(), {
+                    httpOnly: true,
+                    ...(environment.env === 'production' && { secure: true }),
+                    ...(environment.env === 'production' && { sameSite: 'strict' })
+                }) */
+                return res.status(200).json(userFind);
+            }
+        }
     } catch (error) {
         console.error(error.message)
         return res.status(401).send(error.message)
@@ -87,6 +118,7 @@ const resetPassword = async (req, res, next) => {
 
 export default {
     login,
+    loginRut,
     register,
     logout,
     forgotPassword,

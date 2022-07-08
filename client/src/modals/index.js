@@ -10,6 +10,7 @@ import { InternalMessageModal } from './internalMessage';
 import { ReportCommitModal } from './reportCommit';
 import { ReportMessagesModal } from './reportMessages';
 import { CameraModal } from "./camera"
+import { FirmaUsuario } from "./firma"
 
 export {
     AssignReportModal,
@@ -26,5 +27,6 @@ export {
     InternalMessageModal,
     ReportCommitModal,
     ReportMessagesModal,
-    CameraModal
+    CameraModal,
+    FirmaUsuario
 }

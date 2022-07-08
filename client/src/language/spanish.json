@@ -1,5 +1,6 @@
 {
     "login": {
+        "rutField": "Rut",
         "emailField": "E-mail",
         "passwordField": "Contraseña",
         "loginButton": "Ingresar",

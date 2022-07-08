@@ -122,6 +122,24 @@ const authenticateUser = (req, res, next) => {
     })
 }
 
+const authenticateUserWithRut = (req, res, next) => {
+    return new Promise((resolve, reject) => {
+        passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
+            //console.log('Usuario Passport:', passportUser)
+            if (err) {
+                reject(new Error(errorMsg.unauthorized))
+            }
+            if (passportUser) {
+                if (!passportUser.enabled) {
+                    reject(new Error(errorMsg.userDisabled))
+                }
+                resolve(passportUser)
+            }
+            reject(new Error(errorMsg.badCredentials))
+        })(req, res, next)
+    })
+}
+
 /**
 
  */
@@ -205,6 +223,7 @@ export default {
     editUser,
     deleteUser,
     authenticateUser,
+    authenticateUserWithRut,
     logout,
     changePassword,
     forgotPassword,

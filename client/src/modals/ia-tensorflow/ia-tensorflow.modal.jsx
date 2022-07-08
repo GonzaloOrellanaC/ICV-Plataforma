@@ -188,4 +188,4 @@ const IAModal = ({open, closeModal}) => {
     )
 }
 
-export default IAModal;
+export default IAModal

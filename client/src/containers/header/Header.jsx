@@ -15,6 +15,7 @@ import { usersRoutes } from '../../routes'
 import { Canvas } from '..'
 import addNotification from 'react-push-notification';
 import { SocketConnection } from '../../connections'
+import { FirmaUsuario } from '../../modals'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -161,7 +162,8 @@ const Header = () => {
                                 {!network && <p>Sin red</p>}
                             </div>
                     </Toolbar>
-                    <Modal
+                    <FirmaUsuario openSign={openSign} styleModal={styleModal} setRefCanvasFunction={setRefCanvasFunction} getImage={getImage} />
+                    {/* <Modal
                         open={openSign}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
@@ -223,7 +225,7 @@ const Header = () => {
                                 </div>
                             </div>
                         </Box>
-                    </Modal>
+                    </Modal> */}
                 </div>
             </AppBar>
         )

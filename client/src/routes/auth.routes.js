@@ -10,6 +10,15 @@ export default {
         }
         return axios.post('/auth/login', requestBody)
     },
+    loginRut: (rut, password) => {
+        const requestBody = {
+            user: {
+                rut,
+                password
+            }
+        }
+        return axios.post('/auth/loginRut', requestBody)
+    },
     register: (userData, password) => {
         const requestBody = {
             userData,

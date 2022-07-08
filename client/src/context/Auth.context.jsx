@@ -39,6 +39,50 @@ export const AuthProvider = (props) => {
         loading,
         error,
         admin,
+        loginRut: (rut, password) => {
+            return new Promise(resolve => {
+                authRoutes.loginRut(rut, password)
+                .then(response => {
+                    let userDataToSave = response.data;
+                    if(response.data.enabled) {
+                        localStorage.setItem('email', userDataToSave.email);
+                        localStorage.setItem('fullName', userDataToSave.fullName);
+                        localStorage.setItem('name', userDataToSave.name);
+                        localStorage.setItem('lastName', userDataToSave.lastName);
+                        localStorage.setItem('_id', userDataToSave._id);
+                        localStorage.setItem('role', userDataToSave.role);
+                        if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
+                            localStorage.setItem('isAdmin', true);
+                            setAdmin(true)
+                        }else{
+                            localStorage.setItem('isAdmin', false);
+                            setAdmin(false);
+                            
+                        }
+                        if(userDataToSave.sites) {
+                            localStorage.setItem('sitio', userDataToSave.sites);
+                        }
+                        localStorage.setItem('isauthenticated', true);
+                        setIsAuthenticated(true);
+                        resolve({
+                            state: true,
+                            response: response
+                        })
+                    }else{
+                        setIsAuthenticated(false);
+                        alert('Su cuenta no está habilitada, debe confirmarla.')
+                        resolve({
+                            state: false,
+                        })
+                    }
+                })
+                .catch(error => {
+                    alert('Error de autenticación: '+error);
+                    setIsAuthenticated(false);
+                    localStorage.setItem('isauthenticated', false);
+                })
+            })
+        },
         login: (email, password) => {
             return new Promise(resolve => {
                 authRoutes.login(email, password)

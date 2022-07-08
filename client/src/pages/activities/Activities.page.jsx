@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme } from '@material-ui/core'
+import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme, CircularProgress } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { date, reportPriority, saveReport, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
@@ -64,7 +64,7 @@ const ActivitiesPage = () => {
         }else{
             const db = await reportsDatabase.initDbReports()
             const {database} = db
-            let dataList = new Array()
+            let dataList = []
             dataList = await reportsDatabase.consultar(database)
             setAssignments(dataList.reverse())
         }
@@ -132,10 +132,10 @@ const ActivitiesPage = () => {
                                 <Grid container direction='column'>
                                     <div style={
                                         {
-                                            width: '100%', 
-                                            borderRadius: 10, 
-                                            borderStyle: 'solid', 
-                                            borderWidth: 1, 
+                                            width: '100%',
+                                            borderRadius: 10,
+                                            borderStyle: 'solid',
+                                            borderWidth: 1,
                                             borderColor: '#CCC',
                                             backgroundColor: '#CCC',
                                             marginBottom: 10
@@ -193,17 +193,14 @@ const ActivitiesPage = () => {
                                             <h3 className='item-style'>Mis actividades pendientes</h3>
                                         </div>
                                     }
-                                    {prioritaryAssignments && prioritaryAssignments.map((element, i) => {
+                                    {prioritaryAssignments && prioritaryAssignments.reverse().map((element, i) => {
                                         return(
                                             <div key={i}
                                                 className='border-color-primary item-style'
                                                 style={
                                                     {
-                                                        width: '100%', 
-                                                        borderRadius: 10, 
-                                                        //borderStyle: 'solid', 
-                                                        //borderWidth: 1, 
-                                                        //borderColor: theme.palette.warning,
+                                                        width: '100%',
+                                                        borderRadius: 10,
                                                         marginBottom: 10
                                                     }
                                             }>
@@ -320,15 +317,16 @@ const ActivitiesPage = () => {
                                                             }
                                                         </Button>
                                                     </Grid>
-                                                    {/* <Grid item xl={1} lg={1} md={1} sm={4} xs={3}>
-                                                        <div style={{width: '100%', textAlign: 'center', paddingRight: 20, marginTop: 10}}>
-                                                            <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
-                                                        </div>
-                                                    </Grid> */}
                                                 </Grid>
                                             </div>
                                         )
                                     })}
+                                    {
+                                        ((assignments.length == 0) && (prioritaryAssignments.length == 0)) && 
+                                        <div style={{ width: '100%', textAlign: 'center', height: 100 }}>
+                                            <CircularProgress size={50} />
+                                        </div>
+                                    }
                                 </Grid>
                             </div>
                         </Grid>

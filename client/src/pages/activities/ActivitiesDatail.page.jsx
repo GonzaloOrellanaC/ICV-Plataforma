@@ -135,9 +135,11 @@ const ActivitiesDetailPage = () => {
                     return info
                 }})
         setPauta(pautaFiltered[0])
-        setTimeout(() => {
-            setLoadingLogo(false)
-        }, 1000)
+        if (pautaFiltered[0]) {
+            setTimeout(() => {
+                setLoadingLogo(false)
+            }, 1000)
+        }
     }
 
     const setProgress = (value) => {
@@ -525,7 +527,7 @@ const ActivitiesDetailPage = () => {
                                     <div style={{padding: 20}}>
                                         {
                                             pauta && <PautaDetail 
-                                                height={smActivated ? 'calc(100vh - 850px)' :'calc(100vh - 360px)'} 
+                                                height={smActivated ? 'calc(100vh - 850px)' :'55vh'} 
                                                 reportAssigned={reportAssigned} 
                                                 pauta={pauta} 
                                                 reportLevel={reportLevel} 
