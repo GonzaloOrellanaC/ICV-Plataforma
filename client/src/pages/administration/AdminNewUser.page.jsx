@@ -53,6 +53,10 @@ const AdminNewUserPage = () => {
             setRoutingData('Editar usuario');
             let uData = usersRoutes.getUser(id);
             uData.then(u => {
+                console.log(u)
+                if (u.data.email === 'x@x.xx') {
+                    u.data.email = ''
+                }
                 setUserData(u.data);
                 setUsageModule(0)
                 //localStorage.setItem('userDataToSave', JSON.stringify(u.data))
@@ -206,35 +210,77 @@ const AdminNewUserPage = () => {
         if(user) {
             if(user.rut) {
                 if(validate(user.rut)) {
-                    let phone = new String()
-                    phone = user.phone;
+                    /* let phone = user.phone; */
                     if(user.phone) {
+                        console.log(user)
                         let infoFaltante = []
-                        Object.values(user).map(async (value, index) => {
-                            if(!value) {
-                                if(!id) {
-                                    habilitado = false
+                        let userData = {}
+                        if (user.email === "") {
+                            userData.confirmPassword = user.confirmPassword
+                            userData.password = user.password
+                            userData.name = user.name
+                            userData.lastName = user.lastName
+                            userData.phone = user.phone
+                            userData.role = user.role
+                            userData.rut = user.rut
+                            userData.sites = user.sites
+                            Object.values(userData).map(async (value, index) => {
+                                console.log(value)
+                                if(!value) {
+                                    if(!id) {
+                                        habilitado = false
+                                    }
+                                    infoFaltante.push(await transformInfo(Object.keys(user)[index]))
                                 }
-                                infoFaltante.push(await transformInfo(Object.keys(user)[index]))
-                            }
-                            if(index == (Object.values(user).length - 2)) {
-                                if(!habilitado) {
-                                    setTimeout(() => {
-                                        alert('Faltan datos: ' + JSON.stringify(infoFaltante))
-                                    }, 100);
-                                }else{
-                                    if(id) {
-                                        setUsageModule(usageModule + 1)
+                                if(index == (Object.values(userData).length - 2)) {
+                                    console.log(infoFaltante)
+                                    if(!habilitado) {
+                                        setTimeout(() => {
+                                            alert('Faltan datos: ' + JSON.stringify(infoFaltante))
+                                        }, 100);
                                     }else{
-                                        if(user.password === user.confirmPassword) {
+                                        if(id) {
                                             setUsageModule(usageModule + 1)
                                         }else{
-                                            alert('Contraseñas no coinciden')
+                                            if(user.password === user.confirmPassword) {
+                                                setUsageModule(usageModule + 1)
+                                            }else{
+                                                alert('Contraseñas no coinciden')
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        })
+                            })
+                        } else {
+                            Object.values(user).map(async (value, index) => {
+                                console.log(value)
+                                if(!value) {
+                                    if(!id) {
+                                        habilitado = false
+                                    }
+                                    infoFaltante.push(await transformInfo(Object.keys(user)[index]))
+                                }
+                                if(index == (Object.values(user).length - 2)) {
+                                    console.log(infoFaltante)
+                                    if(!habilitado) {
+                                        setTimeout(() => {
+                                            alert('Faltan datos: ' + JSON.stringify(infoFaltante))
+                                        }, 100);
+                                    }else{
+                                        if(id) {
+                                            setUsageModule(usageModule + 1)
+                                        }else{
+                                            if(user.password === user.confirmPassword) {
+                                                setUsageModule(usageModule + 1)
+                                            }else{
+                                                alert('Contraseñas no coinciden')
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                        
                     }else{
                         alert('Teléfono debe contar con al menos 9 carácteres')
                     }

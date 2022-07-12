@@ -12,7 +12,7 @@ const createUser = async  (req, res, next) => {
 
     try {
         const registerUser = await UserServices.createUser(userData, password)
-        if(registerUser) {
+        if(registerUser && userData.email) {
             const emailSenderState = await EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password)
             //EmailServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password )
             //const emailSenderState = await EmailMailgunServices.sendEmail('newUser', `${userData.name} ${userData.lastName}`, 'es', userData.email, password)
@@ -21,6 +21,8 @@ const createUser = async  (req, res, next) => {
             }else{
                 res.status(200).json({ user: registerUser, email: 'Not sended' })
             }
+        } else if (registerUser && !userData.email) {
+            res.status(200).json({ user: registerUser, data: 'user created' })
         }else{
             res.status(400).end({message: 'Error al guardar usuario'})
         }

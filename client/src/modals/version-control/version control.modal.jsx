@@ -17,6 +17,13 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.1.8.7</strong>
+                        <li>
+                            Cambios en los permisos de roles.
+                        </li>
+                        <li>
+                            Correo para creación de usuarios opcional.
+                        </li>
                         <strong>v.1.8.6</strong>
                         <li>
                             Se agrega login usando RUT.

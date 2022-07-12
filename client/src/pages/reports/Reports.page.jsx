@@ -104,7 +104,7 @@ const ReportsPage = () => {
                 setLoading(false)
             }
         })
-        if(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive') {
+        if(localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive') {
             setHableCreateReport(true);
         }
     }
@@ -146,6 +146,7 @@ const ReportsPage = () => {
                             Ordenes
                         </h1>
                         <button 
+                            hidden={!hableCreateReport}
                             onClick={()=>{history.push('/reports/create-report')}} 
                             title='Nuevo reporte' 
                             style={

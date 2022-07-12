@@ -144,7 +144,7 @@ const UsersList = ({height, hableButton}) => {
                                         {e.name} {e.lastName}    
                                     </div>
                                     <div style={{width: '20%', marginLeft: 5, fontSize: 12, wordBreak: 'break-all' }}>
-                                        {e.email}  
+                                        {e.email === 'x@x.xx' ? '----' : e.email}  
                                     </div>
                                     <div style={{width: '10%', marginLeft: 5, fontSize: 12 }}>
                                           {e.rut}

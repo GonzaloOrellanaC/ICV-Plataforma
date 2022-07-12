@@ -14,14 +14,13 @@ const UsersSchema = new Schema({
     email: {
         type: Schema.Types.String,
         lowercase: true,
-        unique: [true, 'Email has already been used'],
         validate: {
             validator: (value) => {
                 return /(^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+))\w+/g.test(value)
             },
             message: props => `${props.value} it's not an email`
         },
-        required: false
+        required: false,
     },
     name: {
         type: Schema.Types.String,

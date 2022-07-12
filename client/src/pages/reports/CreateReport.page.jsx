@@ -391,8 +391,9 @@ const CreateReports = () => {
                                                 <option>Seleccione...</option>
                                                 {
                                                     (pautas.length > 0) && pautas.map((pauta, index) => {
+                                                        console.log(pauta)
                                                         return(
-                                                            <option key={index} value={[pauta.idpm, pauta.typepm]}> {pauta.idpm} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
+                                                            <option key={index} value={[pauta.idpm, pauta.typepm]}> {(pauta.idpm === 'SPM000787') ? 'Motor LMR' : 'Motor Estándar'} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
                                                         )
                                                     })
                                                 }
@@ -402,9 +403,9 @@ const CreateReports = () => {
                                             </select>
                                         </FormControl>
                                     </div>
-                                    <div style={{width: '100%'}}>
+                                    {/* <div style={{width: '100%'}}>
                                         <p>Test: <Switch checked={isTest} onChange={(e) => setIsTest(e.target.checked)}/></p>
-                                    </div>
+                                    </div> */}
                                     <div style={{width: '100%'}}>
                                         <FormControl >
                                             <p>Seleccionar máquina de obra</p>

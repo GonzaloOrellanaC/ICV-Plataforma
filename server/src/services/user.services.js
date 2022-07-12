@@ -22,6 +22,9 @@ const createUser =  (user, password) => {
             resolve(false)
             throw new Error(errorMsg.missingParameters)
         }
+        if (!user.email) {
+            user.email = 'x@x.xx'
+        }
         const registerUser = new Users(user)
         registerUser.setPassword(password)
         try {

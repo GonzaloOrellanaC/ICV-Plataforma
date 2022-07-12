@@ -339,7 +339,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
                             <Grid item xl={8} lg={8} md={6} sm={12} xs={12}>
                                 <FormControl style={{width: '100%', paddingRight: 10}}>
                                     <p style={{margin: 0, marginTop: 5}}>Correo electrónico</p>
-                                    <input autoComplete="off" required className="inputClass" id="email" onBlur={()=>saveUserData()} onChange={(e)=>setEmail(e.target.value)} value={email} /*className={classes.inputsStyle}*/ placeholder="nombre@correo.cl" type="email" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
+                                    <input autoComplete="off" required /* className="inputClass"  */id="email" onBlur={()=>saveUserData()} onChange={(e)=>setEmail(e.target.value)} value={email} /*className={classes.inputsStyle}*/ placeholder="nombre@correo.cl" type="email" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </Grid>
                             <Grid item xl={4} lg={4} md={6} sm={12} xs={12}>
