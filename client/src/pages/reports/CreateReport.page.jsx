@@ -403,9 +403,9 @@ const CreateReports = () => {
                                             </select>
                                         </FormControl>
                                     </div>
-                                    {/* <div style={{width: '100%'}}>
+                                    <div style={{width: '100%'}}>
                                         <p>Test: <Switch checked={isTest} onChange={(e) => setIsTest(e.target.checked)}/></p>
-                                    </div> */}
+                                    </div>
                                     <div style={{width: '100%'}}>
                                         <FormControl >
                                             <p>Seleccionar máquina de obra</p>

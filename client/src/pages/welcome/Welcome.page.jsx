@@ -12,9 +12,9 @@ import Files from './3dFiles'
 import { useHistory } from 'react-router-dom'
 import { dateWithTime, download3DFiles, imageToBase64 } from '../../config'
 import addNotification from 'react-push-notification'
-import { Download3DFilesDialog } from '../../dialogs'
+import { io } from "socket.io-client"
 
-const WelcomePage = ({readyToLoad}) => {
+const WelcomePage = ({ readyToLoad }) => {
     const [ date, setDate ] = useState('')
     const [ hora, setHora ] = useState('')
     const [ openLoader, setOpenLoader ] = useState(false)
@@ -79,25 +79,14 @@ const WelcomePage = ({readyToLoad}) => {
         let db = await readyToSendReportsDatabase.initDb()
         let data2 = await readyToSendReportsDatabase.consultar(db.database)
         /* setElementsReadyToSend(data) */
-        notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
-            let lista = new Array()
-            lista = data.data.reverse()
-            if(lista.length > 0) {
-                if(lista[0].state) {
-                    setNotificaciones1('Sin notificaciones pendientes')
-                } else {
-                    setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt))
-                }
-                if(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
-                    if(data2.length > 0) {
-                        setNotificaciones2('Existen ' + data2.length + ' Ordenes de trabajo listos a enviar.')
-                    }else{
-                        setNotificaciones2('Sin OT listas a enviar')
-                    }
-                }
-            }
-        })
+        readNotifications(data2)
         if(cancel) {
+            const socket = io()
+            if (navigator.onLine) {
+                socket.on(`notification_${localStorage.getItem('_id')}`, data => {
+                    readNotifications()
+                })
+            }
             init()
             var xhr = new XMLHttpRequest()
             xhr.onload = async () => {
@@ -120,6 +109,27 @@ const WelcomePage = ({readyToLoad}) => {
         }
         return () => setCancel(false)
     }, [cancel])
+
+    const readNotifications = (data2 = []) => {
+        notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
+            let lista = []
+            lista = data.data.reverse()
+            if(lista.length > 0) {
+                if(lista[0].state) {
+                    setNotificaciones1('Sin notificaciones pendientes')
+                } else {
+                    setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt))
+                }
+                if(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
+                    if(data2.length > 0) {
+                        setNotificaciones2('Existen ' + data2.length + ' Ordenes de trabajo listos a enviar.')
+                    }else{
+                        setNotificaciones2('Sin OT listas a enviar')
+                    }
+                }
+            }
+        })
+    }
 
     const init = async () => {
         readData(

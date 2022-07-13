@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Box, Button, Modal } from "@material-ui/core"
 import { Canvas } from "../../containers"
 
-const FirmaUsuario = ({openSign, styleModal, setRefCanvasFunction, getImage}) => {
+const FirmaUsuario = ({openSign, styleModal, setRefCanvasFunction, getImage, clear}) => {
     return (
         <Modal
             open={openSign}

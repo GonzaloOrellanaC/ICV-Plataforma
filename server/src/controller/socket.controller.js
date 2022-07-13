@@ -15,12 +15,11 @@ export default async (server) => {
     io.on('connection', (socket) => {
         socket.on('isConnected', async (data) => {
             console.log('Activado!!!', data)
-            const responseData1 = await reportsService.readIfReportIsOneDayToStart()
+            /* const responseData1 = await reportsService.readIfReportIsOneDayToStart()
             console.log(responseData1)
             const list = []
             responseData1.forEach(async (report, index) => {
                 report.usersAssigned.forEach((user, i) => {
-                    /* console.log(user === data.id) */
                     if(user === data.id) {
                         list.push(report)
                     }
@@ -38,7 +37,6 @@ export default async (server) => {
                         io.emit(`notification_${data.id}`, {title: notificationToSave.title, subtitle: notificationToSave.subtitle, message: notificationToSave.message})
                         NotificationService.createNotification(notificationToSave)
                         const user = await UserServices.getUser(data.id.toString())
-                        /* console.log(user.name, user.lastName) */
                         const admins = await UserServices.getUserByRole('admin')
                         const sapExecutives = await UserServices.getUserByRole('sapExecutive')
                         const shiftManagers = await UserServices.getUserByRole('shiftManager')
@@ -60,16 +58,22 @@ export default async (server) => {
                     }
                 }
                 
-            })
+            }) */
         })
         socket.on('test_user', (data) => {
             console.log('Get data......', data)
             io.emit(`test_${data.id}`, {message: data.message})
         })
-        socket.on('termino-jornada', (data) => {
-            console.log('Get data......', data)
-            io.emit(`notification_${data.id}`, {title: data.title, subtitle: data.title, message: data.message})
-            NotificationService.createNotification(data)
+        socket.on('termino-jornada', async (data) => {
+            console.log('termino-jornada-log......', data)
+            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
+            const shiftManagers = await UserServices.getUserByRole('shiftManager')
+            const all = sapExecutives.concat(shiftManagers)
+            all.forEach((user) => {
+                console.log(user._id)
+                io.emit(`notification_${user._id}`, {title: data.title, subtitle: data.title, message: data.message})
+                NotificationService.createNotification(data)
+            })
         })
         socket.on('nueva-asignacion', (data) => {
             console.log('Get data......', data)

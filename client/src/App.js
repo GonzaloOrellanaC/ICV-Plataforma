@@ -76,7 +76,7 @@ const OnApp = () => {
     const [ progressDownload3D, setProgressDownload3D ] = useState(0)
     const [ loadingData3D, setLoadingData3D ] = useState('')
     const { loading } = useAuth()
-    const isAuthenticated = localStorage.getItem('isauthenticated')==='true'
+    const isAuthenticated = localStorage.getItem('isauthenticated') //==='true'
     const isNotAuthenticated = (localStorage.getItem('isauthenticated')==='false')||!localStorage.getItem('isauthenticated')
     const readyToLoad = () => {
         initLoad3D()
@@ -86,6 +86,7 @@ const OnApp = () => {
         iniciarDescarga3D()
     }
     useEffect(() => {
+        console.log(isAuthenticated)
         if(isAuthenticated) {
             SocketConnection.sendIsActive()
             let go = true
@@ -106,7 +107,7 @@ const OnApp = () => {
     return (
         <div style={{fontFamily: 'Roboto'}}>
             {isAuthenticated && <Route path={['/']}>
-            {isAuthenticated && !loading && <Navbar iniciarDescarga3D={iniciarDescarga3D}/>} {isAuthenticated && !loading && <Header />}
+            {isAuthenticated && !loading && <Navbar iniciarDescarga3D={iniciarDescarga3D}/>} {isAuthenticated && !loading && <Header/>}
                 </Route>}
             <Switch>
                 {isNotAuthenticated && <Route exact path={['/reset-password']} render={() => (<ResetPasswordPage />)}/>}

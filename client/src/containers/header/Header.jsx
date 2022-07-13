@@ -156,13 +156,13 @@ const Header = () => {
                             </Fragment>}
                             <div style={{position: 'absolute', right: 10}}>
                                 {
-                                    (localStorage.getItem('role')==='admin') && <button onClick={() => sendTestNotification()}>Notif. Test</button>
+                                    (localStorage.getItem('role')==='admin'||localStorage.getItem('role')==='superAdmin') && <button onClick={() => sendTestNotification()}>Notif. Test</button>
                                 }
                                 <p><FontAwesomeIcon icon={faCircle} color={network ? '#2FB83F' : '#B62800'} /> {network ? 'Online' : 'Offline'}</p>
                                 {!network && <p>Sin red</p>}
                             </div>
                     </Toolbar>
-                    <FirmaUsuario openSign={openSign} styleModal={styleModal} setRefCanvasFunction={setRefCanvasFunction} getImage={getImage} />
+                    <FirmaUsuario openSign={openSign} styleModal={styleModal} setRefCanvasFunction={setRefCanvasFunction} getImage={getImage} clear={clear} />
                     {/* <Modal
                         open={openSign}
                         aria-labelledby="modal-modal-title"

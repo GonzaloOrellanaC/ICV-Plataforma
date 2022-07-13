@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { CircularProgress, Drawer, Grid, IconButton, LinearProgress, makeStyles } from '@material-ui/core';
+import { Drawer, Grid, IconButton, makeStyles } from '@material-ui/core';
 import { Menu, Close } from '@material-ui/icons';
 import clsx from 'clsx';
 import logo from '../../assets/Logologo_icv_1.svg';
@@ -24,7 +24,6 @@ import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals
 import { io } from "socket.io-client";
 import logoNotification from '../../assets/logo_icv_notification_push.png'
 import addNotification from 'react-push-notification';
-import { download3DFiles } from '../../config';
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -117,22 +116,19 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 'bold'
     }
 }))
-const Navbar = () => {
+const Navbar = ({getNotification}) => {
     const classes = useStyles()
     const { navBarOpen, handleNavBar } = useNavigation()
     const { userData } = useAuth()
     const [ useButton, setUseButton ] = useState()
     const [ path, setPath ] = useState('')
     const history = useHistory()
-    const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true)
+    const [ disableButtonNoAdmin, setDisableButtonsNoAdmin ] = useState(true)
+    const [ disabled, setDisabled ] = useState(true)
     const [ openVersionModal, setOpenVersionModal ] = useState(false)
     const [ openIAModal, setOpenIAModal ] = useState(false)
     const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false)
     const [ cancel, setCancel ] = useState(true)
-    // 
-/*     const [ openDownload3D, setOpenDownload3D ] = useState(false)
-    const [ progressDownload3D, setProgressDownload3D ] = useState(0)
-    const [ loadingData3D, setLoadingData3D ] = useState('') */
 
     const logout = async () => {
         if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
@@ -233,9 +229,9 @@ const Navbar = () => {
 
     useEffect(() => {
         if(cancel) {
-            /* window.addEventListener('online', () => { */
-                const socket = io()
-                /* socket.on(`test_${localStorage.getItem('_id')}`, data => {
+            const socket = io()
+            if (navigator.onLine) {
+                socket.on(`test_${localStorage.getItem('_id')}`, data => {
                     addNotification({
                         icon: logoNotification,
                         title: 'Test',
@@ -243,10 +239,9 @@ const Navbar = () => {
                         message: data.message,
                         theme: 'red',
                         duration: 5000,
-                        native: true // when using native, your OS will handle theming.
+                        native: true
                     })
-                    //alert(data.message)
-                }) */
+                })
                 socket.on(`notification_${localStorage.getItem('_id')}`, data => {
                     addNotification({
                         icon: logoNotification,
@@ -255,16 +250,16 @@ const Navbar = () => {
                         message: data.message,
                         theme: 'red',
                         duration: 5000,
-                        native: true // when using native, your OS will handle theming.
+                        native: true
                     })
                 })
-            /* }) */
-            window.addEventListener('offline', () => {
-                
-            })
+            }
             
-            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive')) {
-                setDisableButtonsNoSAP(false);
+            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin')) {
+                setDisableButtonsNoAdmin(false);
+            }
+            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'shiftManager')) {
+                setDisabled(false);
             }
             setPath(history.location.pathname)
             if(history.listen(data => {
@@ -324,40 +319,40 @@ const Navbar = () => {
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Máquinas'>
-                                    <Link to='/machines' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path.match('/machines')) ? '#BE2E26' : '#FFFFFF' }}>
-                                        <FontAwesomeIcon icon={faTruck}/> {navBarOpen ?  ' Máquinas' : ''}
-                                    </Link>
-                                </IconButton>
-                            </div>
-                            {(localStorage.getItem('role')==='admin' || localStorage.getItem('role')==='sapExecutive') && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Obras'>
-                                    <Link to='/sites' className={classes.sideButtons} style={{ color: (path === '/sites') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
-                                        <FontAwesomeIcon icon={faMapMarkerAlt}/> {navBarOpen ?  ' Obras' : ''}
-                                    </Link>
-                                </IconButton>
-                            </div>}
-                            {!disableButtonNoSAP && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Ordenes de Trabajo'>
-                                    <Link to='/reports' className={classes.sideButtons} style={{ color: (path.includes('/reports')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
-                                        <FontAwesomeIcon icon={faClipboardList}/> {navBarOpen ?  ' Ordenes de Trabajo' : ''}
-                                    </Link>
-                                </IconButton>
-                            </div>}
-                            {!disableButtonNoSAP && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Administración'>
-                                    <Link to='/administration' className={classes.sideButtons} style={{ color: (path.includes('/administration')||path.includes('/users')||path.includes('/edit-user')||path.includes('/new-users')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
-                                        <FontAwesomeIcon icon={faUserCog}/> {navBarOpen ?  ' Administración' : ''}
-                                    </Link>
-                                </IconButton>
-                            </div>}
-                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Listado Asignaciones'>
                                     <Link to='/assignment' className={classes.sideButtons} style={{ color: (path.includes('/assignment')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faListAlt}/> {navBarOpen ?  ' Listado Asignaciones' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
+                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar} title='Máquinas'>
+                                    <Link to='/machines' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path.match('/machines')) ? '#BE2E26' : '#FFFFFF' }}>
+                                        <FontAwesomeIcon icon={faTruck}/> {navBarOpen ?  ' Máquinas' : ''}
+                                    </Link>
+                                </IconButton>
+                            </div>
+                            {!disableButtonNoAdmin && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar} title='Obras'>
+                                    <Link to='/sites' className={classes.sideButtons} style={{ color: (path === '/sites') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faMapMarkerAlt}/> {navBarOpen ?  ' Obras' : ''}
+                                    </Link>
+                                </IconButton>
+                            </div>}
+                            {!disabled && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar} title='Ordenes de Trabajo'>
+                                    <Link to='/reports' className={classes.sideButtons} style={{ color: (path.includes('/reports')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faClipboardList}/> {navBarOpen ?  ' Ordenes de Trabajo' : ''}
+                                    </Link>
+                                </IconButton>
+                            </div>}
+                            {!disableButtonNoAdmin && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar} title='Administración'>
+                                    <Link to='/administration' className={classes.sideButtons} style={{ color: (path.includes('/administration')||path.includes('/users')||path.includes('/edit-user')||path.includes('/new-users')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faUserCog}/> {navBarOpen ?  ' Administración' : ''}
+                                    </Link>
+                                </IconButton>
+                            </div>}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Perfil'>
                                     <Link to='/user-profile' className={classes.sideButtons} style={{ color: (path.includes('/user-profile')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
@@ -414,41 +409,6 @@ const Navbar = () => {
                     {openInternalMessagesModal && <InternalMessageModal open={openInternalMessagesModal} closeModal={closeInternalMessageModal} />}
                 </div>
             </Drawer>
-            {/* {
-                (navigator.onLine && openDownload3D) && 
-                <div style={
-                    {
-                        position: 'absolute', 
-                        bottom: 20, 
-                        right: 20, 
-                        width: 300, 
-                        paddingTop: 50, 
-                        paddingBottom: 40, 
-                        paddingLeft: 20, 
-                        paddingRight: 20,
-                        borderRadius: 20,
-                        backgroundColor: '#fff',
-                        borderColor: '#ccc',
-                        borderWidth: 1,
-                        borderStyle: 'solid',
-                        textAlign: 'center',
-                        zIndex: 2
-                    }
-                }>
-                    {
-                        !loadingData3D && <CircularProgress color='primary' />
-                    }
-                    {
-                        !loadingData3D && <p style={{margin: 0, marginTop: 10}}>Cargando datos...</p>
-                    }
-                    {
-                        loadingData3D && <LinearProgress variant="determinate" value={progressDownload3D} />
-                    }
-                    {
-                        loadingData3D && <p style={{margin: 0, marginTop: 10}}>{loadingData3D}</p>
-                    }
-                </div>
-            } */}
         </div>
     )
 }
