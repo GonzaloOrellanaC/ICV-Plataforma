@@ -128,6 +128,8 @@ const Login = () => {
                         <Button className={classes.button} style={{ marginBottom: 20 }} type='submit' variant='contained' color='primary'>
                             {dictionary.login.loginButton}
                         </Button>
+                    </Grid>
+                    <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
                         <Button className={classes.button} variant='contained' onClick={() => {changeTypeAccess()}}>
                             Usar {typeText}
                         </Button>
