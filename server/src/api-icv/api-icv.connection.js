@@ -4,6 +4,10 @@ import { environment } from '../config';
 import { SiteController } from '../controller';
 import { Site, Machine } from '../models';
 import { machinesOfProject, machinesListPms } from '../files'
+const myHeaders = {
+    'Authorization': 'Token ' + environment.icvApi.token,
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
 /* import { ApiIcv } from '.'; */
 
 /* Leer pautas */
@@ -34,7 +38,10 @@ const leerPauta = async (i, machinesListPms, listaPMsConcat, res) => {
         res.send(listaPMsConcat);
     }else{
         let pIDPM = machinesListPms[i].pIDPM;
-        const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`);
+        const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
+            headers: myHeaders,
+            method: 'GET'
+        })
         const listaPMs =  await response.json();
         console.log(listaPMs)
         listaPMsConcat = listaPMsConcat.concat(listaPMs.data);
@@ -45,7 +52,10 @@ const leerPauta = async (i, machinesListPms, listaPMsConcat, res) => {
 
 const getHeaderPauta = async (req, res) => {
     const {body} = req;
-    const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${body.idpm}&pTypePm=${body.typepm}`);
+    const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${body.idpm}&pTypePm=${body.typepm}`, {
+            headers: myHeaders,
+        method: 'GET'
+    })
     const headers = await response2.json();
     if(headers) {
         res.send(headers)
@@ -55,7 +65,10 @@ const getHeaderPauta = async (req, res) => {
 const getStructsPauta = async (req, res) => {
     const {body} = req;
     console.log(body)
-    const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${body.idpm}&pTypePm=${body.typepm}`);
+    const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${body.idpm}&pTypePm=${body.typepm}`, {
+        headers: myHeaders,
+        method: 'GET'
+    })
     const headers = await response3.json();
     if(headers) {
         res.send(headers)
@@ -64,7 +77,10 @@ const getStructsPauta = async (req, res) => {
 
 const getIdPmInspection = (equi) => {
     return new Promise(async resolve => {
-        const response4 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=I`);
+        const response4 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=I`, {
+            headers: myHeaders,
+            method: 'GET'
+        })
         let res = await response4.json();
         resolve(res.data.idpm);
     })
@@ -72,7 +88,10 @@ const getIdPmInspection = (equi) => {
 
 const getIdPmMaintenance = (equi) => {
     return new Promise(async resolve => {
-        const response5 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=M`);
+        const response5 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=M`, {
+            headers: myHeaders,
+            method: 'GET'
+        })
         let res = await response5.json();
         resolve(res.data.idpm);
     })
@@ -250,7 +269,10 @@ const leerArchivo = (type) => {
 
 /* Descargar máquinas por obra desde API ICV y guardar en base de datos*/
 const createMachinesToSend = async (pIDOBRA) => {
-    const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`);
+    const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`, {
+        headers: myHeaders,
+        method: 'GET'
+    })
     if( machines ) {
         const body = await machines.json();
         if( body ) {
@@ -285,7 +307,10 @@ const createMachinesToSend = async (pIDOBRA) => {
 }
 
 const editMachineToSend = async (pIDOBRA) => {
-    const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`);
+    const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`, {
+        headers: myHeaders,
+        method: 'GET'
+    })
     if( machines ) {
         const body = await machines.json();
         if( body ) {

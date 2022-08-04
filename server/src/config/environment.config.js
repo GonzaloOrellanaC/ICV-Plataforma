@@ -26,7 +26,8 @@ const environment = {
     jwtKey: process.env.JWT_KEY,
     resetKey: process.env.RESET_KEY,
     icvApi: {
-        url: process.env.ICV_URL
+        url: process.env.ICV_URL,
+        token: process.env.ICV_API_TOKEN
     },
     storageApi: {
         account: process.env.AZURE_ACCOUNT,
