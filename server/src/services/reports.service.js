@@ -2,7 +2,18 @@ import { ExecutionReport, Reports } from "../models"
 import { environment } from '../config'
 const { error: errorMsg, success: successMsg } = environment.messages.services.user
 import fetch from 'node-fetch'
+import https from 'https'
 import { EmailMailgunServices, EmailServices } from "."
+
+const myHeaders = {
+    'Authorization': 'Token ' + environment.icvApi.token,
+    'Content-Type': 'application/json'
+}
+const agentOptions = {
+    rejectUnauthorized: false
+}
+  
+const agent = new https.Agent(agentOptions)
 
 const createReport = async (req, res) => {
     const { body } = req
@@ -228,7 +239,12 @@ const findMyAssignations = (req, res) => {
 
 const getReportByIdpm = async (req, res) => {
     const { body : { idpm } } = req
-    const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${idpm}`)
+    const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${idpm}`, {
+        /* myHeaders */
+        headers: myHeaders,
+        method: 'GET',
+        agent: agent
+    })
     const pmResponse =  await response.json()
     res.send(pmResponse.data)
 }

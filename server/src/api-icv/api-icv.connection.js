@@ -1,30 +1,20 @@
 import fs from 'fs';
 import fetch from 'node-fetch'
+import https from 'https'
 import { environment } from '../config';
 import { SiteController } from '../controller';
 import { Site, Machine } from '../models';
 import { machinesOfProject, machinesListPms } from '../files'
+
 const myHeaders = {
     'Authorization': 'Token ' + environment.icvApi.token,
-    'Content-Type': 'application/x-www-form-urlencoded'
-  }
-/* import { ApiIcv } from '.'; */
-
-/* Leer pautas */
-
-
-
-/* const getMachinesList = () => {
-    return new Promise(resolve => {
-        Machine.find({}, (err, machines) => {
-            if(err) {
-                res.status(502).json({message: 'Error de lectura en Base de Datos'})
-                throw err
-            }
-            resolve(machines)
-        })
-    })
-} */
+    'Content-Type': 'application/json'
+}
+const agentOptions = {
+    rejectUnauthorized: false
+}
+  
+const agent = new https.Agent(agentOptions)
 
 const leerPautas = (req, res) => {
     let listaPMsConcat = [];
@@ -39,13 +29,15 @@ const leerPauta = async (i, machinesListPms, listaPMsConcat, res) => {
     }else{
         let pIDPM = machinesListPms[i].pIDPM;
         const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
+            /* myHeaders */
             headers: myHeaders,
-            method: 'GET'
+            method: 'GET',
+            agent: agent
         })
-        const listaPMs =  await response.json();
-        console.log(listaPMs)
-        listaPMsConcat = listaPMsConcat.concat(listaPMs.data);
-        i = i + 1;
+        const listaPMs =  await response.json()
+        console.log('Respuesta: ', listaPMs)
+        listaPMsConcat = listaPMsConcat.concat(listaPMs.data)
+        i = i + 1
         leerPauta(i, machinesListPms, listaPMsConcat, res)
     }
 }
@@ -53,8 +45,10 @@ const leerPauta = async (i, machinesListPms, listaPMsConcat, res) => {
 const getHeaderPauta = async (req, res) => {
     const {body} = req;
     const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${body.idpm}&pTypePm=${body.typepm}`, {
-            headers: myHeaders,
-        method: 'GET'
+        /* myHeaders */
+        headers: myHeaders,
+        method: 'GET',
+        agent: agent
     })
     const headers = await response2.json();
     if(headers) {
@@ -66,8 +60,10 @@ const getStructsPauta = async (req, res) => {
     const {body} = req;
     console.log(body)
     const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${body.idpm}&pTypePm=${body.typepm}`, {
+        /* myHeaders */
         headers: myHeaders,
-        method: 'GET'
+        method: 'GET',
+        agent: agent
     })
     const headers = await response3.json();
     if(headers) {
@@ -78,8 +74,10 @@ const getStructsPauta = async (req, res) => {
 const getIdPmInspection = (equi) => {
     return new Promise(async resolve => {
         const response4 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=I`, {
+            /* myHeaders */
             headers: myHeaders,
-            method: 'GET'
+            method: 'GET',
+            agent: agent
         })
         let res = await response4.json();
         resolve(res.data.idpm);
@@ -89,8 +87,10 @@ const getIdPmInspection = (equi) => {
 const getIdPmMaintenance = (equi) => {
     return new Promise(async resolve => {
         const response5 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=M`, {
+            /* myHeaders */
             headers: myHeaders,
-            method: 'GET'
+            method: 'GET',
+            agent: agent
         })
         let res = await response5.json();
         resolve(res.data.idpm);
@@ -188,7 +188,12 @@ const saveMachineDataById = ( req, res ) => {
 /* Crear sitios para enviar a FRONT */
 const createSiteToSend = () => {
     return new Promise(async resolve => {
-        const sites = await fetch(`${environment.icvApi.url}pmobras`);
+        const sites = await fetch(`${environment.icvApi.url}pmobras`, {
+            /* myHeaders */
+            headers: myHeaders,
+            method: 'GET',
+            agent: agent
+        });
         if( sites ) {
             const body = await sites.json();
             if( body ) {
@@ -270,8 +275,10 @@ const leerArchivo = (type) => {
 /* Descargar máquinas por obra desde API ICV y guardar en base de datos*/
 const createMachinesToSend = async (pIDOBRA) => {
     const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`, {
+        /* myHeaders */
         headers: myHeaders,
-        method: 'GET'
+        method: 'GET',
+        agent: agent
     })
     if( machines ) {
         const body = await machines.json();
@@ -308,8 +315,10 @@ const createMachinesToSend = async (pIDOBRA) => {
 
 const editMachineToSend = async (pIDOBRA) => {
     const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`, {
+        /* myHeaders */
         headers: myHeaders,
-        method: 'GET'
+        method: 'GET',
+        agent: agent
     })
     if( machines ) {
         const body = await machines.json();
