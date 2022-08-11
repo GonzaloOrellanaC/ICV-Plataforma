@@ -260,8 +260,9 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         Object.values(data).map((item, i) => {
             list = list.concat(item)
             if(i == (Object.values(data).length - 1)) {
+                console.log(list.length)
                 list.map((el, number) => {
-                    console.log(el)
+                    console.log(number)
                     if (el.isChecked) {
                         isCheckedList.push(true)
                     } else {
@@ -269,6 +270,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                     }
                     if (number == (list.length - 1)) {
                         console.log(isCheckedList, noIsCheckedList)
+                        console.log((isCheckedList.length * 100) / noIsCheckedList.length)
                         resultThisItemProgress((isCheckedList.length * 100) / noIsCheckedList.length)
                     }
                 })
