@@ -257,20 +257,27 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         let list = []
         let isCheckedList = []
         let noIsCheckedList = []
+        let isCheckedNumber = 0
+        let isNoCheckedNumber = 0
         Object.values(data).map((item, i) => {
             list = list.concat(item)
             if(i == (Object.values(data).length - 1)) {
                 console.log(list.length)
                 list.map((el, number) => {
+                    console.log(el.isChecked)
                     console.log(number)
                     if (el.isChecked) {
                         isCheckedList.push(true)
+                        isCheckedNumber = isCheckedNumber + 1
                     } else {
                         noIsCheckedList.push(false)
+                        isNoCheckedNumber = isNoCheckedNumber + 1
                     }
                     if (number == (list.length - 1)) {
                         console.log(isCheckedList, noIsCheckedList)
                         console.log((isCheckedList.length * 100) / noIsCheckedList.length)
+                        console.log((isNoCheckedNumber * 100) / isNoCheckedNumber)
+                        console.log(isNoCheckedNumber, isNoCheckedNumber)
                         resultThisItemProgress((isCheckedList.length * 100) / noIsCheckedList.length)
                     }
                 })
