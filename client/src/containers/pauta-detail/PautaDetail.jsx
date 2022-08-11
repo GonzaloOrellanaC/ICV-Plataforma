@@ -266,7 +266,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 list.map((el, number) => {
                     console.log(el.isChecked)
                     console.log(number)
-                    if (el.isChecked) {
+                    if (el.isChecked === true) {
                         isCheckedList.push(true)
                         isCheckedNumber = isCheckedNumber + 1
                     } else {
