@@ -268,6 +268,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                         noIsCheckedList.push(false)
                     }
                     if (number == (list.length - 1)) {
+                        console.log(isCheckedList, noIsCheckedList)
                         resultThisItemProgress((isCheckedList.length * 100) / noIsCheckedList.length)
                     }
                 })
