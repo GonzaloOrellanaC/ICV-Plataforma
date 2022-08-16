@@ -30,7 +30,7 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
     const [ loadingDelete, setLoadingDelete ] = useState(false)
     const history = useHistory()
 
-    const setUserToReport = async (userId) => {
+    /* const setUserToReport = async (userId) => {
         if(userId === '') {
             let usersAssigned = new Array();
             usersAssigned[0] = userId;
@@ -56,15 +56,21 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
                 }, 1000);
             }
         }
-    }
+    } */
 
     const getUsers = () => {
+        console.log(usersAssigned[0])
         usersRoutes.getAllUsers().then(response => {
             let userList = new Array();
             let users = new Array();
             userList = response.data;
+            console.log(userList)
             userList.forEach((user, index) => {
-                let permissionsReports = new Array();
+                console.log(user._id, usersAssigned[0])
+                if(user._id === usersAssigned[0]) {
+                    setUserAssignedName(user.name + ' ' + user.lastName);
+                }
+                /* let permissionsReports = new Array();
                 permissionsReports = user.permissionsReports
                 if(permissionsReports.length > 0) {
                     if(permissionsReports[1].isChecked) {
@@ -72,15 +78,16 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
                     }
                 }
                 if(index == (userList.length - 1)) {
-                    users.forEach((u, i) => {
+                    userList.forEach((u, i) => {
+                        console.log(u._id, usersAssigned[0])
                         if(u._id === usersAssigned[0]) {
                             setUserAssignedName(u.name + ' ' + u.lastName);
                         }
                     })
                     setOperarios(users)
-                }
+                } */
             })
-
+            setOperarios(users)
         })
     }
 
@@ -161,7 +168,7 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
                         <div style={{marginTop: 30, width: '100%'}}>
 
                         <div style={{width: '100%', height: 59}}>
-                            <label>Pauta asignada a: <b>{userAssignedName.length > 1 ? userAssignedName : 'Sin asignación'}</b></label>
+                            <label>Pauta asignada a: <b>{userAssignedName/*  ? userAssignedName : 'Sin asignación' */}</b></label>
                         </div>
                         <div style={{width: '100%', height: 59}}>
                             <label>Jefe de turno revisor: <b>{userShiftManagerName.length > 1 ? userShiftManagerName : 'Sin información'}</b></label>
