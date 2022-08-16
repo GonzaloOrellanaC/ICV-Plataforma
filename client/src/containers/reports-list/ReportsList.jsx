@@ -127,8 +127,11 @@ const ReportsList = ({list, reloadData}) => {
                 <Grid item xs={1} sm={1} md={2} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Responsable</strong> </p>
                 </Grid>
-                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                    <p style={{textAlign: 'center'}}> <strong>Máquina</strong> </p>
+                <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                    <p style={{textAlign: 'center', minWidth: 70}}> <strong>Flota</strong> </p>
+                </Grid>
+                <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                    <p style={{textAlign: 'center', minWidth: 70}}> <strong>Máquina</strong> </p>
                 </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                     <p style={{textAlign: 'left'}}> <strong>Acción</strong> </p>
@@ -179,8 +182,11 @@ const ReportsList = ({list, reloadData}) => {
                                 <p style={{textAlign: 'center'}}> <button disabled style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Terminado</button> </p>
                             </Grid>
                             }
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> {item.model} {item.number} </p>
+                            <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                <p style={{textAlign: 'center', minWidth: 70}}> {item.model} </p>
+                            </Grid>
+                            <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                <p style={{textAlign: 'center', minWidth: 70}}> {item.number} </p>
                             </Grid>
                     
                             <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>                                <Grid container>

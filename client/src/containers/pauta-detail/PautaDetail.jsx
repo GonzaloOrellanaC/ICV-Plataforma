@@ -7,7 +7,7 @@ import CircleCheckedFilled from '@material-ui/icons/CheckCircle'
 import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked'
 import { faEye, faPen, faPaperclip, faCommentDots } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ReadActivityModal, WriteActivityModal } from '../../modals'
+import { LoadingLogoModal, ReadActivityModal, WriteActivityModal } from '../../modals'
 import { executionReportsDatabase } from "../../indexedDB"
 import { apiIvcRoutes, executionReportsRoutes, reportsRoutes } from "../../routes"
 import { compareExecutionReport, getExecutionReport, saveExecutionReport } from "../../config"
@@ -45,10 +45,12 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
     const [ item, setItem ] = useState()
     const [ index, setIndex ] = useState()
     const [ iconToItemDetail, setIconToItemDetail ] = useState(faPen)
-
+    const [ stateOnLoadData, setStateOnLoadData ] = useState(false)
     const [ descriptionWidth, setDescriptionWith ] = useState('12%')
     const [ obsWidth, setObsWith ] = useState('20%')
-    
+    const [ loadingLogo, setLoadingLogo ] = useState(false)
+    const [ alertActive, setAlertActive ] = useState(false)
+
     useEffect(() => {
         if(pauta.action === 'Inspección') {
             setDescriptionWith('30%')
@@ -176,6 +178,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         let executionReportDataElementGuard
         if(navigator.onLine) {
             executionReportDataElement = await getExecutionReportData()
+            console.log(executionReportDataElement)
             executionReportDataElementGuard = await getExecutionReportFromDb(reportAssigned._id)
             if(executionReportDataElement.offLineGuard) {
                 if(executionReportDataElementGuard) {
@@ -212,7 +215,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 setGroupData(Object.keys(executionReportData.group), executionReportData.group, true)
                 setTotalProgress(executionReportData.group)
                 setExecutionReport(executionReportData)
-                saveExecutionReport(executionReportData, reportAssigned)
+                await saveExecutionReport(executionReportData, reportAssigned)
             }else{
                 let data = await apiIvcRoutes.getStructsPauta2(pauta.idpm, pauta.typepm)
                 pauta.struct = data.data
@@ -224,9 +227,9 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 executionReportData.group = groupD
                 setGroupData(Object.keys(groupD), groupD, true)
                 setTotalProgress(groupD)
-                executionReportsRoutes.saveExecutionReport(executionReportData)
+                await executionReportsRoutes.saveExecutionReport(executionReportData)
                 setExecutionReport(executionReportData)
-                saveExecutionReport(executionReportData, reportAssigned)
+                await saveExecutionReport(executionReportData, reportAssigned)
             }
         }else{
             if(executionReportData.group) {
@@ -234,7 +237,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 setGroupData(Object.keys(executionReportData.group), executionReportData.group)
                 setTotalProgress(executionReportData.group)
                 setExecutionReport(executionReportData)
-                saveExecutionReport(executionReportData, reportAssigned)
+                await saveExecutionReport(executionReportData, reportAssigned)
             }else{
                 let data = await apiIvcRoutes.getStructsPauta2(pauta.idpm, pauta.typepm)
                 pauta.struct = data.data
@@ -246,11 +249,38 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 executionReportData.group = groupD
                 setGroupData(Object.keys(groupD), groupD)
                 setTotalProgress(executionReportData.group)
-                executionReportsRoutes.saveExecutionReport(executionReportData)
+                await executionReportsRoutes.saveExecutionReport(executionReportData)
                 setExecutionReport(executionReportData)
-                saveExecutionReport(executionReportData, reportAssigned)
+                await saveExecutionReport(executionReportData, reportAssigned)
             }
         }
+        window.addEventListener('online', async () => {
+            /* setLoadingLogo(true)
+            setStateOnLoadData(true)
+            setAlertActive(true) */
+            const db = await executionReportsDatabase.initDb()
+            const executionReportsList = await executionReportsDatabase.consultar(db.database)
+            const executionReportToSend = executionReportsList.filter(eR => {
+                console.log(eR)
+                if (eR._id === executionReportData._id) {
+                    return eR
+                }
+            })
+            /* console.log(executionReportToSend[0]) */
+            setLoadingLogo(true)
+            executionReportsRoutes.saveExecutionReport(executionReportToSend[0]).then(() => {
+                reportsRoutes.editReport(reportAssigned).then(() => {
+                    setLoadingLogo(false)
+                })
+            })
+        })
+        window.addEventListener('offline', () => {
+            setLoadingLogo(false)
+            if (stateOnLoadData) {
+                alert('No se logra cargar todo el formulario a la base de datos. Intente conectarse a internet y espere a que se vuelva a cargar toda la información.')
+                setStateOnLoadData(false)
+            }
+        })
     }
 
     const setTotalProgress = (data) => {
@@ -264,8 +294,6 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
             if(i == (Object.values(data).length - 1)) {
                 console.log(list.length)
                 list.map((el, number) => {
-                    console.log(el.isChecked)
-                    console.log(number)
                     if (el.isChecked === true) {
                         isCheckedList.push(true)
                         isCheckedNumber = isCheckedNumber + 1
@@ -274,11 +302,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                         isNoCheckedNumber = isNoCheckedNumber + 1
                     }
                     if (number == (list.length - 1)) {
-                        console.log(isCheckedList, noIsCheckedList)
-                        console.log((isCheckedList.length * 100) / noIsCheckedList.length)
-                        console.log((isNoCheckedNumber * 100) / isNoCheckedNumber)
-                        console.log(isNoCheckedNumber, isNoCheckedNumber)
-                        resultThisItemProgress((/* (noIsCheckedList.length + isCheckedList.length) */isCheckedList.length * 100) / list.length)
+                        resultThisItemProgress((isCheckedList.length * 100) / list.length)
                     }
                 })
             }
@@ -286,7 +310,6 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
     }
 
     const handleContent = (gruposKeys, element) => {
-        /* console.log(gruposKeys, element) */
         selectionItem(element.data)
         setContentData([])
         gruposKeys.forEach((tab, index) => {
@@ -294,7 +317,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
             if(index == (gruposKeys.length - 1)) {
                 let checkedList = []
                 let checkedTrue = []
-                let newGruposObservaciones = group[element.data]//gruposObservaciones[element.data]
+                let newGruposObservaciones = group[element.data]
                 newGruposObservaciones.forEach((e, n)=>{
                     if(!e.obs01) {
                         e.obs01 = 'Sin Observaciones'
@@ -321,91 +344,6 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
         })
     }
 
-    /* const closeModal = async (isOnlyClose) => {
-        let group_ = executionReport.group
-        if(!reportAssigned.dateInit) {
-            reportAssigned.dateInit = Date.now()
-        }
-        setContentData([])
-        if(group_[indexGroup][indexActivity].readCommits) {
-            if(navigator.onLine) {
-                if(!isOnlyClose) {
-                    group_[indexGroup][indexActivity].isWarning = true
-                }
-                let checkedList = []
-                let checkedTrue = []
-                group_[indexGroup].forEach((e, n) => {
-                    console.log(e)
-                    if(e.isChecked) {
-                        checkedTrue.push(e.isChecked)
-                    }else{
-                        e.isChecked = false
-                    }
-                    checkedList.push(e.isChecked)
-                    if(n == (group_[indexGroup].length - 1)) {
-                        let newProgress = ( (checkedTrue.length) * 100) / group_[indexGroup].length
-                        setProgress(newProgress)
-                        console.log(newProgress, group_[indexGroup])
-                        setContentData(group_[indexGroup])
-                        setChecks(checkedList)
-                        if(navigator.onLine) {
-                            executionReportsRoutes.saveExecutionReport(executionReport)
-                            reportsRoutes.editReport(reportAssigned)
-                        }
-                        reportAssigned.idDatabase = reportAssigned.idIndex
-                        saveExecutionReport(executionReport, reportAssigned)
-                    }
-                })
-            }
-        }
-    }
-
-    const onlyClose = () => {
-        setOpenReadActivity(false)
-        setOpenWriteActivity(false)
-    }
-
-    const closeWriteModal = async (isOnlyClose) => {
-        let group_ = executionReport.group
-        if(!reportAssigned.dateInit) {
-            reportAssigned.dateInit = Date.now()
-        }
-        setContentData([])
-        if(group_[indexGroup][indexActivity].writeCommits) {
-            if(!isOnlyClose) {
-                group_[indexGroup][indexActivity].isWarning = false
-            }
-            let checkedList = []
-            let checkedTrue = []
-            group_[indexGroup].forEach((e, n) => {
-                if(e.isChecked) {
-                    checkedTrue.push(e.isChecked)
-                }else{
-                    e.isChecked = false
-                }
-                checkedList.push(e.isChecked)
-                if(n == (group_[indexGroup].length - 1)) {
-                    let newProgress = ( (checkedTrue.length) * 100) / group_[indexGroup].length
-                    setProgress(newProgress)
-                    setContentData(group_[indexGroup])
-                    setChecks(checkedList)
-                    if(navigator.onLine) {
-                        executionReportsRoutes.saveExecutionReport(executionReport)
-                        reportsRoutes.editReport(reportAssigned)
-                    }
-                    reportAssigned.idDatabase = reportAssigned.idIndex
-                    saveExecutionReport(executionReport, reportAssigned)
-                }
-            })
-            
-        }
-    }
-
-    const well = {
-        borderRadius: 10,
-        boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)'
-    } */
-      
     const SampleArrow = (props) => {
         const { className, style, onClick } = props
         return (
@@ -452,18 +390,40 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
             item.isWarning = false
         }
         item.isChecked = true
+        saveOnNavigator(executionReport)
         if(navigator.onLine) {
-            executionReportsRoutes.saveExecutionReport(executionReport)
-            reportsRoutes.editReport(reportAssigned)
-            saveOnNavigator(executionReport)
-        }else{
-            saveOnNavigator(executionReport)
+            setLoadingLogo(true)
+            executionReportsRoutes.saveExecutionReport(executionReport).then(() => {
+                reportsRoutes.editReport(reportAssigned).then(() => {
+                    setLoadingLogo(false)
+                })
+            })
         }
     }
 
     const saveOnNavigator = async (executionReport) => {
         let db = await executionReportsDatabase.initDb()
         await executionReportsDatabase.actualizar(executionReport, db.database)
+    }
+
+    const changeState = (element, number) => {
+        if (!element.isChecked) {
+            if (confirm('¿Desea indicar estado ejecutado, sin dejar un mensaje?')) {
+                /* element.isChecked = true */
+                const messages = [
+                    {
+                        content: "Se indica estado ejecutado sin dejar mensajes",
+                        id: Date.now(),
+                        name: "ADMINISTRADOR PLATAFORMA",
+                        namePicture: null,
+                        urlBase64: undefined,
+                        user: localStorage.getItem('_id'),
+                    }
+                ]
+                element.messages = messages
+                save(number, true, element)
+            }
+        }
     }
 
     return (
@@ -529,6 +489,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 {contentData && <div style={{height: height, overflowY: 'scroll'}}>
                     {
                         contentData.map((e, n) => {
+                            console.log(e)
                             return(
                                 <Grid key={n} container style={{borderBottomStyle: 'solid', borderBottomWidth: 1, borderBottomColor: '#ccc'}}>
                                     <Grid item xl={'auto'} md={'auto'}>
@@ -565,7 +526,7 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                                         </div>
                                     </Grid>
                                     <Grid item xl={1} md={1}>
-                                        <Checkbox checked={checks[n]} disabled style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} />
+                                        <Checkbox checked={checks[n]} disabled={checks[n] ? true : false} onClick={() => { changeState(e, n) }} style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} />
                                         {e.messages && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon icon={faCommentDots} /></IconButton>}
                                         {!e.messages && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faCommentDots} /></IconButton>}
                                         {e.haveClip && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon icon={faPaperclip} /></IconButton>}
@@ -595,6 +556,9 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 {
                     openWriteActivity && <WriteActivityModal reportLevel={reportLevel} open={openWriteActivity} closeWriteModal={closeWriteModal} onlyClose={onlyClose} activity={executionReport.group[indexGroup][indexActivity]} reportAssignment={reportAssignment} reportId={executionReport._id}/>
                 } */}
+                {
+                    loadingLogo && <LoadingLogoModal open={loadingLogo} />
+                }
             </div>
         </div>
     )

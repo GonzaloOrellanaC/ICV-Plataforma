@@ -99,6 +99,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                     /* }
                 } */
                 if(index == (userList.length - 1)) {
+                    console.log(users)
                     setOperarios(users)
                 }
             })
@@ -180,7 +181,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                                     return user
                                 }
                             }
-                        }).map((user, i) => {
+                        }).sort((a, b)=>{ if (a.name > b.name) { return 1 } if (a.name < b.name) { return -1 } return 0 }).map((user, i) => {
                             return(
                                 <option key={i} value={user._id}>{`${user.name} ${user.lastName}`}</option>
                             )

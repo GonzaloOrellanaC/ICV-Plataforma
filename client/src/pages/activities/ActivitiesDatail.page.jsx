@@ -173,10 +173,13 @@ const ActivitiesDetailPage = () => {
             data: null,
             state: null
         }
-        if(localStorage.getItem('role')==='inspectionWorker' || localStorage.getItem('role')==='maintenceOperator') {
-            const state = executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
+        if(
+            localStorage.getItem('role')==='inspectionWorker' || 
+            localStorage.getItem('role')==='maintenceOperator'
+        ) {
             executionReportData.data = executionReportFiltered[0]
             executionReportData.state = true
+            await executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
         } else {
             executionReportData = await getExecutionReport(reportAssigned._id)
         }
@@ -263,11 +266,6 @@ const ActivitiesDetailPage = () => {
                             alert('Debe completar la pauta totalmente para enviar a revisión.')
                             setLoadingLogo(false)
                         }
-                        /* if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
-                            sendToNext(state, reportAssigned)
-                        }else{
-                            responseMessage()
-                        } */
                     }
                 }
             })

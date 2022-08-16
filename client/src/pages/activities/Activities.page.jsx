@@ -152,8 +152,8 @@ const ActivitiesPage = () => {
                                                 <p style={{fontSize: 12, fontWeight: 'bold'}}>Guía</p>
                                                 </div>
                                             </Grid>
-                                            <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={1} xs={1}>
-                                                <div style={{width: 70, textAlign: 'center'}}>
+                                            <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
+                                                <div style={{width: '100%', textAlign: 'center'}}>
                                                     <p style={{fontSize: 12, fontWeight: 'bold'}}>SAP ID</p>
                                                 </div>
                                             </Grid>
@@ -215,8 +215,8 @@ const ActivitiesPage = () => {
                                                         <p style={{fontSize: 12}}>{element._guide}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={1} xs={1}>
-                                                        <div style={{width: 70, textAlign: 'center'}}>
+                                                    <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
+                                                        <div style={{textAlign: 'center'}}>
                                                             <p style={{fontSize: 12}}>{element.sapId}</p>
                                                         </div>
                                                     </Grid>
@@ -284,8 +284,8 @@ const ActivitiesPage = () => {
                                                         <p style={{fontSize: 12}}>{element._guide}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={1} xs={1}>
-                                                        <div style={{width: 70, textAlign: 'center'}}>
+                                                    <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
+                                                        <div style={{textAlign: 'center'}}>
                                                             <p style={{fontSize: 12}}>{element.sapId}</p>
                                                         </div>
                                                     </Grid>
