@@ -20,8 +20,8 @@ export default async () => {
 
     console.log('Iniciando node JS')
 
-    app.use(express.json({ limit: '200mb', extended: true }))
-    app.use(express.urlencoded({ limit: '200mb', extended: true }))
+    app.use(express.json({ limit: '900mb', extended: true }))
+    app.use(express.urlencoded({ limit: '900mb', extended: true }))
     app.use(cookieParser())
     app.use(fileUpload());
     /* Configure Passport */
