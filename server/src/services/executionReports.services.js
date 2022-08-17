@@ -49,12 +49,42 @@ const createNewExecutionReport = async (executionReport) => {
 const saveExecutionReport = async (req, res) => {
     const { body } = req
     console.log(body);
-    try{
-        const updated = await ExecutionReport.findByIdAndUpdate(body.reportData._id, body.reportData, { new: true })
-        res.json(updated)
-    }catch(err) {
-        res.json(err);
-    }
+    const executionReportData = body.reportData
+    Object.keys(executionReportData.group).forEach(async (key, index) => {
+        executionReportData.group[key].forEach(item => {
+            if (item.messages) {
+                item.messages.forEach(async (mensaje, i) => {
+                    if (mensaje.urlBase64) {
+                        if (mensaje.urlBase64.length > 0) {
+                            const imageData = await AzureServices.uploadImageFromReport(
+                                mensaje.urlBase64,
+                                body.report.idIndex,
+                                key,
+                                mensaje.id
+                            )
+                            mensaje.urlImageMessage = imageData.data.url
+                            mensaje.urlBase64 = ''
+                        }
+                    }
+                    await saveExecutionReportInternal(executionReportData)
+                    if (i === (item.messages.length - 1)) {
+                        /* const response =  */
+                    }
+                })
+            }
+        })
+        if (index == (Object.keys(executionReportData.group).length - 1)) {
+            try{
+                const updated = await ExecutionReport.findByIdAndUpdate(executionReportData._id, executionReportData, { new: true })
+                res.json(updated)
+            }catch(err) {
+                res.json(err);
+            }
+            /* console.log('Nueva data: =====>')
+            const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
+            res.json(editReportState) */
+        }
+    })
 }
 
 const saveExecutionReportInternal = async (reportData) => {

@@ -134,6 +134,7 @@ const ActivitiesDetailPage = () => {
                 ) {
                     return info
                 }})
+        console.log(pautaFiltered[0])
         setPauta(pautaFiltered[0])
         if (pautaFiltered[0]) {
             setTimeout(() => {
