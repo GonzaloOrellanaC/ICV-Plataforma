@@ -179,9 +179,41 @@ const uploadPdfFile = (pdfFile, nroOT) => {
     })
 }
 
+const uploadImageFromReport = (imageFile, nroOT, task, mensajeId) => {
+    return new Promise(async resolve => {
+        const containerName = environment.storageApi.reportImagesContainer
+        const date = Date.now()
+        const year = new Date(date).getFullYear()
+        const createContainer = await createContainerIfNotExist(containerName)
+        if (createContainer) {
+
+        } else {
+
+        }
+        const blobName = `${year}/${nroOT}/${task}/${mensajeId}.jpg`
+        const imageBase64 = imageFile.replace('data:image/jpeg;base64,', '')
+        const data = Buffer.from(imageBase64, "base64");
+        const containerClient = blobServiceClient.getContainerClient(containerName)
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName)
+        const uploadBlobResponse = await blockBlobClient.upload(data, data.byteLength)
+        if(uploadBlobResponse) {
+            const blobClient = containerClient.getBlobClient(blobName)
+            const downloadBlockBlobResponse = blobClient.url
+            resolve({
+                status: true,
+                message: 'Image is uploaded',
+                data: {
+                    url: downloadBlockBlobResponse
+                }
+            })
+        }
+    })
+}
+
 export default {
     uploadImageProfile,
     uploadImageReport,
     uploadImage,
-    uploadPdfFile
+    uploadPdfFile,
+    uploadImageFromReport
 }

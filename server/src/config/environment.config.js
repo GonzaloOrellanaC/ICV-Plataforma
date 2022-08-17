@@ -34,7 +34,8 @@ const environment = {
         accountKey: process.env.TOKEN_SAS_BLOB,
         url: process.env.STORAGE_URL,
         urlWithKey: process.env.URL_SAS_BLOB,
-        accessKeys: process.env.ACCESS_KEYS
+        accessKeys: process.env.ACCESS_KEYS,
+        reportImagesContainer: process.env.REPORT_IMAGES_CONTAINER
     },
     mailApi: {
         key: process.env.MAIL_KEY,

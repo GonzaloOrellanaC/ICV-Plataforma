@@ -3,7 +3,8 @@ import { environment } from '../config'
 const { error: errorMsg, success: successMsg } = environment.messages.services.user
 import fetch from 'node-fetch'
 import https from 'https'
-import { EmailMailgunServices, EmailServices } from "."
+import { AzureServices, EmailMailgunServices, EmailServices, ExecutionReportsServices } from "."
+import executionReportsServices from "./executionReports.services"
 
 const myHeaders = {
     'Authorization': 'Token ' + environment.icvApi.token,
@@ -77,12 +78,87 @@ const editReportFromAudit = async (req, res) => {
                     EmailMailgunServices.sendEmailEndOfOrder('closeOrder', 4, body.report.fullNameWorker, 'es', body.report.idIndex, body.report.emailsToSend, body.report.sapExecutiveApprovedCommit, `${environment.mailApi.domain}${body.generateLink}`)
                 }
             }
-            const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
-            res.json(editReportState)
+            /* console.log(body.report) */
+            const executionReportData = await ExecutionReportsServices.getExecutionReportByIdInternal(body.report._id)
+            console.log(Object.keys(executionReportData.group))
+            Object.keys(executionReportData.group).forEach(async (key, index) => {
+                executionReportData.group[key].forEach(item => {
+                    if (item.messages) {
+                        item.messages.forEach(async (mensaje, i) => {
+                            if (mensaje.urlBase64) {
+                                if (mensaje.urlBase64.length > 0) {
+                                    const imageData = await AzureServices.uploadImageFromReport(
+                                        mensaje.urlBase64,
+                                        body.report.idIndex,
+                                        key,
+                                        mensaje.id
+                                    )
+                                    mensaje.urlImageMessage = imageData.data.url
+                                    mensaje.urlBase64 = ''
+                                }
+                            }
+                            await executionReportsServices.saveExecutionReportInternal(executionReportData)
+                            if (i === (item.messages.length - 1)) {
+                                /* const response =  */
+                            }
+                        })
+                    }
+                })
+                if (index == (Object.keys(executionReportData.group).length - 1)) {
+                    console.log('Nueva data: =====>')
+                    const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
+                    res.json(editReportState)
+                    /* const response = await executionReportsServices.saveExecutionReportInternal(executionReportData)
+                    if (response) {
+                        const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
+                        res.json(editReportState)
+                    } */
+                }
+            })
         }catch(err) {
             res.json(err)
         }
     }
+}
+
+const saveExecutionReportData = (
+    executionReportDataGroupKeys = new Array(), 
+    executionReportDataGroup = new Array(), 
+    n = new Number(), 
+    report = new Object(), 
+    res) => {
+        if (n === (executionReportDataGroupKeys.length - 1)) {
+
+        } else {
+            executionReportDataGroup[executionReportDataGroupKeys[n]].messages.forEach()
+        }
+    /* executionReportDataGroupKeys.forEach(async (key, index) => {
+        executionReportData.group[key].forEach(item => {
+            if (item.messages) {
+                item.messages.forEach(async mensaje => {
+                    if (mensaje.urlBase64) {
+                        const imageData = await AzureServices.uploadImageFromReport(
+                                                mensaje.urlBase64,
+                                                body.report.idIndex,
+                                                key,
+                                                mensaje.id
+                                            )
+                        
+                        mensaje.urlImageMessage = imageData.data.url
+                        mensaje.urlBase64 = ''
+                    }
+                })
+            }
+        })
+        if (index == (Object.keys(executionReportData.group).length - 1)) {
+            console.log('Nueva data: =====>')
+            const response = await executionReportsServices.saveExecutionReportInternal(executionReportData)
+            if (response) {
+                const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
+                res.json(editReportState)
+            }
+        }
+    }) */
 }
 
 const deleteReport = async (req, res) => {

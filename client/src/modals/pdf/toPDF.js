@@ -4,6 +4,7 @@ import logo from '../../assets/logo_icv_gris.png';
 import check from '../../assets/check.png'
 import noCheck from '../../assets/no_check.png'
 
+
 let imagesList = new Array;
 
 const createTable = ( groupKeys = new Array, group = new Array) => {
@@ -115,6 +116,23 @@ const getImage = (imageUrl) => {
     })
 }
 
+const getImageBase64 = (imageUrl) => {
+    return new Promise(resolve => {
+        const img = new Image();
+        img.setAttribute('crossOrigin', 'anonymous');
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          const dataURL = canvas.toDataURL("image/jpeg");
+          resolve(dataURL)
+        }
+        img.src = imageUrl
+    })
+}
+
 const createImagesTables = () => {
     let imageArrayColumns = [
         {
@@ -139,7 +157,12 @@ const createImagesTables = () => {
     let number = 0;
     let numberTop = 2;
     return new Promise(resolve => {
-        imagesList.forEach((element, index) => {
+        imagesList.forEach(async (element, index) => {
+            let imgBase64
+            if (element.urlImageMessage) {
+                imgBase64 = await getImageBase64(element.urlImageMessage)
+                console.log(imgBase64)
+            }
             if((index) == numberTop) {
                 table.body[number] = imageColumns;
                 table.body[number + 1] = textColumns;
@@ -151,7 +174,7 @@ const createImagesTables = () => {
             let imageContent = {
                 width: 350,
                 alignment: 'center',
-                image: element.urlBase64
+                image: (element.urlBase64.length > 0) ? element.urlBase64 : imgBase64 
             }
             let textContent = {
                 width: 350,
@@ -182,6 +205,21 @@ const createImagesTables = () => {
             }
         })
     })
+}
+
+const getBase64Image = (url, callback) => {
+    const img = new Image();
+    img.setAttribute('crossOrigin', 'anonymous');
+    img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL("image/jpeg");
+        callback(dataURL)
+    }
+    img.src = url
 }
 
 const createSubTables = async (list = new Array(), index = new String(), indexNumber = new Number()) => {
@@ -220,7 +258,7 @@ const createSubTables = async (list = new Array(), index = new String(), indexNu
             if(e.writeCommits) {
                 if(e.writeCommits.length > 0) {
                     e.writeCommits.forEach((commitItem, index) => {
-                        if(commitItem.urlBase64) {
+                        if(commitItem.urlBase64 || commitItem.urlImageMessage) {
                             imagesList.push(commitItem)
                         }
                     })
@@ -231,7 +269,7 @@ const createSubTables = async (list = new Array(), index = new String(), indexNu
             }else if(e.readCommits){
                 if(e.readCommits.length > 0) {
                     e.readCommits.forEach((commitItem, index) => {
-                        if(commitItem.urlBase64) {
+                        if(commitItem.urlBase64 || commitItem.urlImageMessage) {
                             imagesList.push(commitItem)
                         }
                     })
@@ -242,7 +280,7 @@ const createSubTables = async (list = new Array(), index = new String(), indexNu
             }else if(e.messages) {
                 if(e.messages.length > 0) {
                     e.messages.forEach((commitItem, index) => {
-                        if(commitItem.urlBase64) {
+                        if(commitItem.urlBase64 || commitItem.urlImageMessage) {
                             imagesList.push(commitItem)
                         }
                     })
@@ -553,6 +591,8 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
             }
         },
     };
+
+    console.log(docDefinition)
     
     pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex).then(data=> {
         /* console.log(data) */

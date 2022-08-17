@@ -29,6 +29,10 @@ const getExecutionReportById = (req, res) => {
         res.json(err);
     }
 }
+const getExecutionReportByIdInternal = async (reportId) => {
+    const report = await ExecutionReport.find({reportId: reportId})
+    return report[0].toJSON()
+}
 
 const createNewExecutionReport = async (executionReport) => {
     return new Promise(async resolve => {
@@ -53,7 +57,18 @@ const saveExecutionReport = async (req, res) => {
     }
 }
 
+const saveExecutionReportInternal = async (reportData) => {
+    try{
+        const updated = await ExecutionReport.findByIdAndUpdate(reportData._id, reportData, { new: true })
+        return updated
+    }catch(err) {
+        return err
+    }
+}
+
 export default {
     getExecutionReportById,
-    saveExecutionReport
+    saveExecutionReport,
+    getExecutionReportByIdInternal,
+    saveExecutionReportInternal
 }

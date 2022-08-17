@@ -45,7 +45,7 @@ const createPdfBinary = ( pdfContent, callback ) => {
     /* console.log(fonts) */
     const doc = new pdfMake(fonts)
     const pdf = doc.createPdfKitDocument(pdfContent)
-    /* console.log(pdf) */
+    console.log(pdf)
     var chunks = []
 	var result
 	pdf.on('data', (chunk) => {

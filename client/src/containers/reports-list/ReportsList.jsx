@@ -62,7 +62,7 @@ const ReportsList = ({list, reloadData}) => {
     
     
     const closePdfModal = () => {
-        reloadData()
+        /* reloadData() */
         setOpenPdfModal(false)
         /* let listCache = list
         let reportCache = reportData

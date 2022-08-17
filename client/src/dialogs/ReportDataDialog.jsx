@@ -244,7 +244,7 @@ const ReportDataDialog = (
                         }
                         }>
                       <p style={{marginBottom: 0, fontSize: 10}}><strong>{message.name}</strong></p>
-                      {message.urlBase64 && <img src={message.urlBase64} height={70} onClick={() => openImage(message.urlBase64)} />}
+                      {(message.urlBase64 || message.urlImageMessage) && <img src={(message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage} height={70} onClick={() => openImage((message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage)} />}
                       <p style={{marginBottom: 20, whiteSpace: 'pre-line'}}>{message.content}</p>
                       <p style={{position: 'absolute', fontSize: 10, right: 5, bottom: 0}}>{dateWithTime(message.id)}</p>
                     </div>
