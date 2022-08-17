@@ -12,6 +12,8 @@ const ReportsList = ({list, reloadData}) => {
     const [ openModalState, setOpenModalState ] = useState(false)
     const [ openReviewModalState, setOpenReviewModalState ] = useState(false)
     const [ openPdfModal , setOpenPdfModal ] = useState(false)
+    const [ index, setIndex ] = useState()
+    const [ urlPdf, setUrlPdf ] = useState('')
     const [ lista, setLista ] = useState([])
 
     const openModal = (report) => {
@@ -32,8 +34,10 @@ const ReportsList = ({list, reloadData}) => {
         setOpenModalState(false)
     }
 
-    const openPdf = (report) => {
+    const openPdf = (report, i) => {
+        console.log(report)
         setReportData(report)
+        setIndex(i)
         setOpenPdfModal(true)
     }
 
@@ -58,7 +62,28 @@ const ReportsList = ({list, reloadData}) => {
     
     
     const closePdfModal = () => {
+        reloadData()
         setOpenPdfModal(false)
+        /* let listCache = list
+        let reportCache = reportData
+        reportCache.urlPdf = urlPdf
+        listCache[index] = reportCache
+        listCache.forEach(async (item, i) => {
+            item.date = dateSimple(item.datePrev)
+            item.end = dateSimple(item.endReport)
+            item.init = dateSimple(item.dateInit)
+            machinesRoutes.getMachineByEquid(item.machine).then(data => {
+                item.hourMeter = (Number(data.data[0].hourMeter)/3600000)
+            })
+            let data = await getMachineTypeByEquid(item.machine)
+            item.number = data.number
+            item.model = data.model
+            /* l.push(item)
+            if(i == (list.length - 1)) {
+                setLista(l)
+            }
+        })
+        setLista(listCache) */
     }
     
 
@@ -196,7 +221,8 @@ const ReportsList = ({list, reloadData}) => {
                                 <p style={{textAlign: 'center', minWidth: 70}}> {item.number} </p>
                             </Grid>
                     
-                            <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>                                <Grid container>
+                            <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>                                
+                                <Grid container>
                                     <Grid item>
                                         <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  
                                     </Grid>
@@ -218,7 +244,7 @@ const ReportsList = ({list, reloadData}) => {
                 reportDataReview && <ReviewReportModal open={openReviewModalState} report={reportDataReview} onlyClose={onlyCloseReview}/>
             }
             {
-                reportData && <PdfModal open={openPdfModal} reportData={reportData} close={closePdfModal}/>
+                reportData && <PdfModal open={openPdfModal} reportData={reportData} close={closePdfModal} setUrlPdf={setUrlPdf}/>
             }
         </div>
     )

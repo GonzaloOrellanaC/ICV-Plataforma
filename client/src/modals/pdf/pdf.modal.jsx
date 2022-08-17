@@ -10,7 +10,7 @@ import { Close } from "@material-ui/icons";
 //import getMachineData from '../../config'
 
 
-const PdfModal = ({open, reportData, close}) => {
+const PdfModal = ({open, reportData, close, setUrlPdf}) => {
 
     const [ machineData, setMachineData ] = useState();
     const [ fileName, setFileName ] = useState(null);

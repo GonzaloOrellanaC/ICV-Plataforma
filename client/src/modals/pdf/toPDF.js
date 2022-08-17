@@ -555,11 +555,12 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
     };
     
     pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex).then(data=> {
-        /* const linkSource = data.data;
-        let a = document.createElement("a");
-        a.href = linkSource;
-        a.download = `${fileName}.pdf`
-        a.click(); */
+        /* console.log(data) */
+        /* setUrlPdf(data.data.data.url) */
+        /*let a = document.createElement("a")
+        a.href = data.data.data.url
+         a.download = `${fileName}.pdf` 
+        a.click();*/
         alert('PDF Generado.')
         stopPrintingLoad()
     }).catch(err => {
