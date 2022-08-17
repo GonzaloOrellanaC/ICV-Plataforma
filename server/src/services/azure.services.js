@@ -149,8 +149,8 @@ const uploadImage = async (req, res) => {
     }
 }
 
-const uploadPdfFile = async (pdfFile, nroOT) => {
-    return new Promise(resolve => {
+const uploadPdfFile = (pdfFile, nroOT) => {
+    return new Promise(async resolve => {
         const containerName = `pdf`
         const date = Date.now()
         const year = new Date(date).getFullYear()
