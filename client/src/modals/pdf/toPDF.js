@@ -319,6 +319,21 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
     const executionUser = await getUserNameById(reportData.usersAssigned[0])
     const executionUserSign = await getSignById(reportData.usersAssigned[0])
     const executionReportData = await getExecutionReportData(reportData)
+    if (chiefMachinerySign) {
+        console.log('Firma de jefe maquinaria')
+    }
+    if (shiftManagerSign) {
+        console.log('Firma de jefe de turno')
+    }
+    if (executionUserSign) {
+        console.log('Firma de operario')
+    }
+    /* if (chiefMachinerySign) {
+        console.log('Firma de jefe maquinaria')
+    }
+    if (chiefMachinerySign) {
+        console.log('Firma de jefe maquinaria')
+    } */
     let groupKeys
     let group
     if(reportData.testMode) {

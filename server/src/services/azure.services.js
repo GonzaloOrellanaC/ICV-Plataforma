@@ -147,11 +147,35 @@ const uploadImage = async (req, res) => {
 
         res.status(500).send(err);
     }
+}
 
+const uploadPdfFile = async (pdfFile, nroOT) => {
+    return new Promise(resolve => {
+        const containerName = `pdf`
+        const date = Date.now()
+        const year = new Date(date).getFullYear()
+        /* const createContainer =  */await createContainerIfNotExist(containerName)
+        const blobName = `${year}/${nroOT}.pdf`
+        const containerClient = blobServiceClient.getContainerClient(containerName)
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName)
+        const uploadBlobResponse = await blockBlobClient.upload(pdfFile, pdfFile.byteLength)
+        if(uploadBlobResponse) {
+            const blobClient = containerClient.getBlobClient(blobName)
+            const downloadBlockBlobResponse = blobClient.url
+            resolve({
+                status: true,
+                message: 'File is uploaded',
+                data: {
+                    url: downloadBlockBlobResponse
+                }
+            })
+        }
+    })
 }
 
 export default {
     uploadImageProfile,
     uploadImageReport,
-    uploadImage
+    uploadImage,
+    uploadPdfFile
 }

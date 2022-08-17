@@ -98,6 +98,9 @@ const ReportShema = new Schema({
     },
     readyToSend: {
         type: Schema.Types.Boolean
+    },
+    urlPdf: {
+        type: Schema.Types.String
     }
 },
 {

@@ -1,10 +1,10 @@
-import pdfMake from 'pdfmake';
-import path from 'path';
-import fs from 'fs';
+import pdfMake from 'pdfmake'
+import path from 'path'
+import { AzureServices } from './'
 
 const createPdf = (req, res) => {
     console.log('Iniciando descarga de pdf')
-    const { pdfContent } = req.body;
+    const { pdfContent, nroOT } = req.body
 
     if(pdfContent) {
         console.log(pdfContent)
@@ -13,10 +13,11 @@ const createPdf = (req, res) => {
 
     createPdfBinary(pdfContent, (binary) => {
         console.log('Enviando...')
-        res.contentType('application/pdf');
-		res.send(binary);
+        /* AzureServices.uploadPdfFile(binary, nroOT) */
+        res.contentType('application/pdf')
+		res.send(binary)
 	    }, (error) => {
-		res.send('ERROR:' + error);
+		res.send('ERROR:' + error)
     }, (error) => {
         res.send('Error' + error)
     })
@@ -32,28 +33,23 @@ const createPdfBinary = ( pdfContent, callback ) => {
             italics: path.resolve(__dirname, "../fonts/Roboto-Italic.ttf"),
             bolditalics: path.resolve(__dirname, "../fonts/Roboto-MediumItalic.ttf"),
         }
-    };
-
-    console.log(fonts);
-
-    const doc = new pdfMake(fonts);
-    const pdf = doc.createPdfKitDocument(pdfContent);
-
-    console.log(pdf)
-    
-    var chunks = [];
-	var result;
-
+    }
+    /* console.log(fonts) */
+    const doc = new pdfMake(fonts)
+    const pdf = doc.createPdfKitDocument(pdfContent)
+    /* console.log(pdf) */
+    var chunks = []
+	var result
 	pdf.on('data', (chunk) => {
         //console.log(chunk)
-		chunks.push(chunk);
-	});
+		chunks.push(chunk)
+	})
 	pdf.on('end', () => {
-		result = Buffer.concat(chunks);
+		result = Buffer.concat(chunks)
         console.log('PDF Listo')
-        callback('data:application/pdf;base64,' + result.toString('base64'));
-	});
-	pdf.end();
+        callback('data:application/pdf;base64,' + result.toString('base64'))
+	})
+	pdf.end()
 }
 
 export default {
