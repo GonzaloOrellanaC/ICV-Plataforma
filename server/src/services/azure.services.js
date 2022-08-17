@@ -150,11 +150,11 @@ const uploadImage = async (req, res) => {
 }
 
 const uploadPdfFile = (pdfFile, nroOT) => {
-    return new Promise(async resolve => {
+    /* return new Promise(async resolve => {
         const containerName = `pdf`
         const date = Date.now()
         const year = new Date(date).getFullYear()
-        /* const createContainer =  */await createContainerIfNotExist(containerName)
+        const createContainer = await createContainerIfNotExist(containerName)
         const blobName = `${year}/${nroOT}.pdf`
         const containerClient = blobServiceClient.getContainerClient(containerName)
         const blockBlobClient = containerClient.getBlockBlobClient(blobName)
@@ -170,7 +170,7 @@ const uploadPdfFile = (pdfFile, nroOT) => {
                 }
             })
         }
-    })
+    }) */
 }
 
 export default {
