@@ -1,6 +1,6 @@
 import pdfMake from 'pdfmake'
 import path from 'path'
-import { AzureServices } from './'
+import { AzureServices, ReportsService } from './'
 
 const createPdf = (req, res) => {
     console.log('Iniciando descarga de pdf')
@@ -11,11 +11,19 @@ const createPdf = (req, res) => {
         console.log('Contenido descargado')
     }
 
-    createPdfBinary(pdfContent, (binary) => {
+    createPdfBinary(pdfContent, async (binary) => {
         console.log('Enviando...')
-        /* AzureServices.uploadPdfFile(binary, nroOT) */
-        res.contentType('application/pdf')
-		res.send(binary)
+        const state = await AzureServices.uploadPdfFile(binary, nroOT)
+        console.log(state)
+        /* res.contentType('application/pdf') */
+        const data = await ReportsService.editReportByIndexIntern(nroOT, {urlPdf: state.data.url})
+		if (data) {
+            res.send(state)
+        } else {
+            res.send({
+                data: 'Error'
+            })
+        }
 	    }, (error) => {
 		res.send('ERROR:' + error)
     }, (error) => {
@@ -46,8 +54,9 @@ const createPdfBinary = ( pdfContent, callback ) => {
 	})
 	pdf.on('end', () => {
 		result = Buffer.concat(chunks)
+        console.log(result)
         console.log('PDF Listo')
-        callback('data:application/pdf;base64,' + result.toString('base64'))
+        callback(result/* 'data:application/pdf;base64,' + result.toString('base64') */)
 	})
 	pdf.end()
 }

@@ -46,6 +46,18 @@ const editReport = async (req, res) => {
     }
 }
 
+const editReportByIndexIntern = (indexNumber, reportToEdit) => {
+    return new Promise(resolve => {
+        try {
+            Reports.findOneAndUpdate({deleted: false, idIndex: indexNumber}, reportToEdit, (err, report) => {
+                resolve(report)
+            })
+        } catch (err) {
+
+        }
+    })
+}
+
 const editReportFromAudit = async (req, res) => {
     const { body } = req
     if (!body.report) {
@@ -318,5 +330,6 @@ export default {
     getTotalReportsToIndex,
     countTotalReportsLength,
     countTotalActivesReportsLength,
-    readIfReportIsOneDayToStart
+    readIfReportIsOneDayToStart,
+    editReportByIndexIntern
 }

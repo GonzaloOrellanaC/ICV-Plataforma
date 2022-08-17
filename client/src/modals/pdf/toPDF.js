@@ -328,12 +328,6 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
     if (executionUserSign) {
         console.log('Firma de operario')
     }
-    /* if (chiefMachinerySign) {
-        console.log('Firma de jefe maquinaria')
-    }
-    if (chiefMachinerySign) {
-        console.log('Firma de jefe maquinaria')
-    } */
     let groupKeys
     let group
     if(reportData.testMode) {
@@ -560,12 +554,13 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
         },
     };
     
-    pdfMakeRoutes.createPdf(docDefinition).then(data=> {
-        const linkSource = data.data;
+    pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex).then(data=> {
+        /* const linkSource = data.data;
         let a = document.createElement("a");
         a.href = linkSource;
         a.download = `${fileName}.pdf`
-        a.click();
+        a.click(); */
+        alert('PDF Generado.')
         stopPrintingLoad()
     }).catch(err => {
         alert('Error al descargar PDF');

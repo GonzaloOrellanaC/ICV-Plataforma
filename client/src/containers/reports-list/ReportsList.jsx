@@ -103,8 +103,8 @@ const ReportsList = ({list, reloadData}) => {
     return(
         <div style={{width: '100%', paddingLeft: 10, paddingRight: 10}} /* className='root' */>
             <Grid container style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
-                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
-                    <p style={{textAlign: 'center'}}> <strong>N° OT</strong> </p>
+                <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
+                    <p style={{textAlign: 'center', width: 50}}> <strong>N° OT</strong> </p>
                 </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Pauta</strong> </p>
@@ -126,6 +126,9 @@ const ReportsList = ({list, reloadData}) => {
                 </Grid>
                 <Grid item xs={1} sm={1} md={2} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Responsable</strong> </p>
+                </Grid>
+                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                    <p style={{textAlign: 'center', minWidth: 70}}> <strong>Download</strong> </p>
                 </Grid>
                 <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center', minWidth: 70}}> <strong>Flota</strong> </p>
@@ -151,8 +154,8 @@ const ReportsList = ({list, reloadData}) => {
                 lista.map((item, i) => {
                     return(
                         <Grid container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> {item.idIndex} </p>
+                            <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
+                                <p style={{textAlign: 'center', width: 50}}> {item.idIndex} </p>
                             </Grid>
                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center'}}> {item.guide} </p>
@@ -182,6 +185,10 @@ const ReportsList = ({list, reloadData}) => {
                                 <p style={{textAlign: 'center'}}> <button disabled style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Terminado</button> </p>
                             </Grid>
                             }
+                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                {/* <p style={{textAlign: 'center', minWidth: 70}}> {item.urlPdf ? item.urlPdf : 'Sin URL'} </p> */}
+                                {item.urlPdf ? <p style={{textAlign: 'center', minWidth: 70}}><a href={`${item.urlPdf}`}>Link</a></p> : <p style={{textAlign: 'center', minWidth: 70}}> Sin URL </p>}
+                            </Grid>
                             <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                                 <p style={{textAlign: 'center', minWidth: 70}}> {item.model} </p>
                             </Grid>

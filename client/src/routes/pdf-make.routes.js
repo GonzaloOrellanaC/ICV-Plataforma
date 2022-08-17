@@ -1,9 +1,10 @@
 import axios from 'axios'
 
 export default {
-    createPdf: (pdfContent) => {
+    createPdf: (pdfContent, nroOT) => {
         const requestBody = {
-            pdfContent
+            pdfContent,
+            nroOT
         }
         return axios.post('/pdf-maker/createPdf', requestBody)
     }
