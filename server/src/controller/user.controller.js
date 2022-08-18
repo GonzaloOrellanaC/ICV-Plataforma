@@ -114,7 +114,14 @@ const getUserSign = (req, res, next) => {
     console.log(body)
     try{
         Users.findById(body.id, (err, user) => {
-            res.json(user.sign)
+            if (err) {
+                res.status(400).end({message: 'error', error: err})
+            }
+            if (user) {
+                if (user.sign) {
+                    res.json(user.sign)
+                }
+            }
         });
     }catch (err) {
         console.log(err)

@@ -611,10 +611,12 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
         a.href = data.data.data.url
          a.download = `${fileName}.pdf` 
         a.click();*/
+        console.log(data)
         alert('PDF Generado.')
         stopPrintingLoad()
     }).catch(err => {
         alert('Error al descargar PDF');
+        console.log(err)
         stopPrintingLoad()
     })
     

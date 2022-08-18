@@ -3,37 +3,39 @@ import path from 'path'
 import { AzureServices, ReportsService } from './'
 
 const createPdf = (req, res) => {
+    let resp = ''
     console.log('Iniciando descarga de pdf')
     const { pdfContent, nroOT } = req.body
 
     if(pdfContent) {
         console.log(pdfContent)
         console.log('Contenido descargado')
+        resp+='PDF descargado'
     }
 
-    createPdfBinary(pdfContent, async (binary) => {
+    createPdfBinary(pdfContent, resp, async (binary, resp) => {
         console.log('Enviando...')
         const state = await AzureServices.uploadPdfFile(binary, nroOT)
         console.log(state)
         /* res.contentType('application/pdf') */
         const data = await ReportsService.editReportByIndexIntern(nroOT, {urlPdf: state.data.url})
 		if (data) {
-            res.send(state)
+            res.send({state: state, resp: resp})
         } else {
             res.send({
-                data: 'Error'
+                data: 'Error', resp: resp
             })
         }
 	    }, (error) => {
-		res.send('ERROR:' + error)
+		res.send({error: 'Error: ' + error, resp: resp})
     }, (error) => {
-        res.send('Error' + error)
+        res.send({error: 'Error: ' + error, resp: resp})
     })
     
 
 }
 
-const createPdfBinary = ( pdfContent, callback ) => {
+const createPdfBinary = ( pdfContent, resp, callback ) => {
     var fonts = {
         Roboto: {
             normal: path.resolve(__dirname, "../fonts/Roboto-Regular.ttf"),
@@ -42,11 +44,14 @@ const createPdfBinary = ( pdfContent, callback ) => {
             bolditalics: path.resolve(__dirname, "../fonts/Roboto-MediumItalic.ttf"),
         }
     }
+    resp+='Fonts OK!'
     /* console.log(fonts) */
     const doc = new pdfMake(fonts)
+    resp+='Doc OK!'
     const pdf = doc.createPdfKitDocument(pdfContent)
     if (pdf) {
         console.log('Ok')
+        resp+='PDF OK!'
     }
     var chunks = []
 	var result
@@ -58,9 +63,10 @@ const createPdfBinary = ( pdfContent, callback ) => {
 		result = Buffer.concat(chunks)
         if(result) {
             console.log('Listo a guardar en Nube')
+            resp+='Listo a guardar en Nube!'
         }
         console.log('PDF Listo')
-        callback(result/* 'data:application/pdf;base64,' + result.toString('base64') */)
+        callback(result, resp/* 'data:application/pdf;base64,' + result.toString('base64') */)
 	})
 	pdf.end()
 }
