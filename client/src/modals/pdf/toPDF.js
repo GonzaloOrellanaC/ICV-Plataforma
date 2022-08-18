@@ -31,10 +31,15 @@ const createTable = ( groupKeys = new Array, group = new Array) => {
 const createAstImages = (astList) => {
     let arrayTable = []
     return new Promise(resolve => {
-        astList.forEach((e, i) => {
+        astList.forEach(async (e, i) => {
+            let imgBase64
+            if (e.imageUrl) {
+                imgBase64 = await getImageBase64(e.imageUrl)
+                console.log(imgBase64)
+            }
             arrayTable.push(
                 {
-                    image: e.image,
+                    image: /* e.image, // */(e.image.length > 0) ? e.image : imgBase64,
                     width: 700,
                     height: 500
                 }

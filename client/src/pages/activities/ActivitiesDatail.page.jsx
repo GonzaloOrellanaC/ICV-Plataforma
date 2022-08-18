@@ -489,19 +489,23 @@ const ActivitiesDetailPage = () => {
 
     const syncData = () => {
         return new Promise(async resolve => {
-            setLoadingLogo(true)
-            const db = await executionReportsDatabase.initDb()
-            const data = await executionReportsDatabase.consultar(db.database)
-            const executionReportFiltered = data.filter((execution) => {
-                                                if(execution.reportId === reportAssigned._id) {
-                                                    return execution
-                                                }
-                                            })
-            const restore = await executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
-            console.log(restore)
-            if (restore) {
+            try {
+                setLoadingLogo(true)
+                const db = await executionReportsDatabase.initDb()
+                const data = await executionReportsDatabase.consultar(db.database)
+                const executionReportFiltered = data.filter((execution) => {
+                                                    if(execution.reportId === reportAssigned._id) {
+                                                        return execution
+                                                    }
+                                                })
+                const restore = await executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
+                console.log(restore)
+                if (restore) {
+                    setLoadingLogo(false)
+                    resolve('ok')
+                }
+            } catch (error) {
                 setLoadingLogo(false)
-                resolve('ok')
             }
         })
     }

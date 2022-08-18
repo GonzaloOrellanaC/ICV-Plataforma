@@ -54,6 +54,11 @@ const saveExecutionReport = async (req, res) => {
     const response = await Reports.findById(executionReportData.reportId)
     const report = response.toJSON()
     console.log(report.idIndex)
+    if (report) {
+        res.json({data: 'ok'})
+    } else {
+        res.json({data: 'error'})
+    }
     Object.keys(executionReportData.group).forEach(async (key, index) => {
         console.log(index, Object.keys(executionReportData.group).length)
         executionReportData.group[key].forEach(item => {
@@ -90,17 +95,22 @@ const saveExecutionReport = async (req, res) => {
                 ast.imageUrl = imageAstData.data.url
                 await saveExecutionReportInternal(executionReportData)
                 if (i == (executionReportData.astList.length - 1)) {
-                    try{
-                        const updated = await ExecutionReport.findByIdAndUpdate(executionReportData._id, executionReportData, { new: true })
-                        res.json(updated)
-                    }catch(err) {
-                        res.json(err);
-                    }
+                    await saveExecutionReportInternal(executionReportData)
                 }
             })
             
         }
     })
+}
+
+const saveByOne = (n, executionReportDataGroupKeys, ) => {
+
+    if (n == (executionReportDataGroupKeys.length - 1)) {
+
+    } else {
+        executionReportDataGroupKeys[n]
+    }
+
 }
 
 const saveExecutionReportInternal = async (executionReportData) => {
