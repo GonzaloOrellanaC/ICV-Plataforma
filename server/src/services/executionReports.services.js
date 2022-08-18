@@ -79,7 +79,7 @@ const saveExecutionReport = async (req, res) => {
             }
         })
         if (index == (Object.keys(executionReportData.group).length - 1)) {
-            executionReportData.astList.forEach((ast, i) => {
+            executionReportData.astList.forEach(async (ast, i) => {
                 const imageAstData = await AzureServices.uploadImageAstFromReport(
                     ast.image,
                     report.idIndex,
