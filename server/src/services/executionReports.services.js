@@ -51,7 +51,9 @@ const saveExecutionReport = async (req, res) => {
     const { body } = req
     console.log(body);
     const executionReportData = body.reportData
-    const report = await Reports.findById(executionReportData.reportId)
+    const response = await Reports.findById(executionReportData.reportId)
+    const report = response.toJSON()
+    console.log(report.idIndex)
     Object.keys(executionReportData.group).forEach(async (key, index) => {
         executionReportData.group[key].forEach(item => {
             if (item.messages) {
@@ -64,13 +66,13 @@ const saveExecutionReport = async (req, res) => {
                                 key,
                                 mensaje.id
                             )
+                            console.log(imageData)
                             mensaje.urlImageMessage = imageData.data.url
                             mensaje.urlBase64 = ''
                         }
                     }
-                    await saveExecutionReportInternal(report, executionReportData)
+                    await saveExecutionReportInternal(executionReportData)
                     if (i === (item.messages.length - 1)) {
-                        /* const response =  */
                     }
                 })
             }
@@ -82,42 +84,15 @@ const saveExecutionReport = async (req, res) => {
             }catch(err) {
                 res.json(err);
             }
-            /* console.log('Nueva data: =====>')
-            const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
-            res.json(editReportState) */
         }
     })
 }
 
-const saveExecutionReportInternal = async (report, reportData) => {
+const saveExecutionReportInternal = async (executionReportData) => {
     try{
-        return new Promise(resolve => {
-            ExecutionReport.find({reportId: report._id}, async (err, doc) => {
-                console.log('Report!!', doc.length)
-                /* if(err) {
-                    res.json({
-                        state: false,
-                        message: "Error"
-                    })
-                } */
-                if(doc.length == 0) {
-                    const newDoc = await createNewExecutionReport(reportData);
-                    console.log(newDoc)
-                    if(newDoc) {
-                        resolve(newDoc);
-                    }
-                }else{
-                    resolve(doc)
-                }
-            })
-        })
-        /* const updated = await ExecutionReport.findByIdAndUpdate(reportData._id, reportData, { new: true })
-        if (updated) {
-            return updated
-        } else {
-            const response = await createNewExecutionReport(reportData)
-            return response
-        } */
+        const updated = await ExecutionReport.findByIdAndUpdate(executionReportData._id, executionReportData, { new: true })
+        /* console.log(updated) */
+        return updated
     }catch(err) {
         return err
     }

@@ -442,62 +442,68 @@ const ActivitiesDetailPage = () => {
         })
     }
  
-    const terminarjornada = async () => {
+    const terminarjornada = () => {
         if(navigator.onLine) {
-            setLoading(true)
-            setLoadingMessage('Terminando su jornada')
-            const report = reportAssigned
-            const emails = await getExecutivesSapEmail(reportLevel)
-            let usersAssigned = new Array()
-            usersAssigned = reportAssigned.usersAssigned
-            let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === localStorage.getItem('_id')){}else{return user}})
-            report.idIndex = id
-            report.usersAssigned = usersAssignedFiltered
-            report.state = "Asignar"
-            report.emailing = "termino-jornada"
-            report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`
-            report.emailsToSend = emails
-            let ids = new Array()
-            ids = await getExecutivesSapId()
-            ids.forEach(async (id, index) => {
-                SocketConnection.sendnotificationToUser(
-                    'termino-jornada',
-                    `${localStorage.getItem('_id')}`,
-                    id,
-                    'Aviso general',
-                    'Término de jornada',
-                    `${localStorage.getItem('name')} ${localStorage.getItem('lastName')} ha terminado su jornada. Recuerde reasignar OT`,
-                    '/reports'
-                )
-                if(index == (ids.length - 1)) {
-                    let actualiza = await reportsRoutes.editReport(report)
-                    if(actualiza) {
-                        setLoading(false)
-                        setTimeout(() => {
-                            alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
-                            history.goBack()
-                        }, 500)
+            syncData().then(async () => {
+                setLoading(true)
+                setLoadingMessage('Terminando su jornada')
+                const report = reportAssigned
+                const emails = await getExecutivesSapEmail(reportLevel)
+                let usersAssigned = new Array()
+                usersAssigned = reportAssigned.usersAssigned
+                let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === localStorage.getItem('_id')){}else{return user}})
+                report.idIndex = id
+                report.usersAssigned = usersAssignedFiltered
+                report.state = "Asignar"
+                report.emailing = "termino-jornada"
+                report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`
+                report.emailsToSend = emails
+                let ids = new Array()
+                ids = await getExecutivesSapId()
+                ids.forEach(async (id, index) => {
+                    SocketConnection.sendnotificationToUser(
+                        'termino-jornada',
+                        `${localStorage.getItem('_id')}`,
+                        id,
+                        'Aviso general',
+                        'Término de jornada',
+                        `${localStorage.getItem('name')} ${localStorage.getItem('lastName')} ha terminado su jornada. Recuerde reasignar OT`,
+                        '/reports'
+                    )
+                    if(index == (ids.length - 1)) {
+                        let actualiza = await reportsRoutes.editReport(report)
+                        if(actualiza) {
+                            setLoading(false)
+                            setTimeout(() => {
+                                alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
+                                history.goBack()
+                            }, 500)
+                        }
                     }
-                }
+                })
             })
         }else{
             alert('Dispositivo no está conectado a internet. Conecte a una red e intente nuevamente')
         }
     }
 
-    const syncData = async () => {
-        setLoadingLogo(true)
-        const db = await executionReportsDatabase.initDb()
-        const data = await executionReportsDatabase.consultar(db.database)
-        const executionReportFiltered = data.filter((execution) => {
-                                            if(execution.reportId === reportAssigned._id) {
-                                                return execution
-                                            }
-                                        })
-        const restore = await executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
-        if (restore) {
-            setLoadingLogo(false)
-        }
+    const syncData = () => {
+        return new Promise(async resolve => {
+            setLoadingLogo(true)
+            const db = await executionReportsDatabase.initDb()
+            const data = await executionReportsDatabase.consultar(db.database)
+            const executionReportFiltered = data.filter((execution) => {
+                                                if(execution.reportId === reportAssigned._id) {
+                                                    return execution
+                                                }
+                                            })
+            const restore = await executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
+            console.log(restore)
+            if (restore) {
+                setLoadingLogo(false)
+                resolve('ok')
+            }
+        })
     }
 
     const closeCommitModal = () => {
@@ -555,7 +561,7 @@ const ActivitiesDetailPage = () => {
                                     </div>
                                 </Grid>
                                 <Grid item xl={2} md={2} sm={12}>
-                                    <div style={{marginTop: 20, padding: 20, backgroundColor: '#F9F9F9', borderRadius: 10, height: '98%'}}>
+                                    <div style={{marginTop: 20, padding: 20, backgroundColor: '#F9F9F9', borderRadius: 10, height: '71vh', overflowY: 'auto'}}>
                                         <div style={{textAlign: 'center', width: '100%'}}>
                                             <h2 style={{margin: 0}}>OT {id}</h2>
                                             <p style={{margin: 0}}>Tipo de pauta: <br /> <strong>{pauta && pauta.typepm}</strong></p>
