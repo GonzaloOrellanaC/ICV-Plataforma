@@ -155,7 +155,7 @@ const saveDataOne = (executionReportData, report) => {
     })
 }
 
-const saveByOne = (n, imagesList) => {
+/* const saveByOne = (n, imagesList) => {
     if (n == (imagesList.length - 1)) {
 
     } else {
@@ -168,7 +168,7 @@ const saveByOne = (n, imagesList) => {
         )
     }
 
-}
+} */
 
 const saveExecutionReportInternal = async (executionReportData) => {
     try{
