@@ -68,7 +68,7 @@ const saveExecutionReport = async (req, res) => {
                             mensaje.urlBase64 = ''
                         }
                     }
-                    await saveExecutionReportInternal(executionReportData)
+                    await saveExecutionReportInternal(report, executionReportData)
                     if (i === (item.messages.length - 1)) {
                         /* const response =  */
                     }
@@ -89,15 +89,35 @@ const saveExecutionReport = async (req, res) => {
     })
 }
 
-const saveExecutionReportInternal = async (reportData) => {
+const saveExecutionReportInternal = async (report, reportData) => {
     try{
-        const updated = await ExecutionReport.findByIdAndUpdate(reportData._id, reportData, { new: true })
+        return new Promise(resolve => {
+            ExecutionReport.find({reportId: report._id}, async (err, doc) => {
+                console.log('Report!!', doc.length)
+                /* if(err) {
+                    res.json({
+                        state: false,
+                        message: "Error"
+                    })
+                } */
+                if(doc.length == 0) {
+                    const newDoc = await createNewExecutionReport(reportData);
+                    console.log(newDoc)
+                    if(newDoc) {
+                        resolve(newDoc);
+                    }
+                }else{
+                    resolve(doc)
+                }
+            })
+        })
+        /* const updated = await ExecutionReport.findByIdAndUpdate(reportData._id, reportData, { new: true })
         if (updated) {
             return updated
         } else {
             const response = await createNewExecutionReport(reportData)
             return response
-        }
+        } */
     }catch(err) {
         return err
     }
