@@ -1,4 +1,4 @@
-import { ExecutionReport } from "../models"
+import { ExecutionReport, Reports } from "../models"
 import { environment } from '../config'
 import { AzureServices } from "."
 const { error: errorMsg, success: successMsg } = environment.messages.services.user
@@ -51,6 +51,7 @@ const saveExecutionReport = async (req, res) => {
     const { body } = req
     console.log(body);
     const executionReportData = body.reportData
+    const report = await Reports.findById(executionReportData.reportId)
     Object.keys(executionReportData.group).forEach(async (key, index) => {
         executionReportData.group[key].forEach(item => {
             if (item.messages) {
@@ -59,7 +60,7 @@ const saveExecutionReport = async (req, res) => {
                         if (mensaje.urlBase64.length > 0) {
                             const imageData = await AzureServices.uploadImageFromReport(
                                 mensaje.urlBase64,
-                                body.report.idIndex,
+                                report.idIndex,
                                 key,
                                 mensaje.id
                             )
