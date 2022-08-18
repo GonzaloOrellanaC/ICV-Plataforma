@@ -92,7 +92,12 @@ const saveExecutionReport = async (req, res) => {
 const saveExecutionReportInternal = async (reportData) => {
     try{
         const updated = await ExecutionReport.findByIdAndUpdate(reportData._id, reportData, { new: true })
-        return updated
+        if (updated) {
+            return updated
+        } else {
+            const response = await createNewExecutionReport(reportData)
+            return response
+        }
     }catch(err) {
         return err
     }
