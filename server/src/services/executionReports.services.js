@@ -55,6 +55,7 @@ const saveExecutionReport = async (req, res) => {
     const report = response.toJSON()
     console.log(report.idIndex)
     Object.keys(executionReportData.group).forEach(async (key, index) => {
+        console.log(index, Object.keys(executionReportData.group).length)
         executionReportData.group[key].forEach(item => {
             if (item.messages) {
                 item.messages.forEach(async (mensaje, i) => {
@@ -78,12 +79,26 @@ const saveExecutionReport = async (req, res) => {
             }
         })
         if (index == (Object.keys(executionReportData.group).length - 1)) {
-            try{
-                const updated = await ExecutionReport.findByIdAndUpdate(executionReportData._id, executionReportData, { new: true })
-                res.json(updated)
-            }catch(err) {
-                res.json(err);
-            }
+            executionReportData.astList.forEach((ast, i) => {
+                const imageAstData = await AzureServices.uploadImageAstFromReport(
+                    ast.image,
+                    report.idIndex,
+                    ast.id
+                )
+                console.log(imageAstData)
+                ast.image = ''
+                ast.imageUrl = imageAstData.data.url
+                await saveExecutionReportInternal(executionReportData)
+                if (i == (executionReportData.astList.length - 1)) {
+                    try{
+                        const updated = await ExecutionReport.findByIdAndUpdate(executionReportData._id, executionReportData, { new: true })
+                        res.json(updated)
+                    }catch(err) {
+                        res.json(err);
+                    }
+                }
+            })
+            
         }
     })
 }
