@@ -66,10 +66,21 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
 
     const getExecutionReportData = () => {
         return new Promise(resolve => {
-            executionReportsRoutes.getExecutionReportById(reportAssigned)
-            .then(data => {
-                resolve(data.data[0])
-            })
+            getExecutionReportFromDb(reportAssigned._id)
+                .then(data => {
+                    resolve(data)
+                })
+                .catch(() => {
+                    executionReportsRoutes.getExecutionReportById(reportAssigned)
+                    .then(data => {
+                        resolve(data.data[0])
+                    })
+                })
+            /* if (navigator.onLine) {
+                
+            } else {
+                
+            } */
         })
     }
 
