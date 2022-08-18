@@ -17,6 +17,10 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.1.9</strong>
+                        <li>
+                            Se integra servicio Storage para imágenes de la plataforma.
+                        </li>
                         <strong>v.1.8.9</strong>
                         <li>
                             Cambios en forma de llenado de pauta, presionando el checkbox.

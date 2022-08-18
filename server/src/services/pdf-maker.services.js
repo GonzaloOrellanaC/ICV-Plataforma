@@ -45,7 +45,9 @@ const createPdfBinary = ( pdfContent, callback ) => {
     /* console.log(fonts) */
     const doc = new pdfMake(fonts)
     const pdf = doc.createPdfKitDocument(pdfContent)
-    console.log(pdf)
+    if (pdf) {
+        console.log('Ok')
+    }
     var chunks = []
 	var result
 	pdf.on('data', (chunk) => {
@@ -54,7 +56,9 @@ const createPdfBinary = ( pdfContent, callback ) => {
 	})
 	pdf.on('end', () => {
 		result = Buffer.concat(chunks)
-        console.log(result)
+        if(result) {
+            console.log('Listo a guardar en Nube')
+        }
         console.log('PDF Listo')
         callback(result/* 'data:application/pdf;base64,' + result.toString('base64') */)
 	})

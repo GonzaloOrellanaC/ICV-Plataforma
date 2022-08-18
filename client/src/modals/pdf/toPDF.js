@@ -163,10 +163,11 @@ const createImagesTables = () => {
     let numberTop = 2;
     return new Promise(resolve => {
         imagesList.forEach(async (element, index) => {
+            console.log(element, index)
             let imgBase64
             if (element.urlImageMessage) {
                 imgBase64 = await getImageBase64(element.urlImageMessage)
-                console.log(imgBase64)
+                /* console.log(imgBase64) */
             }
             if((index) == numberTop) {
                 table.body[number] = imageColumns;
@@ -186,9 +187,12 @@ const createImagesTables = () => {
                 alignment: 'center',
                 text: 'Comentario id: ' + element.id + '\n\ "' + element.namePicture + '"' + '\n\ Imágen: ' + dateWithTime(element.id) + '\n\ Usuario: ' + element.name + '\n\ \n\ \n\ \n\ __________________',
             }
+            /* console.log(imageContent) */
             imageColumns.push(imageContent)
             textColumns.push(textContent)
+            /* console.log(index, imagesList.length) */
             if(index == (imagesList.length - 1)) {
+                console.log('OK!!!')
                 if( (imagesList.length%2) == 1 ) {
                     imageColumns.push({})
                     textColumns.push({})
@@ -206,13 +210,14 @@ const createImagesTables = () => {
                 number = 0;
                 numberTop = 2;
                 imagesList = [];
+                console.log(imageArrayColumns)
                 resolve(imageArrayColumns)
             }
         })
     })
 }
 
-const getBase64Image = (url, callback) => {
+/* const getBase64Image = (url, callback) => {
     const img = new Image();
     img.setAttribute('crossOrigin', 'anonymous');
     img.onload = () => {
@@ -225,7 +230,7 @@ const getBase64Image = (url, callback) => {
         callback(dataURL)
     }
     img.src = url
-}
+} */
 
 const createSubTables = async (list = new Array(), index = new String(), indexNumber = new Number()) => {
     const imageCheck = await getImage(check)

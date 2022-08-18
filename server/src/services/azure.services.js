@@ -151,7 +151,7 @@ const uploadImage = async (req, res) => {
 
 const uploadPdfFile = (pdfFile, nroOT) => {
     return new Promise(async resolve => {
-        const containerName = `pdf`
+        const containerName = environment.storageApi.pdfContainer
         const date = Date.now()
         const year = new Date(date).getFullYear()
         const createContainer = await createContainerIfNotExist(containerName)
