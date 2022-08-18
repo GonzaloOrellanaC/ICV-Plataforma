@@ -485,6 +485,21 @@ const ActivitiesDetailPage = () => {
         }
     }
 
+    const syncData = async () => {
+        setLoadingLogo(true)
+        const db = await executionReportsDatabase.initDb()
+        const data = await executionReportsDatabase.consultar(db.database)
+        const executionReportFiltered = data.filter((execution) => {
+                                            if(execution.reportId === reportAssigned._id) {
+                                                return execution
+                                            }
+                                        })
+        const restore = await executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
+        if (restore) {
+            setLoadingLogo(false)
+        }
+    }
+
     const closeCommitModal = () => {
         setOpenReportCommitModal(false)
     }
@@ -561,6 +576,10 @@ const ActivitiesDetailPage = () => {
                                         </Button>}
                                         {(localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') && <Button disabled={!canEdit} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{endReport()}}>
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Cerrar OT
+                                        </Button>
+                                        }
+                                        {(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') && <Button /* disabled={!canEdit}  */variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{syncData()}}>
+                                            <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Sincronizar
                                         </Button>
                                         }
                                         {!((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) && 
