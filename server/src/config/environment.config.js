@@ -19,6 +19,9 @@ const languageSelector = (select) => {
  * if they configured a certain language.
  */
 const environment = {
+    sentry: {
+        dns: process.env.SENTRY_DNS
+    },
     state: process.env.STATE,
     dbURL: process.env.DB_URL,
     port: process.env.PORT,

@@ -1,7 +1,28 @@
 import pdfMake from 'pdfmake'
 import path from 'path'
 import { AzureServices, ReportsService } from './'
+import * as Sentry from "@sentry/node"
+// or use es6 import statements
+// import * as Sentry from '@sentry/node';
 
+import Tracing from "@sentry/tracing"
+import { environment } from '../config'
+// or use es6 import statements
+// import * as Tracing from '@sentry/tracing';
+
+Sentry.init({
+  dsn: environment.sentry.dns,
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
+
+const transaction = Sentry.startTransaction({
+  op: "test",
+  name: "My First Test Transaction",
+});
 const createPdf = (req, res) => {
     let resp = ''
     console.log('Iniciando descarga de pdf')
@@ -27,8 +48,10 @@ const createPdf = (req, res) => {
             })
         }
 	    }, (error) => {
-		res.send({error: 'Error: ' + error, resp: resp})
+            Sentry.captureException(error)
+		    res.send({error: 'Error: ' + error, resp: resp})
     }, (error) => {
+        Sentry.captureException(error)
         res.send({error: 'Error: ' + error, resp: resp})
     })
     
@@ -47,6 +70,7 @@ const createPdfBinary = ( pdfContent, resp, callback ) => {
     resp+='Fonts OK!'
     /* console.log(fonts) */
     const doc = new pdfMake(fonts)
+    console.log(doc)
     resp+='Doc OK!'
     const pdf = doc.createPdfKitDocument(pdfContent)
     if (pdf) {
@@ -58,7 +82,9 @@ const createPdfBinary = ( pdfContent, resp, callback ) => {
 	pdf.on('data', (chunk) => {
         //console.log(chunk)
 		chunks.push(chunk)
-	})
+	}, err => {
+        Sentry.captureException(err)
+    })
 	pdf.on('end', () => {
 		result = Buffer.concat(chunks)
         if(result) {
@@ -67,7 +93,9 @@ const createPdfBinary = ( pdfContent, resp, callback ) => {
         }
         console.log('PDF Listo')
         callback(result, resp/* 'data:application/pdf;base64,' + result.toString('base64') */)
-	})
+	}, err => {
+        Sentry.captureException(err)
+    })
 	pdf.end()
 }
 

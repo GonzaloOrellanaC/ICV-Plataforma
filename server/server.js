@@ -6,6 +6,38 @@ import { Socket } from "./src/controller"
 import { databaseLoader, expressLoader } from "./src/loaders"
 import { AccessControlServices } from "./src/services"
 import reportsService from "./src/services/reports.service"
+import * as Sentry from "@sentry/node"
+// or use es6 import statements
+// import * as Sentry from '@sentry/node';
+
+import Tracing from "@sentry/tracing"
+// or use es6 import statements
+// import * as Tracing from '@sentry/tracing';
+
+Sentry.init({
+  dsn: environment.sentry.dns,
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
+
+const transaction = Sentry.startTransaction({
+  op: "test",
+  name: "My First Test Transaction",
+});
+
+/* setTimeout(() => {
+  try {
+    foo();
+  } catch (e) {
+    Sentry.captureException(e);
+  } finally {
+    transaction.finish();
+  }
+}, 99); */
+
 
 const startServer = async () => {
     /* Conexión a MongoDB  */

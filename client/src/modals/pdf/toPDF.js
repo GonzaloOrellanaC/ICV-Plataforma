@@ -5,9 +5,9 @@ import check from '../../assets/check.png'
 import noCheck from '../../assets/no_check.png'
 
 
-let imagesList = new Array;
+let imagesList = [];
 
-const createTable = ( groupKeys = new Array, group = new Array) => {
+const createTable = ( groupKeys, group ) => {
     let arrayTable = []
     return new Promise(resolve => {
         group.forEach(async (element, index) => {
@@ -35,11 +35,10 @@ const createAstImages = (astList) => {
             let imgBase64
             if (e.imageUrl) {
                 imgBase64 = await getImageBase64(e.imageUrl)
-                console.log(imgBase64)
             }
             arrayTable.push(
                 {
-                    image: /* e.image, // */(e.image.length > 0) ? e.image : imgBase64,
+                    image: (e.image.length > 0) ? e.image : imgBase64,
                     width: 700,
                     height: 500
                 }
@@ -51,7 +50,7 @@ const createAstImages = (astList) => {
     })
 }
 
-const crateHistoryTable = ( history = new Array ) => {
+const crateHistoryTable = ( history ) => {
     let arrayTable = []
     return new Promise(resolve => {
         history.sort((a, b) => {
@@ -163,11 +162,10 @@ const createImagesTables = () => {
     let numberTop = 2;
     return new Promise(resolve => {
         imagesList.forEach(async (element, index) => {
-            console.log(element, index)
+            /* console.log(element, index) */
             let imgBase64
             if (element.urlImageMessage) {
                 imgBase64 = await getImageBase64(element.urlImageMessage)
-                /* console.log(imgBase64) */
             }
             if((index) == numberTop) {
                 table.body[number] = imageColumns;
@@ -187,10 +185,8 @@ const createImagesTables = () => {
                 alignment: 'center',
                 text: 'Comentario id: ' + element.id + '\n\ "' + element.namePicture + '"' + '\n\ Imágen: ' + dateWithTime(element.id) + '\n\ Usuario: ' + element.name + '\n\ \n\ \n\ \n\ __________________',
             }
-            /* console.log(imageContent) */
             imageColumns.push(imageContent)
             textColumns.push(textContent)
-            /* console.log(index, imagesList.length) */
             if(index == (imagesList.length - 1)) {
                 console.log('OK!!!')
                 if( (imagesList.length%2) == 1 ) {
@@ -217,22 +213,7 @@ const createImagesTables = () => {
     })
 }
 
-/* const getBase64Image = (url, callback) => {
-    const img = new Image();
-    img.setAttribute('crossOrigin', 'anonymous');
-    img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        const dataURL = canvas.toDataURL("image/jpeg");
-        callback(dataURL)
-    }
-    img.src = url
-} */
-
-const createSubTables = async (list = new Array(), index = new String(), indexNumber = new Number()) => {
+const createSubTables = async (list, index, indexNumber) => {
     const imageCheck = await getImage(check)
     const noImageCheck = await getImage(noCheck)
     let pageBreak;
@@ -288,6 +269,7 @@ const createSubTables = async (list = new Array(), index = new String(), indexNu
                 date = dateSimple(e.readCommits[0].id)
                 timeData = time(e.readCommits[0].id)
             }else if(e.messages) {
+                /* console.log(e.messages[0]) */
                 if(e.messages.length > 0) {
                     e.messages.forEach((commitItem, index) => {
                         if(commitItem.urlBase64 || commitItem.urlImageMessage) {
@@ -357,9 +339,76 @@ const createSubTables = async (list = new Array(), index = new String(), indexNu
     })
 }
 
-export default async (reportData, machineData, stopPrintingLoad, fileName) => {
+const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser) => {
+    return [
+        {
+            columns: [
+                {
+                    pageBreak: 'before',
+                    text: 'Responsables: ',
+                    margin: [0, 50, 0, 0],
+                },
+                {
+                    pageBreak: 'before',
+                    alignment: 'right',
+                    margin: [0, 50, 0, 0],
+                    width: '*',
+                    text: `Fecha: ${dateSimple(Date.now())} \n\ Hora: ${time(Date.now())}`
+                }
+            ]
+        },
+        {
+            columns: [
+                {
+                    alignment: 'center',
+                    margin: [0, 100, 0, 10],
+                    width: 200,
+                    height: 100,
+                    image: chiefMachinerySign ? chiefMachinerySign : null
+                },
+                {
+                    alignment: 'center',
+                    margin: [0, 100, 0, 10],
+                    width: 200,
+                    height: 100,
+                    image: shiftManagerSign ? shiftManagerSign : null
+                },
+                {
+                    alignment: 'center',
+                    margin: [0, 100, 0, 10],
+                    width: 200,
+                    height: 100,
+                    image: executionUserSign ? executionUserSign : null
+                },
+            ]
+        },
+        {
+            columns: [
+                {
+                    alignment: 'center',
+                    margin: [0, 10, 0, 200],
+                    width: 200,
+                    text: chiefMachineryName + '\n\ Jefe de Maquinaria'
+                },
+                {
+                    alignment: 'center',
+                    margin: [0, 10, 0, 200],
+                    width: 200,
+                    text: shiftManagerName + '\n\ Jefe de Turno'
+                },
+                {
+                    alignment: 'center',
+                    margin: [0, 10, 0, 200],
+                    width: 200,
+                    text: executionUser + '\n\ Técnico Inspección o Mantenimiento'
+                },
+            ]
+        },
+    ]
+}
+
+export default async (reportData, machineData, stopPrintingLoad) => {
     const admin = await getUserNameById(reportData.createdBy)
-    //const adminSign = await getSignById(reportData.createdBy)
     const chiefMachineryName = await getUserNameById(reportData.chiefMachineryApprovedBy)
     const chiefMachinerySign = await getSignById(reportData.chiefMachineryApprovedBy)
     const shiftManagerName = await getUserNameById(reportData.shiftManagerApprovedBy)
@@ -492,71 +541,9 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
             },
             await createTable(groupKeys, group),
             (reportData.history.length > 0) ? await crateHistoryTable(reportData.history) : {},
-            {
-                columns: [
-                    {
-                        pageBreak: 'before',
-                        text: 'Responsables: ',
-                        margin: [0, 50, 0, 0],
-                    },
-                    {
-                        pageBreak: 'before',
-                        alignment: 'right',
-                        margin: [0, 50, 0, 0],
-                        width: '*',
-                        text: `Fecha: ${dateSimple(Date.now())} \n\ Hora: ${time(Date.now())}`
-                    }
-                ]
-            },
-            {
-                columns: [
-                    {
-                        alignment: 'center',
-                        margin: [0, 100, 0, 10],
-                        width: 200,
-			            height: 100,
-                        image: chiefMachinerySign ? chiefMachinerySign : null
-                    },
-                    {
-                        alignment: 'center',
-                        margin: [0, 100, 0, 10],
-                        width: 200,
-			            height: 100,
-                        image: shiftManagerSign ? shiftManagerSign : null
-                    },
-                    {
-                        alignment: 'center',
-                        margin: [0, 100, 0, 10],
-                        width: 200,
-			            height: 100,
-                        image: executionUserSign ? executionUserSign : null
-                    },
-                ]
-            },
-            {
-                columns: [
-                    {
-                        alignment: 'center',
-                        margin: [0, 10, 0, 200],
-                        width: 200,
-                        text: chiefMachineryName + '\n\ Jefe de Maquinaria'
-                    },
-                    {
-                        alignment: 'center',
-                        margin: [0, 10, 0, 200],
-                        width: 200,
-                        text: shiftManagerName + '\n\ Jefe de Turno'
-                    },
-                    {
-                        alignment: 'center',
-                        margin: [0, 10, 0, 200],
-                        width: 200,
-                        text: executionUser + '\n\ Técnico Inspección o Mantenimiento'
-                    },
-                ]
-            },
+            createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser),
             executionReportData[0].astList ? await createAstImages(executionReportData[0].astList) : {},
-            await createImagesTables()
+            /* await createImagesTables() */
         ],
         styles: {
             imageTables: {
@@ -602,15 +589,9 @@ export default async (reportData, machineData, stopPrintingLoad, fileName) => {
         },
     };
 
-    console.log(docDefinition)
+    /* console.log(docDefinition) */
     
     pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex).then(data=> {
-        /* console.log(data) */
-        /* setUrlPdf(data.data.data.url) */
-        /*let a = document.createElement("a")
-        a.href = data.data.data.url
-         a.download = `${fileName}.pdf` 
-        a.click();*/
         console.log(data)
         alert('PDF Generado.')
         stopPrintingLoad()
