@@ -407,198 +407,206 @@ const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSig
     ]
 }
 
-export default async (reportData, machineData, stopPrintingLoad) => {
-    const admin = await getUserNameById(reportData.createdBy)
-    const chiefMachineryName = await getUserNameById(reportData.chiefMachineryApprovedBy)
-    const chiefMachinerySign = await getSignById(reportData.chiefMachineryApprovedBy)
-    const shiftManagerName = await getUserNameById(reportData.shiftManagerApprovedBy)
-    const shiftManagerSign = await getSignById(reportData.shiftManagerApprovedBy)
-    const executionUser = await getUserNameById(reportData.usersAssigned[0])
-    const executionUserSign = await getSignById(reportData.usersAssigned[0])
-    const executionReportData = await getExecutionReportData(reportData)
-    if (chiefMachinerySign) {
-        console.log('Firma de jefe maquinaria')
-    }
-    if (shiftManagerSign) {
-        console.log('Firma de jefe de turno')
-    }
-    if (executionUserSign) {
-        console.log('Firma de operario')
-    }
-    let groupKeys
-    let group
-    if(reportData.testMode) {
-        let filteredKeys = Object.keys(executionReportData[0].group)
-        let filteredValues = Object.values(executionReportData[0].group)
-        groupKeys = [filteredKeys[0], filteredKeys[1]]
-        group = [filteredValues[0], filteredValues[1]]
-    }else{
-        groupKeys = Object.keys(executionReportData[0].group)
-        group = Object.values(executionReportData[0].group)
-    }
-    let docDefinition = {
-        pageOrientation: 'landscape',
-        content: [
-            {
-                columns: [
-                    {
-                        alignment: 'left',
-                        text: 'DEPTO DE CONTROL Y GESTIÓN DE MAQUINARIA',
-                        style: 'deptoInfo',
-                        width: 100,
-                    },
-                    {
-                        alignment: 'center',
-                        text: `ORDEN DE TRABAJO ${reportData.idIndex} \n PAUTA DE ${reportData.reportType}`.toUpperCase() , 
-                        style: 'subheader',
-                        width: '*'
-                    },
-                    {
-                        width: 100,
-                        columns: [
-                            {
-                                width: '*',
-                                text: ''
-                            },
-                            {
-                                alignment: 'right',
-                                image: logo,
-                                width: 60
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                columns: [
-                    {
-                        width: 150,
-                        style: 'table',
-                        table: {
-                            body: [
-                                ['Tipo', `${machineData.type}`],
-                                ['Marca', `${machineData.brand}`],
-                                ['Modelo', `${machineData.model}`],
-                                ['N°', `${machineData.equ}`]
+export default (reportData, machineData/* , stopPrintingLoad */) => {
+    return new Promise(async resolve => {
+        const admin = await getUserNameById(reportData.createdBy)
+        const chiefMachineryName = await getUserNameById(reportData.chiefMachineryApprovedBy)
+        const chiefMachinerySign = await getSignById(reportData.chiefMachineryApprovedBy)
+        const shiftManagerName = await getUserNameById(reportData.shiftManagerApprovedBy)
+        const shiftManagerSign = await getSignById(reportData.shiftManagerApprovedBy)
+        const executionUser = await getUserNameById(reportData.usersAssigned[0])
+        const executionUserSign = await getSignById(reportData.usersAssigned[0])
+        const executionReportData = await getExecutionReportData(reportData)
+        if (chiefMachinerySign) {
+            console.log('Firma de jefe maquinaria')
+        }
+        if (shiftManagerSign) {
+            console.log('Firma de jefe de turno')
+        }
+        if (executionUserSign) {
+            console.log('Firma de operario')
+        }
+        let groupKeys
+        let group
+        if(reportData.testMode) {
+            let filteredKeys = Object.keys(executionReportData[0].group)
+            let filteredValues = Object.values(executionReportData[0].group)
+            groupKeys = [filteredKeys[0], filteredKeys[1]]
+            group = [filteredValues[0], filteredValues[1]]
+        }else{
+            groupKeys = Object.keys(executionReportData[0].group)
+            group = Object.values(executionReportData[0].group)
+        }
+        let docDefinition = {
+            pageOrientation: 'landscape',
+            content: [
+                {
+                    columns: [
+                        {
+                            alignment: 'left',
+                            text: 'DEPTO DE CONTROL Y GESTIÓN DE MAQUINARIA',
+                            style: 'deptoInfo',
+                            width: 100,
+                        },
+                        {
+                            alignment: 'center',
+                            text: `ORDEN DE TRABAJO ${reportData.idIndex} \n PAUTA DE ${reportData.reportType}`.toUpperCase() , 
+                            style: 'subheader',
+                            width: '*'
+                        },
+                        {
+                            width: 100,
+                            columns: [
+                                {
+                                    width: '*',
+                                    text: ''
+                                },
+                                {
+                                    alignment: 'right',
+                                    image: logo,
+                                    width: 60
+                                }
                             ]
                         }
-                    },
-                    {
-                        width: 170,
-                        columns: [
-                            {
-                                width: '*',
-                                text: ''
-                            },
-                            {
-                                width: 50,
-                                style: 'table',
-                                table: {
-                                    body: [
-                                        ['Equipos', `TODOS`],
-                                        ['Pauta', `${reportData.idPm}`]
-                                    ]
-                                }
-                            },
-                            {
-                                width: '*',
-                                text: ''
-                            },
-                        ]
-                    },
-                    {
-                        width: 170,
-                        columns: [
-                            {
-                                width: '*',
-                                text: ''
-                            },
-                            {
-                                width: 70,
-                                style: 'table',
-                                table: {
-                                    body: [
-                                        ['Fecha Creación: ', `${dateSimple(reportData.createdAt)}`],
-                                        ['Creado por: ', `${admin}`]
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                style: 'title',
-                table: {
-                    widths: [50, 50, 130, 170, 50, 50, 30, '*', 35],
-                    body: [
-                        ['Fecha', 'Personal Necesario', 'Descripción de la tarea', 'Observaciones', 'N° Parte Utilizado', 'Cantidad Utilizada', 'Tipo Rpto', 'Comentarios', 'Trabajo Realizado']
                     ]
                 },
-                layout: {
-                    fillColor: '#DADADA'
+                {
+                    columns: [
+                        {
+                            width: 150,
+                            style: 'table',
+                            table: {
+                                body: [
+                                    ['Tipo', `${machineData.type}`],
+                                    ['Marca', `${machineData.brand}`],
+                                    ['Modelo', `${machineData.model}`],
+                                    ['N°', `${machineData.equ}`]
+                                ]
+                            }
+                        },
+                        {
+                            width: 170,
+                            columns: [
+                                {
+                                    width: '*',
+                                    text: ''
+                                },
+                                {
+                                    width: 50,
+                                    style: 'table',
+                                    table: {
+                                        body: [
+                                            ['Equipos', `TODOS`],
+                                            ['Pauta', `${reportData.idPm}`]
+                                        ]
+                                    }
+                                },
+                                {
+                                    width: '*',
+                                    text: ''
+                                },
+                            ]
+                        },
+                        {
+                            width: 170,
+                            columns: [
+                                {
+                                    width: '*',
+                                    text: ''
+                                },
+                                {
+                                    width: 70,
+                                    style: 'table',
+                                    table: {
+                                        body: [
+                                            ['Fecha Creación: ', `${dateSimple(reportData.createdAt)}`],
+                                            ['Creado por: ', `${admin}`]
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    style: 'title',
+                    table: {
+                        widths: [50, 50, 130, 170, 50, 50, 30, '*', 35],
+                        body: [
+                            ['Fecha', 'Personal Necesario', 'Descripción de la tarea', 'Observaciones', 'N° Parte Utilizado', 'Cantidad Utilizada', 'Tipo Rpto', 'Comentarios', 'Trabajo Realizado']
+                        ]
+                    },
+                    layout: {
+                        fillColor: '#DADADA'
+                    }
+                },
+                await createTable(groupKeys, group),
+                (reportData.history.length > 0) ? await crateHistoryTable(reportData.history) : {},
+                createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser),
+                executionReportData[0].astList ? await createAstImages(executionReportData[0].astList) : {},
+                /* await createImagesTables() */
+            ],
+            styles: {
+                imageTables: {
+                    fontSize: 8,
+                    margin: [0, 50, 0, 50]
+                },
+                header: {
+                    fontSize: 18,
+                    bold: true,
+                    margin: [0, 0, 0, 10]
+                },
+                deptoInfo: {
+                    fontSize: 8,
+                    bold: false,
+                    margin: [10, 10, 10, 10]
+                },
+                subheader: {
+                    fontSize: 16,
+                    bold: true,
+                    margin: [0, 10, 0, 5]
+                },
+                table: {
+                    margin: [0, 5, 0, 15],
+                    fontSize: 6
+                },
+                title: {
+                    margin: [0, 5, 0, 15],
+                    fontSize: 10,
+                    bold: 'true',
+                    alignment: 'center'
+                },
+                historial: {
+                    margin: [0, 5, 0, 15],
+                    fontSize: 10,
+                    bold: true,
+                    alignment: 'justify'
+                },
+                tableHeader: {
+                    bold: true,
+                    fontSize: 13,
+                    color: 'black'
                 }
             },
-            await createTable(groupKeys, group),
-            (reportData.history.length > 0) ? await crateHistoryTable(reportData.history) : {},
-            createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser),
-            executionReportData[0].astList ? await createAstImages(executionReportData[0].astList) : {},
-            /* await createImagesTables() */
-        ],
-        styles: {
-            imageTables: {
-                fontSize: 8,
-                margin: [0, 50, 0, 50]
-            },
-            header: {
-                fontSize: 18,
-                bold: true,
-                margin: [0, 0, 0, 10]
-            },
-            deptoInfo: {
-                fontSize: 8,
-                bold: false,
-                margin: [10, 10, 10, 10]
-            },
-            subheader: {
-                fontSize: 16,
-                bold: true,
-                margin: [0, 10, 0, 5]
-            },
-            table: {
-                margin: [0, 5, 0, 15],
-                fontSize: 6
-            },
-            title: {
-                margin: [0, 5, 0, 15],
-                fontSize: 10,
-                bold: 'true',
-                alignment: 'center'
-            },
-            historial: {
-                margin: [0, 5, 0, 15],
-                fontSize: 10,
-                bold: true,
-                alignment: 'justify'
-            },
-            tableHeader: {
-                bold: true,
-                fontSize: 13,
-                color: 'black'
-            }
-        },
-    };
+        };
 
-    /* console.log(docDefinition) */
-    
-    pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex).then(data=> {
-        console.log(data)
-        alert('PDF Generado.')
-        stopPrintingLoad()
-    }).catch(err => {
-        alert('Error al descargar PDF');
-        console.log(err)
-        stopPrintingLoad()
+        /* console.log(docDefinition) */
+        
+        pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex).then(data=> {
+            console.log(data)
+            /* alert('PDF Generado.') */
+            resolve({
+                state: true
+            })
+            /* stopPrintingLoad() */
+        }).catch(err => {
+            alert('Error al descargar PDF');
+            console.log(err)
+            resolve({
+                state: false
+            })
+            /* stopPrintingLoad() */
+        })
     })
     
 }

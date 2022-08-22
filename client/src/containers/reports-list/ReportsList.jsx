@@ -176,7 +176,15 @@ const ReportsList = ({list, reloadData}) => {
                 </Grid>
             }
             {
-                lista.map((item, i) => {
+                lista.sort((a, b) => {
+                    if (a.idIndex > b.idIndex) {
+                        return -1
+                    }
+                    if (a.idIndex < b.idIndex) {
+                        return 1
+                    }
+                    return 0
+                }).map((item, i) => {
                     return(
                         <Grid container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
                             <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
@@ -226,11 +234,11 @@ const ReportsList = ({list, reloadData}) => {
                                     <Grid item>
                                         <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  
                                     </Grid>
-                                    <Grid item>
+                                    {/* <Grid item>
                                         {!item.enabled &&
                                             <p style={{textAlign: 'center', marginLeft: 10}}> <button  onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
                                         }
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                             </Grid>
                         </Grid>

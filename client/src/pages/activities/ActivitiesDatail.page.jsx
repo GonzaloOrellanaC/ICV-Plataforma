@@ -11,6 +11,7 @@ import { SocketConnection } from '../../connections'
 import sendnotificationToManyUsers from './sendnotificationToManyUsers'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock, faPaperPlane, faComment } from '@fortawesome/free-solid-svg-icons'
+import toPDF from '../../modals/pdf/toPDF'
 
 const ActivitiesDetailPage = () => {
     const classes = useStylesTheme()
@@ -303,64 +304,31 @@ const ActivitiesDetailPage = () => {
                 let response = await readyToSendReportsDatabase.eliminar(report.idIndex, db.database)
                 report.level = report.level + 1
                 report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`
-                if(report.level === 1) {
-                    report.emailing = "termino-orden-1"
-                    report.endReport = Date.now()
-                    report.endReport = report.endReport
-                    let res = await nextActivity(report)
-                    if(res) {
-                        sendnotificationToManyUsers(report.emailing, report.idIndex)
-                        setLoading(false)
-                        history.goBack()
-                    }else{
-                        alert('Error de actualización de datos en servidor. contacte al administrador.')
-                        setLoading(false)
-                    }
-                }else if(report.level === 2) {
-                    report.emailing = "termino-orden-2"
-                    report.shiftManagerApprovedBy = localStorage.getItem('_id')
-                    report.shiftManagerApprovedDate = Date.now()
-                    let res = await nextActivity(report)
-                    if(res) {
-                        sendnotificationToManyUsers(report.emailing, report.idIndex)
-                        setLoading(false)
-                        history.goBack()
-                    }else{
-                        alert('Error de actualización de datos en servidor. contacte al administrador.')
-                        setLoading(false)
-                    }
-                }else if(report.level === 3) {
-                    report.emailing = "termino-orden-3"
-                    report.state = 'Por cerrar'
-                    report.chiefMachineryApprovedBy = localStorage.getItem('_id')
-                    report.chiefMachineryApprovedDate = Date.now()
-                    let res = await nextActivity(report)
-                    if(res) {
-                        sendnotificationToManyUsers(report.emailing, report.idIndex)
-                        setLoading(false)
-                        history.goBack()
-                    }else{
-                        alert('Error de actualización de datos en servidor. contacte al administrador.')
-                        setLoading(false)
-                    }
-                }else if(report.level === 4) {
-                    report.emailing = "termino-orden-4"
-                    report.state = 'Completadas'
-                    report.enabled = false
-                    report.dateClose = Date.now()
-                    report.sapExecutiveApprovedBy = localStorage.getItem('_id')
-                    let res = await nextActivity(report)
-                    if(res) {
-                        sendnotificationToManyUsers(report.emailing, report.idIndex)
-                        setLoading(false)
-                        history.goBack()
-                    }else{
-                        alert('Error de actualización de datos en servidor. contacte al administrador.')
-                        setLoading(false)
-                    }
+                if(
+                    (localStorage.getItem('role') === 'sapExecutive')||
+                    (localStorage.getItem('role') === 'admin')||
+                    (localStorage.getItem('role') === 'superAdmin')
+                ) {
+                    setTimeout(async () => {
+                        setLoadingMessage('Generando documento...')
+                        const response = await toPDF(report, machineData)
+                        if (response.state) {
+                            setTimeout(() => {
+                                setLoadingMessage('Guardando base de datos...')
+                                setTimeout(() => {
+                                    continueToSendReport(report)
+                                }, 1000);
+                            }, 1000);
+                        } else {
+                            setLoading(false)
+                            alert('Error al generar documento PDF. Intente nuevamente. De lo contrario contacte al administrador de la plataforma. OT se cerrará de todas formas.')
+                            continueToSendReport(report)
+                        }
+                    }, 1000);
                 } else {
-                    alert('Error al leer los niveles del reporte. Debe ser reparado por el administrador del servicio.')
+                    continueToSendReport(report)
                 }
+                
             }else{
                 setLoading(false)
             }
@@ -370,6 +338,67 @@ const ActivitiesDetailPage = () => {
             setTimeout(() => {
                 setLoading(false)
             }, 1000)
+        }
+    }
+
+    const continueToSendReport = async (report) => {
+        if(report.level === 1) {
+            report.emailing = "termino-orden-1"
+            report.endReport = Date.now()
+            report.endReport = report.endReport
+            let res = await nextActivity(report)
+            if(res) {
+                sendnotificationToManyUsers(report.emailing, report.idIndex)
+                setLoading(false)
+                history.goBack()
+            }else{
+                alert('Error de actualización de datos en servidor. contacte al administrador.')
+                setLoading(false)
+            }
+        }else if(report.level === 2) {
+            report.emailing = "termino-orden-2"
+            report.shiftManagerApprovedBy = localStorage.getItem('_id')
+            report.shiftManagerApprovedDate = Date.now()
+            let res = await nextActivity(report)
+            if(res) {
+                sendnotificationToManyUsers(report.emailing, report.idIndex)
+                setLoading(false)
+                history.goBack()
+            }else{
+                alert('Error de actualización de datos en servidor. contacte al administrador.')
+                setLoading(false)
+            }
+        }else if(report.level === 3) {
+            report.emailing = "termino-orden-3"
+            report.state = 'Por cerrar'
+            report.chiefMachineryApprovedBy = localStorage.getItem('_id')
+            report.chiefMachineryApprovedDate = Date.now()
+            let res = await nextActivity(report)
+            if(res) {
+                sendnotificationToManyUsers(report.emailing, report.idIndex)
+                setLoading(false)
+                history.goBack()
+            }else{
+                alert('Error de actualización de datos en servidor. contacte al administrador.')
+                setLoading(false)
+            }
+        }else if(report.level === 4) {
+            report.emailing = "termino-orden-4"
+            report.state = 'Completadas'
+            report.enabled = false
+            report.dateClose = Date.now()
+            report.sapExecutiveApprovedBy = localStorage.getItem('_id')
+            let res = await nextActivity(report)
+            if(res) {
+                sendnotificationToManyUsers(report.emailing, report.idIndex)
+                setLoading(false)
+                history.goBack()
+            }else{
+                alert('Error de actualización de datos en servidor. contacte al administrador.')
+                setLoading(false)
+            }
+        } else {
+            alert('Error al leer los niveles del reporte. Debe ser reparado por el administrador del servicio.')
         }
     }
 

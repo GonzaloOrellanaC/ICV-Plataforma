@@ -1,6 +1,6 @@
 import { Box, Button, CircularProgress, Modal } from "@material-ui/core"
 import { getMachineData, styleModal, styleModalReport } from '../../config';
-import toPDF from './toPDF'
+/* import toPDF from './toPDF' */
 import './pdf.modal.css';
 import { useEffect } from "react";
 import { useState } from "react";
@@ -32,8 +32,9 @@ const PdfModal = ({open, reportData, close, setUrlPdf}) => {
     }
     
     const print = () => {
+        console.log(reportData, machineData[0])
         try{
-            toPDF(reportData, machineData[0], stopPrintingLoad, fileName);
+            /* toPDF(reportData, machineData[0], stopPrintingLoad, fileName); */
             setPrinting(true)
         }catch (err) {
             alert('Error al descargar. Cerrando ventana.')
