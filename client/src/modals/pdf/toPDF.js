@@ -5,7 +5,8 @@ import check from '../../assets/check.png'
 import noCheck from '../../assets/no_check.png'
 
 
-let imagesList = [];
+let imagesList = []
+let imagesCache = []
 
 const createTable = ( groupKeys, group ) => {
     let arrayTable = []
@@ -15,7 +16,7 @@ const createTable = ( groupKeys, group ) => {
                 {
                     style: 'title',
                     table: {
-                        widths: [50, 50, 130, 170, 50, 50, 30, '*', 35],
+                        widths: [10, 50, 40, 130, 170, 50, 50, 30, '*', 35],
                         body: 
                             await createSubTables(element, groupKeys[index], index),
                     }
@@ -37,11 +38,13 @@ const createAstImages = (astList) => {
                 imgBase64 = await getImageBase64(e.imageUrl)
             }
             arrayTable.push(
-                {
-                    image: (e.image.length > 0) ? e.image : imgBase64,
-                    width: 700,
-                    height: 500
-                }
+                [
+                    {
+                        image: (e.image.length > 0) ? e.image : imgBase64.image,
+                        width: (500*imgBase64.width)/imgBase64.height,
+                        height: 500
+                    }
+                ]
             )
             if(i == (astList.length - 1)) {
                 resolve(arrayTable)
@@ -125,19 +128,63 @@ const getImageBase64 = (imageUrl) => {
         const img = new Image();
         img.setAttribute('crossOrigin', 'anonymous');
         img.onload = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0);
-          const dataURL = canvas.toDataURL("image/jpeg");
-          resolve(dataURL)
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            console.log(img.width, img.height)
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            console.log(ctx)
+            const dataURL = canvas.toDataURL("image/jpeg");
+            resolve({
+                image: dataURL,
+                width: img.width,
+                height: img.height
+            })
         }
         img.src = imageUrl
     })
 }
 
-const createImagesTables = () => {
+let verification = 0
+
+const createImagesTables2 = () => {
+    let arrayTable = []
+    return new Promise(resolve => {
+        imagesList.forEach(async (e, i) => {
+            console.log(e.namePicture)
+            let namePicture = e.namePicture.replace('Pregunta', 'Tarea')
+            let imgBase64
+            if (e.urlImageMessage) {
+                imgBase64 = await getImageBase64(e.urlImageMessage)
+                if (imgBase64) {
+                    verification = verification + 1
+                }
+            } else {
+                imgBase64 = {
+                    image: e.urlBase64
+                }
+            }
+            arrayTable[i] = [
+                {
+                    image: imgBase64.image,
+                    width: (500*imgBase64.width)/imgBase64.height,
+                    height: 500
+                },
+                {
+                    width: 100,
+                    alignment: 'center',
+                    text: 'Comentario id: ' + e.id + '\n\ "' + namePicture + '"' + '\n\ Imágen: ' + dateWithTime(e.id) + '\n\ Usuario: ' + '\n\ ' + e.name + '\n\ \n\ \n\ \n\ __________________',
+                }
+            ]
+            if(i == (imagesList.length - 1)) {
+                wait(i, arrayTable, resolve)
+            }
+        })
+    })
+}
+
+/* const createImagesTables = () => {
     let imageArrayColumns = [
         {
             alignment: 'center',
@@ -161,11 +208,14 @@ const createImagesTables = () => {
     let number = 0;
     let numberTop = 2;
     return new Promise(resolve => {
+        imagesCache = imagesList
         imagesList.forEach(async (element, index) => {
-            /* console.log(element, index) */
             let imgBase64
             if (element.urlImageMessage) {
                 imgBase64 = await getImageBase64(element.urlImageMessage)
+                if (imgBase64) {
+                    verification = verification + 1
+                }
             }
             if((index) == numberTop) {
                 table.body[number] = imageColumns;
@@ -205,11 +255,23 @@ const createImagesTables = () => {
                 }
                 number = 0;
                 numberTop = 2;
-                imagesList = [];
-                console.log(imageArrayColumns)
-                resolve(imageArrayColumns)
+                const response = await wait(index, imageArrayColumns, resolve)
             }
         })
+    })
+} */
+
+const wait = (index, imageArrayColumns, result) => {
+    return new Promise(resolve => {
+        /* console.log(imagesCache.length, verification) */
+        setTimeout(() => {
+            if (imageArrayColumns.length == verification) {
+                result(imageArrayColumns)
+                resolve(true)
+            } else {
+                wait(index, imageArrayColumns, result)
+            }
+        }, 1000);
     })
 }
 
@@ -225,12 +287,13 @@ const createSubTables = async (list, index, indexNumber) => {
     let table = [
         [
             {
-                colSpan: 9, 
+                colSpan: 10, 
                 border: [true, true, true, true],
                 text: `${indexNumber}.- ${index}`,
                 fillColor: '#DADADA',
                 pageBreak: pageBreak
             },
+            {},
             {},
             {},
             {},
@@ -294,6 +357,11 @@ const createSubTables = async (list, index, indexNumber) => {
             }
             
             table.push([ 
+                {
+                    alignment: 'center',
+                    fontSize: 8,
+                    text: i + 1
+                },
                 {
                     fontSize: 8,
                     text: `${date} \n\ ${timeData}` 
@@ -531,9 +599,9 @@ export default (reportData, machineData/* , stopPrintingLoad */) => {
                 {
                     style: 'title',
                     table: {
-                        widths: [50, 50, 130, 170, 50, 50, 30, '*', 35],
+                        widths: [10, 50, 40, 130, 170, 50, 50, 30, '*', 35],
                         body: [
-                            ['Fecha', 'Personal Necesario', 'Descripción de la tarea', 'Observaciones', 'N° Parte Utilizado', 'Cantidad Utilizada', 'Tipo Rpto', 'Comentarios', 'Trabajo Realizado']
+                            ['N°', 'Fecha', 'Personal Necesario', 'Descripción de la tarea', 'Observaciones', 'N° Parte Utilizado', 'Cantidad Utilizada', 'Tipo Rpto', 'Comentarios', 'Trabajo Realizado']
                         ]
                     },
                     layout: {
@@ -543,8 +611,25 @@ export default (reportData, machineData/* , stopPrintingLoad */) => {
                 await createTable(groupKeys, group),
                 (reportData.history.length > 0) ? await crateHistoryTable(reportData.history) : {},
                 createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser),
-                executionReportData[0].astList ? await createAstImages(executionReportData[0].astList) : {},
-                /* await createImagesTables() */
+                executionReportData[0].astList ? 
+                {
+                    style: 'title',
+                    table: {
+                        alignment: 'center',
+                        widths: ['*'],
+                        body: 
+                            await createAstImages(executionReportData[0].astList),
+                    }
+                } : {},
+                {
+                    style: 'title',
+                    table: {
+                        widths: ['*', 100],
+                        body: 
+                            await createImagesTables2(),
+                    }
+                },
+                /* await createImagesTables2() */
             ],
             styles: {
                 imageTables: {
@@ -572,7 +657,7 @@ export default (reportData, machineData/* , stopPrintingLoad */) => {
                 },
                 title: {
                     margin: [0, 5, 0, 15],
-                    fontSize: 10,
+                    fontSize: 8,
                     bold: 'true',
                     alignment: 'center'
                 },

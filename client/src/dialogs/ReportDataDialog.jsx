@@ -115,7 +115,7 @@ const ReportDataDialog = (
       }
       let messageData = {
         id: Date.now(),
-        namePicture: image ? `${indexKey}_Pregunta_${index + 1}_Foto_${totalMessagesWithPictures}` : null,
+        namePicture: image ? `${indexKey}_Tarea_${index + 1}_Foto_${totalMessagesWithPictures}` : null,
         content: m,
         name: `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`,
         user: localStorage.getItem('_id'),

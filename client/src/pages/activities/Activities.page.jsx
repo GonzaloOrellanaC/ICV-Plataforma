@@ -157,25 +157,28 @@ const ActivitiesPage = () => {
                                                     <p style={{fontSize: 12, fontWeight: 'bold'}}>SAP ID</p>
                                                 </div>
                                             </Grid>
-                                            <Grid item xl={2} lg={2} md={2} sm={2} xs={3}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Inicio programado</p>
+                                            <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 200}}>Inicio programado</p>
                                             </Grid>
-                                            <Grid item l={2} lg={2} md={2} sm={2} xs={2}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Inicio ejecución</p>
+                                            <Grid item l={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 200}}>Inicio ejecución</p>
                                             </Grid>
-                                            {!isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Término programado</p>
+                                            {!isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 200}}>Término programado</p>
                                             </Grid>}
-                                            {!isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold'}}>Término ejecución</p>
+                                            {!isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 200}}>Término ejecución</p>
                                             </Grid>}
                                             <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'center'}}>Máquina</p>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'center', minWidth: 70}}>Flota</p>
                                             </Grid>
-                                            <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                <div style={{width: '100%', textAlign: 'center', paddingRight: 20}}>
+                                            <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'center', minWidth: 70}}>Nro Máquina</p>
+                                            </Grid>
+                                            <Grid item xl={2} lg={2} md={2} sm={2} xs={2} style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
+                                                {/* <div style={{width: '100%', textAlign: 'center', paddingRight: 20}}> */}
                                                     <p style={{fontSize: 12, fontWeight: 'bold'}}>Acción</p>
-                                                </div>
+                                                {/* </div> */}
                                             </Grid>
                                         </Grid>
                                     </div>
@@ -220,24 +223,27 @@ const ActivitiesPage = () => {
                                                             <p style={{fontSize: 12}}>{element.sapId}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={3}>
+                                                    <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                         <div style={{width: '100%', textAlign: 'left'}}>
-                                                            <p style={{fontSize: 12}}>{element.dateFormat}</p>
+                                                            <p style={{fontSize: 12, minWidth: 200}}>{element.dateFormat}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={2}>
-                                                        <p style={{fontSize: 12}}>{element.init}</p>
+                                                    <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                        <p style={{fontSize: 12, minWidth: 200}}>{element.init}</p>
                                                     </Grid>
-                                                    { !isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
-                                                        <p style={{fontSize: 12}}> {date(element.endPrev)} </p>
+                                                    { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                        <p style={{fontSize: 12, minWidth: 200}}> {date(element.endPrev)} </p>
                                                     </Grid>}
-                                                    { !isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
-                                                        <p style={{fontSize: 12}}> {element.end} </p>
+                                                    { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                        <p style={{fontSize: 12, minWidth: 200}}> {element.end} </p>
                                                     </Grid>}
-                                                    <Grid item xl={1} lg={1} md={1} sm={2} xs={2}>
-                                                        {element.modelMachine && <p style={{fontSize: 12, textAlign: 'center'}}> {element.machineType} {element.modelMachine} N°: {element.numberMachine} </p>}
+                                                    <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
+                                                        {element.modelMachine && <p style={{fontSize: 12, textAlign: 'center', minWidth: 70}}> {element.machineType} {element.modelMachine} </p>}
                                                     </Grid>
-                                                    <Grid item xl={1} lg={1} md={1} sm={1} xs={1} style={{width: '100%', textAlign: 'center', paddingRight: 20}}>
+                                                    <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                        {element.modelMachine && <p style={{fontSize: 12, textAlign: 'center', minWidth: 70}}> N°: {element.numberMachine} </p>}
+                                                    </Grid>
+                                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={2} style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
                                                         <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
                                                     </Grid>
                                                 </Grid>
@@ -289,24 +295,27 @@ const ActivitiesPage = () => {
                                                             <p style={{fontSize: 12}}>{element.sapId}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={3}>
+                                                    <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                         <div style={{width: '100%', textAlign: 'left'}}>
-                                                            <p style={{fontSize: 12}}>{element.dateFormat}</p>
+                                                            <p style={{fontSize: 12, minWidth: 200}}>{element.dateFormat}</p>
                                                         </div>
                                                     </Grid>
-                                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={2}>
-                                                        <p style={{fontSize: 12}}>{element.init}</p>
+                                                    <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                        <p style={{fontSize: 12, minWidth: 200}}>{element.init}</p>
                                                     </Grid>
-                                                    { !isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
-                                                        <p style={{fontSize: 12}}> {date(element.endPrev)} </p>
+                                                    { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                        <p style={{fontSize: 12, minWidth: 200}}> {date(element.endPrev)} </p>
                                                     </Grid>}
-                                                    { !isSmall && <Grid item xl={2} lg={2} md={2} sm={1} xs={1}>
-                                                        <p style={{fontSize: 12}}> {element.end} </p>
+                                                    { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                        <p style={{fontSize: 12, minWidth: 200}}> {element.end} </p>
                                                     </Grid>}
                                                     <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                        {element.modelMachine && <p style={{fontSize: 12, textAlign: 'center'}}> {element.machineType} {element.modelMachine} <br /> N°: {element.numberMachine} </p>}
+                                                        {element.modelMachine && <p style={{fontSize: 12, textAlign: 'center', minWidth: 70}}> {element.machineType} {element.modelMachine} </p>}
                                                     </Grid>
-                                                    <Grid item xl={1} lg={1} md={1} sm={1} xs={1} style={{width: '100%', textAlign: 'center', paddingRight: 20}}>
+                                                    <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                        {element.modelMachine && <p style={{fontSize: 12, textAlign: 'center', minWidth: 70}}> N°: {element.numberMachine} </p>}
+                                                    </Grid>
+                                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={2} style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
                                                         <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>
                                                             {
                                                                 (element.level && (element.level > 0))

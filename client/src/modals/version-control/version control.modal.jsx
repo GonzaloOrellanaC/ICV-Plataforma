@@ -17,6 +17,10 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.1.9.6</strong>
+                        <li>
+                            Inserta imágenes de comentarios en PDF.
+                        </li>
                         <strong>v.1.9.5</strong>
                         <li>
                             Cambios en la generación del documento PDF. Ahora se crea automáticamente al cerrar la OT por parte del Ejecutivo SAP, Admin o Super Admin.

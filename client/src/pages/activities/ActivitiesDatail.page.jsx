@@ -316,11 +316,12 @@ const ActivitiesDetailPage = () => {
                             setTimeout(() => {
                                 setLoadingMessage('Guardando base de datos...')
                                 setTimeout(() => {
+                                    setLoading(false)
                                     continueToSendReport(report)
                                 }, 1000);
                             }, 1000);
                         } else {
-                            setLoading(false)
+                            /* setLoading(false) */
                             alert('Error al generar documento PDF. Intente nuevamente. De lo contrario contacte al administrador de la plataforma. OT se cerrará de todas formas.')
                             continueToSendReport(report)
                         }
@@ -328,7 +329,6 @@ const ActivitiesDetailPage = () => {
                 } else {
                     continueToSendReport(report)
                 }
-                
             }else{
                 setLoading(false)
             }
