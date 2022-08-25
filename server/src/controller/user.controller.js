@@ -118,9 +118,7 @@ const getUserSign = (req, res, next) => {
                 res.status(400).end({message: 'error', error: err})
             }
             if (user) {
-                if (user.sign) {
-                    res.json(user.sign)
-                }
+                res.json(user.sign)
             }
         });
     }catch (err) {

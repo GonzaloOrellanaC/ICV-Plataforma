@@ -234,11 +234,11 @@ const ReportsList = ({list, reloadData}) => {
                                     <Grid item>
                                         <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  
                                     </Grid>
-                                    {/* <Grid item>
+                                    <Grid item>
                                         {!item.enabled &&
                                             <p style={{textAlign: 'center', marginLeft: 10}}> <button  onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
                                         }
-                                    </Grid> */}
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>

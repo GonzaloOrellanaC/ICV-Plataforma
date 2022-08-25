@@ -1,14 +1,38 @@
 import { usersRoutes } from "../routes"
 
+const getImageBase64 = (imageUrl) => {
+    return new Promise(resolve => {
+        const img = new Image();
+        img.setAttribute('crossOrigin', 'anonymous');
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            console.log(img.width, img.height)
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            console.log(ctx)
+            const dataURL = canvas.toDataURL("image/jpeg");
+            resolve(dataURL)
+        }
+        img.onerror = () => {
+            console.log('error')
+            resolve(null)
+        }
+        img.src = imageUrl
+    })
+}
 
 export default  (_id) => {
     if(_id) {
         return new Promise(async resolve => {
             let sign = await usersRoutes.getUserSign(_id)
-            if (sign) {
+            console.log(sign)
+            if (sign.data.length > 0) {
                 resolve(sign.data)
             } else {
-                resolve('data:image/png;base64,/9j/iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAIAAAAmKNuZAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAADBSURBVEhL7dKxDcMgEIVhl4zBOC4pPQYbuGQMxmA0SvJkHxHChzmII6XIX1kgfzqwl/Rof26+L3MhBK31coQH7z1tyKq5t3WmlKINWTXnnCOpSD4mc3esiDElIv8pYox4n6Sc5OA8h9gZ932n7UZN7sxaS1LuXuxwOPW6riTlbsQOh9h7bIl9DsnvUcQhoSjlECtikbaPBjh0FaufcYxDV7EccJhDlVgOOMOhSqTVaQ7hf9y2DZYxhpY+4dh+mUvpBZXHrV++CN4SAAAAAElFTkSuQmCC')
+                const signAlternative = await getImageBase64('https://icvmantencion.blob.core.windows.net/plataforma-mantencion/assets/firma.jpg')
+                resolve(signAlternative)
             }
         })
     }else{

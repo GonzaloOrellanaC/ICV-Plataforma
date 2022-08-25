@@ -405,20 +405,27 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
             item.isWarning = false
         }
         item.isChecked = true
-        saveOnNavigator(executionReport)
-        if(navigator.onLine) {
-            setLoadingLogo(true)
-            executionReportsRoutes.saveExecutionReport(executionReport).then(() => {
-                reportsRoutes.editReport(reportAssigned).then(() => {
-                    setLoadingLogo(false)
+        const response = await saveOnNavigator(executionReport)
+        if (response) {
+            if(navigator.onLine) {
+                setLoadingLogo(true)
+                executionReportsRoutes.saveExecutionReport(executionReport).then(() => {
+                    reportsRoutes.editReport(reportAssigned).then(() => {
+                        setLoadingLogo(false)
+                    })
                 })
-            })
+            }
+        } else {
+            alert('No se logra guardar la información. Intente nuevamente.')
         }
     }
 
-    const saveOnNavigator = async (executionReport) => {
-        let db = await executionReportsDatabase.initDb()
-        await executionReportsDatabase.actualizar(executionReport, db.database)
+    const saveOnNavigator = (executionReport) => {
+        return new Promise(async resolve => {
+            const db = await executionReportsDatabase.initDb()
+            const data = await executionReportsDatabase.actualizar(executionReport, db.database)
+            resolve(data)
+        })
     }
 
     const changeState = (element, number) => {

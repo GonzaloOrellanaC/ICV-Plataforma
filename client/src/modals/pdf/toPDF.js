@@ -9,19 +9,18 @@ let imagesList = []
 let imagesCache = []
 
 const createTable = ( groupKeys, group ) => {
+    console.log('Creando Tabla')
     let arrayTable = []
     return new Promise(resolve => {
         group.forEach(async (element, index) => {
-            arrayTable.push(
-                {
-                    style: 'title',
-                    table: {
-                        widths: [10, 50, 40, 130, 170, 50, 50, 30, '*', 35],
-                        body: 
-                            await createSubTables(element, groupKeys[index], index),
-                    }
-                },
-            );
+            arrayTable[index] = {
+                                    style: 'title',
+                                    table: {
+                                        widths: [10, 50, 40, 130, 170, 50, 50, 30, '*', 35],
+                                        body: 
+                                            await createSubTables(element, groupKeys[index], index),
+                                    }
+                                }
             if(index == (group.length - 1)) {
                 resolve(arrayTable)
             }
@@ -30,8 +29,10 @@ const createTable = ( groupKeys, group ) => {
 }
 
 const createAstImages = (astList) => {
+    console.log('Creando tabla de las AST')
     let arrayTable = []
     return new Promise(resolve => {
+        console.log(astList)
         astList.forEach(async (e, i) => {
             let imgBase64
             if (e.imageUrl) {
@@ -40,13 +41,14 @@ const createAstImages = (astList) => {
             arrayTable.push(
                 [
                     {
-                        image: (e.image.length > 0) ? e.image : imgBase64.image,
+                        image: /* (e.image.length > 0) ? e.image :  */imgBase64.image,
                         width: (500*imgBase64.width)/imgBase64.height,
                         height: 500
                     }
                 ]
             )
             if(i == (astList.length - 1)) {
+                console.log('Tabla AST lista')
                 resolve(arrayTable)
             }
         })
@@ -54,6 +56,7 @@ const createAstImages = (astList) => {
 }
 
 const crateHistoryTable = ( history ) => {
+    console.log('Creando tabla de historial')
     let arrayTable = []
     return new Promise(resolve => {
         history.sort((a, b) => {
@@ -109,6 +112,7 @@ const crateHistoryTable = ( history ) => {
                 }
             )
             if(index == (history.length - 1)) {
+                console.log('Tabla historial lista')
                 resolve(arrayTable)
             }
         })
@@ -116,6 +120,7 @@ const crateHistoryTable = ( history ) => {
 }
 
 const getImage = (imageUrl) => {
+    console.log('Creando imágen...')
     return new Promise(async resolve => {
         const response = await fetch(imageUrl)
         const imageBlob = await response.blob()
@@ -142,6 +147,10 @@ const getImageBase64 = (imageUrl) => {
                 height: img.height
             })
         }
+        img.onerror = () => {
+            console.log('error')
+            resolve(null)
+        }
         img.src = imageUrl
     })
 }
@@ -149,6 +158,7 @@ const getImageBase64 = (imageUrl) => {
 let verification = 0
 
 const createImagesTables2 = () => {
+    console.log('Creando tabla de imágenes')
     let arrayTable = []
     return new Promise(resolve => {
         imagesList.forEach(async (e, i) => {
@@ -266,6 +276,7 @@ const wait = (index, imageArrayColumns, result) => {
         /* console.log(imagesCache.length, verification) */
         setTimeout(() => {
             if (imageArrayColumns.length == verification) {
+                console.log('Tabla de imágenes lista')
                 result(imageArrayColumns)
                 resolve(true)
             } else {
@@ -276,6 +287,7 @@ const wait = (index, imageArrayColumns, result) => {
 }
 
 const createSubTables = async (list, index, indexNumber) => {
+    console.log('Creando subtabla ' + (index + 1))
     const imageCheck = await getImage(check)
     const noImageCheck = await getImage(noCheck)
     let pageBreak;
@@ -356,7 +368,7 @@ const createSubTables = async (list, index, indexNumber) => {
                 e.image = await imageToBase64(imageCheck)
             }
             
-            table.push([ 
+            table[i+1] = [ 
                 {
                     alignment: 'center',
                     fontSize: 8,
@@ -399,8 +411,9 @@ const createSubTables = async (list, index, indexNumber) => {
                     image: e.image,
                     width: 15
                 }
-            ])
+            ]
             if(i == (list.length - 1)) {
+                console.log(table)
                 resolve(table);
             }
         })
@@ -408,6 +421,8 @@ const createSubTables = async (list, index, indexNumber) => {
 }
 
 const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser) => {
+    console.log('Creando tabla de firmas')
+    console.log(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName)
     return [
         {
             columns: [
@@ -476,8 +491,10 @@ const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSig
 }
 
 export default (reportData, machineData/* , stopPrintingLoad */) => {
+    /* console.log(reportData) */
     return new Promise(async resolve => {
         const admin = await getUserNameById(reportData.createdBy)
+        /* console.log(admin) */
         const chiefMachineryName = await getUserNameById(reportData.chiefMachineryApprovedBy)
         const chiefMachinerySign = await getSignById(reportData.chiefMachineryApprovedBy)
         const shiftManagerName = await getUserNameById(reportData.shiftManagerApprovedBy)
@@ -485,6 +502,15 @@ export default (reportData, machineData/* , stopPrintingLoad */) => {
         const executionUser = await getUserNameById(reportData.usersAssigned[0])
         const executionUserSign = await getSignById(reportData.usersAssigned[0])
         const executionReportData = await getExecutionReportData(reportData)
+        /* console.log([
+            chiefMachineryName,
+            chiefMachinerySign,
+            shiftManagerName,
+            shiftManagerSign,
+            executionUser,
+            executionUserSign,
+            executionReportData
+        ]) */
         if (chiefMachinerySign) {
             console.log('Firma de jefe maquinaria')
         }
@@ -611,7 +637,7 @@ export default (reportData, machineData/* , stopPrintingLoad */) => {
                 await createTable(groupKeys, group),
                 (reportData.history.length > 0) ? await crateHistoryTable(reportData.history) : {},
                 createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser),
-                executionReportData[0].astList ? 
+                (executionReportData[0].astList && (executionReportData[0].astList.length > 0)) ? 
                 {
                     style: 'title',
                     table: {
@@ -675,7 +701,7 @@ export default (reportData, machineData/* , stopPrintingLoad */) => {
             },
         };
 
-        /* console.log(docDefinition) */
+        console.log(docDefinition)
         
         pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex).then(data=> {
             console.log(data)

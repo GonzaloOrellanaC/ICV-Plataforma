@@ -75,7 +75,7 @@ const Header = () => {
                 if(navigator.onLine) {
                     usersRoutes.getUser(localStorage.getItem('_id')).then(data => {
                         if(data.data) {
-                            if(!data.data.sign) {
+                            if(!data.data.sign || (data.data.sign.length < 1)) {
                                 setOpenSign(true)
                             }
                         }

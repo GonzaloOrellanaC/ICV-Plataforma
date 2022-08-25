@@ -162,66 +162,70 @@ const ActivitiesDetailPage = () => {
     }
 
     const endReport = async () => {
-        let group = new Array()
-        let state = true
-        const db = await executionReportsDatabase.initDb()
-        const data = await executionReportsDatabase.consultar(db.database)
-        const executionReportFiltered = data.filter((execution) => {
-                                            if(execution.reportId === reportAssigned._id) {
-                                                return execution
-                                            }
-                                        })
-        let executionReportData = {
-            data: null,
-            state: null
-        }
-        if(
-            localStorage.getItem('role')==='inspectionWorker' || 
-            localStorage.getItem('role')==='maintenceOperator'
-        ) {
-            executionReportData.data = executionReportFiltered[0]
-            executionReportData.state = true
-            await executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
-        } else {
-            executionReportData = await getExecutionReport(reportAssigned._id)
-        }
-        group = Object.values(executionReportData.data.group)
-        if(navigator.onLine) {
+        /* syncData().then(async () => { */
+            let group = new Array()
+            let state = true
+            const db = await executionReportsDatabase.initDb()
+            const data = await executionReportsDatabase.consultar(db.database)
+            const executionReportFiltered = data.filter((execution) => {
+                                                if(execution.reportId === reportAssigned._id) {
+                                                    return execution
+                                                }
+                                            })
+            let executionReportData = {
+                data: null,
+                state: null
+            }
             if(
-                (localStorage.getItem('role') === 'sapExecutive')||
-                (localStorage.getItem('role') === 'admin')||
-                (localStorage.getItem('role') === 'superAdmin')
+                localStorage.getItem('role')==='inspectionWorker' || 
+                localStorage.getItem('role')==='maintenceOperator'
             ) {
-                setLoadingMessage('Cerrando OT...')
-            }else{
-                setLoadingMessage('Enviando estado...')
+                executionReportData.data = executionReportFiltered[0]
+                executionReportData.state = true
+                await executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
+            } else {
+                executionReportData = await getExecutionReport(reportAssigned._id)
             }
-            if(reportAssigned.testMode) {
-                let groupFiltered = []
-                indexGroup.map((g, i) => {
-                    groupFiltered.push(executionReportData.data.group[g.data])
-                    if(i == (indexGroup.length - 1)) {
-                        sendDataToRead(groupFiltered, state, true)
+            group = Object.values(executionReportData.data.group)
+            if(navigator.onLine) {
+                syncData().then(() => {
+                    if(
+                        (localStorage.getItem('role') === 'sapExecutive')||
+                        (localStorage.getItem('role') === 'admin')||
+                        (localStorage.getItem('role') === 'superAdmin')
+                    ) {
+                        setLoadingMessage('Cerrando OT...')
+                    }else{
+                        setLoadingMessage('Enviando estado...')
+                    }
+                    if(reportAssigned.testMode) {
+                        let groupFiltered = []
+                        indexGroup.map((g, i) => {
+                            groupFiltered.push(executionReportData.data.group[g.data])
+                            if(i == (indexGroup.length - 1)) {
+                                sendDataToRead(groupFiltered, state, true)
+                            }
+                        })
+                    }else{
+                        sendDataToRead(group, state, true)
                     }
                 })
             }else{
-                sendDataToRead(group, state, true)
+                setLoadingLogo(true)
+                if(reportAssigned.testMode) {
+                    let groupFiltered = []
+                    indexGroup.map((g, i) => {
+                        groupFiltered.push(executionReportData.data.group[g.data])
+                        if(i == (indexGroup.length - 1)) {
+                            sendDataToRead(groupFiltered, state, false)
+                        }
+                    })
+                }else{
+                    sendDataToRead(group, state, false)
+                }
+                
             }
-        }else{
-            setLoadingLogo(true)
-            if(reportAssigned.testMode) {
-                let groupFiltered = []
-                indexGroup.map((g, i) => {
-                    groupFiltered.push(executionReportData.data.group[g.data])
-                    if(i == (indexGroup.length - 1)) {
-                        sendDataToRead(groupFiltered, state, false)
-                    }
-                })
-            }else{
-                sendDataToRead(group, state, false)
-            }
-            
-        }
+        /* }) */
     }
 
     const saveDataLocal = async () => {
@@ -321,9 +325,14 @@ const ActivitiesDetailPage = () => {
                                 }, 1000);
                             }, 1000);
                         } else {
-                            /* setLoading(false) */
-                            alert('Error al generar documento PDF. Intente nuevamente. De lo contrario contacte al administrador de la plataforma. OT se cerrará de todas formas.')
-                            continueToSendReport(report)
+                            if (response.message) {
+                                setLoading(false)
+                                alert(response.message)
+                            } else {
+                                setLoading(false)
+                                alert('Error al generar documento PDF. Intente nuevamente. De lo contrario contacte al administrador de la plataforma. OT se cerrará de todas formas.')
+                                continueToSendReport(report)
+                            }
                         }
                     }, 1000);
                 } else {
