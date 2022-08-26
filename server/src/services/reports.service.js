@@ -58,7 +58,7 @@ const editReportByIndexIntern = (indexNumber, reportToEdit) => {
         }
     })
 }
-
+/* 
 const editReportState = (req, res) => {
     const { body } = req
     if (!body.report) {
@@ -67,7 +67,7 @@ const editReportState = (req, res) => {
         const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
         res.json(editReportState)
     }
-}
+} */
 
 const editReportFromAudit = async (req, res) => {
     const { body } = req
