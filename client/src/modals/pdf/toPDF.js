@@ -662,14 +662,14 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
                             await createAstImages(executionReportData[0].astList),
                     }
                 } : {},
-                {
+                (imagesList.length > 0) ? {
                     style: 'title',
                     table: {
                         widths: ['*', 100],
                         body: 
                             await createImagesTables2(),
                     }
-                },
+                } : {},
                 /* await createImagesTables2() */
             ],
             styles: {
