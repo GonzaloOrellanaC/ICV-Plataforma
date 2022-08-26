@@ -315,12 +315,12 @@ const ActivitiesDetailPage = () => {
                 ) {
                     setTimeout(async () => {
                         setLoadingMessage('Generando documento...')
-                        const response = await toPDF(report, machineData)
+                        const response = await toPDF(report, machineData, setLoadingMessage)
                         if (response.state) {
                             setTimeout(() => {
                                 setLoadingMessage('Guardando base de datos...')
                                 setTimeout(() => {
-                                    setLoading(false)
+                                    /* setLoading(false) */
                                     continueToSendReport(report)
                                 }, 1000);
                             }, 1000);

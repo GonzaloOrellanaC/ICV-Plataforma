@@ -38,15 +38,15 @@ const createAstImages = (astList) => {
             if (e.imageUrl) {
                 imgBase64 = await getImageBase64(e.imageUrl)
             }
-            arrayTable.push(
-                [
+            if(imgBase64) {
+                arrayTable[i] = [
                     {
                         image: /* (e.image.length > 0) ? e.image :  */imgBase64.image,
                         width: (500*imgBase64.width)/imgBase64.height,
                         height: 500
                     }
                 ]
-            )
+            }
             if(i == (astList.length - 1)) {
                 console.log('Tabla AST lista')
                 resolve(arrayTable)
@@ -130,28 +130,32 @@ const getImage = (imageUrl) => {
 
 const getImageBase64 = (imageUrl) => {
     return new Promise(resolve => {
-        const img = new Image();
-        img.setAttribute('crossOrigin', 'anonymous');
-        img.onload = () => {
-            const canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            console.log(img.width, img.height)
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
-            console.log(ctx)
-            const dataURL = canvas.toDataURL("image/jpeg");
-            resolve({
-                image: dataURL,
-                width: img.width,
-                height: img.height
-            })
-        }
-        img.onerror = () => {
-            console.log('error')
+        try {
+            const img = new Image();
+            img.setAttribute('crossOrigin', 'anonymous');
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                console.log(img.width, img.height)
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                console.log(ctx)
+                const dataURL = canvas.toDataURL("image/jpeg");
+                resolve({
+                    image: dataURL,
+                    width: img.width,
+                    height: img.height
+                })
+            }
+            img.onerror = () => {
+                console.log('error')
+                resolve(null)
+            }
+            img.src = imageUrl
+        } catch (error) {
             resolve(null)
         }
-        img.src = imageUrl
     })
 }
 
@@ -490,9 +494,12 @@ const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSig
     ]
 }
 
-export default (reportData, machineData/* , stopPrintingLoad */) => {
+export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad */) => {
     /* console.log(reportData) */
     return new Promise(async resolve => {
+        if (setLoadingMessage){
+            setLoadingMessage('Detectando firmas de los usuarios')
+        }
         const admin = await getUserNameById(reportData.createdBy)
         /* console.log(admin) */
         const chiefMachineryName = await getUserNameById(reportData.chiefMachineryApprovedBy)
@@ -530,6 +537,9 @@ export default (reportData, machineData/* , stopPrintingLoad */) => {
         }else{
             groupKeys = Object.keys(executionReportData[0].group)
             group = Object.values(executionReportData[0].group)
+        }
+        if (setLoadingMessage){
+            setLoadingMessage('Generando Tablas')
         }
         let docDefinition = {
             pageOrientation: 'landscape',
@@ -702,21 +712,50 @@ export default (reportData, machineData/* , stopPrintingLoad */) => {
         };
 
         console.log(docDefinition)
+
+        if (setLoadingMessage){
+            setLoadingMessage('Detectando problemas en el documento')
+        }
+
+        if (docDefinition.content.length > 6) {
+            if(docDefinition.content[6].table.body.length < 1) {
+                docDefinition.content.splice(6, 1)
+            } else {
+                docDefinition
+            }
+        } else {
+            docDefinition
+        }
+
+        console.log(docDefinition)
+
+        if (setLoadingMessage){
+            setLoadingMessage('Enviando documento compilado al servidor...')
+        }
         
         pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex).then(data=> {
             console.log(data)
-            /* alert('PDF Generado.') */
-            resolve({
-                state: true
-            })
-            /* stopPrintingLoad() */
+            setTimeout(() => {
+                if (setLoadingMessage){
+                    setLoadingMessage('Documento creado y guardado.')
+                }
+                setTimeout(() => {
+                    resolve({
+                        state: true
+                    })
+                }, 1000);
+            }, 1000);
         }).catch(err => {
             alert('Error al descargar PDF');
             console.log(err)
-            resolve({
-                state: false
-            })
-            /* stopPrintingLoad() */
+            if (setLoadingMessage){
+                setLoadingMessage('Error al crear el documento.')
+            }
+            setTimeout(() => {
+                resolve({
+                    state: false
+                })
+            }, 1000);
         })
     })
     
