@@ -195,11 +195,15 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
             executionReportDataElement = await getExecutionReportData()
             console.log(executionReportDataElement)
             executionReportDataElementGuard = await getExecutionReportFromDb(reportAssigned._id)
-            if(executionReportDataElement.offLineGuard) {
-                if(executionReportDataElementGuard) {
-                    if(executionReportDataElementGuard.offLineGuard) {
-                        if(executionReportDataElementGuard.offLineGuard > executionReportDataElement.offLineGuard) {
-                            executionReportData = executionReportDataElementGuard
+            if((localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator')) {
+                if(executionReportDataElement.offLineGuard) {
+                    if(executionReportDataElementGuard) {
+                        if(executionReportDataElementGuard.offLineGuard) {
+                            if(executionReportDataElementGuard.offLineGuard > executionReportDataElement.offLineGuard) {
+                                executionReportData = executionReportDataElementGuard
+                            }else{
+                                executionReportData = executionReportDataElement
+                            }
                         }else{
                             executionReportData = executionReportDataElement
                         }
@@ -207,18 +211,18 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                         executionReportData = executionReportDataElement
                     }
                 }else{
-                    executionReportData = executionReportDataElement
-                }
-            }else{
-                if(executionReportDataElementGuard) {
-                    if(executionReportDataElementGuard.offLineGuard) {
-                        executionReportData = executionReportDataElementGuard
+                    if(executionReportDataElementGuard) {
+                        if(executionReportDataElementGuard.offLineGuard) {
+                            executionReportData = executionReportDataElementGuard
+                        }else{
+                            executionReportData = executionReportDataElement
+                        }
                     }else{
                         executionReportData = executionReportDataElement
                     }
-                }else{
-                    executionReportData = executionReportDataElement
                 }
+            }else{
+                executionReportData = executionReportDataElement
             }
         }else{
             executionReportDataElement = await getExecutionReportFromDb(reportAssigned._id)

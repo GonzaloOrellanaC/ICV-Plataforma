@@ -59,6 +59,16 @@ const editReportByIndexIntern = (indexNumber, reportToEdit) => {
     })
 }
 
+const editReportState = (req, res) => {
+    const { body } = req
+    if (!body.report) {
+        throw new Error(errorMsg.missingParameters)
+    } else {
+        const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
+        res.json(editReportState)
+    }
+}
+
 const editReportFromAudit = async (req, res) => {
     const { body } = req
     if (!body.report) {
@@ -106,13 +116,9 @@ const editReportFromAudit = async (req, res) => {
                 })
                 if (index == (Object.keys(executionReportData.group).length - 1)) {
                     console.log('Nueva data: =====>')
+                    /* res.json({state: true}) */
                     const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
                     res.json(editReportState)
-                    /* const response = await executionReportsServices.saveExecutionReportInternal(executionReportData)
-                    if (response) {
-                        const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
-                        res.json(editReportState)
-                    } */
                 }
             })
         }catch(err) {
