@@ -164,38 +164,43 @@ let verification = 0
 const createImagesTables2 = () => {
     console.log('Creando tabla de imágenes')
     let arrayTable = []
-    return new Promise(resolve => {
-        imagesList.forEach(async (e, i) => {
-            console.log(e.namePicture)
-            let namePicture = e.namePicture.replace('Pregunta', 'Tarea')
-            let imgBase64
-            if (e.urlImageMessage) {
-                imgBase64 = await getImageBase64(e.urlImageMessage)
-                if (imgBase64) {
-                    verification = verification + 1
+    console.log(imagesList)
+    try {
+        return new Promise(resolve => {
+            imagesList.forEach(async (e, i) => {
+                console.log(e.namePicture)
+                let namePicture = e.namePicture.replace('Pregunta', 'Tarea')
+                let imgBase64
+                if (e.urlImageMessage) {
+                    imgBase64 = await getImageBase64(e.urlImageMessage)
+                    if (imgBase64) {
+                        verification = verification + 1
+                    }
+                } else {
+                    imgBase64 = {
+                        image: e.urlBase64
+                    }
                 }
-            } else {
-                imgBase64 = {
-                    image: e.urlBase64
+                arrayTable[i] = [
+                    {
+                        image: imgBase64.image,
+                        width: (500*imgBase64.width)/imgBase64.height,
+                        height: 500
+                    },
+                    {
+                        width: 100,
+                        alignment: 'center',
+                        text: 'Comentario id: ' + e.id + '\n\ "' + namePicture + '"' + '\n\ Imágen: ' + dateWithTime(e.id) + '\n\ Usuario: ' + '\n\ ' + e.name + '\n\ \n\ \n\ \n\ __________________',
+                    }
+                ]
+                if(i == (imagesList.length - 1)) {
+                    wait(i, arrayTable, resolve)
                 }
-            }
-            arrayTable[i] = [
-                {
-                    image: imgBase64.image,
-                    width: (500*imgBase64.width)/imgBase64.height,
-                    height: 500
-                },
-                {
-                    width: 100,
-                    alignment: 'center',
-                    text: 'Comentario id: ' + e.id + '\n\ "' + namePicture + '"' + '\n\ Imágen: ' + dateWithTime(e.id) + '\n\ Usuario: ' + '\n\ ' + e.name + '\n\ \n\ \n\ \n\ __________________',
-                }
-            ]
-            if(i == (imagesList.length - 1)) {
-                wait(i, arrayTable, resolve)
-            }
+            })
         })
-    })
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 /* const createImagesTables = () => {
