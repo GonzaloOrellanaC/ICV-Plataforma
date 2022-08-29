@@ -19,9 +19,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 /* SwiperCore.use([EffectCoverflow, Pagination]) */
 
 const ImageAstDialog = ({handleClickOpen, open, handleClose, images}) => {
-    /* useEffect(() => {
-      console.log(images)
-    }, [images]) */
+    console.log(images)
     
     const [sliderIndex, setSliderIndex] = useState()
     const [openLoadingLogoModal, setOpenLoadinlogoModal] = useState(false)
@@ -114,12 +112,13 @@ const ImageAstDialog = ({handleClickOpen, open, handleClose, images}) => {
                 >
                     {
                         imagesList.map((element, index) => {
+                            console.log(element)
                             return (
                                 <SwiperSlide key={index} style={{height: '80vh', display: 'block', width: '100%', textAlign: 'center'}}>
                                     <div className="swiper-zoom-container">
                                         <img 
                                             key={index}
-                                            src={element.image}
+                                            src={/* (element.image.length > 0) ? element.image :  */element.imageUrl}
                                             style={{height: '85vh', textAlign: 'center'}}
                                         />
                                     </div>
