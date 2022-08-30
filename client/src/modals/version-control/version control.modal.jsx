@@ -17,6 +17,10 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.1.9.8</strong>
+                        <li>
+                            Reparación de fallos al subir las AST.
+                        </li>
                         <strong>v.1.9.7</strong>
                         <li>
                             Reparación de fallos PDF.

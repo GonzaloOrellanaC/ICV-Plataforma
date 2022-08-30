@@ -87,17 +87,21 @@ const saveExecutionReport = async (req, res) => {
             if (executionReportData.astList && (executionReportData.astList.length > 0)) {
                 executionReportData.astList.forEach(async (ast, i) => {
                     numberVerification1 = numberVerification1 + 1
-                    const imageAstData = await AzureServices.uploadImageAstFromReport(
-                        ast.image,
-                        report.idIndex,
-                        ast.id
-                    )
-                    console.log(imageAstData)
-                    if (imageAstData) {
+                    if (ast.image.length > 0) {
+                        const imageAstData = await AzureServices.uploadImageAstFromReport(
+                            ast.image,
+                            report.idIndex,
+                            ast.id
+                        )
+                        console.log(imageAstData)
+                        if (imageAstData) {
+                            numberVerification2 = numberVerification2 + 1
+                        }
+                        ast.image = ''
+                        ast.imageUrl = imageAstData.data.url
+                    } else {
                         numberVerification2 = numberVerification2 + 1
                     }
-                    ast.image = ''
-                    ast.imageUrl = imageAstData.data.url
                     if (i == (executionReportData.astList.length - 1)) {
                         timeout(executionReportData, res)
                     }

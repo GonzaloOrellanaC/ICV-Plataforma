@@ -415,7 +415,9 @@ const PautaDetail = ({height, pauta,  reportAssigned, setProgress, reportAssignm
                 setLoadingLogo(true)
                 executionReportsRoutes.saveExecutionReport(executionReport).then(() => {
                     reportsRoutes.editReport(reportAssigned).then(() => {
-                        setLoadingLogo(false)
+                        readData().then(() => {
+                            setLoadingLogo(false)
+                        })
                     })
                 })
             }

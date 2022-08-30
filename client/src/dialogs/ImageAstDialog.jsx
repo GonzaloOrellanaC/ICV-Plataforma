@@ -18,7 +18,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 /* SwiperCore.use([EffectCoverflow, Pagination]) */
 
-const ImageAstDialog = ({handleClickOpen, open, handleClose, images}) => {
+const ImageAstDialog = ({handleClickOpen, open, handleClose, images, setIsEdited}) => {
     console.log(images)
     
     const [sliderIndex, setSliderIndex] = useState()
@@ -57,6 +57,7 @@ const ImageAstDialog = ({handleClickOpen, open, handleClose, images}) => {
             if(res) {
               image.image = res
               setOpenLoadinlogoModal(false)
+              setIsEdited(true)
             }
           }, 1000);
         }
@@ -69,6 +70,7 @@ const ImageAstDialog = ({handleClickOpen, open, handleClose, images}) => {
         setImagesList(images)
         setTimeout(() => {
             setOpenLoadinlogoModal(false)
+            setIsEdited(true)
         }, 1000);
     }
     return (
@@ -118,7 +120,7 @@ const ImageAstDialog = ({handleClickOpen, open, handleClose, images}) => {
                                     <div className="swiper-zoom-container">
                                         <img 
                                             key={index}
-                                            src={/* (element.image.length > 0) ? element.image :  */element.imageUrl}
+                                            src={(element.image.length > 0) ? element.image :  element.imageUrl}
                                             style={{height: '85vh', textAlign: 'center'}}
                                         />
                                     </div>

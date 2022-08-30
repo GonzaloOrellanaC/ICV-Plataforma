@@ -41,6 +41,7 @@ const ReportDataDialog = (
   const [ast, setAst] = useState(false)
   const [totalMessagesWithPictures, setPicturesOfItem] = useState(1)
   const [indexKey, setIndexKey] = useState()
+  const [isEdited, setIsEdited] = useState(false)
 
   useEffect(() => {
     gruposKeys.map((k, n) => {
@@ -97,6 +98,7 @@ const ReportDataDialog = (
             saveMessage(res, `Imagen ${Date.now()}`)
           }
           setOpenLoadinModal(false)
+          setIsEdited(true)
         }
       }, 1000);
     }
@@ -135,6 +137,7 @@ const ReportDataDialog = (
   }
 
   const saveItem = (index, state, item) => {
+    setIsEdited(false)
     item.unidadData = unidad
     if(messages.length > 0) {
       save(index, state, item)
@@ -176,17 +179,25 @@ const ReportDataDialog = (
         return false
       }
   }
+
+  const close = () => {
+    if (isEdited) {
+      alert('Existen cambios que no se han guardado. Confirme los cambios presionando "Guardar Sin Ejecutar" o "Guardar Ejecutado"')
+    } else {
+      handleClose()
+    }
+  }
   
   return (
       <Dialog
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        onClose={handleClose}
+        disableEscapeKeyDown
         aria-describedby="alert-dialog-slide-description"
       >
         <div style={{position: 'absolute', right: 50, top: 10}}>
-          <IconButton onClick={()=>handleClose()} style={{position: 'fixed'}}><Close/></IconButton>
+          <IconButton onClick={()=>close()} style={{position: 'fixed'}}><Close/></IconButton>
         </div>
         <DialogTitle style={{marginTop: 30}}>{item.taskdesc}</DialogTitle>
         <DialogContent>
@@ -263,9 +274,9 @@ const ReportDataDialog = (
                   }
                 </div>
                 <div style={{width: '30%', float: 'right', textAlign: 'right'}}>
-                  <IconButton onClick={() => {upImage(); setAst(false)}}>
+                  {(!item.taskdesc.match('Confección de ART o AST')) && <IconButton onClick={() => {upImage(); setAst(false)}}>
                     <FontAwesomeIcon icon={faImage} />
-                  </IconButton>
+                  </IconButton>}
                   <IconButton onClick={() => saveMessage()}>
                     <FontAwesomeIcon icon={faArrowRight} />
                   </IconButton>
@@ -277,7 +288,7 @@ const ReportDataDialog = (
           </div>
         </div>
         <DialogActions style={{minWidth: 400}}>
-          {(item.taskdesc.match('Confección de ART o AST')) && <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {upImage(); setAst(true)}}><FontAwesomeIcon style={{marginRight: 10}} icon={faArrowUp} /> AST / ART</Button>}
+          {(item.taskdesc.match('Confección de ART o AST')) && <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {upImage(); setAst(true)}}><FontAwesomeIcon style={{marginRight: 10}} icon={faArrowUp} />Subir AST / ART</Button>}
           <Button style={{backgroundColor: '#D5CC41', color: '#fff'}} onClick={() => {saveItem(index, false, item)}}>Guardar sin ejecutar</Button>
           <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {saveItem(index, true, item)}}>Guardar ejecutado</Button>
         </DialogActions>
@@ -285,7 +296,7 @@ const ReportDataDialog = (
           openImageDialog && <ImageDialog open={openImageDialog} image={imagePreview} handleClose={handleCloseImage}/>
         }
         {
-          openImageAstDialog && <ImageAstDialog open={openImageAstDialog} images={astList} handleClose={handleCloseAstImage}/>
+          openImageAstDialog && <ImageAstDialog open={openImageAstDialog} images={astList} handleClose={handleCloseAstImage} setIsEdited={setIsEdited}/>
         }
         {
           openInputTextDialog && <InputTextDialog open={openInputTextDialog} handleClose={handleCloseText} saveMessage={saveMessage} message={message} inputMessage={inputMessage}/>

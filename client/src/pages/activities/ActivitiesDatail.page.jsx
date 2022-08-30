@@ -59,35 +59,7 @@ const ActivitiesDetailPage = () => {
         }
         setLoadingLogo(true)
         if(navigator.onLine) {
-            reportsRoutes.getReportByIndex(id).then(r => {
-                let report = r.data
-                console.log(report)
-                getPauta(report)
-                if(!report.level) {
-                    report.level = 0
-                }
-                getMachineData(report.machine)
-                .then(data => {
-                    console.log(data[0])
-                    setMachineDtaa(data[0])
-                })
-                setReportAssigned(report)
-                setReportLevel(report.level)
-                let myReportLevel
-                if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
-                    myReportLevel = 0
-                }else if(localStorage.getItem('role') === 'shiftManager') {
-                    myReportLevel = 1
-                }else if(localStorage.getItem('role') === 'chiefMachinery') {
-                    myReportLevel = 2
-                }else if(localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') {
-                    myReportLevel = 3
-                }
-                if(myReportLevel === report.level) {
-                    setCanEdit(true)
-                    setCanRejectReport(true)
-                }
-            })
+            initData()
         }else{
             const db = await reportsDatabase.initDbReports()
             const {database} = db
@@ -121,6 +93,38 @@ const ActivitiesDetailPage = () => {
             console.log(report)
         }
     }, [])
+
+    const initData = () => {
+        reportsRoutes.getReportByIndex(id).then(r => {
+            let report = r.data
+            console.log(report)
+            getPauta(report)
+            if(!report.level) {
+                report.level = 0
+            }
+            getMachineData(report.machine)
+            .then(data => {
+                console.log(data[0])
+                setMachineDtaa(data[0])
+            })
+            setReportAssigned(report)
+            setReportLevel(report.level)
+            let myReportLevel
+            if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+                myReportLevel = 0
+            }else if(localStorage.getItem('role') === 'shiftManager') {
+                myReportLevel = 1
+            }else if(localStorage.getItem('role') === 'chiefMachinery') {
+                myReportLevel = 2
+            }else if(localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') {
+                myReportLevel = 3
+            }
+            if(myReportLevel === report.level) {
+                setCanEdit(true)
+                setCanRejectReport(true)
+            }
+        })
+    }
 
     const getPauta = async (r) => {
         let db = await pautasDatabase.initDbPMs()
@@ -541,6 +545,9 @@ const ActivitiesDetailPage = () => {
                 if (restore) {
                     setLoadingLogo(false)
                     resolve('ok')
+                    if (navigator.onLine) {
+                        initData()
+                    }
                 }
             } catch (error) {
                 setLoadingLogo(false)
