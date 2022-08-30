@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react'
-import {Box, Grid, Card, makeStyles, Toolbar, IconButton, ListItem, ListItemIcon, ListItemText, Checkbox, Button, Chip} from '@material-ui/core';
+import {Box, Grid, Card, makeStyles, Toolbar, IconButton, ListItem, ListItemIcon, ListItemText, Checkbox, Button, Chip, TablePagination} from '@material-ui/core';
 import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 import { machinesRoutes, reportsRoutes } from '../../routes';
@@ -24,7 +24,9 @@ const ReportsPage = () => {
     const [ vista, setVista ] = useState(true);
     const [ cancel, setCancel ] = useState(true);
     const [ loading, setLoading ] = useState(false)
-
+    const [ rowsPerPage, setRowsPerPage ] = useState(10)
+    const [ page, setPage]  = useState(0);
+    const [ listToShow, setListToShow ] = useState([])
     const history = useHistory()
     const classes = useStylesTheme();
 
@@ -124,12 +126,69 @@ const ReportsPage = () => {
     }
 
     const selectList = (list) => {
+        console.log(list)
         setVista(false)
         setList(list)
+        initReadList(list.sort((a, b) => {
+            if (a.idIndex > b.idIndex) {
+                return -1
+            }
+            if (a.idIndex < b.idIndex) {
+                return 1
+            }
+            return 0
+            }))
     }
 
     const reloadData = () => {
         location.reload();
+    }
+
+    const initReadList = (list) => {
+        let lista = []
+        console.log(0*rowsPerPage)
+        for (let i = (0*rowsPerPage); i < (rowsPerPage+(0*rowsPerPage)); i++) {
+            console.log(i)
+            if (list[i]) {
+                lista.push(list[i])
+            }
+            if (i === ((rowsPerPage+(0*rowsPerPage)) - 1)) {
+                setListToShow(lista)
+            }
+        }
+    }
+
+    const handleChangePage = (event, newPage) => {
+        /* console.log(newPage) */
+        setPage(newPage)
+        let lista = []
+        console.log(newPage*rowsPerPage)
+        for (let i = (newPage*rowsPerPage); i < (rowsPerPage+(newPage*rowsPerPage)); i++) {
+            console.log(i)
+            if (list[i]) {
+                lista.push(list[i])
+            }
+            if (i === ((rowsPerPage+(newPage*rowsPerPage)) - 1)) {
+                setListToShow(lista)
+            }
+        }
+    }
+    
+    const handleChangeRowsPerPage = (event) => {
+        console.log(event.target.value)
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0)
+        let lista = []
+        console.log(page*parseInt(event.target.value, 10))
+        for (let i = (page*parseInt(event.target.value, 10)); i < (parseInt(event.target.value, 10) + (page*parseInt(event.target.value, 10))); i++) {
+            console.log(i)
+            if (list[i]) {
+                lista.push(list[i])
+            }
+            if (i === ((parseInt(event.target.value, 10) + (page*parseInt(event.target.value, 10))) - 1)) {
+                setListToShow(lista)
+            }
+        }
     }
 
     return(
@@ -264,8 +323,18 @@ const ReportsPage = () => {
                         </div>
                     }
                     {
-                        !vista && <div style={{height: 'calc(100% - 50px)', display: 'block', overflowY: 'auto'}}>
-                            <ReportsList list={list} reloadData={reloadData}/>
+                        !vista && <div style={{height: 'calc(100% - 10px)', display: 'block', overflowY: 'auto'}}>
+                            <ReportsList list={listToShow} reloadData={reloadData}/>
+                            <TablePagination
+                                component="div"
+                                color={'primary'}
+                                style={{ position: 'absolute', right: 10, borderColor: '#ccc', borderWidth: 1, borderStyle: 'solid' }}
+                                onPageChange={handleChangePage}
+                                rowsPerPage={rowsPerPage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}                          
+                                count={list.length}
+                                page={page}
+                            />
                         </div>
                     }
                     {

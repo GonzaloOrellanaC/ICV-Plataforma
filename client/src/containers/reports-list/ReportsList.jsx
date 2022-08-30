@@ -165,86 +165,82 @@ const ReportsList = ({list, reloadData}) => {
                     <p style={{textAlign: 'left'}}> <strong>Acción</strong> </p>
                 </Grid>
             </Grid>
-            {
-                (lista.length == 0) && <Grid container>
-                        <div style={{width: '100%', textAlign: 'center', height: '50vh'}}>
-                        <img style={{margin: 0, top: '50%', left: 'calc(100%/1.53)'}} src="../../assets/icons/Arrow.svg" alt="" />
-                        <div style={{width: '100%', textAlign: 'center', top: '55%'}}>
-                            <p>Selecciona otra opción <br /> El detalle no cuenta con lista de reportes.</p>
+            <div>
+                {
+                    (lista.length == 0) && <Grid container>
+                            <div style={{width: '100%', textAlign: 'center', height: '50vh'}}>
+                            <img style={{margin: 0, top: '50%', left: 'calc(100%/1.53)'}} src="../../assets/icons/Arrow.svg" alt="" />
+                            <div style={{width: '100%', textAlign: 'center', top: '55%'}}>
+                                <p>Selecciona otra opción <br /> El detalle no cuenta con lista de reportes.</p>
+                            </div>
                         </div>
-                    </div>
-                </Grid>
-            }
-            {
-                lista.sort((a, b) => {
-                    if (a.idIndex > b.idIndex) {
-                        return -1
-                    }
-                    if (a.idIndex < b.idIndex) {
-                        return 1
-                    }
-                    return 0
-                }).map((item, i) => {
-                    return(
-                        <Grid container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
-                            <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center', width: 50}}> {item.idIndex} </p>
-                            </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> {item.guide} </p>
-                            </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> {item.date} </p>
-                            </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> {item.init} </p>
-                            </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> {item.end} </p>
-                            </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> {item.hourMeter} hrs </p>
-                            </Grid>
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
-                                <div style={{textAlign: 'center'}}>
-                                    <p> {levelToState(item.level, item.usersAssigned)} </p>
-                                </div>
-                            </Grid>
-                            {item.enabled ? 
-                            <Grid item xs={1} sm={1} md={2} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> <button onClick={()=>openModal(item)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
-                            </Grid> :
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center'}}> <button disabled style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Terminado</button> </p>
-                            </Grid>
-                            }
-                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                                {/* <p style={{textAlign: 'center', minWidth: 70}}> {item.urlPdf ? item.urlPdf : 'Sin URL'} </p> */}
-                                {item.urlPdf ? <p style={{textAlign: 'center', minWidth: 70}}><a href={`${item.urlPdf}`}>Link</a></p> : <p style={{textAlign: 'center', minWidth: 70}}> Sin URL </p>}
-                            </Grid>
-                            <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center', minWidth: 70}}> {item.model} </p>
-                            </Grid>
-                            <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                                <p style={{textAlign: 'center', minWidth: 70}}> {item.number} </p>
-                            </Grid>
-                    
-                            <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>                                
-                                <Grid container>
-                                    <Grid item>
-                                        <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  
+                    </Grid>
+                }
+            </div>
+            <div style={{ height: '60vh', overflowY: 'auto' }}>
+                {
+                    lista.map((item, i) => {
+                            return(
+                                <Grid container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
+                                    <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center', width: 50}}> {item.idIndex} </p>
                                     </Grid>
-                                    <Grid item>
-                                        {!item.enabled &&
-                                            <p style={{textAlign: 'center', marginLeft: 10}}> <button  onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
-                                        }
+                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center'}}> {item.guide} </p>
+                                    </Grid>
+                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center'}}> {item.date} </p>
+                                    </Grid>
+                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center'}}> {item.init} </p>
+                                    </Grid>
+                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center'}}> {item.end} </p>
+                                    </Grid>
+                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center'}}> {item.hourMeter} hrs </p>
+                                    </Grid>
+                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
+                                        <div style={{textAlign: 'center'}}>
+                                            <p> {levelToState(item.level, item.usersAssigned)} </p>
+                                        </div>
+                                    </Grid>
+                                    {item.enabled ? 
+                                    <Grid item xs={1} sm={1} md={2} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center'}}> <button onClick={()=>openModal(item)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
+                                    </Grid> :
+                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '15%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center'}}> <button disabled style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Terminado</button> </p>
+                                    </Grid>
+                                    }
+                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                        {/* <p style={{textAlign: 'center', minWidth: 70}}> {item.urlPdf ? item.urlPdf : 'Sin URL'} </p> */}
+                                        {item.urlPdf ? <p style={{textAlign: 'center', minWidth: 70}}><a href={`${item.urlPdf}`}>Link</a></p> : <p style={{textAlign: 'center', minWidth: 70}}> Sin URL </p>}
+                                    </Grid>
+                                    <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center', minWidth: 70}}> {item.model} </p>
+                                    </Grid>
+                                    <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center', minWidth: 70}}> {item.number} </p>
+                                    </Grid>
+                            
+                                    <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>                                
+                                        <Grid container>
+                                            <Grid item>
+                                                <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  
+                                            </Grid>
+                                            <Grid item>
+                                                {!item.enabled &&
+                                                    <p style={{textAlign: 'center', marginLeft: 10}}> <button  onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
+                                                }
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
-                            </Grid>
-                        </Grid>
-                    )
-                })
-            }
+                            )
+                        })
+                    }
+            </div>
             {
                 reportData && <AssignReportModal open={openModalState} report={reportData} reportType={reportData.reportType} onlyClose={onlyClose} closeModal={closeModal}/>
             }
