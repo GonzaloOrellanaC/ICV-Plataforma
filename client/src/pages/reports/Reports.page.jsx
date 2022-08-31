@@ -126,6 +126,8 @@ const ReportsPage = () => {
     }
 
     const selectList = (list) => {
+        setPage(0)
+        setRowsPerPage(10)
         console.log(list)
         setVista(false)
         setList(list)
