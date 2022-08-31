@@ -274,9 +274,9 @@ const ReportDataDialog = (
                   }
                 </div>
                 <div style={{width: '30%', float: 'right', textAlign: 'right'}}>
-                  {(!item.taskdesc.match('Confección de ART o AST')) && <IconButton onClick={() => {upImage(); setAst(false)}}>
+                  <IconButton onClick={() => {upImage(); setAst(false)}}>
                     <FontAwesomeIcon icon={faImage} />
-                  </IconButton>}
+                  </IconButton>
                   <IconButton onClick={() => saveMessage()}>
                     <FontAwesomeIcon icon={faArrowRight} />
                   </IconButton>
@@ -288,7 +288,7 @@ const ReportDataDialog = (
           </div>
         </div>
         <DialogActions style={{minWidth: 400}}>
-          {(item.taskdesc.match('Confección de ART o AST')) && <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {upImage(); setAst(true)}}><FontAwesomeIcon style={{marginRight: 10}} icon={faArrowUp} />Subir AST / ART</Button>}
+          {/* {(item.taskdesc.match('Confección de ART o AST')) && <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {upImage(); setAst(true)}}><FontAwesomeIcon style={{marginRight: 10}} icon={faArrowUp} />Subir AST / ART</Button>} */}
           <Button style={{backgroundColor: '#D5CC41', color: '#fff'}} onClick={() => {saveItem(index, false, item)}}>Guardar sin ejecutar</Button>
           <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {saveItem(index, true, item)}}>Guardar ejecutado</Button>
         </DialogActions>
