@@ -20,6 +20,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
     const [ closeType, setCloseType ] = useState(false)
     const [ userAssigned, setUserAssigned ] = useState()
     const setUserToReport = async (userId) => {
+
         if(userId === '') {
             let usersAssigned = new Array();
             usersAssigned[0] = userId;
@@ -46,28 +47,32 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                 }, 1000);
             }
         }else{
-            setData('Pauta asignada.')
-            let usersAssigned = new Array();
-            usersAssigned.push(userId);
-            const reportState = await reportsRoutes.editReport({idIndex: idIndex, state: 'En proceso', usersAssigned: usersAssigned});
-            if(reportState) {
-                report.usersAssigned = usersAssigned;
-                setStateAssignment(true);
-                alert('Pauta asignada');
-                SocketConnection.sendnotificationToUser(
-                    'nueva-asignacion',
-                    `${localStorage.getItem('_id')}`,
-                    userId,
-                    'Asignaciones',
-                    'Se ha asignado nueva OT',
-                    `OT ${report.idIndex} asignada a usted`,
-                    '/assignment'
-                    )
-                setTimeout(() => {
-                    setStateAssignment(false);
-                    closeModal();
-                }, 1000);
-            }
+            usersRoutes.getUser(userId).then(async data => {
+                if (confirm(`Confirma asignación a ${data.data.name} ${data.data.lastName}`)) {
+                    setData('Pauta asignada.')
+                    let usersAssigned = new Array();
+                    usersAssigned.push(userId);
+                    const reportState = await reportsRoutes.editReport({idIndex: idIndex, state: 'En proceso', usersAssigned: usersAssigned});
+                    if(reportState) {
+                        report.usersAssigned = usersAssigned;
+                        setStateAssignment(true);
+                        alert('Pauta asignada');
+                        SocketConnection.sendnotificationToUser(
+                            'nueva-asignacion',
+                            `${localStorage.getItem('_id')}`,
+                            userId,
+                            'Asignaciones',
+                            'Se ha asignado nueva OT',
+                            `OT ${report.idIndex} asignada a usted`,
+                            '/assignment'
+                            )
+                        setTimeout(() => {
+                            setStateAssignment(false);
+                            closeModal();
+                        }, 1000);
+                    }
+                }
+            })
         }
     }
 

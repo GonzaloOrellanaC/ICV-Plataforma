@@ -177,7 +177,7 @@ const ReportsList = ({list, reloadData}) => {
                     </Grid>
                 }
             </div>
-            <div style={{ height: '60vh', overflowY: 'auto' }}>
+            <div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
                 {
                     lista.map((item, i) => {
                             return(

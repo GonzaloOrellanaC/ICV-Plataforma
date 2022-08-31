@@ -30,7 +30,7 @@ const ReportsPage = () => {
     const history = useHistory()
     const classes = useStylesTheme();
 
-    useEffect(() => {
+    /* useEffect(() => {
         if(history) {
             initPage();
         }
@@ -43,7 +43,11 @@ const ReportsPage = () => {
             }, 1000);
         }
         return () => setCancel(false);
-    }, [cancel]);
+    }, [cancel]); */
+    useEffect(() => {
+        initPage()
+    }, [])
+    
 
     const initPage = async () => {
         setLoading(true)
@@ -52,6 +56,8 @@ const ReportsPage = () => {
         let completesManteinances = await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Mantención');
         setInspeccionesCompletadas(completesInspections.data.length);
         setMantencionesCompletadas(completesManteinances.data.length);
+        let stateInspecciones = false
+        let stateMantenciones = false
         Inspecciones.map(async (e, i) => {
             let response = await reportsRoutes.getReportByState(e.name, 'Inspección');
             let porAsignar = []
@@ -68,11 +74,13 @@ const ReportsPage = () => {
                     if(i == (response.data.length - 1)) {
                         e.lista = response.data.reverse();
                         setInspeccionesPorAsignar(porAsignar.length)
+                        stateInspecciones = true
                     }
                 })
             }else{
                 e.lista = [];
                 e.number = 0;
+                stateInspecciones = true
             }
             if(i == (Inspecciones.length - 1)) {
                 setInspecciones(Inspecciones)
@@ -94,20 +102,44 @@ const ReportsPage = () => {
                     if(i == (response.data.length - 1)) {
                         e.lista = response.data.reverse();
                         setMantencionesPorAsignar(porAsignar.length)
+                        stateMantenciones = true
                         //e.number = response.data.length;
                     }
                 })
             }else{
                 e.lista = [];
                 e.number = 0;
+                stateMantenciones = true
             }
             if(i == (Mantenciones.length - 1)) {
                 setMantenciones(Mantenciones)
-                setLoading(false)
+                waiting(stateInspecciones, stateMantenciones)
             }
         })
         if(localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive') {
             setHableCreateReport(true);
+        }
+    }
+
+    const waiting = (state1, state2) => {
+        if (state1 && state2) {
+            if (localStorage.getItem('buttonReportSelected')) {
+                var elementExists = document.getElementById(localStorage.getItem('buttonReportSelected'))
+                if (elementExists) {
+                    setLoading(false)
+                    elementExists.click()
+                } else {
+                    setTimeout(() => {
+                        waiting(state1, state2)
+                    }, 1000);
+                }
+            } else {
+                setLoading(false)
+            }
+        } else {
+            setTimeout(() => {
+                waiting(state1, state2)
+            }, 1000);
         }
     }
 
@@ -125,21 +157,24 @@ const ReportsPage = () => {
         })
     }
 
-    const selectList = (list) => {
+    const selectList = (list, idButton) => {
+        localStorage.setItem('buttonReportSelected', idButton)
         setPage(0)
         setRowsPerPage(10)
         console.log(list)
         setVista(false)
         setList(list)
-        initReadList(list.sort((a, b) => {
-            if (a.idIndex > b.idIndex) {
+        let l = list.sort((a, b) => {
+                /* return b.idIndex - a.idIndex */
+            if (Number(a.idIndex) > Number(b.idIndex)) {
                 return -1
             }
-            if (a.idIndex < b.idIndex) {
+            if (Number(a.idIndex) < Number(b.idIndex)) {
                 return 1
             }
             return 0
-            }))
+            })
+        initReadList(l)
     }
 
     const reloadData = () => {
@@ -148,9 +183,7 @@ const ReportsPage = () => {
 
     const initReadList = (list) => {
         let lista = []
-        console.log(0*rowsPerPage)
         for (let i = (0*rowsPerPage); i < (rowsPerPage+(0*rowsPerPage)); i++) {
-            console.log(i)
             if (list[i]) {
                 lista.push(list[i])
             }
@@ -161,12 +194,9 @@ const ReportsPage = () => {
     }
 
     const handleChangePage = (event, newPage) => {
-        /* console.log(newPage) */
         setPage(newPage)
         let lista = []
-        console.log(newPage*rowsPerPage)
         for (let i = (newPage*rowsPerPage); i < (rowsPerPage+(newPage*rowsPerPage)); i++) {
-            console.log(i)
             if (list[i]) {
                 lista.push(list[i])
             }
@@ -177,13 +207,10 @@ const ReportsPage = () => {
     }
     
     const handleChangeRowsPerPage = (event) => {
-        console.log(event.target.value)
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0)
         let lista = []
-        console.log(page*parseInt(event.target.value, 10))
         for (let i = (page*parseInt(event.target.value, 10)); i < (parseInt(event.target.value, 10) + (page*parseInt(event.target.value, 10))); i++) {
-            console.log(i)
             if (list[i]) {
                 lista.push(list[i])
             }
@@ -265,7 +292,7 @@ const ReportsPage = () => {
                                             <Chip label={e.number} style={{marginLeft: 10, marginRight: 10}} />
                                         </Grid>
                                         <Grid item style={{width: '40%', textAlign: 'right'}}>
-                                            <button onClick={()=>selectList(e.lista)} style={{position: 'relative', right: 5, width: 80, height: 30, borderRadius: 20}}>{e.button}</button>
+                                            <button id={`button_${i}_inspecciones`} onClick={()=>selectList(e.lista, `button_${i}_inspecciones`)} style={{position: 'relative', right: 5, width: 80, height: 30, borderRadius: 20}}>{e.button}</button>
                                         </Grid>
                                     </Grid>
                                 )
@@ -306,7 +333,7 @@ const ReportsPage = () => {
                                             <Chip label={e.number} style={{marginLeft: 10, marginRight: 10}} />
                                         </Grid>
                                         <Grid item style={{width: '40%', textAlign: 'right'}}>
-                                            <button onClick={()=>selectList(e.lista)} style={{position: 'relative', right: 5, width: 80, height: 30, borderRadius: 20}}>{e.button}</button>
+                                            <button id={`button_${i}_mantenciones`}  onClick={()=>selectList(e.lista, `button_${i}_mantenciones`)} style={{position: 'relative', right: 5, width: 80, height: 30, borderRadius: 20}}>{e.button}</button>
                                         </Grid>
                                     </Grid>
                                 )
@@ -317,28 +344,32 @@ const ReportsPage = () => {
                 </Grid>
                 <Grid item xs={12} sm={12} md={8} lg={9} xl={9}>
                     {
-                        vista && <div>
+                        vista ? <div>
                             <img style={{margin: 0, position: 'absolute', top: '50%', left: 'calc(100%/1.53)', msTransform: 'translateY(-50%)', transform: 'translateY(-50%)'}} src="../../assets/icons/Arrow.svg" alt="" />
                             <div style={{textAlign: 'center', position: 'absolute', top: '55%', left: 'calc(100%/1.6)'}}>
                                 <p>Selecciona una opción <br /> para ver el detalle</p>
                             </div>
                         </div>
-                    }
-                    {
-                        !vista && <div style={{height: 'calc(100% - 10px)', display: 'block', overflowY: 'auto'}}>
-                            <ReportsList list={listToShow} reloadData={reloadData}/>
-                            <TablePagination
+                        :
+                        <div style={{height: 'calc(100% - 10px)', display: 'block', overflowY: 'auto'}}>
+                            {!vista ? <ReportsList list={listToShow} reloadData={reloadData}/> : <></>}
+                            {
+                            (listToShow.length > 0) ? <TablePagination
                                 component="div"
                                 color={'primary'}
-                                style={{ position: 'absolute', right: 10, borderColor: '#ccc', borderWidth: 1, borderStyle: 'solid' }}
+                                style={{ position: 'absolute', right: 20, bottom: 20, borderColor: '#ccc', borderWidth: 1, borderStyle: 'solid' }}
                                 onPageChange={handleChangePage}
                                 rowsPerPage={rowsPerPage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}                          
                                 count={list.length}
                                 page={page}
                             />
+                                :
+                            <></>
+                        }
                         </div>
                     }
+                    
                     {
                         loading && <LoadingLogoModal open={loading} />
                     }
