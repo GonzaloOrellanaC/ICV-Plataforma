@@ -23,7 +23,7 @@ export default (
         }else {
             
         }
-        if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'shiftManager')) {
+        if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'shiftManager') || (localStorage.getItem('role') === 'chiefMachinery')) {
             setDisableButtonsNoSAP(false)
         } else {
             //setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.')

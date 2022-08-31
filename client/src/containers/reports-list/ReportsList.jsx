@@ -131,6 +131,9 @@ const ReportsList = ({list, reloadData}) => {
                 <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center', width: 50}}> <strong>N° OT</strong> </p>
                 </Grid>
+                <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                    <p style={{textAlign: 'center', minWidth: 70}}> <strong>Máquina</strong> </p>
+                </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center'}}> <strong>Pauta</strong> </p>
                 </Grid>
@@ -158,9 +161,6 @@ const ReportsList = ({list, reloadData}) => {
                 <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                     <p style={{textAlign: 'center', minWidth: 70}}> <strong>Flota</strong> </p>
                 </Grid>
-                <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                    <p style={{textAlign: 'center', minWidth: 70}}> <strong>Máquina</strong> </p>
-                </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                     <p style={{textAlign: 'left'}}> <strong>Acción</strong> </p>
                 </Grid>
@@ -184,6 +184,9 @@ const ReportsList = ({list, reloadData}) => {
                                 <Grid container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                                         <p style={{textAlign: 'center', width: 50}}> {item.idIndex} </p>
+                                    </Grid>
+                                    <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
+                                        <p style={{textAlign: 'center', minWidth: 70}}> {item.number} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                                         <p style={{textAlign: 'center'}}> {item.guide} </p>
@@ -220,9 +223,6 @@ const ReportsList = ({list, reloadData}) => {
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
                                         <p style={{textAlign: 'center', minWidth: 70}}> {item.model} </p>
                                     </Grid>
-                                    <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} /* style={{textAlign: 'center', width: '10%', marginLeft: 5}} */>
-                                        <p style={{textAlign: 'center', minWidth: 70}}> {item.number} </p>
-                                    </Grid>
                             
                                     <Grid item xs={1} sm={1} md={1} lg={2} xl={2} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>                                
                                         <Grid container>
@@ -231,7 +231,7 @@ const ReportsList = ({list, reloadData}) => {
                                             </Grid>
                                             <Grid item>
                                                 {!item.enabled &&
-                                                    <p style={{textAlign: 'center', marginLeft: 10}}> <button  onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
+                                                    <p style={{textAlign: 'center', marginLeft: 10}}> <button disabled={(localStorage.getItem('role') === 'chiefMachinery') ? true : false } onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
                                                 }
                                             </Grid>
                                         </Grid>

@@ -17,6 +17,14 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.1.9.9</strong>
+                        <li>
+                            Modificaciones en vistas de Ordenes.
+                        </li>
+                        <li>
+                            Se habilita vista de Ordenes para Jefe de Maquinaria. Este perfil no puede generar nuevo documento PDF por estar
+                            fuera del flujo de actualizaciones de la OT.
+                        </li>
                         <strong>v.1.9.8</strong>
                         <li>
                             Reparación de fallos al subir las AST.
