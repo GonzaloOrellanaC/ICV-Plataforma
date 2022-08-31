@@ -59,6 +59,7 @@ const ReportsPage = () => {
         let stateInspecciones = false
         let stateMantenciones = false
         Inspecciones.map(async (e, i) => {
+            console.log(e)
             let response = await reportsRoutes.getReportByState(e.name, 'Inspección');
             let porAsignar = []
             if(response.data.length > 0) {
@@ -157,24 +158,40 @@ const ReportsPage = () => {
         })
     }
 
-    const selectList = (list, idButton) => {
-        localStorage.setItem('buttonReportSelected', idButton)
-        setPage(0)
-        setRowsPerPage(10)
-        console.log(list)
-        setVista(false)
-        setList(list)
-        let l = list.sort((a, b) => {
-                /* return b.idIndex - a.idIndex */
-            if (Number(a.idIndex) > Number(b.idIndex)) {
-                return -1
+    const selectList = (list, idButton, index) => {
+        Inspecciones.map((e, i) => {
+            // `button_${i}_inspecciones`
+            document.getElementById(`button_${i}_inspecciones`).style.backgroundColor = '#F9F9F9'
+            e.buttonColor = '#F9F9F9'
+            if (i === (Inspecciones.length - 1)) {
+                /* setInspecciones(Inspecciones) */
+                Mantenciones.map((e, n) => {
+                    e.buttonColor = '#F9F9F9'
+                    document.getElementById(`button_${n}_mantenciones`).style.backgroundColor = '#F9F9F9'
+                    if (n === (Mantenciones.length - 1)) {
+                        /* setMantenciones(Mantenciones) */
+                        document.getElementById(idButton).style.backgroundColor = '#ccc'
+                        localStorage.setItem('buttonReportSelected', idButton)
+                        setPage(0)
+                        setRowsPerPage(10)
+                        console.log(list)
+                        setVista(false)
+                        setList(list)
+                        let l = list.sort((a, b) => {
+                                /* return b.idIndex - a.idIndex */
+                            if (Number(a.idIndex) > Number(b.idIndex)) {
+                                return -1
+                            }
+                            if (Number(a.idIndex) < Number(b.idIndex)) {
+                                return 1
+                            }
+                            return 0
+                            })
+                        initReadList(l)
+                    }
+                })
             }
-            if (Number(a.idIndex) < Number(b.idIndex)) {
-                return 1
-            }
-            return 0
-            })
-        initReadList(l)
+        })
     }
 
     const reloadData = () => {
@@ -292,7 +309,22 @@ const ReportsPage = () => {
                                             <Chip label={e.number} style={{marginLeft: 10, marginRight: 10}} />
                                         </Grid>
                                         <Grid item style={{width: '40%', textAlign: 'right'}}>
-                                            <button id={`button_${i}_inspecciones`} onClick={()=>selectList(e.lista, `button_${i}_inspecciones`)} style={{position: 'relative', right: 5, width: 80, height: 30, borderRadius: 20}}>{e.button}</button>
+                                            <button
+                                                id={`button_${i}_inspecciones`}
+                                                onClick={()=>selectList(e.lista, `button_${i}_inspecciones`, i)}
+                                                style={
+                                                    {
+                                                        position: 'relative',
+                                                        right: 5,
+                                                        width: 80,
+                                                        height: 30,
+                                                        borderRadius: 20,
+                                                        backgroundColor: e.buttonColor
+                                                    }
+                                                }
+                                            >
+                                                {e.button}
+                                            </button>
                                         </Grid>
                                     </Grid>
                                 )
@@ -333,7 +365,22 @@ const ReportsPage = () => {
                                             <Chip label={e.number} style={{marginLeft: 10, marginRight: 10}} />
                                         </Grid>
                                         <Grid item style={{width: '40%', textAlign: 'right'}}>
-                                            <button id={`button_${i}_mantenciones`}  onClick={()=>selectList(e.lista, `button_${i}_mantenciones`)} style={{position: 'relative', right: 5, width: 80, height: 30, borderRadius: 20}}>{e.button}</button>
+                                            <button
+                                                id={`button_${i}_mantenciones`} 
+                                                onClick={()=>selectList(e.lista, `button_${i}_mantenciones`, i)}
+                                                style={
+                                                    {
+                                                        position: 'relative',
+                                                        right: 5,
+                                                        width: 80,
+                                                        height: 30,
+                                                        borderRadius: 20,
+                                                        backgroundColor: e.buttonColor
+                                                    }
+                                                }
+                                            >
+                                                {e.button}
+                                            </button>
                                         </Grid>
                                     </Grid>
                                 )
