@@ -723,10 +723,10 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
         }
 
         if (docDefinition.content.length > 6) {
-            if(docDefinition.content[6].table.body.length < 1) {
-                docDefinition.content.splice(6, 1)
-            } else {
+            if(docDefinition.content[6].table) {
                 docDefinition
+            } else {
+                docDefinition.content.splice(6, 1)
             }
         } else {
             docDefinition
