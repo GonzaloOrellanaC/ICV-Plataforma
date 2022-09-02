@@ -137,6 +137,7 @@ const ReportDataDialog = (
   }
 
   const saveItem = (index, state, item) => {
+    item.messages = messages
     setIsEdited(false)
     item.unidadData = unidad
     if(messages.length > 0) {
@@ -180,6 +181,23 @@ const ReportDataDialog = (
       }
   }
 
+  const deleteMessage = (index) => {
+    if (confirm('¿Confirma borrar el mensaje?')) {
+      setIsEdited(true)
+      const messagesNew = []
+      messages.forEach((m, i) => {
+        if (index === i) {
+          null
+        } else {
+          messagesNew.push(m)
+        }
+        if (i === (messages.length - 1)) {
+          setMessages(messagesNew)
+        }
+      })
+    }
+  }
+
   const close = () => {
     if (isEdited) {
       alert('Existen cambios que no se han guardado. Confirme los cambios presionando "Guardar Sin Ejecutar" o "Guardar Ejecutado"')
@@ -204,9 +222,6 @@ const ReportDataDialog = (
           <DialogContentText id="alert-dialog-slide-description" style={{whiteSpace: 'pre-line'}}>
             {item.obs01} <br />
           </DialogContentText>
-          {
-            (item.taskdesc.match('Confección de ART o AST')) && <button style={{ width: 200, borderRadius: 20, borderColor: '#ccc' }} onClick={() => {setOpenImageAstDialog(true)}}> Total imágenes AST: <strong>{astList.length}</strong> </button>
-          }
         </DialogContent>
         {(item.unidad !== '*') && <Grid container>
           <Grid item xl={3}>
@@ -254,6 +269,10 @@ const ReportDataDialog = (
                         backgroundColor: '#F5F5F5'
                         }
                         }>
+                          {
+                            ((localStorage.getItem('_id' === message.user) || (localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role')==='shiftManager'))) &&
+                            <IconButton onClick={()=>{deleteMessage(index)}} style={{position: 'absolute', top: 10, right: 10}}><Close style={{fontSize: 14}}/></IconButton>
+                          }
                       <p style={{marginBottom: 0, fontSize: 10}}><strong>{message.name}</strong></p>
                       {(message.urlBase64 || message.urlImageMessage) && <img src={(message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage} height={70} onClick={() => openImage((message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage)} />}
                       <p style={{marginBottom: 20, whiteSpace: 'pre-line'}}>{message.content}</p>
