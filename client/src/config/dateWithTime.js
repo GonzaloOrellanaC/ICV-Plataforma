@@ -39,7 +39,7 @@ export default (time) => {
         }
     }
      
-    let date = new Date(time).getDate() + 1;
+    let date = new Date(time).getDate();
     let month = new Date(time).getMonth();
     let monthName
     if(month == 0) {
