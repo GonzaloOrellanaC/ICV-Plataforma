@@ -8,7 +8,7 @@ import { onError } from '@apollo/client/link/error'
 import { createUploadLink } from 'apollo-upload-client'
 
 /* Material UI */
-import { Box, CircularProgress, CssBaseline, LinearProgress, ThemeProvider } from '@material-ui/core'
+import { Box, CircularProgress, CssBaseline, IconButton, LinearProgress, ThemeProvider } from '@material-ui/core'
 import { theme, download3DFiles } from './config'
 
 import './App.css'
@@ -45,6 +45,7 @@ import {
 import { RolesPage, UserProfilePage } from './pages/administration'
 import { Notifications } from 'react-push-notification';
 import { SocketConnection } from './connections'
+import { Close } from '@material-ui/icons'
 
 /* import history from './history'
  */
@@ -103,6 +104,12 @@ const OnApp = () => {
         setOpenDownload3D(true)
         localStorage.setItem('isLoading3D', 'ok')
         download3DFiles(setProgressDownload3D, setOpenDownload3D, setLoadingData3D, null)
+    }
+
+    const closeLoader = () => {
+        if(confirm('Confirme cierre de carga de elementos 3D. Posiblemente no pueda verlos. Para volver a cargarlos vuelva a iniciar sesión.')){
+            setOpenDownload3D(false)
+        }
     }
     return (
         <div style={{fontFamily: 'Roboto'}}>
@@ -329,6 +336,9 @@ const OnApp = () => {
                         zIndex: 2
                     }
                 }>
+                    <IconButton style={{ position: 'absolute', top: 10, right: 10 }} onClick={() => {closeLoader()}}>
+                        <Close />
+                    </IconButton>
                     {
                         !loadingData3D && <CircularProgress color='primary' />
                     }
