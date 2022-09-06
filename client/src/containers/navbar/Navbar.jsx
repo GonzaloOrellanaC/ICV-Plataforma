@@ -255,10 +255,10 @@ const Navbar = ({getNotification}) => {
                 })
             }
             
-            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin')) {
+            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin')) { 
                 setDisableButtonsNoAdmin(false);
             }
-            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'shiftManager')) {
+            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'shiftManager') || (localStorage.getItem('role') === 'chiefMachinery')) {
                 setDisabled(false);
             }
             setPath(history.location.pathname)
