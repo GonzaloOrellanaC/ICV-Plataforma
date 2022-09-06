@@ -108,11 +108,13 @@ const ReportsList = ({list, reloadData}) => {
     }, [list])
     
 
-    const levelToState = (level, usersAssigned) => {
+    const levelToState = (level, usersAssigned, init) => {
         if((level==0 || !level) && (usersAssigned.length > 0)) {
             return 'Ejecutando Operario'
-        } else if((level==0 || !level) && (usersAssigned.length == 0)) {
+        } else if(((level==0 || !level)&&(init==='No informado')) && (usersAssigned.length == 0)) {
             return 'Sin Asignar'
+        } else if(((level==0 || !level)&& init!='No informado') && (usersAssigned.length == 0)) {
+            return 'Reasignar'
         } else if (level==1) {
             return 'Revisión Supervisor'
         } else if (level==2) {
@@ -205,7 +207,7 @@ const ReportsList = ({list, reloadData}) => {
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} /* style={{textAlign: 'center', width: '5%', marginLeft: 5}} */>
                                         <div style={{textAlign: 'center'}}>
-                                            <p> {levelToState(item.level, item.usersAssigned)} </p>
+                                            <p> <strong>{levelToState(item.level, item.usersAssigned, item.init)}</strong> </p>
                                         </div>
                                     </Grid>
                                     {item.enabled ? 
