@@ -4,6 +4,7 @@ import { Users } from '../models'
 
 import { environment } from '../config'
 import { EncryptionServices } from '.'
+import { Sentry } from './sentry.services'
 
 const { error: errorMsg, success: successMsg } = environment.messages.services.user
 
@@ -20,6 +21,7 @@ const createUser =  (user, password) => {
     return new Promise(async resolve => {
         if (!user || !password) {
             resolve(false)
+            Sentry.captureException(errorMsg)
             throw new Error(errorMsg.missingParameters)
         }
         if (!user.email) {
@@ -32,6 +34,7 @@ const createUser =  (user, password) => {
             await registerUser.save()
             resolve(true)
         } catch (error) {
+            Sentry.captureException(error)
             if (error.code === 11000) {
                 resolve(false)
                 throw new Error(errorMsg.userExists)
@@ -48,13 +51,14 @@ const editUser = async (user, id) => {
     console.log('Usuario es: ', user)
     try {
         Users.findByIdAndUpdate(id, user, (err, user) => {
+            Sentry.captureException(err)
             console.log('Usuario editado: ', user);
             if(user) {
                 return user
             }
         });
     } catch (err) {
-
+        Sentry.captureException(err)
     }
 }
 
@@ -67,10 +71,12 @@ const deleteUser = async (userId) => {
     try {
         const deleted = await Users.findByIdAndDelete(userId)
         if (!deleted) {
+            Sentry.captureException(errorMsg)
             throw new Error(errorMsg.userNotFound)
         }
         return deleted
     } catch (error) {
+        Sentry.captureException(error)
         throw new Error(errorMsg.unableToDelete)
     }
 }
@@ -83,6 +89,7 @@ const getUser = async (userId) => {
         return user
     }catch (err) {
         console.log(err)
+        Sentry.captureException(err)
     }
 }
 
@@ -90,12 +97,14 @@ const getUserByRole = (role) => {
     try{
         return new Promise(resolve => {
             Users.find({role: role}, (err, user) => {
+                Sentry.captureException(err)
                 resolve(user)
             });
         })
         
     }catch (err) {
         console.log(err)
+        Sentry.captureException(err)
     }
 }
 
@@ -110,16 +119,18 @@ const getUserByRole = (role) => {
 const authenticateUser = (req, res, next) => {
     return new Promise((resolve, reject) => {
         passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
-            //console.log('Usuario Passport:', passportUser)
+            Sentry.captureException(err)
             if (err) {
                 reject(new Error(errorMsg.unauthorized))
             }
             if (passportUser) {
                 if (!passportUser.enabled) {
+                    Sentry.captureException(errorMsg)
                     reject(new Error(errorMsg.userDisabled))
                 }
                 resolve(passportUser)
             }
+            Sentry.captureException(errorMsg)
             reject(new Error(errorMsg.badCredentials))
         })(req, res, next)
     })
@@ -128,16 +139,18 @@ const authenticateUser = (req, res, next) => {
 const authenticateUserWithRut = (req, res, next) => {
     return new Promise((resolve, reject) => {
         passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
-            //console.log('Usuario Passport:', passportUser)
+            Sentry.captureException(err)
             if (err) {
                 reject(new Error(errorMsg.unauthorized))
             }
             if (passportUser) {
                 if (!passportUser.enabled) {
+                    Sentry.captureException(errorMsg)
                     reject(new Error(errorMsg.userDisabled))
                 }
                 resolve(passportUser)
             }
+            Sentry.captureException(errorMsg)
             reject(new Error(errorMsg.badCredentials))
         })(req, res, next)
     })
@@ -148,9 +161,13 @@ const authenticateUserWithRut = (req, res, next) => {
  */
  const logout = (userId) => {
     return new Promise( async (resolve, reject) => {
-        const findUser = await Users.findById(userId);
-        if(findUser) {
-            resolve(findUser)
+        try {
+            const findUser = await Users.findById(userId);
+            if(findUser) {
+                resolve(findUser)
+            }
+        } catch (error) {
+            Sentry.captureException(error)
         }
     })
 }
@@ -162,17 +179,21 @@ const authenticateUserWithRut = (req, res, next) => {
  * @returns Message, success or error message
  */
 const changePassword = async (userId, password) => {
-    const findUser = await Users.findById(userId)
-    if (!password) {
-        throw new Error(errorMsg.missingParameters)
+    try {
+        const findUser = await Users.findById(userId)
+        if (!password) {
+            throw new Error(errorMsg.missingParameters)
+        }
+        if (!findUser) {
+            throw new Error(errorMsg.userNotFound)
+        }
+    
+        findUser.setPassword(password)
+        await findUser.save()
+        return successMsg.savedPassword
+    } catch (error) {
+        Sentry.captureException(error)
     }
-    if (!findUser) {
-        throw new Error(errorMsg.userNotFound)
-    }
-
-    findUser.setPassword(password)
-    await findUser.save()
-    return successMsg.savedPassword
 }
 
 /**
@@ -191,6 +212,7 @@ const forgotPassword = async (email) => {
             const token = findUser.generateResetToken()
             return { token, fullName: findUser.fullName, email: findUser.email }
         } catch (error) {
+            Sentry.captureException(error)
             console.log(errorMsg.resetToken)
             throw new Error(errorMsg.resetToken)
         }
@@ -214,9 +236,11 @@ const resetPassword = async (userId, token, password) => {
             await findUser.save()
             return successMsg.resetPassword
         } else {
+            Sentry.captureException(errorMsg)
             throw new Error(errorMsg.invalidToken)
         }
     } catch (error) {
+        Sentry.captureException(error)
         throw new Error(error.message)
     }
 }

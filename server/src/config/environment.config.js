@@ -20,7 +20,7 @@ const languageSelector = (select) => {
  */
 const environment = {
     sentry: {
-        dns: process.env.SENTRY_DNS
+        dsn: process.env.SENTRY_DSN
     },
     state: process.env.STATE,
     dbURL: process.env.DB_URL,

@@ -1,6 +1,7 @@
 import { environment } from '../config'
 import { Users } from '../models';
 import { EmailServices, UserServices } from '../services'
+import { Sentry } from '../services/sentry.services'
 
 /* Crypto */
 import crypto from 'crypto'
@@ -8,8 +9,10 @@ import crypto from 'crypto'
 const { error: errorMsg, success: successMsg } = environment.messages.controller.auth
 
 const login = async (req, res, next) => {
+    Sentry.captureMessage('Login por email solicitado', 'info')
     const { body: { user } } = req;
     if (!user.email || !user.password) {
+        Sentry.captureException(errorMsg)
         return res.status(400).end(errorMsg.credentialsRequired)
     }
     try {
@@ -19,35 +22,33 @@ const login = async (req, res, next) => {
             ...(environment.env === 'production' && { secure: true }),
             ...(environment.env === 'production' && { sameSite: 'strict' })
         })
+        Sentry.captureMessage('Login por email ' + user.email + ' aceptado', 'info')
         return res.status(200).json(authenticatedUser);
     } catch (error) {
+        Sentry.captureException(error)
         console.error(error.message)
         return res.status(401).send(error.message)
     }
 }
 
 const loginRut = async (req, res, next) => {
+    Sentry.captureMessage('Login por rut solicitado', 'info')
     const { body: { user } } = req;
     if (!user.rut || !user.password) {
+        Sentry.captureException(errorMsg)
         return res.status(400).end(errorMsg.credentialsRequired)
     }
     try {
         const userFind = await Users.findOne({rut: user.rut})
-        /* console.log(userFind) */
         if (userFind) {
             const hash = crypto.pbkdf2Sync(user.password, userFind.salt, 200000, 64, 'sha512').toString('hex')
-            console.log(hash)
             if (userFind.hash === hash) {
-                console.log(true)
-                /* res.cookie('jwt', authenticatedUser.generateJWT(), {
-                    httpOnly: true,
-                    ...(environment.env === 'production' && { secure: true }),
-                    ...(environment.env === 'production' && { sameSite: 'strict' })
-                }) */
+                Sentry.captureMessage('Login por rut ' + user.rut + ' aceptado', 'info')
                 return res.status(200).json(userFind);
             }
         }
     } catch (error) {
+        Sentry.captureException(error)
         console.error(error.message)
         return res.status(401).send(error.message)
     }

@@ -5,6 +5,7 @@ import fetch from 'node-fetch'
 import https from 'https'
 import { AzureServices, EmailMailgunServices, EmailServices, ExecutionReportsServices } from "."
 import executionReportsServices from "./executionReports.services"
+import { Sentry } from './sentry.services'
 
 const myHeaders = {
     'Authorization': 'Token ' + environment.icvApi.token,
