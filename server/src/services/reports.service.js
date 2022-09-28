@@ -253,6 +253,20 @@ const getReportsByDateRange = (req, res) => {
     }   
 }
 
+const getReportById = (req, res) => {
+    const { body } = req
+    const { _id } = body
+    console.log('El id: ', _id)
+    try {
+        Reports.findById(_id, (err, report) => {
+            console.log(report)
+            res.json(report)
+        })
+    } catch (err) {
+
+    }
+}
+
 const getReportByIndex = (req, res) => {
     const { body } = req
     const { indexNumber } = body
@@ -390,6 +404,7 @@ export default {
     editReportFromAudit,
     deleteReport,
     getReports,
+    getReportById,
     getReportByIndex,
     getReportByGuide,
     getReportByType,

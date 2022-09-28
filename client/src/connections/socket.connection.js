@@ -1,10 +1,11 @@
 import { io } from "socket.io-client";
+import environment from "../config/environment.config";
 
 const socket = io()
 
 const sendIsActive = () => {
     console.log('Revisando')
-    socket.emit('isConnected', {id: localStorage.getItem('_id')})
+    socket.emit('isConnected', {id: localStorage.getItem('_id'), frontVersion: environment.version})
 }
 
 const sendnotificationToUser = (notificationType, from, userId, title, subtitle, message, url) => {

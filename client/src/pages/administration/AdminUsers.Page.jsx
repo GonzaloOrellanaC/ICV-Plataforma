@@ -43,8 +43,8 @@ const AdminUsersPage = ({route}) => {
                             </div>
                         </Grid>
                         <Grid container alignItems='center' justifyContent='center'>
-                            <div style={{width: '100%', textAlign: 'left', padding: 20, overflowY: 'auto', height: 'calc(100vh - 200px)'}}>
-                                <UsersList height={'100%'} hableButton={isConnected}/>
+                            <div style={{width: '100%', textAlign: 'left', padding: 20, overflowY: 'auto', height: 'calc(100vh - 195px)'}}>
+                                <UsersList height={'calc(100vh - 500px)'} hableButton={isConnected}/>
                             </div>
                         </Grid>
                     </Card>

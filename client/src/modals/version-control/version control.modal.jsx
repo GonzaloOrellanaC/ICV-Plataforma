@@ -1,5 +1,5 @@
 import { Modal, ListItem, Fab, Switch, Box } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+import { Close, Undo } from '@material-ui/icons';
 import { styleModal } from '../../config';
 import { environment } from '../../config';
 
@@ -17,6 +17,42 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
+                        <strong>v.2.0</strong>
+                        <li>
+                            Se agrega al servicio sistema de búsqueda por Nombre, Rut y Correo Electrónico
+                        </li>
+                        <li>
+                            Se elimina la posibilidad al Jefe de Maquinaria la posibilidad de comentar.
+                        </li>
+                        <li>
+                            Se agrega al servicio restaurador de datos de ejecución de OT desde la cuenta
+                            de Operador o Mantenedor, utilizando botón <strong>Restaurar</strong>.
+                        </li>
+                        <div
+                            style={
+                                {
+                                    width: '100%',
+                                    textAlign: 'center'
+                                }
+                            }
+                        >
+                            <Fab color="primary" aria-label="add">
+                                <Undo />
+                            </Fab>
+                        </div>
+                        <div
+                            style={
+                                {
+                                    borderBottomWidth: 1,
+                                    borderBottomStyle: 'solid',
+                                    borderBottomColor: '#ccc',
+                                    paddingTop: 0,
+                                    marginBottom: 50
+                                }
+                            }
+                        >
+
+                        </div>
                         <strong>v.1.9.9</strong>
                         <li>
                             Modificaciones en vistas de Ordenes.

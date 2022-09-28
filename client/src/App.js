@@ -9,7 +9,7 @@ import { createUploadLink } from 'apollo-upload-client'
 
 /* Material UI */
 import { Box, CircularProgress, CssBaseline, IconButton, LinearProgress, ThemeProvider } from '@material-ui/core'
-import { theme, download3DFiles } from './config'
+import { theme, download3DFiles, detectExecutionState } from './config'
 
 import './App.css'
 import { AuthProvider, LanguageProvider, NavigationProvider, useAuth } from './context'
@@ -40,7 +40,8 @@ import {
     ActivitiesDetailPage,
     ActivitiesPage,
     InternalMessagesPage,
-    NotificationsPage
+    NotificationsPage,
+    OptionsPage
 } from './pages';
 import { RolesPage, UserProfilePage } from './pages/administration'
 import { Notifications } from 'react-push-notification';
@@ -90,15 +91,8 @@ const OnApp = () => {
         console.log(isAuthenticated)
         if(isAuthenticated) {
             SocketConnection.sendIsActive()
-            let go = true
-            window.addEventListener('online', async () => {
-                
-            });
-            window.addEventListener('offline', () => {
-                go = true
-            });
+            detectExecutionState()
         }
-
     }, [isAuthenticated])
     const iniciarDescarga3D = () => {
         setOpenDownload3D(true)
@@ -220,13 +214,13 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                {/* <Route path={['/pms']}>
+                <Route path={['/options']}>
                     <Switch>
-                        <Route exact path='/pms'>
-                            <PmsPage route={'pms'}/>
+                        <Route exact path='/options'>
+                            <OptionsPage route={'options'}/>
                         </Route>
                     </Switch>
-                </Route> */}
+                </Route>
                 <Route path={['/pauta-detail']}>
                     <Switch>
                         <Route exact path='/pauta-detail/:id'>

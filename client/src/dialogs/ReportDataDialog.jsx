@@ -1,15 +1,14 @@
-import { faArrowRight, faArrowUp, faImage } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faImage } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Slide, Switch, TextField } from '@material-ui/core'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, Slide, TextField } from '@material-ui/core'
 import { Close } from '@material-ui/icons'
 import { useEffect, forwardRef, useState } from 'react'
-import { dateSimple, dateWithTime, imageToBase64, uploadImage } from '../config'
+import { dateWithTime, imageToBase64 } from '../config'
 import { CameraModal, LoadingModal } from '../modals'
 import ImageDialog from './ImageDialog'
 import ImageAstDialog from './ImageAstDialog'
 import {isMobile} from 'react-device-detect'
 import InputTextDialog from './InputTextDialog'
-import Webcam from "react-webcam"
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -42,8 +41,17 @@ const ReportDataDialog = (
   const [totalMessagesWithPictures, setPicturesOfItem] = useState(1)
   const [indexKey, setIndexKey] = useState()
   const [isEdited, setIsEdited] = useState(false)
+  const [canEdit, setCanEdit] = useState(false)
 
   useEffect(() => {
+    if (
+      (localStorage.getItem('role') === 'inspectionWorker')||
+      (localStorage.getItem('role') === 'maintenceOperator')||
+      (localStorage.getItem('role') === 'shiftManager')
+    ) 
+      {
+        setCanEdit(true)
+      }
     gruposKeys.map((k, n) => {
       if(k.data === indexGroup) {
         setIndexKey(n)
@@ -231,19 +239,19 @@ const ReportDataDialog = (
             </div>
           </Grid>
           <Grid item xl={2} lg={2} md={2} sm={2}>
-            <div /* style={{marginLeft: 24, marginBottom: 16}} */>
+            <div>
               <p>Nro Parte: {item.partnumberUtl}</p>
             </div>
           </Grid>
           <Grid item xl={4} lg={4} md={4} sm={4}>
             <Grid container>
               <Grid item xl={6} lg={6} md={6} sm={6}>
-                <div /* style={{marginLeft: 24, marginBottom: 16}} */>
+                <div>
                   <p>Cant. Utilizar: <br /> {item.cantidad} {item.unidad}</p>
                 </div>
               </Grid>
               <Grid item xl={6} lg={6} md={6} sm={6}>
-                <div /* style={{marginLeft: 24, marginBottom: 16}} */>
+                <div>
                   <p>Tipo Rpto: {item.idtypeutlPartnumber}</p>
                 </div>
               </Grid>
@@ -286,10 +294,10 @@ const ReportDataDialog = (
               <form>
                 <div style={{width: '70%', float: 'left'}}>
                   {
-                    !isMobile && <textarea value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onChange={(e) => {inputMessage(e.target.value)}}/>
+                    !isMobile && <textarea disabled={!canEdit} value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onChange={(e) => {inputMessage(e.target.value)}}/>
                   }
                   {
-                    isMobile && <textarea id="mobileTextArea" value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onChange={(e) => {console.log(e.target.value)}} onClick={()=>{setOpenInputTextDialog(true); document.getElementById('mobileTextArea').blur()}} />
+                    isMobile && <textarea disabled={!canEdit} id="mobileTextArea" value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onChange={(e) => {console.log(e.target.value)}} onClick={()=>{setOpenInputTextDialog(true); document.getElementById('mobileTextArea').blur()}} />
                   }
                 </div>
                 <div style={{width: '30%', float: 'right', textAlign: 'right'}}>
@@ -300,14 +308,12 @@ const ReportDataDialog = (
                     <FontAwesomeIcon icon={faArrowRight} />
                   </IconButton>
                   <input autoComplete="off" type="file" id="foto" accept="image/x-png,image/jpeg" onChange={(e)=>{uploadImageReport(e.target.files[0])}} hidden />
-                  {/* <input type='button' value={'SEND'} style={{height: 40}} onClick={() => saveMessage()}/> */}
                 </div>
               </form>
             </div>
           </div>
         </div>
         <DialogActions style={{minWidth: 400}}>
-          {/* {(item.taskdesc.match('Confección de ART o AST')) && <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {upImage(); setAst(true)}}><FontAwesomeIcon style={{marginRight: 10}} icon={faArrowUp} />Subir AST / ART</Button>} */}
           <Button style={{backgroundColor: '#D5CC41', color: '#fff'}} onClick={() => {saveItem(index, false, item)}}>Guardar sin ejecutar</Button>
           <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {saveItem(index, true, item)}}>Guardar ejecutado</Button>
         </DialogActions>

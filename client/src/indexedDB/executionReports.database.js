@@ -80,13 +80,15 @@ const actualizar = (data, database) =>{
 }
 
 const eliminar = (clave, database) =>{      
-    const trasaccion = database.transaction(['Reports'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('Reports')
-    const conexion = coleccionObjetos.delete(clave)
+    return new Promise(resolve => {
+        const trasaccion = database.transaction(['Reports'],'readwrite')
+        const coleccionObjetos = trasaccion.objectStore('Reports')
+        const conexion = coleccionObjetos.delete(clave)
 
-    conexion.onsuccess = () =>{
-        consultar()
-    }
+        conexion.onsuccess = () =>{
+            resolve(true)
+        }
+    })
 }
 
 const consultar = (database) => {

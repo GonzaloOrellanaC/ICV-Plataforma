@@ -1,7 +1,7 @@
-import React, { useState, useEffect, ReactDOM } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button, Modal, Fab } from '@material-ui/core'
 import { ArrowBackIos, Close } from '@material-ui/icons'
-import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, getMachineData, useStylesTheme, detectIf3DModelExist, translateSubSystem, styleModal3D } from '../../config'
+import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, getMachineData, useStylesTheme, detectIf3DModelExist, translateSubSystem, styleModal3D, dateSimple, dateWithTime, saveExecutionReport } from '../../config'
 import { useHistory, useParams } from 'react-router-dom'
 import { pautasDatabase, reportsDatabase, readyToSendReportsDatabase, executionReportsDatabase } from '../../indexedDB'
 import { MVAvatar, PautaDetail } from '../../containers'
@@ -38,6 +38,7 @@ const ActivitiesDetailPage = () => {
     const [ habilite3D, setHabilite3D ] = useState(false)
     const [ subSistem, setSubSistem ] = useState()
     const [ open3D, setOpen3D ] = useState(false)
+    const [ ultimoGuardadoDispositivo, setUltimoGuardadoDispositivo ] = useState()
 
     useEffect(async () => {
         window.addEventListener('resize', (ev) => {
@@ -166,7 +167,6 @@ const ActivitiesDetailPage = () => {
     }
 
     const endReport = async () => {
-        /* syncData().then(async () => { */
             let group = new Array()
             let state = true
             const db = await executionReportsDatabase.initDb()
@@ -229,7 +229,6 @@ const ActivitiesDetailPage = () => {
                 }
                 
             }
-        /* }) */
     }
 
     const saveDataLocal = async () => {
@@ -426,7 +425,6 @@ const ActivitiesDetailPage = () => {
             ejecutor = 'jefe de maquinaria'
         }
         if(confirm(`Devolverá la información al ${ejecutor}. ¿Desea confirmar?`)) {
-            //let report = reportAssigned
             report.level = report.level - 1
             report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`
             if(report.level === 0) {
@@ -605,6 +603,7 @@ const ActivitiesDetailPage = () => {
                                                 setIndexGroupToSend={setIndexGroup}
                                                 resultThisItemProgress={resultThisItemProgress}
                                                 selectionItem={selectionItem}
+                                                setUltimoGuardadoDispositivo={setUltimoGuardadoDispositivo}
                                                 />
                                         }
                                     </div>
@@ -613,18 +612,17 @@ const ActivitiesDetailPage = () => {
                                     <div style={{marginTop: 20, padding: 20, backgroundColor: '#F9F9F9', borderRadius: 10, height: '71vh', overflowY: 'auto'}}>
                                         <div style={{textAlign: 'center', width: '100%'}}>
                                             <h2 style={{margin: 0}}>OT {id}</h2>
-                                            <p style={{margin: 0}}>Tipo de pauta: <br /> <strong>{pauta && pauta.typepm}</strong></p>
+                                            <p style={{margin: 0}}>Último guardado en dispositivo: {dateWithTime(ultimoGuardadoDispositivo)}</p>
+                                            <p style={{margin: 0}}>Tipo de pauta: <strong>{pauta && pauta.typepm}</strong></p>
                                             <p style={{backgroundColor: 'red', color: 'white', marginBottom: 0}}><strong>{reportAssigned && reportAssigned.testMode ? 'Modo test' : ''}</strong></p>
                                             {machineData && <p style={{margin: 0}}>Máquina: {machineData.brand}, modelo {machineData.model}, N°{machineData.equ}</p>}
                                             <br />
-                                            <Button variant="contained" disabled={!habilite3D} style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}} onClick={()=>{setOpen3D(true)}}><strong>3D</strong></Button>
+                                            {habilite3D && <Button variant="contained" disabled={!habilite3D} style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}} onClick={()=>{setOpen3D(true)}}><strong>3D</strong></Button>}
                                         </div>
                                         <h4 style={{textAlign: 'center'}}>Avance en esta hoja: {progress.toFixed(0)}%</h4>
                                         <LinearProgress variant="determinate" value={progress} style={{width: '100%'}}/>
-                                        {/* <p style={{textAlign: 'center'}}>{progress.toFixed(0)}%</p> */}
                                         <h4 style={{textAlign: 'center'}}>Avance total: {itemProgress.toFixed(0)}%</h4>
                                         <LinearProgress variant="determinate" value={itemProgress} style={{width: '100%'}}/>
-                                        {/* <p style={{textAlign: 'center'}}>{itemProgress.toFixed(0)}%</p> */}
                                         <br />
                                         {((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')||(localStorage.getItem('role') === 'shiftManager')||(localStorage.getItem('role') === 'chiefMachinery')) && <Button disabled={!canEdit} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{endReport()}}>
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Enviar OT

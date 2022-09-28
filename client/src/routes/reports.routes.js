@@ -26,6 +26,12 @@ export default {
         }
         return axios.post('/reports/deleteReport', requestBody);
     },
+    getReportById: (_id) => {
+        const requestBody = {
+            _id
+        }
+        return axios.post('/reports/getReportById', requestBody);
+    },
     getAllReports: () => {
         return axios.get('/reports/getAllReports')
     },

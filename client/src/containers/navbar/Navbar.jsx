@@ -18,7 +18,8 @@ import {
     faTruck,
     faUser,
     faCube,
-    faTrash} from '@fortawesome/free-solid-svg-icons';
+    faTrash,
+    faSlidersH} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation } from '../../context';
 import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
 import { io } from "socket.io-client";
@@ -142,7 +143,7 @@ const Navbar = ({getNotification}) => {
         let databases = await window.indexedDB.databases();
         if(databases.length > 0) {
             databases.forEach((database, index) => {
-                if(database.name === '3Ds' || database.name === 'MachinesParts') {
+                if(database.name === '3Ds' || database.name === 'MachinesParts' || database.name === 'Executions') {
 
                 }else{
                     window.indexedDB.deleteDatabase(database.name)
@@ -389,10 +390,15 @@ const Navbar = ({getNotification}) => {
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}  title='Limpiar Datos' onClickCapture={()=>{clearAndLogout()}}>
+                                {/* <IconButton onClick={closeSideBar}  title='Limpiar Datos' onClickCapture={()=>{clearAndLogout()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faTrash}/> {navBarOpen ?  ' Limpiar Datos' : ''}
                                     </div>
+                                </IconButton> */}
+                                <IconButton onClick={closeSideBar}  title='Opciones'>
+                                    <Link to={'/options'} className={classes.sideButtons} style={{ color: (path === '/options') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faSlidersH}/> {navBarOpen ?  ' Opciones' : ''}
+                                    </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center',}}>

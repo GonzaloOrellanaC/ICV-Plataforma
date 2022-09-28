@@ -17,7 +17,7 @@ import { NoPermissionPage } from './no-permission'
 import { ActivitiesPage, ActivitiesDetailPage } from './activities'
 import { InternalMessagesPage } from './internal-messages'
 import { NotificationsPage } from './notifications'
-
+import { OptionsPage } from './options'
 export {
     AppliancePage,
     MachinesPage,
@@ -46,5 +46,6 @@ export {
     ActivitiesPage,
     ActivitiesDetailPage,
     InternalMessagesPage,
-    NotificationsPage
+    NotificationsPage,
+    OptionsPage
 }

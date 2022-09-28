@@ -9,6 +9,7 @@ import { UserListDataModal } from '../../modals'
 
 const UsersList = ({height, hableButton}) => {
     const [ usuarios, setUsuarios ] = useState([])
+    const [ usuariosCache, setUsuariosCache ] = useState([])
     const [ open, setOpen ] = useState(false);
     const [ userModal, setUserModal ] = useState({});
     const [ indice, setIndice ] = useState(0);
@@ -44,7 +45,10 @@ const UsersList = ({height, hableButton}) => {
         let cancel = true;
         if(cancel) {
             usersRoutes.getAllUsers().then(users=> {
-                if(cancel) setUsuarios(users.data);
+                if(cancel) {
+                    setUsuarios(users.data)
+                    setUsuariosCache(users.data)
+                }
             }) 
             localStorage.removeItem('userDataToSave');
         }
@@ -81,6 +85,58 @@ const UsersList = ({height, hableButton}) => {
         fontSize: 14
     }
 
+    const buscarUsuario = (value = new String()) => {
+        console.log(value)
+        if (value.length > 3) {
+            const usuarios = usuariosCache.filter(usuario => {
+                const name = usuario.name + ' ' + usuario.lastName
+                if (name.toLocaleUpperCase().match(value.toLocaleUpperCase())) {
+                    return usuario
+                } else {
+                    return null
+                }
+            })
+            setUsuarios(usuarios)
+        } else if (value.length === 0) {
+            setUsuarios(usuariosCache)
+        }
+    }
+
+    const buscarPorCorreo = (value = new String()) => {
+        if (value.length > 3) {
+            const usuarios = usuariosCache.filter(usuario => {
+                const email = usuario.email
+                if (email.toLocaleUpperCase().match(value.toLocaleUpperCase())) {
+                    return usuario
+                } else {
+                    return null
+                }
+            })
+            setUsuarios(usuarios)
+        } else if (value.length === 0) {
+            setUsuarios(usuariosCache)
+        }
+    }
+
+    const buscarPorRut = (value = new String()) => {
+        if (value.length > 3) {
+            const usuarios = usuariosCache.filter(usuario => {
+                if (usuario.rut) {
+                    if (usuario.rut.match(value)) {
+                        return usuario
+                    } else {
+                        return null
+                    }
+                } else {
+                    return null
+                }
+            })
+            setUsuarios(usuarios)
+        } else if (value.length === 0) {
+            setUsuarios(usuariosCache)
+        }
+    }
+
     return (
         <div style={{height: height}}>
             <div style={{height: height}}>
@@ -93,7 +149,7 @@ const UsersList = ({height, hableButton}) => {
                     <Grid item xs={12} sm={12} md={4} lg={4}>
                         <div style={{width: '100%', textAlign: 'right'}}>
                             <Link to="/new-users">
-                                <button disabled={!hableButton} style={{marginTop: 20, width: 171, height: 38, borderRadius: 23, fontSize: 16}}>
+                                <button disabled={!hableButton} style={{marginTop: 15, width: 171, height: 38, borderRadius: 23, fontSize: 16}}>
                                     <FontAwesomeIcon icon={faUser} style={{marginRight: 10}}/>
                                     Crear usuario
                                 </button>
@@ -108,21 +164,41 @@ const UsersList = ({height, hableButton}) => {
                         </div>
                         <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>Nombre de usuario</strong> </p>
+                            <input
+                                type={'text'}
+                                placeholder="Buscar por nombre"
+                                onChange={(e) => {buscarUsuario(e.target.value)}}
+                            />
                         </div>
                         <div style={{width: '20%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>Correo electrónico</strong> </p>
+                            <input
+                                type={'text'}
+                                placeholder="Buscar por correo"
+                                onChange={(e) => {buscarPorCorreo(e.target.value)}}
+                            />
                         </div>
                         <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>RUN</strong> </p>
+                            <input
+                                style={
+                                    {
+                                        width: 110
+                                    }
+                                }
+                                type={'text'}
+                                placeholder="Buscar por RUN"
+                                onChange={(e) => {buscarPorRut(e.target.value)}}
+                            />
                         </div>
                         <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
-                            <p style={{margin: 0}}> <strong>Rol</strong> </p>
+                            <p style={{margin: 0, marginBottom: 22}}> <strong>Rol</strong> </p>
                         </div>
                         <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
-                            <p style={{margin: 0}}> <strong>Faena/Obra</strong> </p>
+                            <p style={{margin: 0, marginBottom: 22}}> <strong>Faena/Obra</strong> </p>
                         </div>
                         <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
-                            <p style={{margin: 0}}> <strong>Estado</strong> </p>
+                            <p style={{margin: 0, marginBottom: 22}}> <strong>Estado</strong> </p>
                         </div>
                     </ListItem>
                 </div>

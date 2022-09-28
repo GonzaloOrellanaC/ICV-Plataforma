@@ -1,8 +1,11 @@
 import socketIo from 'socket.io'
+import { Users } from '../models';
 import {NotificationService, UserServices} from '../services';
 import reportsService from '../services/reports.service';
+import { Sentry } from '../services/sentry.services';
 
 export default async (server) => {
+    const user = Users
     console.log('Socket connection')
     const io = new socketIo.Server(server, {
         cors: {
@@ -14,51 +17,8 @@ export default async (server) => {
     })
     io.on('connection', (socket) => {
         socket.on('isConnected', async (data) => {
-            console.log('Activado!!!', data)
-            /* const responseData1 = await reportsService.readIfReportIsOneDayToStart()
-            console.log(responseData1)
-            const list = []
-            responseData1.forEach(async (report, index) => {
-                report.usersAssigned.forEach((user, i) => {
-                    if(user === data.id) {
-                        list.push(report)
-                    }
-                })
-                if(index === (responseData1.length - 1)) {
-                    console.log(list)
-                    if (list.length > 0) {
-                        let notificationToSave = {
-                            id: data.id.toString(),
-                            url: './assignment',
-                            title: `Aviso de inicio próximo de OT.`, 
-                            subtitle: `Debe ingresar próximamente.`, 
-                            message: `Existen ${list.length} OT a punto de iniciar.`
-                        }
-                        io.emit(`notification_${data.id}`, {title: notificationToSave.title, subtitle: notificationToSave.subtitle, message: notificationToSave.message})
-                        NotificationService.createNotification(notificationToSave)
-                        const user = await UserServices.getUser(data.id.toString())
-                        const admins = await UserServices.getUserByRole('admin')
-                        const sapExecutives = await UserServices.getUserByRole('sapExecutive')
-                        const shiftManagers = await UserServices.getUserByRole('shiftManager')
-                        const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
-                        const all = admins.concat(sapExecutives.concat(shiftManagers.concat(chiefMachineries)))
-                        all.forEach((user) => {
-                            console.log('Se crea notificación a '+user._id)
-                            let notificationToSave = {
-                                id: user._id.toString(),
-                                url: './assignment',
-                                title: `Aviso de inicio próximo de OT.`, 
-                                subtitle: `Debe ingresar próximamente.`, 
-                                message: `${user.name} ${user.lastName} tiene ${list.length} OT a punto de iniciar.`
-                            }
-                            console.log(`notification_${user._id}`)
-                            io.emit(`notification_${user._id}`, {title: data.title, subtitle: data.subtitle, message: data.message})
-                            NotificationService.createNotification(notificationToSave)
-                        })
-                    }
-                }
-                
-            }) */
+            const userData = await user.findById(data.id)
+            Sentry.captureMessage(`${userData.name} ${userData.lastName} a iniciado sesión. ${data.frontVersion ? data.frontVersion : 'No informado'}`, 'info')
         })
         socket.on('test_user', (data) => {
             console.log('Get data......', data)

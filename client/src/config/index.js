@@ -29,6 +29,7 @@ import getinfo from './getInfo'
 import download3DFiles from './download3DFiles'
 import detectIf3DModelExist from './detectIf3DModelExist'
 import translateSubSystem from './translateSubSystem'
+import detectExecutionState from './detectExecutionState'
 export {
     theme,
     getUserNameById,
@@ -70,5 +71,6 @@ export {
     getinfo,
     download3DFiles,
     detectIf3DModelExist,
-    translateSubSystem
+    translateSubSystem,
+    detectExecutionState
 }
