@@ -167,6 +167,8 @@ const ActivitiesDetailPage = () => {
     }
 
     const endReport = async () => {
+        setLoading(true)
+        setLoadingMessage('Espere...')
             let group = new Array()
             let state = true
             const db = await executionReportsDatabase.initDb()
@@ -192,7 +194,7 @@ const ActivitiesDetailPage = () => {
             }
             group = Object.values(executionReportData.data.group)
             if(navigator.onLine) {
-                syncData().then(() => {
+                syncData(true).then(() => {
                     if(
                         (localStorage.getItem('role') === 'sapExecutive')||
                         (localStorage.getItem('role') === 'admin')||
@@ -215,7 +217,7 @@ const ActivitiesDetailPage = () => {
                     }
                 })
             }else{
-                setLoadingLogo(true)
+                /* setLoadingLogo(true) */
                 if(reportAssigned.testMode) {
                     let groupFiltered = []
                     indexGroup.map((g, i) => {
@@ -484,7 +486,7 @@ const ActivitiesDetailPage = () => {
  
     const terminarjornada = () => {
         if(navigator.onLine) {
-            syncData().then(async () => {
+            syncData(true).then(async () => {
                 setLoading(true)
                 setLoadingMessage('Terminando su jornada')
                 const report = reportAssigned
@@ -527,10 +529,12 @@ const ActivitiesDetailPage = () => {
         }
     }
 
-    const syncData = () => {
+    const syncData = (execution) => {
         return new Promise(async resolve => {
             try {
-                setLoadingLogo(true)
+                if (!execution) {
+                    setLoadingLogo(true)
+                }
                 const db = await executionReportsDatabase.initDb()
                 const data = await executionReportsDatabase.consultar(db.database)
                 const executionReportFiltered = data.filter((execution) => {

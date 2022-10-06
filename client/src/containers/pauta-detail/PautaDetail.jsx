@@ -13,6 +13,7 @@ import { apiIvcRoutes, executionReportsRoutes, reportsRoutes } from "../../route
 import { saveExecutionReport } from "../../config"
 import { ReportDataDialog } from '../../dialogs'
 import { Undo } from "@material-ui/icons"
+import { useHistory } from "react-router-dom"
 
 const PautaDetail = (
     {
@@ -28,6 +29,7 @@ const PautaDetail = (
         selectionItem
     }) => {
 
+    const history = useHistory()
     //Pestañas
     const [ gruposKeys, setGruposKeys ] = useState([])
 
@@ -68,26 +70,41 @@ const PautaDetail = (
     }, [pauta])
 
     const getExecutionReportData = () => {
-        return new Promise(resolve => {
-            getExecutionReportFromDb(reportAssigned._id)
-                .then(data => {
-                    if (data) {
-                        resolve(data)
-                    } else {
-                        executionReportsRoutes.getExecutionReportById(reportAssigned)
-                        .then(data => {
-                            console.log(data.data[0])
-                            resolve(data.data[0])
-                        })
-                    }
-                })
-                .catch(() => {
-                    executionReportsRoutes.getExecutionReportById(reportAssigned)
+        try {
+            return new Promise(resolve => {
+                getExecutionReportFromDb(reportAssigned._id)
                     .then(data => {
-                        resolve(data.data[0])
+                        if (data && ((localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator'))) {
+                            resolve(data)
+                        } else {
+                            if (navigator.onLine) {
+                                executionReportsRoutes.getExecutionReportById(reportAssigned)
+                                .then(data => {
+                                    resolve(data.data[0])
+                                })
+                            } else {
+                                alert('Ha habido un error. Revise su conexión a internet, puese ser inexistente o inestable. Si el problema persiste contacte al administrador.')
+                                history.goBack()
+                            }
+                        }
                     })
-                })
-        })
+                    .catch(() => {
+                        if (navigator.onLine) {
+                            executionReportsRoutes.getExecutionReportById(reportAssigned)
+                            .then(data => {
+                                console.log(data.data[0])
+                                resolve(data.data[0])
+                            })
+                        } else {
+                            alert('Ha habido un error. Revise su conexión a internet, puese ser inexistente o inestable. Si el problema persiste contacte al administrador.')
+                            history.goBack()
+                        }
+                    })
+            })
+        } catch (error) {
+            alert('Ha habido un error. Revise su conexión a internet, puese ser inexistente o inestable. Si el problema persiste contacte al administrador.')
+            history.goBack()
+        }
     }
 
     const getExecutionReportFromDb = (id) => {
@@ -195,6 +212,7 @@ const PautaDetail = (
         let executionReportDataElementGuard
         if(navigator.onLine) {
             executionReportDataElement = await getExecutionReportData()
+            console.log(executionReportDataElement)
             executionReportDataElementGuard = await getExecutionReportFromDb(reportAssigned._id)
             if((localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator')) {
                 if(executionReportDataElement.offLineGuard) {
@@ -229,6 +247,11 @@ const PautaDetail = (
         }else{
             executionReportDataElement = await getExecutionReportFromDb(reportAssigned._id)
             executionReportData = executionReportDataElement
+        }
+        console.log(executionReportData)
+        if (!executionReportData) {
+            alert('No se logra obtener la información de la ejecución de la pauta. Revise su conexión, puede ser inestable o inexistente. Si el problema persiste contacte al Administrador.')
+            history.goBack()
         }
         if(reportAssigned.testMode) {
             if(executionReportData.group) {

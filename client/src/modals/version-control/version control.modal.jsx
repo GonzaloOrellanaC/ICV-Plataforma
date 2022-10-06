@@ -16,6 +16,13 @@ const VersionControlModal = ({open, closeModal}) => {
                     <h2>Versión {environment.version}</h2>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <strong>v.2.1</strong>
+                        <li>
+                            Corrección de errores al cierre de OT.
+                        </li>
+                        <li>
+                            Todo usuario que no sea operario, obtendrá la pauta desde la base de datos. Con esto se espera que se elimine la información.
+                        </li>
                         <p>Se ha actualizado la aplicación de servicios de Mantenimiento e Inspección.</p>
                         <strong>v.2.0</strong>
                         <li>
