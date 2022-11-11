@@ -3,8 +3,9 @@ import { executionReportsRoutes, reportsRoutes } from "../../routes";
 
 export default () => {
     return new Promise(async resolve => {
+        const isOperator = Boolean(localStorage.getItem('isOperator'))
         let reps = new Array()
-        if((localStorage.getItem('role') === 'maintenceOperator'||(localStorage.getItem('role') === 'inspectionWorker'))){
+        if(isOperator||(localStorage.getItem('role') === 'maintenceOperator'||(localStorage.getItem('role') === 'inspectionWorker'))){
             reps = await getMyReports(localStorage.getItem('_id'));
         }else{
             reps = await getAllAssignment()

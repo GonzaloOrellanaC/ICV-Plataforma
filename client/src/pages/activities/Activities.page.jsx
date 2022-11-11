@@ -14,8 +14,12 @@ const ActivitiesPage = () => {
     const [ assignmentsReadyToSend, setAssignmentsReadyToSend ] = useState([])
     const theme = useTheme();
     const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
-
+    const isOperator = Boolean(localStorage.getItem('isOperator'))
+    const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
+    const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
+    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
     useEffect(async () => {
+        console.log(isShiftManager,isChiefMachinery)
         let db = await  readyToSendReportsDatabase.initDb()
         let dataToSend = await readyToSendReportsDatabase.consultar(db.database)
         setAssignmentsReadyToSend(dataToSend)
@@ -191,7 +195,7 @@ const ActivitiesPage = () => {
                                 }
                                 >
                                     {
-                                    (localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') &&
+                                    (isChiefMachinery || isShiftManager || localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') &&
                                         <div>
                                             <h3 className='item-style'>Mis actividades pendientes</h3>
                                         </div>
@@ -251,10 +255,10 @@ const ActivitiesPage = () => {
                                         )
                                     })}
                                     {
-                                        ((localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') && prioritaryAssignments.length == 0) && <Grid container><h3 className='item-style'>Sin Asignación pendiente</h3></Grid>
+                                        (isChiefMachinery || isShiftManager || (localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') && prioritaryAssignments.length == 0) && <Grid container><h3 className='item-style'>Sin Asignación pendiente</h3></Grid>
                                     }
                                     {
-                                    (localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') &&
+                                    (isChiefMachinery || isShiftManager || localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') &&
                                         <div>
                                             <h3>Otras asignaciones</h3>
                                         </div>
@@ -322,7 +326,7 @@ const ActivitiesPage = () => {
                                                                 ? 
                                                                 'Ver'
                                                                 : 
-                                                                ((localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') ? (element.readyToSend ? 'Listo a enviar' : 'Ejecutar') : 'Ver')
+                                                                (isOperator||(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') ? (element.readyToSend ? 'Listo a enviar' : 'Ejecutar') : 'Ver')
                                                             }
                                                         </Button>
                                                     </Grid>

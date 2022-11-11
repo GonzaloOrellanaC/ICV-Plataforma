@@ -18,6 +18,12 @@ export default {
     getAllUsers: () => {
         return axios.get('/users/getUsers')
     },
+    getMantenedores: () => {
+        return axios.get('/users/getMantenedores')
+    },
+    getOperadores: () => {
+        return axios.get('/users/getOperadores')
+    },
     getUser: (id) => {
         const requestBody = {
             id

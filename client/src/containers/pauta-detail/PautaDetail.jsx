@@ -28,6 +28,7 @@ const PautaDetail = (
         resultThisItemProgress,
         selectionItem
     }) => {
+    const isOperator = Boolean(localStorage.getItem('isOperator'))
 
     const history = useHistory()
     //Pestañas
@@ -62,19 +63,19 @@ const PautaDetail = (
 
     useEffect(() => {
         readData()
-        if((localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator')) {
+        if(isOperator||(localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator')) {
             setIconToItemDetail(faPen)
         }else{
             setIconToItemDetail(faEye)
         }
-    }, [pauta])
+    }, [])
 
     const getExecutionReportData = () => {
         try {
             return new Promise(resolve => {
                 getExecutionReportFromDb(reportAssigned._id)
                     .then(data => {
-                        if (data && ((localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator'))) {
+                        if (data && (isOperator||(localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator'))) {
                             resolve(data)
                         } else {
                             if (navigator.onLine) {
@@ -214,7 +215,7 @@ const PautaDetail = (
             executionReportDataElement = await getExecutionReportData()
             console.log(executionReportDataElement)
             executionReportDataElementGuard = await getExecutionReportFromDb(reportAssigned._id)
-            if((localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator')) {
+            if(isOperator||(localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator')) {
                 if(executionReportDataElement.offLineGuard) {
                     setUltimoGuardadoDispositivo(executionReportDataElement.offLineGuard)
                     if(executionReportDataElementGuard) {
@@ -538,9 +539,10 @@ const PautaDetail = (
                 setLoadingLogo(true)
                 executionReportsRoutes.saveExecutionReport(executionReport).then(() => {
                     reportsRoutes.editReport(reportAssigned).then(() => {
-                        readData().then(() => {
+                        setLoadingLogo(false)
+                        /* readData().then(() => {
                             setLoadingLogo(false)
-                        })
+                        }) */
                     })
                 })
             }
@@ -710,7 +712,7 @@ const PautaDetail = (
                     loadingLogo && <LoadingLogoModal open={loadingLogo} />
                 }
                 {
-                    ((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator'))
+                    (isOperator || (localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator'))
                     &&
                     <Fab title="Restaurar" color="primary" aria-label="add" style={
                         {

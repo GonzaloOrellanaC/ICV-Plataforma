@@ -98,6 +98,36 @@ const readAllUsers = (req, res, next) => {
     }
 }
 
+const getMantenedores = (req, res, next) => {
+    try {
+        Users.find({$or : [{role:'maintenceOperator'}, {roles:'maintenceOperator'}]}, (err, users) => {
+            res.json(users)
+            /* Users.find({roles:'maintenceOperator'}, (err, users2) => {
+                console.log(users2)
+                userList.concat(users2)
+                console.log(userList)
+                res.json(userList)
+            }) */
+        })
+    } catch (err) {
+
+    }
+}
+
+const getOperadores = (req, res, next) => {
+    try {
+        Users.find({$or : [{role:'inspectionWorker'}, {roles:'inspectionWorker'}]}, (err, users) => {
+        /* Users.find({role:'inspectionWorker'}, (err, users) => { */
+            res.json(users)
+            /* Users.find({roles:'inspectionWorker'}, (err, users2) => {
+                res.json(userList.concat(users2))
+            }) */
+        })
+    } catch (err) {
+
+    }
+}
+
 const readUser = (req, res, next) => {
     const { body } = req;
     try{
@@ -141,6 +171,8 @@ const deleteUser = (req, res, next) => {
 export default {
     createUser,
     readAllUsers,
+    getMantenedores,
+    getOperadores,
     readUser,
     getUserSign,
     deleteUser,

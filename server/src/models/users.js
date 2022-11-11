@@ -41,6 +41,11 @@ const UsersSchema = new Schema({
     role: {
         type: Schema.Types.String
     },
+    roles: [
+        {
+            type: Schema.Types.String
+        }
+    ],
     hidden: {
         type: Schema.Types.Boolean,
         default: false

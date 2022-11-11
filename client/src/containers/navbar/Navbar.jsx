@@ -130,7 +130,9 @@ const Navbar = ({getNotification}) => {
     const [ openIAModal, setOpenIAModal ] = useState(false)
     const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false)
     const [ cancel, setCancel ] = useState(true)
-
+    const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
+    const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
+    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
     const logout = async () => {
         if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
             window.localStorage.clear();
@@ -259,7 +261,7 @@ const Navbar = ({getNotification}) => {
             if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin')) { 
                 setDisableButtonsNoAdmin(false);
             }
-            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'shiftManager') || (localStorage.getItem('role') === 'chiefMachinery')) {
+            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive') || isSapExecutive || (localStorage.getItem('role') === 'shiftManager') || isShiftManager || (localStorage.getItem('role') === 'chiefMachinery') || isChiefMachinery) {
                 setDisabled(false);
             }
             setPath(history.location.pathname)

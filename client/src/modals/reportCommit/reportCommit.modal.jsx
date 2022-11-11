@@ -13,7 +13,7 @@ import {
 import { Close } from '@material-ui/icons';
 import { styleInternalMessageModal } from '../../config';
 
-const ReportCommitModal = ({open, report, closeModal, getResponseState, messageType}) => {
+const ReportCommitModal = ({open, report, closeModal, closeLoading, getResponseState, messageType}) => {
     const [ message, setMessage ] = useState('');
 
     useEffect(() => {
@@ -48,6 +48,7 @@ const ReportCommitModal = ({open, report, closeModal, getResponseState, messageT
 
     const closeModalActivate = () => {
         closeModal();
+        closeLoading();
         getResponseState(false, report)
     }
     

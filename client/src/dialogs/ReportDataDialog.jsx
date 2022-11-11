@@ -42,9 +42,11 @@ const ReportDataDialog = (
   const [indexKey, setIndexKey] = useState()
   const [isEdited, setIsEdited] = useState(false)
   const [canEdit, setCanEdit] = useState(false)
+  const isOperator = Boolean(localStorage.getItem('isOperator'))
 
   useEffect(() => {
     if (
+      isOperator ||
       (localStorage.getItem('role') === 'inspectionWorker')||
       (localStorage.getItem('role') === 'maintenceOperator')||
       (localStorage.getItem('role') === 'shiftManager')

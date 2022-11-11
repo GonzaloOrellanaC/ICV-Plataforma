@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useMemo } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 
-import { AppBar, makeStyles, Toolbar, Button, Modal, Box } from '@material-ui/core'
+import { AppBar, makeStyles, Toolbar, Button, Modal, Box, Grid } from '@material-ui/core'
 import { faCircle, faEraser, faPen, faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import logo from '../../assets/logo_icv_gris.png'
@@ -68,6 +68,8 @@ const Header = () => {
     userData.lastName = window.localStorage.getItem('lastName');
     if(window.localStorage.getItem('role')) {
         userData.role = changeTypeUser(window.localStorage.getItem('role'))
+    } else if (window.localStorage.getItem('roles')) {
+        userData.roles = JSON.parse(window.localStorage.getItem('roles'))
     }
     useEffect(() => {
         if (cancel) {
@@ -150,7 +152,27 @@ const Header = () => {
                                 <div className='user-name' onClick={()=>{history.push('/user-profile')}}>
                                 <dl>
                                     <dt style={{margin: 0}}>{isAuthenticated && <div> <p className='nombre'> { userData.name } { userData.lastName } </p> </div>}</dt>
-                                    <dt> {userData.role} </dt>
+                                    {
+                                            (userData.role && userData.role.length > 0)
+                                            ?
+                                            <dt>
+                                                {userData.role}
+                                            </dt>
+                                            :
+                                            <Grid container>
+                                                {
+                                                    userData.roles.map((role, i) => {
+                                                        return (
+                                                            <Grid item key={i} style={{marginRight: 10}}>
+                                                                {changeTypeUser(role)} |
+                                                            </Grid>
+                                                        )
+                                                    })
+                                                }
+                                            </Grid>
+                                            
+                                        }
+                                    
                                 </dl>
                                 </div>
                             </Fragment>}

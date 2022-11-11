@@ -28,7 +28,11 @@ const ReportsPage = () => {
     const [ page, setPage]  = useState(0);
     const [ listToShow, setListToShow ] = useState([])
     const history = useHistory()
-    const classes = useStylesTheme();
+    const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
+    const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
+    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
+    /* const classes = useStylesTheme(); */
+    
 
     /* useEffect(() => {
         if(history) {
@@ -117,7 +121,7 @@ const ReportsPage = () => {
                 waiting(stateInspecciones, stateMantenciones)
             }
         })
-        if(localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive') {
+        if(localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive' || isSapExecutive) {
             setHableCreateReport(true);
         }
     }
@@ -160,16 +164,14 @@ const ReportsPage = () => {
 
     const selectList = (list, idButton, index) => {
         Inspecciones.map((e, i) => {
-            // `button_${i}_inspecciones`
             document.getElementById(`button_${i}_inspecciones`).style.backgroundColor = '#F9F9F9'
             e.buttonColor = '#F9F9F9'
             if (i === (Inspecciones.length - 1)) {
-                /* setInspecciones(Inspecciones) */
                 Mantenciones.map((e, n) => {
                     e.buttonColor = '#F9F9F9'
+                    console.log(document.getElementById(`button_${n}_mantenciones`))
                     document.getElementById(`button_${n}_mantenciones`).style.backgroundColor = '#F9F9F9'
                     if (n === (Mantenciones.length - 1)) {
-                        /* setMantenciones(Mantenciones) */
                         document.getElementById(idButton).style.backgroundColor = '#ccc'
                         localStorage.setItem('buttonReportSelected', idButton)
                         setPage(0)
@@ -178,7 +180,6 @@ const ReportsPage = () => {
                         setVista(false)
                         setList(list)
                         let l = list.sort((a, b) => {
-                                /* return b.idIndex - a.idIndex */
                             if (Number(a.idIndex) > Number(b.idIndex)) {
                                 return -1
                             }

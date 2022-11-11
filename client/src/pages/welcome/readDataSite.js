@@ -23,27 +23,42 @@ export default (
         }else {
             
         }
-        if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'shiftManager') || (localStorage.getItem('role') === 'chiefMachinery')) {
+        if(
+            (localStorage.getItem('role') === 'admin') || 
+            (localStorage.getItem('role') === 'superAdmin') || 
+            (localStorage.getItem('role') === 'sapExecutive') || 
+            (localStorage.getItem('role') === 'shiftManager') || 
+            (localStorage.getItem('role') === 'chiefMachinery')
+            )
+        {
             setDisableButtonsNoSAP(false)
         } else {
-            //setNotificaciones2('Solo Roles "Admin" o "Ejecutivo SAP" puede administrar usuarios.')
-            /* if(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
-                if(elementsReadyToSend.length > 0) {
-                    setNotificaciones2('Existen ' + elementsReadyToSend.length + ' Ordenes de trabajo listos a enviar.')
-                }else{
-                    
-                }
-            } */
             if(localStorage.getItem('role') === 'maintenceOperator') {
                 setDisableIfNoMaintenance(false)
             }else{
                 setDisableIfNoMaintenance(true)
-            };
+            }
             if(localStorage.getItem('role') === 'inspectionWorker') {
                 setDisableIfNoInspection(false)
             }else{
                 setDisableIfNoInspection(true)
-            };
+            }
+            if(localStorage.getItem('roles')) {
+                setDisableIfNoInspection(true)
+                setDisableIfNoInspection(true)
+                const roles = JSON.parse(localStorage.getItem('roles'))
+                roles.map(rol => {
+                    if (rol === 'maintenceOperator') {
+                        setDisableIfNoMaintenance(false)
+                    } else if (rol === 'inspectionWorker') {
+                        setDisableIfNoInspection(false)
+                    } else if ((rol === 'admin')||(rol === 'superAdmin')) {
+                        setDisableButtonNoAdmin(false)
+                    } else if ((rol === 'admin')||(rol === 'superAdmin')||(rol === 'sapExecutive')||(rol === 'shiftManager')||(rol === 'chiefMachinery')) {
+                        setDisableButtonsNoSAP(false)
+                    }
+                })
+            }
         }
         if(localStorage.getItem('version')) {
             if((localStorage.getItem('version') != environment.version)) {

@@ -253,7 +253,7 @@ const AdminNewUserPage = () => {
                             })
                         } else {
                             Object.values(user).map(async (value, index) => {
-                                console.log(value)
+                                /* console.log(value) */
                                 if(!value) {
                                     if(!id) {
                                         habilitado = false

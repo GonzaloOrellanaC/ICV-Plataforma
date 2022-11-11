@@ -10,7 +10,7 @@ const Canvas = (props) => {
             ref={(ref) => {setRefCanvas(ref)}}
             penColor='black'
             canvasProps={
-                disabled,
+                /* disabled, */
                 {
                     width: width, 
                     height: height, 

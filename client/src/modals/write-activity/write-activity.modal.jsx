@@ -16,11 +16,12 @@ const WriteActivityModal = ({open, closeWriteModal, activity, onlyClose, reportI
     const [ commits, setCommits ] = useState([]);
     const [ commitsLength, setCommitsLength ] = useState(0);
     const [ canEdit, setCanEdit ] = useState(false)
+    const isOperator = Boolean(localStorage.getItem('isOperator'))
 
     
     useEffect(() => {
         let myReportLevel;
-        if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+        if(isOperator||(localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
             myReportLevel = 0;
         }else if(localStorage.getItem('role') === 'shiftManager') {
             myReportLevel = 1;
@@ -241,7 +242,7 @@ const WriteActivityModal = ({open, closeWriteModal, activity, onlyClose, reportI
                         </div>
                     }
                     {
-                        (((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator'))&& !canEdit) &&
+                        ((isOperator||(localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator'))&& !canEdit) &&
                         <div style={{width: '100%', textAlign: 'center'}}>
                             <p style={{fontSize: 18}}><b>Usted ya ha enviado la orden a revisión.</b></p>
                         </div>

@@ -16,6 +16,10 @@ import toPDF from '../../modals/pdf/toPDF'
 const ActivitiesDetailPage = () => {
     const classes = useStylesTheme()
     const history = useHistory()
+    const isOperator = Boolean(localStorage.getItem('isOperator'))
+    const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
+    const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
+    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
     const {id} = useParams()
     const [ pauta, setPauta ] = useState()
     const [ progress, resutProgress ] = useState(0)
@@ -53,7 +57,7 @@ const ActivitiesDetailPage = () => {
         } else {
             setSmActivated(false)
         }
-        if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+        if(isOperator || (localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
             setCanSendReport(false)
         }else{
             setCanSendReport(true)
@@ -79,13 +83,13 @@ const ActivitiesDetailPage = () => {
             setReportAssigned(report)
             setReportLevel(report.level)
             let myReportLevel
-            if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+            if((isOperator && report.level===0) || (localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
                 myReportLevel = 0
-            }else if(localStorage.getItem('role') === 'shiftManager') {
+            }else if(localStorage.getItem('role') === 'shiftManager'||(isShiftManager && report.level===1)) {
                 myReportLevel = 1
-            }else if(localStorage.getItem('role') === 'chiefMachinery') {
+            }else if(localStorage.getItem('role') === 'chiefMachinery'||(isChiefMachinery && report.level===2)) {
                 myReportLevel = 2
-            }else if(localStorage.getItem('role') === 'sapExecutive') {
+            }else if(localStorage.getItem('role') === 'sapExecutive'||(isSapExecutive && report.level===3)) {
                 myReportLevel = 3
             }
             if(myReportLevel === report.level) {
@@ -110,16 +114,18 @@ const ActivitiesDetailPage = () => {
             })
             setReportAssigned(report)
             setReportLevel(report.level)
+            console.log(report)
             let myReportLevel
-            if((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
+            if((isOperator && report.level===0) || (localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) {
                 myReportLevel = 0
-            }else if(localStorage.getItem('role') === 'shiftManager') {
+            }else if(localStorage.getItem('role') === 'shiftManager'||(isShiftManager && report.level===1)) {
                 myReportLevel = 1
-            }else if(localStorage.getItem('role') === 'chiefMachinery') {
+            }else if(localStorage.getItem('role') === 'chiefMachinery'||(isChiefMachinery && report.level===2)) {
                 myReportLevel = 2
-            }else if(localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') {
+            }else if((isSapExecutive && report.level===3) || localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') {
                 myReportLevel = 3
             }
+            console.log(myReportLevel)
             if(myReportLevel === report.level) {
                 setCanEdit(true)
                 setCanRejectReport(true)
@@ -169,68 +175,69 @@ const ActivitiesDetailPage = () => {
     const endReport = async () => {
         setLoading(true)
         setLoadingMessage('Espere...')
-            let group = new Array()
-            let state = true
-            const db = await executionReportsDatabase.initDb()
-            const data = await executionReportsDatabase.consultar(db.database)
-            const executionReportFiltered = data.filter((execution) => {
-                                                if(execution.reportId === reportAssigned._id) {
-                                                    return execution
-                                                }
-                                            })
-            let executionReportData = {
-                data: null,
-                state: null
-            }
-            if(
-                localStorage.getItem('role')==='inspectionWorker' || 
-                localStorage.getItem('role')==='maintenceOperator'
-            ) {
-                executionReportData.data = executionReportFiltered[0]
-                executionReportData.state = true
-                await executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
-            } else {
-                executionReportData = await getExecutionReport(reportAssigned._id)
-            }
-            group = Object.values(executionReportData.data.group)
-            if(navigator.onLine) {
-                syncData(true).then(() => {
-                    if(
-                        (localStorage.getItem('role') === 'sapExecutive')||
-                        (localStorage.getItem('role') === 'admin')||
-                        (localStorage.getItem('role') === 'superAdmin')
-                    ) {
-                        setLoadingMessage('Cerrando OT...')
-                    }else{
-                        setLoadingMessage('Enviando estado...')
-                    }
-                    if(reportAssigned.testMode) {
-                        let groupFiltered = []
-                        indexGroup.map((g, i) => {
-                            groupFiltered.push(executionReportData.data.group[g.data])
-                            if(i == (indexGroup.length - 1)) {
-                                sendDataToRead(groupFiltered, state, true)
-                            }
-                        })
-                    }else{
-                        sendDataToRead(group, state, true)
-                    }
-                })
-            }else{
-                /* setLoadingLogo(true) */
+        let group = new Array()
+        let state = true
+        const db = await executionReportsDatabase.initDb()
+        const data = await executionReportsDatabase.consultar(db.database)
+        const executionReportFiltered = data.filter((execution) => {
+                                            if(execution.reportId === reportAssigned._id) {
+                                                return execution
+                                            }
+                                        })
+        let executionReportData = {
+            data: null,
+            state: null
+        }
+        if(
+            isOperator ||
+            localStorage.getItem('role')==='inspectionWorker' || 
+            localStorage.getItem('role')==='maintenceOperator'
+        ) {
+            executionReportData.data = executionReportFiltered[0]
+            executionReportData.state = true
+            await executionReportsRoutes.saveExecutionReport(executionReportFiltered[0])
+        } else {
+            executionReportData = await getExecutionReport(reportAssigned._id)
+        }
+        group = Object.values(executionReportData.data.group)
+        if(navigator.onLine) {
+            syncData(true).then(() => {
+                if(
+                    (isSapExecutive && (reportLevel===3)) ||
+                    (localStorage.getItem('role') === 'sapExecutive')||
+                    (localStorage.getItem('role') === 'admin')||
+                    (localStorage.getItem('role') === 'superAdmin')
+                ) {
+                    setLoadingMessage('Cerrando OT...')
+                }else{
+                    setLoadingMessage('Enviando estado...')
+                }
                 if(reportAssigned.testMode) {
                     let groupFiltered = []
                     indexGroup.map((g, i) => {
                         groupFiltered.push(executionReportData.data.group[g.data])
                         if(i == (indexGroup.length - 1)) {
-                            sendDataToRead(groupFiltered, state, false)
+                            sendDataToRead(groupFiltered, state, true)
                         }
                     })
                 }else{
-                    sendDataToRead(group, state, false)
+                    sendDataToRead(group, state, true)
                 }
-                
+            })
+        }else{
+            /* setLoadingLogo(true) */
+            if(reportAssigned.testMode) {
+                let groupFiltered = []
+                indexGroup.map((g, i) => {
+                    groupFiltered.push(executionReportData.data.group[g.data])
+                    if(i == (indexGroup.length - 1)) {
+                        sendDataToRead(groupFiltered, state, false)
+                    }
+                })
+            }else{
+                sendDataToRead(group, state, false)
             }
+        }
     }
 
     const saveDataLocal = async () => {
@@ -275,7 +282,7 @@ const ActivitiesDetailPage = () => {
                             }
                         } else {
                             alert('Debe completar la pauta totalmente para enviar a revisión.')
-                            setLoadingLogo(false)
+                            setLoading(false)
                         }
                     }
                 }
@@ -314,6 +321,7 @@ const ActivitiesDetailPage = () => {
                 report.level = report.level + 1
                 report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`
                 if(
+                    (isSapExecutive && (reportLevel===3)) ||
                     (localStorage.getItem('role') === 'sapExecutive')||
                     (localStorage.getItem('role') === 'admin')||
                     (localStorage.getItem('role') === 'superAdmin')
@@ -419,11 +427,11 @@ const ActivitiesDetailPage = () => {
     const sendToBack = async (report) => {
         setLoading(true)
         let ejecutor = new String()
-        if(localStorage.getItem('role')==='shiftManager') {
+        if(isShiftManager || localStorage.getItem('role')==='shiftManager') {
             ejecutor = 'ejecutor'
-        }else if(localStorage.getItem('role')==='chiefMachinery') {
+        }else if(isChiefMachinery || localStorage.getItem('role')==='chiefMachinery') {
             ejecutor = 'jefe de turno'
-        }else if(localStorage.getItem('role')==='sapExecutive') {
+        }else if((isSapExecutive && reportLevel === 3) || localStorage.getItem('role')==='sapExecutive') {
             ejecutor = 'jefe de maquinaria'
         }
         if(confirm(`Devolverá la información al ${ejecutor}. ¿Desea confirmar?`)) {
@@ -561,6 +569,10 @@ const ActivitiesDetailPage = () => {
         setOpenReportCommitModal(false)
     }
 
+    const closeLoading = () => {
+        setLoading(false)
+    }
+
     const openMessages = () => {
         setOpenMessagesModal(true)
     }
@@ -628,10 +640,10 @@ const ActivitiesDetailPage = () => {
                                         <h4 style={{textAlign: 'center'}}>Avance total: {itemProgress.toFixed(0)}%</h4>
                                         <LinearProgress variant="determinate" value={itemProgress} style={{width: '100%'}}/>
                                         <br />
-                                        {((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')||(localStorage.getItem('role') === 'shiftManager')||(localStorage.getItem('role') === 'chiefMachinery')) && <Button disabled={!canEdit} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{endReport()}}>
+                                        {(isOperator || isShiftManager || isChiefMachinery || (localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')||(localStorage.getItem('role') === 'shiftManager')||(localStorage.getItem('role') === 'chiefMachinery')) && <Button disabled={!canEdit} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{endReport()}}>
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Enviar OT
                                         </Button>}
-                                        {(localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') && <Button disabled={!canEdit} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{endReport()}}>
+                                        {((isSapExecutive && reportLevel===3) || localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') && <Button disabled={!canEdit} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{endReport()}}>
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Cerrar OT
                                         </Button>
                                         }
@@ -639,12 +651,12 @@ const ActivitiesDetailPage = () => {
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Sincronizar
                                         </Button>
                                         }
-                                        {!((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) && 
+                                        {!(isOperator || (localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) && 
                                         <Button disabled={!canSendReport || !canRejectReport} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{rejectReport()}}>
                                             <Close />
                                             Rechazar OT
                                         </Button>}
-                                        {(((localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator'))&&(reportLevel===0)) && <Button onClick={()=>{terminarjornada()}} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
+                                        {((isOperator || (localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator'))&&(reportLevel===0)) && <Button onClick={()=>{terminarjornada()}} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
                                             <FontAwesomeIcon icon={faClock} style={{marginRight: 10}} /> Terminar Jornada
                                         </Button>}
                                         <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 0}} onClick={()=>{openMessages()}}>
@@ -654,7 +666,7 @@ const ActivitiesDetailPage = () => {
                                 </Grid>
                             </Grid>
                             {
-                                openReportCommitModal && <ReportCommitModal open={openReportCommitModal} closeModal={closeCommitModal} report={reportAssigned} getResponseState={getResponseState} messageType={messageType}/>
+                                openReportCommitModal && <ReportCommitModal open={openReportCommitModal} closeLoading={closeLoading} closeModal={closeCommitModal} report={reportAssigned} getResponseState={getResponseState} messageType={messageType}/>
                             }
                             {
                                 openMessagesModal && <ReportMessagesModal open={openMessagesModal} close={closeMessages} report={reportAssigned} />

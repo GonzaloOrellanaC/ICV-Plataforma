@@ -34,6 +34,7 @@ const WelcomePage = ({ readyToLoad }) => {
     const [ notificaciones2, setNotificaciones2 ] = useState('Sin informaciones pendientes')
 
     const [ cancel, setCancel ] = useState(true)
+    const isOperator = Boolean(localStorage.getItem('isOperator'))
 
  
     const history = useHistory()
@@ -120,7 +121,7 @@ const WelcomePage = ({ readyToLoad }) => {
                 } else {
                     setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt))
                 }
-                if(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
+                if(isOperator || localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
                     if(data2.length > 0) {
                         setNotificaciones2('Existen ' + data2.length + ' Ordenes de trabajo listos a enviar.')
                     }else{
@@ -290,7 +291,7 @@ const WelcomePage = ({ readyToLoad }) => {
                     <Grid item xs={12} sm={12} md={6} lg={4}>
                         <button className='notificaciones alertas' onClick={() => history.push('/assignment')}>
                             {
-                                (localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') &&
+                                (isOperator || localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') &&
                                 <p className='notificaciones-texto'> <b>OT Listas a enviar:</b> </p>
                             }
                             <p className='notificaciones-texto'> {notificaciones2}</p>

@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 
 const PermissionUser = ({width, height, typeDisplay, id}) => {
 
-    const [ userData, setUserData ] = useState({})
+    const [ userData, setUserData ] = useState()
     const [ userType, setUserType ] = useState('');
     const [ obra, setObra ] = useState('')
     const [ permisosReportes, setPermisosReportes ] = useState([]);
@@ -25,7 +25,7 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
         setUserData(JSON.parse(localStorage.getItem('userDataToSave')))
         setObra(JSON.parse(JSON.parse(localStorage.getItem('userDataToSave')).sites).descripcion)
         /* getPermisos(); */
-        renameUserType();
+        /* renameUserType(); */
     }, []);
 
     /* SELECCION DE CHECKBOX */
@@ -85,10 +85,10 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
 
     /* EN BASE DE DATOS SE GUARDA NOMBRE, EL CUAL DEBE MOSTRARSE SEGÚN ROL */
 
-    const renameUserType = async () => {
+/*     const renameUserType = async () => {
         let userDataRole = await changeTypeUser(JSON.parse(localStorage.getItem('userDataToSave')).role);
         setUserType(userDataRole);
-    }
+    } */
 
     const classes = useStyles()
 
@@ -115,8 +115,14 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
                                     <div style={{width: '100%', marginBottom: 15}}>
                                         <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Tipo de usuario</p>
                                         {
-                                            userType &&
-                                            <p style={{margin: 0, fontSize: 16}}>{userType}</p>
+                                            (userData.role.length > 0) ?
+                                            <p style={{margin: 0, fontSize: 16}}>{changeTypeUser(userData.role)}</p>
+                                            :
+                                            userData.roles.map(el => {
+                                                return (
+                                                    <p>{changeTypeUser(el)}</p>
+                                                )
+                                            })
                                         }
                                     </div>
 

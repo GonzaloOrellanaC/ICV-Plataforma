@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { makeStyles, Grid, Box, FormControl, IconButton } from "@material-ui/core";
+import { makeStyles, Grid, Box, FormControl, IconButton, Checkbox } from "@material-ui/core";
 import { faEye, faEyeSlash, faPaperclip, faUserCog } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { azureStorageRoutes, rolesRoutes, usersRoutes } from '../../routes';
@@ -12,15 +12,15 @@ import _init from './init';
 import _continue from './continue'
 import { imageToBase64 } from "../../config";
 
-const useStyles = makeStyles(theme => ({
+/* const useStyles = makeStyles(theme => ({
     inputsStyle: {
         borderColor: '#C4C4C4'
     }
-}));
+})); */
 
 const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
 
-    const [ tiposUsuarios, setTiposUsuarios ] = useState([]);
+    /* const [ tiposUsuarios, setTiposUsuarios ] = useState([]); */
     const [ verPassword, setVerPassword ] = useState('password');
     const [ verConfirmarPassword, setVerConfirmarPassword ] = useState('password');
 
@@ -29,6 +29,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
     const [ lastName, setLastName ] = useState('');
     const [ rut, setRut ] = useState('');
     const [ role, setUserType ] = useState('');
+    const [ rolesListSelection, setRolesListSelection ] = useState([]);
     const [ userSite, setSiteToUser ] = useState('');
     const [ email, setEmail ] = useState('');
     const [ phone, setPhone ] = useState('');
@@ -51,81 +52,89 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
     
 
     const saveUserData = async (image) => {
-        const userData = {
-            name: name,
-            lastName: lastName,
-            rut: rut,
-            role: role,
-            email: email,
-            phone: phone,
-            password: password,
-            sites: userSite,
-            confirmPassword: confirmPassword,
-            createdBy: localStorage.getItem('_id'),
-            imageUrl: imageUrl
-        }
-        if(image) {
-            userData.imageUrl = image
-        }
-        
-        if(userData.rut) {
-            if(!validate(userData.rut)) {
-                document.getElementById('rut').className = 'isInvalid';
-            }else{
-                document.getElementById('rut').className = 'isValid';
-                /* let user = await usersRoutes.findByRut(userData.rut);
-                if(user) {
-                    document.getElementById('rut').className = 'isInvalid';
-                    alert('Rut ingresado ya está registrado.')
-                } */
+        if (rolesListSelection.length > 0) {
+            console.log(rolesListSelection)
+            const rolesList = []
+            rolesListSelection.map(role => {
+                if (role.selected) {
+                    rolesList.push(role.dbName)
+                }
+            })
+            const userData = {
+                name: name,
+                lastName: lastName,
+                rut: rut,
+                role: (rolesList.length > 0) ? '' : role,
+                roles: (rolesList.length > 0) ? rolesList : [],
+                email: email,
+                phone: phone,
+                password: password,
+                sites: userSite,
+                confirmPassword: confirmPassword,
+                createdBy: localStorage.getItem('_id'),
+                imageUrl: imageUrl
             }
-        }
-        if(userData.email.length > 0) {
-            ValidatorEmail(userData.email)
-        }
-        if(userData.name.length > 0) {
-            if(userData.name[0] == userData.name[0].toUpperCase()) {
-
-            }else{
-                let upperCase = userData.name[0].toUpperCase()
-                userData.name = userData.name.slice(1);
-                setName(`${upperCase}${userData.name}`)
+            if(image) {
+                userData.imageUrl = image
             }
-        }
-        if(userData.lastName.length > 0) {
-            if(userData.lastName[0] == userData.lastName[0].toUpperCase()) {
-
-            }else{
-                let upperCase = userData.lastName[0].toUpperCase()
-                userData.lastName = userData.lastName.slice(1);
-                setLastName(`${upperCase}${userData.lastName}`)
+            
+            if(userData.rut) {
+                if(!validate(userData.rut)) {
+                    document.getElementById('rut').className = 'isInvalid'
+                }else{
+                    document.getElementById('rut').className = 'isValid'
+                }
             }
-        }
-        if(typeDisplay === 'Nuevo usuario') {
-            if(userData.password.length > 0) {
-                if(userData.password === userData.confirmPassword) {
-                    setPasswordNoIguales(false);
-                    document.getElementById('passw').className = 'isValid';
-                    document.getElementById('c_passw').className = 'isValid';
+            if(userData.email.length > 0) {
+                ValidatorEmail(userData.email)
+            }
+            if(userData.name.length > 0) {
+                if(userData.name[0] == userData.name[0].toUpperCase()) {
+    
+                }else{
+                    let upperCase = userData.name[0].toUpperCase()
+                    userData.name = userData.name.slice(1);
+                    setName(`${upperCase}${userData.name}`)
+                }
+            }
+            if(userData.lastName.length > 0) {
+                if(userData.lastName[0] == userData.lastName[0].toUpperCase()) {
+    
+                }else{
+                    let upperCase = userData.lastName[0].toUpperCase()
+                    userData.lastName = userData.lastName.slice(1);
+                    setLastName(`${upperCase}${userData.lastName}`)
+                }
+            }
+            if(typeDisplay === 'Nuevo usuario') {
+                if(userData.password.length > 0) {
+                    if(userData.password === userData.confirmPassword) {
+                        setPasswordNoIguales(false);
+                        document.getElementById('passw').className = 'isValid';
+                        document.getElementById('c_passw').className = 'isValid';
+                    }else{
+                        setPasswordNoIguales(true)
+                        document.getElementById('passw').className = 'isInvalid';
+                        document.getElementById('c_passw').className = 'isInvalid';
+                    }
                 }else{
                     setPasswordNoIguales(true)
                     document.getElementById('passw').className = 'isInvalid';
                     document.getElementById('c_passw').className = 'isInvalid';
                 }
-            }else{
-                setPasswordNoIguales(true)
-                document.getElementById('passw').className = 'isInvalid';
-                document.getElementById('c_passw').className = 'isInvalid';
             }
-        }
-        if(userData.phone.length > 0) {
-            if(userData.phone.length == 9) {
-                document.getElementById('phone').className = 'isValid';
-            }else {
-                document.getElementById('phone').className = 'isInvalid';
+            if(userData.phone.length > 0) {
+                if(userData.phone.length == 9) {
+                    document.getElementById('phone').className = 'isValid';
+                }else {
+                    document.getElementById('phone').className = 'isInvalid';
+                }
             }
+            localStorage.setItem('userDataToSave', JSON.stringify(userData));
+        } else {
+            alert('Debe seleccionar al menos un rol de usuario')
         }
-        localStorage.setItem('userDataToSave', JSON.stringify(userData));
+
     }
 
     const cambiarVistaConfirmarPassword = () => {
@@ -145,7 +154,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
         }
     }
 
-    const classes = useStyles();
+    /* const classes = useStyles(); */
 
     const uploadImageProfile = async (file) => {
         let image = await imageToBase64(file);
@@ -192,10 +201,47 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
             setConfirmPassword,
             setImageUrl
             )
-        setTiposUsuarios(usersTypes);
+        /* setTiposUsuarios(usersTypes); */
         rolesRoutes.getRoles().then(responseRoles => {
             if(cancel) {
-                setUserTypes(responseRoles.data)
+                if (uData.role.length > 0) {
+                    const rolesToList = responseRoles.data
+                    const rolesData = []
+                    rolesToList.map((role, number) => {
+                        if (uData.role === role.dbName) {
+                            role.selected = true
+                        } else {
+                            role.selected = false
+                        }
+                        if (role.dbName === 'superAdmin') {
+
+                        } else {
+                            rolesData.push(role)
+                        }
+                        if (number === (rolesToList.length - 1)) {
+                            setRolesListSelection(rolesData)
+                        }
+                    })
+                } else {
+                    const rolesToList = responseRoles.data
+                    const rolesData = []
+                    rolesToList.map((role, number) => {
+                        role.selected = false
+                        uData.roles.map(r => {
+                            if (r === role.dbName) {
+                                role.selected = true
+                            }
+                        })
+                        if (role.dbName === 'superAdmin') {
+
+                        } else {
+                            rolesData.push(role)
+                        }
+                        if (number === (rolesToList.length - 1)) {
+                            setRolesListSelection(rolesData)
+                        }
+                    })
+                }
             }
             
         });
@@ -213,6 +259,18 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
         return () => cancel = false;
         
     }, []);
+
+    const selectRole = (event, index) => {
+        console.log(event.target.checked)
+        const rolesListSelectionCache = [...rolesListSelection]
+        rolesListSelectionCache.map((role, number) => {
+            if (number === index) {
+                role.selected = event.target.checked
+            }
+        })
+        setRolesListSelection(rolesListSelectionCache)
+        saveUserData()
+    }
 
     return (
             <div style={{height: 'calc(100vh-100px)', width: '100%'}}>
@@ -262,31 +320,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
                                     />
                                 </FormControl>
                             </Grid>
-                            <Grid item xl={4} lg={4} md={6} sm={12} xs={12}>
-                                <FormControl style={{width: '100%', paddingRight: 10}}>
-                                    <p style={{margin: 0, marginTop: 5}}>Tipo de usuario</p>
-                                    <select 
-                                        onBlur={()=>saveUserData()} 
-                                        required
-                                        name="userType" 
-                                        id="userType" 
-                                        style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, marginRight: 10}}
-                                        onChange={(e)=> setUserType(e.target.value)}
-                                        value={role} 
-                                        className="inputClass"
-                                    >
-                                        <option key={100} value={''}>Seleccione...</option>
-                                        {
-                                            usersTypes.filter((item) => {if(item.dbName !== 'superAdmin') { return item }}).map((usuario, index) => {
-                                                return(
-                                                    <option key={index} value={usuario.dbName}>{usuario.name}</option>
-                                                )
-                                            })
-                                        }
-                                    </select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xl={4} lg={4} md={12} sm={12} xs={12}>
+                            <Grid item xl={8} lg={8} md={12} sm={12} xs={12}>
                                 <FormControl style={{width: '100%', paddingRight: 10}}>
                                     <p style={{margin: 0, marginTop: 5}}>Obra</p>
                                     <select 
@@ -322,20 +356,6 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
                                     <input autoComplete="off" required className="inputClass" id="lastName" onBlur={()=>saveUserData()} onChange={(e)=>setLastName(e.target.value)} value={lastName} /*className={classes.inputsStyle}*/ placeholder="Doe" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </Grid>
-                        {/* <div style={{width: '70vw', height: '12vh'}}>
-                            <div style={{float: 'left', width: '45%', marginRight: 10}}>
-                                <FormControl fullWidth>
-                                    <p style={{margin: 0, marginTop: 5}}>Nombre</p>
-                                    <input autoComplete="off" required className="inputClass" id="name" onBlur={()=>saveUserData()} onChange={(e)=>setName(e.target.value)} value={name} placeholder="John" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
-                                </FormControl>
-                            </div>
-                            <div style={{float: 'left', width: '45%'}}>
-                                <FormControl fullWidth>
-                                    <p style={{margin: 0, marginTop: 5}}>Apellido</p>
-                                    <input autoComplete="off" required className="inputClass" id="lastName" onBlur={()=>saveUserData()} onChange={(e)=>setLastName(e.target.value)} value={lastName} placeholder="Doe" type="text" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
-                                </FormControl>
-                            </div>
-                        </div>  */}
                             <Grid item xl={8} lg={8} md={6} sm={12} xs={12}>
                                 <FormControl style={{width: '100%', paddingRight: 10}}>
                                     <p style={{margin: 0, marginTop: 5}}>Correo electrónico</p>
@@ -348,98 +368,79 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
                                     <input autoComplete="off" required className="inputClass" id="phone" minLength={9} onBlur={()=>saveUserData()} onInput={(e)=>{e.target.value = e.target.value.slice(0, 9)}} onChange={(e)=>setPhone(e.target.value)} value={phone} /*className={classes.inputsStyle}*/ placeholder="999998888" type="phone" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
                                 </FormControl>
                             </Grid>
-                        {/* <div style={{width: '70vw', height: '12vh'}}>
-                            <div style={{float: 'left', width: '60%', marginRight: 10}}>
-                                <FormControl fullWidth>
-                                    <p style={{margin: 0, marginTop: 5}}>Correo electrónico</p>
-                                    <input autoComplete="off" required className="inputClass" id="email" onBlur={()=>saveUserData()} onChange={(e)=>setEmail(e.target.value)} value={email} placeholder="nombre@correo.cl" type="email" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
-                                </FormControl>
+                            {
+                                (typeDisplay === 'Nuevo usuario') && 
+                                <Grid container>
+                                    <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                                        <p style={{margin: 0, marginTop: 5}}>Contraseña</p>
+                                        <div style={{float: 'left', width: '100%', paddingRight: 10}}>
+                                            <input autoComplete="off" id="passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setPassword(e.target.value)} value={password} minLength={6} /*className={classes.inputsStyle}*/ placeholder="Min 6 carácteres" type={verPassword}
+                                                style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
+                                        </div>
+                                        <div style={{float: 'left', width: '1%', marginLeft: -50}}>
+                                            <IconButton style={{width: 40}} onClick={() => {cambiarVistaPassword()}}>
+                                                {
+                                                    verPassword === 'password' && <FontAwesomeIcon icon={faEye}/>
+                                                }
+                                                {
+                                                    verPassword === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
+                                                }
+                                            </IconButton>
+                                        </div>
+                                    </Grid>
+                                    <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                                        <p style={{margin: 0, marginTop: 5}}>Confirmar contraseña</p>
+                                        <div style={{float: 'left', width: '100%', paddingRight: 10}}>
+                                            <input autoComplete="off" id="c_passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setConfirmPassword(e.target.value)} value={confirmPassword} minLength={6} /*className={classes.inputsStyle}*/ placeholder="Repita contraseña" type={verConfirmarPassword}
+                                                style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
+                                        </div>
+                                        <div style={{float: 'left', width: '1%', marginLeft: -50}}>
+                                            <IconButton style={{width: 40}} onClick={()=>{cambiarVistaConfirmarPassword()}}>
+                                                {
+                                                    verConfirmarPassword === 'password' && <FontAwesomeIcon icon={faEye}/>
+                                                }
+                                                {
+                                                    verConfirmarPassword === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
+                                                }
+                                            </IconButton>
+                                        </div>
+                                    </Grid>
+                                </Grid>
+                            }
+                            <div style={
+                                {
+                                    marginTop: 10,
+                                    marginPadding: 10
+                                }
+                            }>
+                                <h2>
+                                    Roles de usuario
+                                </h2>
                             </div>
-                            <div style={{float: 'left', width: '30%'}}>
-                                <FormControl fullWidth>
-                                    <p style={{margin: 0, marginTop: 5}}>Número de teléfono</p>
-                                    <input autoComplete="off" required className="inputClass" id="phone" minLength={9} onBlur={()=>saveUserData()} onInput={(e)=>{e.target.value = e.target.value.slice(0, 9)}} onChange={(e)=>setPhone(e.target.value)} value={phone} placeholder="999998888" type="phone" style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20}} />
-                                </FormControl>
-                            </div>
-                        </div>  */}
-                        {
-                            (typeDisplay === 'Nuevo usuario') && <Grid container>
-                                <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
-                                <p style={{margin: 0, marginTop: 5}}>Contraseña</p>
-                                <div style={{float: 'left', width: '100%', paddingRight: 10}}>
-                                    <input autoComplete="off" id="passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setPassword(e.target.value)} value={password} minLength={6} /*className={classes.inputsStyle}*/ placeholder="Min 6 carácteres" type={verPassword}
-                                        style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
-                                </div>
-                                <div style={{float: 'left', width: '1%', marginLeft: -50}}>
-                                    <IconButton style={{width: 40}} onClick={() => {cambiarVistaPassword()}}>
-                                        {
-                                            verPassword === 'password' && <FontAwesomeIcon icon={faEye}/>
-                                        }
-                                        {
-                                            verPassword === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
-                                        }
-                                    </IconButton>
-                                </div>
+                            <Grid container>
+                                {
+                                    rolesListSelection.map((role, n) => {
+                                        /* console.log(role) */
+                                        return (
+                                            <Grid xl={3} lg={3} md={3} item key={n}>
+                                                <Grid container>
+                                                    <Grid item xl={2} lg={2} md={2}>
+                                                        <Checkbox
+                                                            disabled={((localStorage.getItem('role') === 'superAdmin') && (role.dbName === 'superAdmin')) && false}
+                                                            checked={role.selected}
+                                                            onChange={(e) => { selectRole(e, n) }}
+                                                        />
+                                                    </Grid> 
+                                                    <Grid item xl={10} lg={10} md={10}>
+                                                        <p>{role.name}</p>
+                                                    </Grid> 
+                                                </Grid>
+                                            </Grid>
+                                        )
+                                    })
+                                }
                             </Grid>
-                            <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
-                                <p style={{margin: 0, marginTop: 5}}>Confirmar contraseña</p>
-                                <div style={{float: 'left', width: '100%', paddingRight: 10}}>
-                                    <input autoComplete="off" id="c_passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setConfirmPassword(e.target.value)} value={confirmPassword} minLength={6} /*className={classes.inputsStyle}*/ placeholder="Repita contraseña" type={verConfirmarPassword}
-                                        style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
-                                </div>
-                                <div style={{float: 'left', width: '1%', marginLeft: -50}}>
-                                    <IconButton style={{width: 40}} onClick={()=>{cambiarVistaConfirmarPassword()}}>
-                                        {
-                                            verConfirmarPassword === 'password' && <FontAwesomeIcon icon={faEye}/>
-                                        }
-                                        {
-                                            verConfirmarPassword === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
-                                        }
-                                    </IconButton>
-                                </div>
-                            </Grid>
-                            </Grid>
-                        }
                         </Grid>
-                        {/* {(typeDisplay === 'Nuevo usuario') && <div style={{width: '70vw', height: '12vh'}}>
-                            <div style={{float: 'left', width: '37%', marginRight: 10}}>
-                                <p style={{margin: 0, marginTop: 5}}>Contraseña</p>
-                                <div style={{float: 'left', width: '100%'}}>
-                                    <input autoComplete="off" id="passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setPassword(e.target.value)} value={password} minLength={6} placeholder="Min 6 carácteres" type={verPassword}
-                                        style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
-                                </div>
-                                <div style={{float: 'left', width: '1%', marginLeft: -50}}>
-                                    <IconButton style={{width: 40}} onClick={() => {cambiarVistaPassword()}}>
-                                        {
-                                            verPassword === 'password' && <FontAwesomeIcon icon={faEye}/>
-                                        }
-                                        {
-                                            verPassword === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
-                                        }
-                                    </IconButton>
-                                </div>
-                            </div>
-                            <div style={{float: 'left', width: '37%'}}>
-                                <p style={{margin: 0, marginTop: 5}}>Confirmar contraseña</p>
-                                <div style={{float: 'left', width: '100%'}}>
-                                    <input autoComplete="off" id="c_passw" required className="isInvalid" onBlur={()=>saveUserData()} onChange={(e)=>setConfirmPassword(e.target.value)} value={confirmPassword} minLength={6} placeholder="Repita contraseña" type={verConfirmarPassword}
-                                        style={{width: '100%', height: 44, borderRadius: 10, fontSize: 20, paddingRight: 50}} />
-                                </div>
-                                <div style={{float: 'left', width: '1%', marginLeft: -50}}>
-                                    <IconButton style={{width: 40}} onClick={()=>{cambiarVistaConfirmarPassword()}}>
-                                        {
-                                            verConfirmarPassword === 'password' && <FontAwesomeIcon icon={faEye}/>
-                                        }
-                                        {
-                                            verConfirmarPassword === 'text' && <FontAwesomeIcon icon={faEyeSlash}/>
-                                        }
-                                    </IconButton>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        
-                        }  */}   
                         {
                             passwordNoIguales && <div style={{width: '100%', textAlign: 'center'}}>
                                 <h3 style={{color: 'red'}}>Contraseñas no coinciden</h3>

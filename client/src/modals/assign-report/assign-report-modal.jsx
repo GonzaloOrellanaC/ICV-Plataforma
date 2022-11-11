@@ -86,30 +86,33 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
 
     const getUsers = () => {
         let hableUser;
+        console.log(reportType)
         if(reportType === 'Inspección') {
             hableUser === 'inspectionWorker'
+            usersRoutes.getOperadores().then(response => {
+                console.log(response)
+                setOperarios(response.data)
+            })
         }else if(reportType === 'Mantención') {
             hableUser === 'maintenceOperator'
+            usersRoutes.getMantenedores().then(response => {
+                console.log(response)
+                setOperarios(response.data)
+            })
         }
-        usersRoutes.getAllUsers().then(response => {
+        /* usersRoutes.getAllUsers().then(response => {
             let userList = new Array();
             let users = new Array();
             userList = response.data;
-            userList.forEach((user, index) => {/* 
-                let permissionsReports = new Array();
-                permissionsReports = user.permissionsReports
-                if(permissionsReports.length > 0) {
-                    if(permissionsReports[1].isChecked) { */
+            userList.forEach((user, index) => {
                         users.push(user);
-                    /* }
-                } */
                 if(index == (userList.length - 1)) {
                     console.log(users)
                     setOperarios(users)
                 }
             })
 
-        })
+        }) */
     }
 
     useEffect(() => {
@@ -125,7 +128,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         }else if(state === 'Completadas') {
             setColorState('#27AE60');
         }     
-    }, [])
+    }, [reportType])
     
     return(
         <Modal
@@ -176,7 +179,12 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                 <select value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value); setCloseType(true)}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
                     <option value={""}>Seleccionar operario</option>
                     {
-                        operarios.filter(user => {
+                        operarios.map((user, i) => {
+                            return(
+                                <option key={i} value={user._id}>{`${user.name} ${user.lastName}`}</option>
+                            )
+                        })
+                        /* operarios.filter(user => {
                             if(reportType ==='Inspección') {
                                 if(user.role==='inspectionWorker') {
                                     return user
@@ -190,7 +198,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                             return(
                                 <option key={i} value={user._id}>{`${user.name} ${user.lastName}`}</option>
                             )
-                        })
+                        }) */
                     }
                 </select>
 

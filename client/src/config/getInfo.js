@@ -4,9 +4,10 @@ import getMyReports from './getMyReports'
 import getAllAssignment from './getAllAssignment'
 
 const getAssignments = (setProgress) => {
+    const isOperator = Boolean(localStorage.getItem('isOperator'))
     return new Promise(async resolve => {
         let reps = new Array();
-        if((localStorage.getItem('role') === 'maintenceOperator'||(localStorage.getItem('role') === 'inspectionWorker'))){
+        if((isOperator||(localStorage.getItem('role') === 'maintenceOperator')||(localStorage.getItem('role') === 'inspectionWorker'))){
             reps = await getMyReports(localStorage.getItem('_id'));
         }else{
             reps = await getAllAssignment()
