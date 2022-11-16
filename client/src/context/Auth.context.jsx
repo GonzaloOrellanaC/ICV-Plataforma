@@ -6,7 +6,7 @@ import { authRoutes } from '../routes'
 const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
-    const defaultAuthenticated  = Boolean(window.localStorage.getItem('isauthenticated'));
+    const defaultAuthenticated  = Boolean(window.localStorage.getItem('isauthenticated'))
     const defaultAdmin = Boolean(window.localStorage.getItem('isAdmin'));
     const [ isAuthenticated, setIsAuthenticated ] = useState(defaultAuthenticated || false)
     const [ getSelf, { loading, error, data } ] = useLazyQuery(UsersGraphQL.query.GET_SELF)
@@ -30,6 +30,10 @@ export const AuthProvider = (props) => {
     }, [error])
 
     useEffect(() => {
+        console.log(isAuthenticated)
+    }, [isAuthenticated])
+
+    useEffect(() => {
         getSelf()
     }, []) 
 
@@ -43,33 +47,33 @@ export const AuthProvider = (props) => {
             return new Promise(resolve => {
                 authRoutes.loginRut(rut, password)
                 .then(response => {
-                    let userDataToSave = response.data;
+                    let userDataToSave = response.data
                     if(response.data.enabled) {
-                        localStorage.setItem('email', userDataToSave.email);
-                        localStorage.setItem('fullName', userDataToSave.fullName);
-                        localStorage.setItem('name', userDataToSave.name);
-                        localStorage.setItem('lastName', userDataToSave.lastName);
-                        localStorage.setItem('_id', userDataToSave._id);
-                        localStorage.setItem('role', userDataToSave.role);
+                        localStorage.setItem('email', userDataToSave.email)
+                        localStorage.setItem('fullName', userDataToSave.fullName)
+                        localStorage.setItem('name', userDataToSave.name)
+                        localStorage.setItem('lastName', userDataToSave.lastName)
+                        localStorage.setItem('_id', userDataToSave._id)
+                        localStorage.setItem('role', userDataToSave.role)
+                        localStorage.setItem('roles', JSON.stringify(userDataToSave.roles))
                         if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
-                            localStorage.setItem('isAdmin', true);
+                            localStorage.setItem('isAdmin', true)
                             setAdmin(true)
                         }else{
-                            localStorage.setItem('isAdmin', false);
-                            setAdmin(false);
-                            
+                            localStorage.setItem('isAdmin', false)
+                            setAdmin(false)
                         }
                         if(userDataToSave.sites) {
-                            localStorage.setItem('sitio', userDataToSave.sites);
+                            localStorage.setItem('sitio', userDataToSave.sites)
                         }
-                        localStorage.setItem('isauthenticated', true);
-                        setIsAuthenticated(true);
+                        localStorage.setItem('isauthenticated', true)
+                        setIsAuthenticated(true)
                         resolve({
                             state: true,
                             response: response
                         })
-                    }else{
-                        setIsAuthenticated(false);
+                    } else {
+                        setIsAuthenticated(false)
                         alert('Su cuenta no está habilitada, debe confirmarla.')
                         resolve({
                             state: false,
@@ -77,9 +81,9 @@ export const AuthProvider = (props) => {
                     }
                 })
                 .catch(error => {
-                    alert('Error de autenticación: '+error);
-                    setIsAuthenticated(false);
-                    localStorage.setItem('isauthenticated', false);
+                    alert('Error de autenticación: '+error)
+                    setIsAuthenticated(false)
+                    /* localStorage.setItem('isauthenticated', false) */
                 })
             })
         },
@@ -87,7 +91,7 @@ export const AuthProvider = (props) => {
             return new Promise(resolve => {
                 authRoutes.login(email, password)
                 .then(response => {
-                    let userDataToSave = response.data;
+                    let userDataToSave = response.data
                     if(response.data.enabled) {
                         localStorage.setItem('email', userDataToSave.email)
                         localStorage.setItem('fullName', userDataToSave.fullName)
@@ -119,24 +123,24 @@ export const AuthProvider = (props) => {
                         }
                         if (userDataToSave.role.length > 0) {
                             if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
-                                localStorage.setItem('isAdmin', true);
+                                localStorage.setItem('isAdmin', true)
                                 setAdmin(true)
                             }else{
-                                localStorage.setItem('isAdmin', false);
+                                localStorage.setItem('isAdmin', false)
                                 setAdmin(false);
                             }
                         }
                         
                         if(userDataToSave.sites) {
-                            localStorage.setItem('sitio', userDataToSave.sites);
+                            localStorage.setItem('sitio', userDataToSave.sites)
                         }
-                        localStorage.setItem('isauthenticated', true);
-                        setIsAuthenticated(true);
+                        localStorage.setItem('isauthenticated', true)
+                        setIsAuthenticated(true)
                         resolve({
                             state: true,
                             response: response
                         })
-                    }else{
+                    } else {
                         setIsAuthenticated(false);
                         alert('Su cuenta no está habilitada, debe confirmarla.')
                         resolve({
@@ -145,9 +149,9 @@ export const AuthProvider = (props) => {
                     }
                 })
                 .catch(error => {
-                    alert('Error de autenticación: '+error);
-                    setIsAuthenticated(false);
-                    localStorage.setItem('isauthenticated', false);
+                    alert('Error de autenticación: '+error)
+                    setIsAuthenticated(false)
+                    localStorage.setItem('isauthenticated', false)
                 })
             })
         }

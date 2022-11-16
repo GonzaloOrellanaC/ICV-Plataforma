@@ -1,18 +1,15 @@
-import React, { Fragment, useEffect, useMemo } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-
-import { AppBar, makeStyles, Toolbar, Button, Modal, Box, Grid } from '@material-ui/core'
-import { faCircle, faEraser, faPen, faSave } from '@fortawesome/free-solid-svg-icons'
+import { AppBar, makeStyles, Toolbar, Grid } from '@material-ui/core'
+import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import logo from '../../assets/logo_icv_gris.png'
 import logoNotification from '../../assets/logo_icv_notification_push.png'
-import { useAuth, useLanguage, useNavigation } from '../../context'
+import { useAuth, useNavigation } from '../../context'
 import { changeTypeUser, styleModal, sync } from '../../config'
 import { useState } from 'react'
-
 import './style.css'
 import { usersRoutes } from '../../routes'
-import { Canvas } from '..'
 import addNotification from 'react-push-notification';
 import { SocketConnection } from '../../connections'
 import { FirmaUsuario } from '../../modals'
@@ -61,61 +58,59 @@ const Header = () => {
     const [ network, setIfHavNetwork ] = useState(false);
     const [ openSign, setOpenSign ] = useState(false);
     const [ refCanvas, setRefCanvas ] = useState();
-    const [ cancel, setCancel ] = useState(true)
-    let userData = {};
+    const [ userData, setUserData ] = useState({
+        name: '',
+        lastName: '',
+        role: '',
+        roles: []
+    })
     const history = useHistory();
-    userData.name = window.localStorage.getItem('name');
-    userData.lastName = window.localStorage.getItem('lastName');
-    if(window.localStorage.getItem('role')) {
-        userData.role = changeTypeUser(window.localStorage.getItem('role'))
-    } else if (window.localStorage.getItem('roles')) {
-        userData.roles = JSON.parse(window.localStorage.getItem('roles'))
-    }
     useEffect(() => {
-        if (cancel) {
-            if(isAuthenticated) {
-                if(navigator.onLine) {
-                    usersRoutes.getUser(localStorage.getItem('_id')).then(data => {
-                        if(data.data) {
-                            if(!data.data.sign || (data.data.sign.length < 1)) {
-                                setOpenSign(true)
-                            }
+        console.log(isAuthenticated)
+        const uData = {
+            name: window.localStorage.getItem('name'),
+            lastName: window.localStorage.getItem('lastName'),
+            role: window.localStorage.getItem('role') && changeTypeUser(((window.localStorage.getItem('role')).length > 0) ? window.localStorage.getItem('role') : ''),
+            roles: JSON.parse(window.localStorage.getItem('roles'))
+        }
+        console.log(uData)
+        setUserData(uData)
+        if(isAuthenticated) {
+            if(navigator.onLine) {
+                usersRoutes.getUser(localStorage.getItem('_id')).then(data => {
+                    if(data.data) {
+                        if(!data.data.sign || (data.data.sign.length < 1)) {
+                            setOpenSign(true)
                         }
-                    })
-                    /* SocketConnection.sendIsActive() */
-                }
-                if (navigator.onLine) {
-                    setIfHavNetwork(true)
-                } else {
-                    setIfHavNetwork(false)
-                }
-                window.addEventListener('online', () => {
-                    setIfHavNetwork(true);
-                });
-                window.addEventListener('offline', () => {
-                    setIfHavNetwork(false);
-                    addNotification({
-                        icon: logoNotification,
-                        title: 'Alerta',
-                        subtitle: 'Pérdida de conexión',
-                        message: 'El dispositivo no cuenta con conexión a internet.',
-                        theme: 'red',
-                        native: true // when using native, your OS will handle theming.
-                    })
-                });
-                Notification.requestPermission().then((res) => {
-                    if(res === 'denied' || res === 'default') {
-                        
                     }
                 })
             }
+            if (navigator.onLine) {
+                setIfHavNetwork(true)
+            } else {
+                setIfHavNetwork(false)
+            }
+            window.addEventListener('online', () => {
+                setIfHavNetwork(true);
+            });
+            window.addEventListener('offline', () => {
+                setIfHavNetwork(false);
+                addNotification({
+                    icon: logoNotification,
+                    title: 'Alerta',
+                    subtitle: 'Pérdida de conexión',
+                    message: 'El dispositivo no cuenta con conexión a internet.',
+                    theme: 'red',
+                    native: true // when using native, your OS will handle theming.
+                })
+            });
+            Notification.requestPermission().then((res) => {
+                if(res === 'denied' || res === 'default') {
+                    
+                }
+            })
         }
-        return () => setCancel(false)
-    }, [cancel])
-
-    const openPage = () => {
-        window.open('http://localhost:3000')
-    }
+    }, [])
 
     const setRefCanvasFunction = (ref) => {
         setRefCanvas(ref);
@@ -153,26 +148,25 @@ const Header = () => {
                                 <dl>
                                     <dt style={{margin: 0}}>{isAuthenticated && <div> <p className='nombre'> { userData.name } { userData.lastName } </p> </div>}</dt>
                                     {
-                                            (userData.role && userData.role.length > 0)
-                                            ?
-                                            <dt>
-                                                {userData.role}
-                                            </dt>
-                                            :
-                                            <Grid container>
-                                                {
-                                                    userData.roles.map((role, i) => {
-                                                        return (
-                                                            <Grid item key={i} style={{marginRight: 10}}>
-                                                                {changeTypeUser(role)} |
-                                                            </Grid>
-                                                        )
-                                                    })
-                                                }
-                                            </Grid>
+                                        (userData && (userData.role && userData.role.length > 0))
+                                        ?
+                                        <dt>
+                                            {userData.role}
+                                        </dt>
+                                        :
+                                        <Grid container>
+                                            {
+                                                userData.roles.map((role, i) => {
+                                                    return (
+                                                        <Grid item key={i} style={{marginRight: 10}}>
+                                                            {changeTypeUser(role)} |
+                                                        </Grid>
+                                                    )
+                                                })
+                                            }
+                                        </Grid>
                                             
-                                        }
-                                    
+                                    }
                                 </dl>
                                 </div>
                             </Fragment>}
@@ -185,69 +179,6 @@ const Header = () => {
                             </div>
                     </Toolbar>
                     <FirmaUsuario openSign={openSign} styleModal={styleModal} setRefCanvasFunction={setRefCanvasFunction} getImage={getImage} clear={clear} />
-                    {/* <Modal
-                        open={openSign}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    >
-                        <Box sx={styleModal}>
-                            <div style={{width: '100%', textAlign: 'center'}}>
-                                <h2>Para continuar deje su firma para la documentación. (Obligatorio)</h2>
-                            </div>
-                            <div style={{width: '100%', textAlign: 'center', position: 'relative'}}>
-                                <div style={{position: 'absolute', width: '100%', textAlign: 'center', marginTop: 10}}>
-                                    <FontAwesomeIcon size='lg' icon={faPen} color={'#333'} />
-                                </div>
-                                <Canvas 
-                                    disabled={true}
-                                    width={300} 
-                                    height={300}
-                                    setRefCanvas={setRefCanvasFunction}
-                                />
-                            </div>
-                            <div style={{width: '100%', textAlign: 'center'}}>
-                                <div style={{width: '50%', textAlign: 'center', float: 'left'}}>
-                                    <Button 
-                                    onClick={()=> clear()} 
-                                    style={
-                                        {
-                                            borderStyle: 'solid',
-                                            borderWidth: 1,
-                                            borderColor: '#333',
-                                            borderRadius: 10
-                                            }
-                                        }
-                                    >
-                                        <FontAwesomeIcon 
-                                            size='lg' 
-                                            icon={faEraser} 
-                                            color={'#333'} 
-                                            style={{marginRight: 10}}
-                                        /> Borrar
-                                    </Button>
-                                </div>
-                                <div style={{width: '50%', textAlign: 'center', float: 'right'}}>
-                                    <Button 
-                                    onClick={()=> getImage()}
-                                    style={
-                                        {
-                                            borderStyle: 'solid',
-                                            borderWidth: 1,
-                                            borderColor: '#333',
-                                            borderRadius: 10
-                                            }
-                                        }>
-                                        <FontAwesomeIcon 
-                                            size='lg' 
-                                            icon={faSave} 
-                                            color={'#333'} 
-                                            style={{marginRight: 10}}
-                                        /> Guardar
-                                    </Button>
-                                </div>
-                            </div>
-                        </Box>
-                    </Modal> */}
                 </div>
             </AppBar>
         )

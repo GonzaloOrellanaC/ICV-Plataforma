@@ -16,6 +16,10 @@ const VersionControlModal = ({open, closeModal}) => {
                     <h2>Versión {environment.version}</h2>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <strong>v.2.2.1</strong>
+                    <li>
+                        Reparación de errores generados en versión 2.2
+                    </li>
                     <strong>v.2.2</strong>
                     <li>
                         Se habilita multiusuarios.

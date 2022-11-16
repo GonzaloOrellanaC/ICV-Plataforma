@@ -8,9 +8,8 @@ import { onError } from '@apollo/client/link/error'
 import { createUploadLink } from 'apollo-upload-client'
 
 /* Material UI */
-import { Box, CircularProgress, CssBaseline, IconButton, LinearProgress, ThemeProvider } from '@material-ui/core'
+import { CircularProgress, CssBaseline, IconButton, LinearProgress, ThemeProvider } from '@material-ui/core'
 import { theme, download3DFiles, detectExecutionState } from './config'
-
 import './App.css'
 import { AuthProvider, LanguageProvider, NavigationProvider, useAuth } from './context'
 import { Header, Navbar } from './containers'
@@ -29,7 +28,6 @@ import {
     SitesPage,
     AdminPage,
     MaintencePage,
-    PmsPage,
     PautaDetailPage,
     MachinesListPage,
     AdminUsersPage,
@@ -48,8 +46,6 @@ import { Notifications } from 'react-push-notification';
 import { SocketConnection } from './connections'
 import { Close } from '@material-ui/icons'
 
-/* import history from './history'
- */
 const errorLink = onError(({ graphQLErrors, networkError, response }) => {
     if (networkError?.statusCode === 401) {
     }else{
@@ -71,7 +67,6 @@ const client = new ApolloClient({
     link: link,
     cache: new InMemoryCache()
 });
-    
 
 const OnApp = () => {
     const [ openDownload3D, setOpenDownload3D ] = useState(false)
@@ -80,6 +75,10 @@ const OnApp = () => {
     const { loading } = useAuth()
     const isAuthenticated = localStorage.getItem('isauthenticated') //==='true'
     const isNotAuthenticated = (localStorage.getItem('isauthenticated')==='false')||!localStorage.getItem('isauthenticated')
+    const isOperator = Boolean(localStorage.getItem('isOperator'))
+    const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
+    const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
+    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
     const readyToLoad = () => {
         initLoad3D()
     }
@@ -99,7 +98,6 @@ const OnApp = () => {
         localStorage.setItem('isLoading3D', 'ok')
         download3DFiles(setProgressDownload3D, setOpenDownload3D, setLoadingData3D, null)
     }
-
     const closeLoader = () => {
         if(confirm('Confirme cierre de carga de elementos 3D. Posiblemente no pueda verlos. Para volver a cargarlos vuelva a iniciar sesión.')){
             setOpenDownload3D(false)
@@ -125,7 +123,11 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                {(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'superAdmin')) && <Route path={['/internal-messages']}>
+                {(
+                    localStorage.getItem('role') === ('admin') ||
+                    (localStorage.getItem('role') === 'sapExecutive') ||
+                    (localStorage.getItem('role') === 'superAdmin') ||
+                    isSapExecutive) && <Route path={['/internal-messages']}>
                     <Switch>
                         <Route exact path='/internal-messages'>
                             <InternalMessagesPage route={'internal-messages'}/>
@@ -179,21 +181,32 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                { !(localStorage.getItem('role') === 'maintenceOperator') && <Route path={['/maintenance']}>
+                {!(localStorage.getItem('role') === 'maintenceOperator') && <Route path={['/maintenance']}>
                     <Switch>
                         <Route exact path='/maintenance'>
                             <NoPermissionPage route={'maintenance'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'superAdmin')) &&<Route path={['/sites']}>
+                {(
+                    isSapExecutive ||
+                    localStorage.getItem('role') === ('admin') ||
+                    (localStorage.getItem('role') === 'sapExecutive') ||
+                    (localStorage.getItem('role') === 'superAdmin')
+                    ) && <Route path={['/sites']}>
                     <Switch>
                         <Route exact path='/sites'>
                             <SitesPage route={'sites'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {(localStorage.getItem('role') !== ('admin') || localStorage.getItem('role') !== 'sapExecutive') &&<Route path={['/sites']}>
+                {(
+                    isOperator ||
+                    isShiftManager ||
+                    isChiefMachinery ||
+                    localStorage.getItem('role') !== ('admin') ||
+                    localStorage.getItem('role') !== 'sapExecutive'
+                    ) && <Route path={['/sites']}>
                     <Switch>
                         <Route exact path='/sites'>
                             <NoPermissionPage route={'sites'}/>
@@ -228,49 +241,86 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                {(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'superAdmin')) && <Route path={['/administration']}>
+                {(
+                    isSapExecutive ||
+                    localStorage.getItem('role') === ('admin') ||
+                    (localStorage.getItem('role') === 'sapExecutive') ||
+                    (localStorage.getItem('role') === 'superAdmin')
+                    ) && <Route path={['/administration']}>
                     <Switch>
                         <Route exact path='/administration'>
                             <AdminPage route={'administration'}/>
                         </Route>
                     </Switch>
                 </Route> }
-                {((localStorage.getItem('role') !== ('admin')) ||  (localStorage.getItem('role') !== 'sapExecutive') || (localStorage.getItem('role') !== 'superAdmin') ) && <Route path={['/administration']}>
+                {((
+                    isOperator ||
+                    isShiftManager ||
+                    isChiefMachinery ||
+                    localStorage.getItem('role') !== ('admin')) ||
+                    (localStorage.getItem('role') !== 'sapExecutive') ||
+                    (localStorage.getItem('role') !== 'superAdmin')
+                    ) && <Route path={['/administration']}>
                     <Switch>
                         <Route exact path='/administration'>
                             <NoPermissionPage route={'administration'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'superAdmin')) && <Route path={['/users']}>
+                {(
+                    isSapExecutive ||
+                    localStorage.getItem('role') === ('admin') ||
+                    (localStorage.getItem('role') === 'sapExecutive') ||
+                    (localStorage.getItem('role') === 'superAdmin')
+                    ) && <Route path={['/users']}>
                     <Switch>
                         <Route exact path='/users'>
                             <AdminUsersPage route={'users'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {(localStorage.getItem('role') !== ('admin') ||  (localStorage.getItem('role') !== 'sapExecutive') || (localStorage.getItem('role') !== 'superAdmin')) && <Route path={['/users']}>
+                {(
+                    isOperator ||
+                    isShiftManager ||
+                    isChiefMachinery ||
+                    localStorage.getItem('role') !== ('admin') ||
+                    (localStorage.getItem('role') !== 'sapExecutive') || (localStorage.getItem('role') !== 'superAdmin')) && <Route path={['/users']}>
                     <Switch>
                         <Route exact path='/users'>
                             <NoPermissionPage route={'users'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'superAdmin')) && <Route path={['/new-users']}>
+                {(
+                    isSapExecutive ||
+                    localStorage.getItem('role') === ('admin') ||
+                    (localStorage.getItem('role') === 'sapExecutive') ||
+                    (localStorage.getItem('role') === 'superAdmin')
+                    ) && <Route path={['/new-users']}>
                     <Switch>
                         <Route exact path='/new-users'>
                             <AdminNewUserPage route={'new-users'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {(localStorage.getItem('role') !== ('admin') ||  (localStorage.getItem('role') !== 'sapExecutive') || (localStorage.getItem('role') !== 'superAdmin') ) && <Route path={['/new-users']}>
+                {(
+                    isOperator ||
+                    isShiftManager ||
+                    isChiefMachinery ||
+                    localStorage.getItem('role') !== ('admin') ||
+                    (localStorage.getItem('role') !== 'sapExecutive') ||
+                    (localStorage.getItem('role') !== 'superAdmin')
+                    ) && <Route path={['/new-users']}>
                     <Switch>
                         <Route exact path='/new-users'>
                             <NoPermissionPage route={'new-users'}/>
                         </Route>
                     </Switch>
                 </Route>}
-                {(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'superAdmin') ) && <Route path={['/roles']}>
+                {(
+                    localStorage.getItem('role') === ('admin') ||
+                    (localStorage.getItem('role') === 'superAdmin')
+                    ) && <Route path={['/roles']}>
                     <Switch>
                         <Route exact path='/roles'>
                             <RolesPage route={'roles'}/>
@@ -297,11 +347,6 @@ const OnApp = () => {
                     </Switch>
                 </Route>
                 <Route path={['/notifications']}>
-                    {/* <Switch>
-                        <Route path='/notifications/:id'>
-                            <ActivitiesDetailPage route={'assignment'}/>
-                        </Route>
-                    </Switch> */}
                     <Switch>
                         <Route exact path='/notifications'>
                             <NotificationsPage route={'notifications'}/>
@@ -353,7 +398,6 @@ const OnApp = () => {
 
 /*  Main app component, activates providers for the whole app (Theme, Snackbar, Apollo and AuthContext) */
 const App = () => {   
-
     return (
         <Router>
             <Notifications />
@@ -370,8 +414,7 @@ const App = () => {
                 </AuthProvider>
             </ApolloProvider>
         </Router>
-    );
-    
+    )
 }
 
 export default App

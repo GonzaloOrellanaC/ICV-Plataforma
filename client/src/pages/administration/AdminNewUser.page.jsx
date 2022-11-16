@@ -59,7 +59,6 @@ const AdminNewUserPage = () => {
                 }
                 setUserData(u.data);
                 setUsageModule(0)
-                //localStorage.setItem('userDataToSave', JSON.stringify(u.data))
             })
         }else{
             setUsageModule(0)
@@ -106,62 +105,6 @@ const AdminNewUserPage = () => {
                 history.goBack()
             }
         }
-        /* let permisosReportes = JSON.parse(localStorage.getItem('listaPermisosReportes'));
-        let permisosUsuarios = JSON.parse(localStorage.getItem('listaPermisosUsuarios'));
-        permisosReportes.forEach( (permisoReporte, index) => {
-            if(!permisoReporte.isChecked) {
-                permisoReporte.isChecked = false
-            }
-            if(index == (permisosReportes.length - 1)) {
-                permisosUsuarios.forEach(async(permisoUsuario, i) => {
-                    if(!permisoUsuario.isChecked) {
-                        permisoUsuario.isChecked = false
-                    }
-                    if(i == (permisosUsuarios.length - 1)) {
-                        userData.permissionsReports = permisosReportes;
-                        userData.permissionsUsers = permisosUsuarios;
-                        userData.confirmPassword = null;
-                        setOpenLoader(true);
-                        if(routingData === 'Nuevo usuario') {
-                            try{
-                                setLoadingData('Inscribiendo nuevo usuario');
-                                let userState = await usersRoutes.createUser(userData, userData.password);
-                                if(userState.status == 200) {
-                                    setOpenLoader(false)
-                                    openCloseModal()
-                                }else{
-                                    alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
-                                    setOpenLoader(false)
-                                    history.goBack()
-                                }
-                            } catch (err) {
-                                alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
-                                setOpenLoader(false)
-                                history.goBack()
-                            }
-                        }else if(routingData === 'Editar usuario') {
-                            try{
-                                setLoadingData('Editando usuario');
-                                let userState = await usersRoutes.editUser(userData);
-                                if(userState.status == 200) {
-                                    setOpenLoader(false)
-                                    openCloseModal()
-                                }else{
-                                    alert('Error al editar usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
-                                    setOpenLoader(false)
-                                    history.goBack()
-                                }
-                            } catch (err) {
-                                alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
-                                setOpenLoader(false)
-                                history.goBack()
-                            }
-                        }
-                        
-                    }
-                })
-            }
-        }); */
     }
 
     const editUser = () => {
@@ -173,29 +116,7 @@ const AdminNewUserPage = () => {
                 openCloseModal()
                 setOpenLoader(false)
             }
-        }, 1000);
-        /* let permisosReportes = JSON.parse(localStorage.getItem('listaPermisosReportes'));
-        let permisosUsuarios = JSON.parse(localStorage.getItem('listaPermisosUsuarios'));
-        permisosReportes.forEach( (permisoReporte, index) => {
-            if(!permisoReporte.isChecked) {
-                permisoReporte.isChecked = false
-            }
-            if(index == (permisosReportes.length - 1)) {
-                permisosUsuarios.forEach(async(permisoUsuario, i) => {
-                    if(!permisoUsuario.isChecked) {
-                        permisoUsuario.isChecked = false
-                    }
-                    if(i == (permisosUsuarios.length - 1)) {
-                        userData.permissionsReports = permisosReportes;
-                        userData.permissionsUsers = permisosUsuarios;
-                        let userState = await usersRoutes.editUser(userData, id);
-                        if(userState) {
-                            openCloseModal()
-                        }
-                    }
-                })
-            }
-        }); */
+        }, 1000)
     }
 
     const deleteData = () => {
@@ -210,7 +131,6 @@ const AdminNewUserPage = () => {
         if(user) {
             if(user.rut) {
                 if(validate(user.rut)) {
-                    /* let phone = user.phone; */
                     if(user.phone) {
                         console.log(user)
                         let infoFaltante = []
@@ -221,7 +141,8 @@ const AdminNewUserPage = () => {
                             userData.name = user.name
                             userData.lastName = user.lastName
                             userData.phone = user.phone
-                            userData.role = user.role
+                            /* userData.role = user.role */
+                            userData.roles = user.roles
                             userData.rut = user.rut
                             userData.sites = user.sites
                             Object.values(userData).map(async (value, index) => {
@@ -236,6 +157,7 @@ const AdminNewUserPage = () => {
                                     console.log(infoFaltante)
                                     if(!habilitado) {
                                         setTimeout(() => {
+                                            console.log('Faltan datos: ' + JSON.stringify(infoFaltante))
                                             alert('Faltan datos: ' + JSON.stringify(infoFaltante))
                                         }, 100);
                                     }else{
@@ -252,8 +174,9 @@ const AdminNewUserPage = () => {
                                 }
                             })
                         } else {
+                            console.log(user)
                             Object.values(user).map(async (value, index) => {
-                                /* console.log(value) */
+                                console.log(value)
                                 if(!value) {
                                     if(!id) {
                                         habilitado = false
@@ -264,6 +187,7 @@ const AdminNewUserPage = () => {
                                     console.log(infoFaltante)
                                     if(!habilitado) {
                                         setTimeout(() => {
+                                            console.log('Faltan datos: ' + JSON.stringify(infoFaltante))
                                             alert('Faltan datos: ' + JSON.stringify(infoFaltante))
                                         }, 100);
                                     }else{

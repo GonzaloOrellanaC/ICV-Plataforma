@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { makeStyles, Grid, Box, FormControl, IconButton, Checkbox } from "@material-ui/core";
-import { faEye, faEyeSlash, faPaperclip, faUserCog } from "@fortawesome/free-solid-svg-icons";
+import { Grid, FormControl, IconButton, Checkbox } from "@material-ui/core";
+import { faEye, faEyeSlash, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { azureStorageRoutes, rolesRoutes, usersRoutes } from '../../routes';
-import { validate, clean, format, getCheckDigit } from 'rut.js';
+import { rolesRoutes, usersRoutes } from '../../routes';
+import { validate, format } from 'rut.js';
 import { sitesDatabase } from "../../indexedDB";
 import './CreateUser.css'
 import ValidatorEmail from './emailValidator'
@@ -12,15 +12,8 @@ import _init from './init';
 import _continue from './continue'
 import { imageToBase64 } from "../../config";
 
-/* const useStyles = makeStyles(theme => ({
-    inputsStyle: {
-        borderColor: '#C4C4C4'
-    }
-})); */
+const CreateUser = ({typeDisplay, uData}) => {
 
-const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
-
-    /* const [ tiposUsuarios, setTiposUsuarios ] = useState([]); */
     const [ verPassword, setVerPassword ] = useState('password');
     const [ verConfirmarPassword, setVerConfirmarPassword ] = useState('password');
 
@@ -28,14 +21,14 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
     const [ name, setName ] = useState('');
     const [ lastName, setLastName ] = useState('');
     const [ rut, setRut ] = useState('');
-    const [ role, setUserType ] = useState('');
+    /* const [ role, setUserType ] = useState(''); */
     const [ rolesListSelection, setRolesListSelection ] = useState([]);
     const [ userSite, setSiteToUser ] = useState('');
     const [ email, setEmail ] = useState('');
     const [ phone, setPhone ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ confirmPassword, setConfirmPassword ] = useState('');
-    const [ usersTypes, setUserTypes ] = useState([]);
+    /* const [ usersTypes, setUserTypes ] = useState([]); */
     const [ sites, setSites ] = useState([]);
     const [ passwordNoIguales, setPasswordNoIguales ] = useState(false)
     const [ open, setOpen ] = useState(false);
@@ -64,7 +57,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
                 name: name,
                 lastName: lastName,
                 rut: rut,
-                role: (rolesList.length > 0) ? '' : role,
+                /* role: (rolesList.length > 0) ? '' : role, */
                 roles: (rolesList.length > 0) ? rolesList : [],
                 email: email,
                 phone: phone,
@@ -174,6 +167,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
     useEffect(() => {
         let cancel = true;
         let userDataToContinue = localStorage.getItem('userDataToSave');
+        console.log(uData)
         _init(
             uData, 
             setOpen, 
@@ -182,7 +176,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
             setLastName, 
             setEmail, 
             setPhone, 
-            setUserType, 
+            /* setUserType,  */
             setSiteToUser, 
             setPassword, 
             setConfirmPassword,
@@ -195,7 +189,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
             setLastName,
             setEmail,
             setPhone,
-            setUserType,
+            /* setUserType, */
             setSiteToUser,
             setPassword,
             setConfirmPassword,
@@ -204,7 +198,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
         /* setTiposUsuarios(usersTypes); */
         rolesRoutes.getRoles().then(responseRoles => {
             if(cancel) {
-                if (uData.role.length > 0) {
+                if (uData.role && uData.role.length > 0) {
                     const rolesToList = responseRoles.data
                     const rolesData = []
                     rolesToList.map((role, number) => {
@@ -222,7 +216,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
                             setRolesListSelection(rolesData)
                         }
                     })
-                } else {
+                } else if(uData.roles) {
                     const rolesToList = responseRoles.data
                     const rolesData = []
                     rolesToList.map((role, number) => {
@@ -232,6 +226,20 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
                                 role.selected = true
                             }
                         })
+                        if (role.dbName === 'superAdmin') {
+
+                        } else {
+                            rolesData.push(role)
+                        }
+                        if (number === (rolesToList.length - 1)) {
+                            setRolesListSelection(rolesData)
+                        }
+                    })
+                } else {
+                    const rolesToList = responseRoles.data
+                    const rolesData = []
+                    rolesToList.map((role, number) => {
+                        role.selected = false
                         if (role.dbName === 'superAdmin') {
 
                         } else {
@@ -276,7 +284,7 @@ const CreateUser = ({/* width, height,  */typeDisplay, uData}) => {
             <div style={{height: 'calc(100vh-100px)', width: '100%'}}>
                 {(typeDisplay === 'Nuevo usuario') && <Grid>
                     <div>
-                        <h2>Para enrolar nuevo usuario debe ingresar todos los datos. <br /> Foto de perfil se podrá cargar una vez creado.</h2>
+                        <p>Para enrolar nuevo usuario debe ingresar todos los datos. <br /> Foto de perfil se podrá cargar una vez creado.</p>
                     </div>
                 </Grid>}
                 <Grid container>

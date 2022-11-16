@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 const PermissionUser = ({width, height, typeDisplay, id}) => {
 
     const [ userData, setUserData ] = useState()
-    const [ userType, setUserType ] = useState('');
+    /* const [ userType, setUserType ] = useState(''); */
     const [ obra, setObra ] = useState('')
     const [ permisosReportes, setPermisosReportes ] = useState([]);
     const [ permisosUsuarios, setPermisosUsuarios ] = useState([]);
@@ -115,6 +115,13 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
                                     <div style={{width: '100%', marginBottom: 15}}>
                                         <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Tipo de usuario</p>
                                         {
+                                            userData.roles.map(el => {
+                                                return (
+                                                    <p>{changeTypeUser(el)}</p>
+                                                )
+                                            })
+                                        }
+                                        {/* {
                                             (userData.role.length > 0) ?
                                             <p style={{margin: 0, fontSize: 16}}>{changeTypeUser(userData.role)}</p>
                                             :
@@ -123,7 +130,7 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
                                                     <p>{changeTypeUser(el)}</p>
                                                 )
                                             })
-                                        }
+                                        } */}
                                     </div>
 
                                     <div style={{width: '100%', marginBottom: 15}}>

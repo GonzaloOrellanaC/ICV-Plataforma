@@ -5,7 +5,7 @@ export default (
     setLastName,
     setEmail,
     setPhone,
-    setUserType,
+    /* setUserType, */
     setSiteToUser,
     setPassword,
     setConfirmPassword,
@@ -35,9 +35,9 @@ export default (
                     }
                 }
             }
-            if(data.role) {
+            /* if(data.role) {
                 setUserType(data.role)
-            }
+            } */
             if(data.sites) {
                 setSiteToUser(data.sites)
             }

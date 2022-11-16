@@ -1,4 +1,4 @@
-export default (uData, setOpen, setRut, setName, setLastName, setEmail, setPhone, setUserType, setSiteToUser, setPassword, setConfirmPassword, setImageUrl) => {
+export default (uData, setOpen, setRut, setName, setLastName, setEmail, setPhone, /* setUserType, */ setSiteToUser, setPassword, setConfirmPassword, setImageUrl) => {
     
     setOpen(true)
     let data = uData;
@@ -27,9 +27,9 @@ export default (uData, setOpen, setRut, setName, setLastName, setEmail, setPhone
             }
         }
     }
-    if(data.role) {
+    /* if(data.role) {
         setUserType(data.role)
-    }
+    } */
     if(data.sites) {
         setSiteToUser(data.sites)
     }
