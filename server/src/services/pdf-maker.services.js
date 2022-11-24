@@ -6,7 +6,7 @@ import { Sentry } from './sentry.services'
 const createPdf = (req, res) => {
     let resp = ''
     Sentry.captureMessage('Iniciando descarga de pdf', 'info')
-    const { pdfContent, nroOT } = req.body
+    const { pdfContent, nroOT, sapId, guide, numEquip } = req.body
 
     if(pdfContent) {
         console.log(pdfContent)
@@ -18,7 +18,7 @@ const createPdf = (req, res) => {
 
     createPdfBinary(pdfContent, resp, async (binary, resp) => {
         console.log('Enviando...')
-        const state = await AzureServices.uploadPdfFile(binary, nroOT)
+        const state = await AzureServices.uploadPdfFile(binary, nroOT, sapId, numEquip, guide)
         console.log(state)
         /* res.contentType('application/pdf') */
         const data = await ReportsService.editReportByIndexIntern(nroOT, {urlPdf: state.data.url})

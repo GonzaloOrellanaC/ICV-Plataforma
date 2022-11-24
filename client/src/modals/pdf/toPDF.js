@@ -4,9 +4,7 @@ import logo from '../../assets/logo_icv_gris.png';
 import check from '../../assets/check.png'
 import noCheck from '../../assets/no_check.png'
 
-
 let imagesList = []
-let imagesCache = []
 
 const createTable = ( groupKeys, group ) => {
     console.log('Creando Tabla')
@@ -202,83 +200,6 @@ const createImagesTables2 = () => {
         console.log(error)
     }
 }
-
-/* const createImagesTables = () => {
-    let imageArrayColumns = [
-        {
-            alignment: 'center',
-            width: '*',
-            pageBreak: 'before',
-            text: 'Imágenes de la OT'
-        },
-        {
-            style: 'imageTables',
-            table: {},
-            layout: 'noBorders'
-        }
-    ];
-    let imageColumns = [];
-    let textColumns = [];
-    let table = {
-        widths: [350, 350],
-        height: [300, 300],
-        body: []
-    }
-    let number = 0;
-    let numberTop = 2;
-    return new Promise(resolve => {
-        imagesCache = imagesList
-        imagesList.forEach(async (element, index) => {
-            let imgBase64
-            if (element.urlImageMessage) {
-                imgBase64 = await getImageBase64(element.urlImageMessage)
-                if (imgBase64) {
-                    verification = verification + 1
-                }
-            }
-            if((index) == numberTop) {
-                table.body[number] = imageColumns;
-                table.body[number + 1] = textColumns;
-                imageColumns = [];
-                textColumns = []; 
-                number = numberTop
-                numberTop = numberTop + numberTop
-            }
-            let imageContent = {
-                width: 350,
-                alignment: 'center',
-                image: (element.urlBase64.length > 0) ? element.urlBase64 : imgBase64 
-            }
-            let textContent = {
-                width: 350,
-                alignment: 'center',
-                text: 'Comentario id: ' + element.id + '\n\ "' + element.namePicture + '"' + '\n\ Imágen: ' + dateWithTime(element.id) + '\n\ Usuario: ' + element.name + '\n\ \n\ \n\ \n\ __________________',
-            }
-            imageColumns.push(imageContent)
-            textColumns.push(textContent)
-            if(index == (imagesList.length - 1)) {
-                console.log('OK!!!')
-                if( (imagesList.length%2) == 1 ) {
-                    imageColumns.push({})
-                    textColumns.push({})
-                }
-                table.body[number] = imageColumns
-                table.body[number + 1] = textColumns
-                imageArrayColumns[1].table = table
-                imageColumns = []
-                textColumns = []
-                table = {
-                    widths: [300, 300, 300],
-                    height: [300, 300, 300],
-                    body: []
-                }
-                number = 0;
-                numberTop = 2;
-                const response = await wait(index, imageArrayColumns, resolve)
-            }
-        })
-    })
-} */
 
 const wait = (index, imageArrayColumns, result) => {
     return new Promise(resolve => {
@@ -500,13 +421,12 @@ const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSig
 }
 
 export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad */) => {
-    /* console.log(reportData) */
+    console.log(reportData)
     return new Promise(async resolve => {
         if (setLoadingMessage){
             setLoadingMessage('Detectando firmas de los usuarios')
         }
         const admin = await getUserNameById(reportData.createdBy)
-        /* console.log(admin) */
         const chiefMachineryName = await getUserNameById(reportData.chiefMachineryApprovedBy)
         const chiefMachinerySign = await getSignById(reportData.chiefMachineryApprovedBy)
         const shiftManagerName = await getUserNameById(reportData.shiftManagerApprovedBy)
@@ -514,15 +434,6 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
         const executionUser = await getUserNameById(reportData.usersAssigned[0])
         const executionUserSign = await getSignById(reportData.usersAssigned[0])
         const executionReportData = await getExecutionReportData(reportData)
-        /* console.log([
-            chiefMachineryName,
-            chiefMachinerySign,
-            shiftManagerName,
-            shiftManagerSign,
-            executionUser,
-            executionUserSign,
-            executionReportData
-        ]) */
         if (chiefMachinerySign) {
             console.log('Firma de jefe maquinaria')
         }
@@ -559,7 +470,7 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
                         },
                         {
                             alignment: 'center',
-                            text: `ORDEN DE TRABAJO ${reportData.idIndex} \n PAUTA DE ${reportData.reportType}`.toUpperCase() , 
+                            text: `ORDEN DE TRABAJO ${reportData.idIndex} \n PAUTA DE ${reportData.reportType} ${reportData.guide}`.toUpperCase() , 
                             style: 'subheader',
                             width: '*'
                         },
@@ -582,7 +493,7 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
                 {
                     columns: [
                         {
-                            width: 150,
+                            width: 200,
                             style: 'table',
                             table: {
                                 body: [
@@ -594,12 +505,8 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
                             }
                         },
                         {
-                            width: 170,
+                            width: 200,
                             columns: [
-                                {
-                                    width: '*',
-                                    text: ''
-                                },
                                 {
                                     width: 50,
                                     style: 'table',
@@ -617,7 +524,7 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
                             ]
                         },
                         {
-                            width: 170,
+                            width: 200,
                             columns: [
                                 {
                                     width: '*',
@@ -630,6 +537,28 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
                                         body: [
                                             ['Fecha Creación: ', `${dateSimple(reportData.createdAt)}`],
                                             ['Creado por: ', `${admin}`]
+                                        ]
+                                    }
+                                },
+                                {
+                                    width: '*',
+                                    text: ''
+                                },
+                            ]
+                        },
+                        {
+                            width: 250,
+                            columns: [
+                                {
+                                    width: '*',
+                                    text: ''
+                                },
+                                {
+                                    width: 200,
+                                    style: 'table',
+                                    table: {
+                                        body: [
+                                            ['ID Documento: ', `${reportData.idPm}-${reportData.guide}`]
                                         ]
                                     }
                                 }
@@ -738,7 +667,7 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
             setLoadingMessage('Enviando documento compilado al servidor...')
         }
         
-        pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex).then(data=> {
+        pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex, reportData.sapId, (reportData.guide === 'Pauta de Inspección') ? 'PI' : reportData.guide, reportData.number).then(data=> {
             console.log(data)
             setTimeout(() => {
                 if (setLoadingMessage){
@@ -746,6 +675,7 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
                 }
                 setTimeout(() => {
                     resolve({
+                        url: data.data.state.data.url,
                         state: true
                     })
                 }, 1000);

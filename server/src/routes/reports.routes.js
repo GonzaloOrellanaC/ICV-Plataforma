@@ -5,6 +5,7 @@ const router = new Router()
 
 router.post('/createReport', ReportsService.createReport)
 router.post('/editReport', ReportsService.editReport)
+router.post('/editReportById', ReportsService.editReportById)
 router.post('/editReportFromAudit', ReportsService.editReportFromAudit)
 router.post('/deleteReport', ReportsService.deleteReport)
 router.get('/getAllReports', ReportsService.getReports)

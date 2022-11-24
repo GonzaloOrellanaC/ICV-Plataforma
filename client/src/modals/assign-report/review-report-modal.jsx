@@ -14,84 +14,32 @@ import { reportsRoutes, usersRoutes } from '../../routes';
 import { dateWithTime } from '../../config';
 import { LoadingLogoModal } from '../loadings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowCircleLeft, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faArrowCircleLeft, faArrowUp, faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useHistory } from 'react-router-dom';
 
-const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
-    const [ operarios, setOperarios ] = useState([]);
+const ReviewReportModal = ({open, report, onlyClose}) => {
     const [ colorState, setColorState ] = useState();
     const { idIndex, guide, state, siteName, usersAssigned, sapId } = report;
-    const [ stateAssignment , setStateAssignment ] = useState(false);
-    const [ data, setData ] = useState('');
     const [ userAssignedName, setUserAssignedName ] = useState('')
     const [ userShiftManagerName, setUserShiftManagerName ] = useState('')
     const [ userChiefMachineryName, setChiefMachineryName ] = useState('')
     const [ userSapExecutiveName, setUserSapExecutiveName ] = useState('')
     const [ loadingDelete, setLoadingDelete ] = useState(false)
+    const [ toEditSapId, setToEditSapId ] = useState(false)
+    const [ sapIdToEdit, setSapIdToEdit ] = useState(sapId)
     const history = useHistory()
-
-    /* const setUserToReport = async (userId) => {
-        if(userId === '') {
-            let usersAssigned = new Array();
-            usersAssigned[0] = userId;
-            setData('Reporte sin asignación.');
-            const reportState = await reportsRoutes.editReport({idIndex: idIndex, state: 'Asignar', usersAssigned: usersAssigned});
-            if(reportState) {
-                report.usersAssigned = usersAssigned;
-                setStateAssignment(true);
-                setTimeout(() => {
-                    setStateAssignment(false)
-                }, 1000);
-            }
-        }else{
-            setData('Pauta asignada.')
-            let usersAssigned = new Array();
-            usersAssigned.push(userId);
-            const reportState = await reportsRoutes.editReport({idIndex: idIndex, state: 'En proceso', usersAssigned: usersAssigned});
-            if(reportState) {
-                report.usersAssigned = usersAssigned;
-                setStateAssignment(true);
-                setTimeout(() => {
-                    setStateAssignment(false)
-                }, 1000);
-            }
-        }
-    } */
 
     const getUsers = () => {
         console.log(usersAssigned[0])
-        usersRoutes.getAllUsers().then(response => {
-            let userList = new Array();
-            let users = new Array();
-            userList = response.data;
-            console.log(userList)
-            userList.forEach((user, index) => {
-                console.log(user._id, usersAssigned[0])
-                if(user._id === usersAssigned[0]) {
-                    setUserAssignedName(user.name + ' ' + user.lastName);
-                }
-                /* let permissionsReports = new Array();
-                permissionsReports = user.permissionsReports
-                if(permissionsReports.length > 0) {
-                    if(permissionsReports[1].isChecked) {
-                        users.push(user);
-                    }
-                }
-                if(index == (userList.length - 1)) {
-                    userList.forEach((u, i) => {
-                        console.log(u._id, usersAssigned[0])
-                        if(u._id === usersAssigned[0]) {
-                            setUserAssignedName(u.name + ' ' + u.lastName);
-                        }
-                    })
-                    setOperarios(users)
-                } */
-            })
-            setOperarios(users)
+        usersRoutes.getUser(usersAssigned[0]).then((data) => {
+            const user = data.data
+            if (user)
+            setUserAssignedName(user.name + ' ' + user.lastName)
         })
     }
 
     useEffect(() => {
+        console.log(report)
         let ok = true
         getUserNameById(report.chiefMachineryApprovedBy).then(user => {
             setChiefMachineryName(user)
@@ -126,6 +74,35 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
             })
         }
     }
+
+    const changeInputSapId = () => {
+        if (!toEditSapId) {
+            setToEditSapId(true)
+        } else {
+            setToEditSapId(false)
+        }
+    }
+
+    const saveChangesSapId = async () => {
+        if (sapIdToEdit.length < 1) {
+            alert('Debe agregar algún número SAP')
+        } else {
+            try {
+                const reportToEdit = {
+                    _id: report._id,
+                    sapId: sapIdToEdit
+                }
+                const response = await reportsRoutes.editReportById(reportToEdit)
+                console.log(response)
+                if (response) {
+                    report.sapId = sapIdToEdit
+                    changeInputSapId()
+                }
+            } catch (error) {
+                
+            }
+        }
+    }
     
     return(
         <Modal
@@ -150,8 +127,28 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
                         {idIndex}
                     </Grid>
                     <Grid item xs={12} sm={12} md={4} lg={4}>
-                        <strong>ID de SAP:</strong> <br />
-                        {sapId ? sapId : 'N/A'}
+                            <strong>ID de SAP:</strong> <br />
+                        <Grid container>
+                            <Grid item>
+                            {
+                                !toEditSapId ?
+                                sapIdToEdit ? sapIdToEdit : 'N/A'
+                                :
+                                <input onChange={(e) => setSapIdToEdit(e.target.value)} value={sapIdToEdit} />
+                            }
+                            </Grid>
+                            <Grid item>
+                                {
+                                    !toEditSapId ?
+                                    <button style={{marginLeft: 10}} onClick={changeInputSapId}>
+                                        <FontAwesomeIcon icon={faPen} />
+                                    </button> :
+                                    <button style={{marginLeft: 10}}>
+                                        <FontAwesomeIcon icon={faArrowUp} onClick={saveChangesSapId}/>
+                                    </button>
+                                }
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Grid>
                 <Grid container>
@@ -168,16 +165,16 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
                         <div style={{marginTop: 30, width: '100%'}}>
 
                         <div style={{width: '100%', height: 59}}>
-                            <label>Pauta asignada a: <b>{userAssignedName/*  ? userAssignedName : 'Sin asignación' */}</b></label>
+                            <label>Pauta asignada a: <b>{userAssignedName  ? userAssignedName : 'No encontrado'}</b></label>
                         </div>
                         <div style={{width: '100%', height: 59}}>
-                            <label>Jefe de turno revisor: <b>{userShiftManagerName.length > 1 ? userShiftManagerName : 'Sin información'}</b></label>
+                            <label>Jefe de turno revisor: <b>{userShiftManagerName.length > 1 ? userShiftManagerName : 'No encontrado'}</b></label>
                         </div>
                         <div style={{width: '100%', height: 59}}>
-                            <label>Jefe de maquinaria revisor: <b>{userChiefMachineryName.length > 1 ? userChiefMachineryName : 'Sin información'}</b></label>
+                            <label>Jefe de maquinaria revisor: <b>{userChiefMachineryName.length > 1 ? userChiefMachineryName : 'No encontrado'}</b></label>
                         </div>
                         <div style={{width: '100%', height: 59}}>
-                            <label>Ejecutivo SAP revisor: <b>{userSapExecutiveName.length > 1 ? userSapExecutiveName : 'Sin información'}</b></label>
+                            <label>Ejecutivo SAP revisor: <b>{userSapExecutiveName.length > 1 ? userSapExecutiveName : 'No encontrado'}</b></label>
                         </div>
                         </div>
 
@@ -219,12 +216,6 @@ const ReviewReportModal = ({open, report, closeModal, onlyClose}) => {
                         </div>
                     </Grid>
                 </Grid>
-                {/* <Grid container>
-                    <div>
-                        <button>X Borrar pauta</button>
-                    </div>
-                </Grid> */}
-
                 <Fab onClick={onlyClose} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>
                     <Close style={{color: '#ccc'}} />
                 </Fab>

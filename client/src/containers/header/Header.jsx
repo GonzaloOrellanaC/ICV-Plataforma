@@ -156,7 +156,7 @@ const Header = () => {
                                         :
                                         <Grid container>
                                             {
-                                                userData.roles.map((role, i) => {
+                                                userData.roles && userData.roles.map((role, i) => {
                                                     return (
                                                         <Grid item key={i} style={{marginRight: 10}}>
                                                             {changeTypeUser(role)} |

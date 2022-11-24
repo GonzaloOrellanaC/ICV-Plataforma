@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-
 import { Button, Grid, IconButton, Link, makeStyles, TextField } from '@material-ui/core'
 import { useAuth, useLanguage } from '../../context'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
-import { validate, clean, format, getCheckDigit } from 'rut.js';
+import { format } from 'rut.js';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -22,10 +21,9 @@ const Login = () => {
     const [ email, setEmail ] = useState('')
     const [ rut, setRut ] = useState('')
     const [ password, setPassword ] = useState('')
-    const [ typeAccess, setTypeAccess ] = useState('email')
-    const [ typeText, setTipeText ] = useState('rut')
+    const [ typeAccess, setTypeAccess ] = useState('rut')
+    const [ typeText, setTipeText ] = useState('email')
     const classes = useStyles()
-    const [ userData, setUserData ] = useState({})
     const history = useHistory();
     const [ verPassword, setVerPassword ] = useState('password')
 
@@ -135,7 +133,6 @@ const Login = () => {
                         </Button>
                     </Grid>
                     <Grid item xs={12} container justifyContent='center'>
-                        {/* {dictionary.login.forgotPasswordText} <Link href="/reset-password" >{dictionary.login.forgotPasswordLink}</Link> */}
                         {(typeText === 'rut') && <Link href="/reset-password" > {dictionary.login.forgotPasswordText} </Link>}
                     </Grid>
                 </Grid>

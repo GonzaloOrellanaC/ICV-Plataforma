@@ -201,13 +201,16 @@ const AppliancePage = ({ route }) => {
                                                     (navigator.onLine && mantenciones.length === 0) && <p>No hay mantenciones</p>
                                                 }
                                                 {
-                                                    (navigator.onLine && mantenciones.length > 0) && mantenciones.map((mantencion, index) => {
+                                                    (navigator.onLine && mantenciones.length > 0) && mantenciones.reverse().map((mantencion, index) => {
                                                         return(
                                                             <div key={index} style={{width: '95%', padding: 10, margin: 10, display: 'block', height: 100, borderBottomStyle: 'solid', borderBottomColor: '#ccc', borderBottomWidth: 2}}>
                                                                 <div style={{float: 'left'}}>
                                                                     <h4 style={{margin: 0}}>OT N°{mantencion.idIndex}</h4>
                                                                     <p style={{margin: 0}}>Código SAP {mantencion.sapId}</p>
                                                                     <p style={{margin: 0}}>Estado: {mantencion.state}</p>
+                                                                    {
+                                                                        (mantencion.state === 'Completadas') && <a href={mantencion.urlPdf} target='_blank'>Enlace Documento</a>
+                                                                    }
                                                                 </div>
                                                                 <button style={{float: 'right'}} onClick={() => initDialog(mantencion)}>
                                                                     <FontAwesomeIcon icon={faEye}/>

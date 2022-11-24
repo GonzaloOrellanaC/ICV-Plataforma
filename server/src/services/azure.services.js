@@ -149,7 +149,7 @@ const uploadImage = async (req, res) => {
     }
 }
 
-const uploadPdfFile = (pdfFile, nroOT) => {
+const uploadPdfFile = (pdfFile, nroOT, sapId, numEquip, guide) => {
     return new Promise(async resolve => {
         const containerName = environment.storageApi.pdfContainer
         const date = Date.now()
@@ -160,7 +160,7 @@ const uploadPdfFile = (pdfFile, nroOT) => {
         } else {
 
         }
-        const blobName = `${year}/${nroOT}.pdf`
+        const blobName = `${sapId}/${numEquip}/${guide}.pdf`
         const data = Buffer.from(pdfFile, "base64");
         const containerClient = blobServiceClient.getContainerClient(containerName)
         const blockBlobClient = containerClient.getBlockBlobClient(blobName)

@@ -34,13 +34,27 @@ const createReport = async (req, res) => {
 }
 
 const editReport = async (req, res) => {
+    console.log(req.body)
     const { body } = req    
     if (!body.report) {
         throw new Error(errorMsg.missingParameters)
     }else{
         try{
             const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
-            console.log('Respuesta edición reporte =>>>>>', editReportState)
+            res.json(editReportState)
+        }catch(err) {
+            res.json(err)
+        }
+    }
+}
+
+const editReportById = async (req, res) => {
+    const { body } = req    
+    if (!body.report) {
+        throw new Error(errorMsg.missingParameters)
+    }else{
+        try{
+            const editReportState = await Reports.findByIdAndUpdate(body.report._id, body.report, {new: false, timestamps: false}) //new Reports(body.report)
             res.json(editReportState)
         }catch(err) {
             res.json(err)
@@ -129,33 +143,6 @@ const saveExecutionReportData = (
         } else {
             executionReportDataGroup[executionReportDataGroupKeys[n]].messages.forEach()
         }
-    /* executionReportDataGroupKeys.forEach(async (key, index) => {
-        executionReportData.group[key].forEach(item => {
-            if (item.messages) {
-                item.messages.forEach(async mensaje => {
-                    if (mensaje.urlBase64) {
-                        const imageData = await AzureServices.uploadImageFromReport(
-                                                mensaje.urlBase64,
-                                                body.report.idIndex,
-                                                key,
-                                                mensaje.id
-                                            )
-                        
-                        mensaje.urlImageMessage = imageData.data.url
-                        mensaje.urlBase64 = ''
-                    }
-                })
-            }
-        })
-        if (index == (Object.keys(executionReportData.group).length - 1)) {
-            console.log('Nueva data: =====>')
-            const response = await executionReportsServices.saveExecutionReportInternal(executionReportData)
-            if (response) {
-                const editReportState = await Reports.findOneAndUpdate({idIndex: body.report.idIndex}, body.report, {new: false, timestamps: false}) //new Reports(body.report)
-                res.json(editReportState)
-            }
-        }
-    }) */
 }
 
 const deleteReport = async (req, res) => {
@@ -281,15 +268,7 @@ const getReportByIndex = (req, res) => {
 
 const getReportByType = (req, res) => {
     const { body } = req
-    //console.log(body)
-    /* try {
-        Reports.find({}, (err, reports) => {
-            console.log('Reportes', reports)
-            res.jason(reports)
-        })
-    } catch (err) {
-        console.log(err)
-    } */
+    
 }
 
 const getReportByState = (req, res) => {
@@ -419,5 +398,6 @@ export default {
     countTotalReportsLength,
     countTotalActivesReportsLength,
     readIfReportIsOneDayToStart,
-    editReportByIndexIntern
+    editReportByIndexIntern,
+    editReportById
 }

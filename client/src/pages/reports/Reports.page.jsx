@@ -4,7 +4,7 @@ import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 import { machinesRoutes, reportsRoutes } from '../../routes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle, faClipboardList } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faCircle, faClipboardList } from '@fortawesome/free-solid-svg-icons';
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useHistory } from 'react-router-dom';
@@ -31,6 +31,8 @@ const ReportsPage = () => {
     const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
     const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
     const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
+    const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
+    const [ flechaListaxMaquina, setFlechaListaxMaquina ] = useState(faArrowUp)
     /* const classes = useStylesTheme(); */
     
 
@@ -170,6 +172,7 @@ const ReportsPage = () => {
                 Mantenciones.map((e, n) => {
                     e.buttonColor = '#F9F9F9'
                     console.log(document.getElementById(`button_${n}_mantenciones`))
+                    if (document.getElementById(`button_${n}_mantenciones`))
                     document.getElementById(`button_${n}_mantenciones`).style.backgroundColor = '#F9F9F9'
                     if (n === (Mantenciones.length - 1)) {
                         document.getElementById(idButton).style.backgroundColor = '#ccc'
@@ -180,13 +183,14 @@ const ReportsPage = () => {
                         setVista(false)
                         setList(list)
                         let l = list.sort((a, b) => {
-                            if (Number(a.idIndex) > Number(b.idIndex)) {
+                            return a.idIndex - b.idIndex
+                            /* if (Number(a.idIndex) > Number(b.idIndex)) {
                                 return -1
                             }
                             if (Number(a.idIndex) < Number(b.idIndex)) {
                                 return 1
                             }
-                            return 0
+                            return 0 */
                             })
                         initReadList(l)
                     }
@@ -206,7 +210,12 @@ const ReportsPage = () => {
                 lista.push(list[i])
             }
             if (i === ((rowsPerPage+(0*rowsPerPage)) - 1)) {
-                setListToShow(lista)
+                const listaCache = [...lista]
+                console.log(listaCache)
+                const nuevaLista = listaCache.sort((a, b) => {
+                    return b.idIndex - a.idIndex
+                })
+                setListToShow(nuevaLista)
             }
         }
     }
@@ -219,7 +228,12 @@ const ReportsPage = () => {
                 lista.push(list[i])
             }
             if (i === ((rowsPerPage+(newPage*rowsPerPage)) - 1)) {
-                setListToShow(lista)
+                const listaCache = [...lista]
+                console.log(listaCache)
+                const nuevaLista = listaCache.sort((a, b) => {
+                    return b.idIndex - a.idIndex
+                })
+                setListToShow(nuevaLista)
             }
         }
     }
@@ -235,6 +249,46 @@ const ReportsPage = () => {
             if (i === ((parseInt(event.target.value, 10) + (page*parseInt(event.target.value, 10))) - 1)) {
                 setListToShow(lista)
             }
+        }
+    }
+
+    const ordenarPorNumeroOT = (value = new String) => {
+        if (value === 'mayor') {
+            setFlechaListaxOT(faArrowDown)
+            const listaCache = [...listToShow]
+            console.log(listaCache)
+            const nuevaLista = listaCache.sort((a, b) => {
+                return Number(a.idIndex) - Number(b.idIndex)
+            })
+            setListToShow(nuevaLista)
+        } else {
+            setFlechaListaxOT(faArrowUp)
+            const listaCache = [...listToShow]
+            console.log(listaCache)
+            const nuevaLista = listaCache.sort((a, b) => {
+                return Number(b.idIndex) - Number(a.idIndex)
+            })
+            setListToShow(nuevaLista)
+        }
+    }
+
+    const ordenarPorNumeroMaquina = (value = new String) => {
+        if (value === 'mayor') {
+            setFlechaListaxMaquina(faArrowDown)
+            const listaCache = [...listToShow]
+            console.log(listaCache)
+            const nuevaLista = listaCache.sort((a, b) => {
+                return Number(a.number) - Number(b.number)
+            })
+            setListToShow(nuevaLista)
+        } else {
+            setFlechaListaxMaquina(faArrowUp)
+            const listaCache = [...listToShow]
+            console.log(listaCache)
+            const nuevaLista = listaCache.sort((a, b) => {
+                return Number(b.number) - Number(a.number)
+            })
+            setListToShow(nuevaLista)
         }
     }
 
@@ -399,13 +453,32 @@ const ReportsPage = () => {
                             </div>
                         </div>
                         :
-                        <div style={{height: 'calc(100% - 10px)', display: 'block', overflowY: 'auto'}}>
-                            {!vista ? <ReportsList list={listToShow} reloadData={reloadData}/> : <></>}
+                        <div style={{height: 'calc(100vh - 240px)', display: 'block', overflowY: 'auto'}}>
+                            <div style={{width: '100%', paddingLeft: 10, paddingRight: 10}}>
+                                <Grid container style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1, paddingBottom: 10}}>
+                                    <Grid item xl={'auto'}>
+                                        <p style={{ width: 80 }}>Filtros: </p>
+                                    </Grid>
+                                    <Grid item>
+                                        <button style={{ marginRight: 10, marginTop: 14, marginBottom: 14 }} onClick={() => { ordenarPorNumeroOT((flechaListaxOT === faArrowUp) ? 'mayor' : '') }}>Ordenar por OT <FontAwesomeIcon icon={flechaListaxOT}/> </button>
+                                    </Grid>
+                                    <Grid item>
+                                        <button style={{ marginRight: 10, marginTop: 14, marginBottom: 14 }} onClick={() => { ordenarPorNumeroMaquina((flechaListaxMaquina === faArrowUp) ? 'mayor' : '') }}>Ordenar por Máquina <FontAwesomeIcon icon={flechaListaxMaquina}/> </button>
+                                    </Grid>
+                                </Grid>
+                            </div>
+                            {!vista ? 
+                            <ReportsList 
+                                list={listToShow} 
+                                reloadData={reloadData} 
+                                ordenarPorNumeroOT={ordenarPorNumeroOT}
+                                flechaListaxOT={flechaListaxOT}
+                            /> : <></>}
                             {
                             (listToShow.length > 0) ? <TablePagination
                                 component="div"
                                 color={'primary'}
-                                style={{ position: 'absolute', right: 20, bottom: 20, borderColor: '#ccc', borderWidth: 1, borderStyle: 'solid' }}
+                                style={{ position: 'absolute', right: 20, bottom: 10, borderColor: '#ccc', borderWidth: 1, borderStyle: 'solid' }}
                                 onPageChange={handleChangePage}
                                 rowsPerPage={rowsPerPage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}                          

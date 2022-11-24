@@ -23,7 +23,7 @@ const getImageBase64 = (imageUrl) => {
     })
 }
 
-export default  (_id) => {
+const getSignById = (_id) => {
     if(_id) {
         return new Promise(async resolve => {
             let sign = await usersRoutes.getUserSign(_id)
@@ -41,3 +41,5 @@ export default  (_id) => {
         })
     }
 }
+
+export default getSignById

@@ -16,6 +16,33 @@ const VersionControlModal = ({open, closeModal}) => {
                     <h2>Versión {environment.version}</h2>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <br />
+                    <strong>Documentos PDF</strong>
+                    <li>
+                        Se agrega Nro de Pauta en título de la OT
+                    </li>
+                    <li>
+                        Se agrega ID de Documento
+                    </li>
+                    <li>
+                        Se corrige nombre de la pauta al descargar
+                    </li>
+                    <strong>Página Ordenes</strong>
+                    <li>
+                        Se agrega primeros filtros (ordenar por OT y ordenar por Nro de Máquina)
+                    </li>
+                    <li>
+                        Se puede corregir número SAP desde ventana emergente al presionar votón <button style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button>
+                    </li>
+                    <strong>Máquinas</strong>
+                    <li>
+                        Al ingresar a cada máquina, en el listado de las OT, puede ver un <a href='#'>Enlace Documento</a> en caso de existir documento PDF creado.
+                    </li>
+                    <strong>Login</strong>
+                    <li>
+                        Login por defecto queda por R.U.N.
+                    </li>
+                    <br />
                     <strong>v.2.2.1</strong>
                     <li>
                         Reparación de errores generados en versión 2.2
