@@ -90,6 +90,7 @@ export const AuthProvider = (props) => {
         admin,
         loginRut: (rut, password) => {
             return new Promise(resolve => {
+                console.log(rut)
                 authRoutes.loginRut(rut, password)
                 .then(response => {
                     let userDataToSave = response.data
@@ -136,6 +137,8 @@ export const AuthProvider = (props) => {
                         if(userDataToSave.sites) {
                             localStorage.setItem('sitio', userDataToSave.sites)
                         }
+                        localStorage.setItem('isauthenticated', true)
+                        setIsAuthenticated(true)
                         resolve({
                             state: true,
                             response: response

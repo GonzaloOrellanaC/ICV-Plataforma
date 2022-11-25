@@ -16,6 +16,11 @@ const VersionControlModal = ({open, closeModal}) => {
                     <h2>Versión {environment.version}</h2>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <li>
+                        Error de login con R.U.N. resuelto
+                    </li>
+                    <br />
+                    <strong>v.2.3</strong>
                     <br />
                     <strong>Documentos PDF</strong>
                     <li>
