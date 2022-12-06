@@ -33,28 +33,9 @@ const ReportsPage = () => {
     const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
     const [ flechaListaxMaquina, setFlechaListaxMaquina ] = useState(faArrowUp)
-    /* const classes = useStylesTheme(); */
-    
-
-    /* useEffect(() => {
-        if(history) {
-            initPage();
-        }
-        if(cancel) {
-            setTimeout(() => {
-                if(!navigator.onLine) {
-                    alert('Problemas de red. Revise su conexión.');
-                    history.goBack()
-                }
-            }, 1000);
-        }
-        return () => setCancel(false);
-    }, [cancel]); */
     useEffect(() => {
         initPage()
     }, [])
-    
-
     const initPage = async () => {
         setLoading(true)
         let daysOfThisWeek = getWeekReports();
@@ -110,7 +91,6 @@ const ReportsPage = () => {
                         e.lista = response.data.reverse();
                         setMantencionesPorAsignar(porAsignar.length)
                         stateMantenciones = true
-                        //e.number = response.data.length;
                     }
                 })
             }else{
@@ -183,14 +163,13 @@ const ReportsPage = () => {
                         setVista(false)
                         setList(list)
                         let l = list.sort((a, b) => {
-                            return a.idIndex - b.idIndex
-                            /* if (Number(a.idIndex) > Number(b.idIndex)) {
+                            if (Number(a.idIndex) > Number(b.idIndex)) {
                                 return -1
                             }
                             if (Number(a.idIndex) < Number(b.idIndex)) {
                                 return 1
                             }
-                            return 0 */
+                            return 0
                             })
                         initReadList(l)
                     }
@@ -204,6 +183,7 @@ const ReportsPage = () => {
     }
 
     const initReadList = (list) => {
+        console.log(list)
         let lista = []
         for (let i = (0*rowsPerPage); i < (rowsPerPage+(0*rowsPerPage)); i++) {
             if (list[i]) {
@@ -255,40 +235,57 @@ const ReportsPage = () => {
     const ordenarPorNumeroOT = (value = new String) => {
         if (value === 'mayor') {
             setFlechaListaxOT(faArrowDown)
-            const listaCache = [...listToShow]
+            const listaCache = [...list]
             console.log(listaCache)
             const nuevaLista = listaCache.sort((a, b) => {
                 return Number(a.idIndex) - Number(b.idIndex)
             })
-            setListToShow(nuevaLista)
+            initReadList(nuevaLista)
         } else {
             setFlechaListaxOT(faArrowUp)
-            const listaCache = [...listToShow]
+            const listaCache = [...list]
             console.log(listaCache)
             const nuevaLista = listaCache.sort((a, b) => {
                 return Number(b.idIndex) - Number(a.idIndex)
             })
-            setListToShow(nuevaLista)
+            initReadList(nuevaLista)
         }
     }
 
     const ordenarPorNumeroMaquina = (value = new String) => {
         if (value === 'mayor') {
             setFlechaListaxMaquina(faArrowDown)
-            const listaCache = [...listToShow]
+            const listaCache = [...list]
             console.log(listaCache)
             const nuevaLista = listaCache.sort((a, b) => {
                 return Number(a.number) - Number(b.number)
             })
-            setListToShow(nuevaLista)
+            initReadList(nuevaLista)
         } else {
             setFlechaListaxMaquina(faArrowUp)
-            const listaCache = [...listToShow]
+            const listaCache = [...list]
             console.log(listaCache)
             const nuevaLista = listaCache.sort((a, b) => {
                 return Number(b.number) - Number(a.number)
             })
-            setListToShow(nuevaLista)
+            initReadList(nuevaLista)
+        }
+    }
+
+    const textoFiltrado = (value) => {
+        console.log(value)
+        const listaCache = [...list]
+        if (value.length > 2) {
+            const nuevaLista = listaCache.filter((element) => {
+                if (element.idIndex === Number(value) || element.model === value || element.number === value || element.sapId === value) {
+                    return element
+                } else {
+                    return null
+                }
+            })
+            initReadList(nuevaLista)
+        } else {
+            initReadList(list)
         }
     }
 
@@ -459,11 +456,8 @@ const ReportsPage = () => {
                                     <Grid item xl={'auto'}>
                                         <p style={{ width: 80 }}>Filtros: </p>
                                     </Grid>
-                                    <Grid item>
-                                        <button style={{ marginRight: 10, marginTop: 14, marginBottom: 14 }} onClick={() => { ordenarPorNumeroOT((flechaListaxOT === faArrowUp) ? 'mayor' : '') }}>Ordenar por OT <FontAwesomeIcon icon={flechaListaxOT}/> </button>
-                                    </Grid>
-                                    <Grid item>
-                                        <button style={{ marginRight: 10, marginTop: 14, marginBottom: 14 }} onClick={() => { ordenarPorNumeroMaquina((flechaListaxMaquina === faArrowUp) ? 'mayor' : '') }}>Ordenar por Máquina <FontAwesomeIcon icon={flechaListaxMaquina}/> </button>
+                                    <Grid item xl={2}>
+                                        <input style={{ marginRight: 10, marginTop: 14, marginBottom: 14, width: 300 }} placeholder={'Ingrese N° OT, Máquina, Flota o Cód. SAP'} onChange={(e) => { textoFiltrado(e.target.value) }}  />
                                     </Grid>
                                 </Grid>
                             </div>

@@ -17,6 +17,11 @@ const VersionControlModal = ({open, closeModal}) => {
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                     <li>
+                        Reparaciones menores en lista de Ordenes
+                    </li>
+                    <br />
+                    <strong>v.2.3.1</strong>
+                    <li>
                         Error de login con R.U.N. resuelto
                     </li>
                     <br />
