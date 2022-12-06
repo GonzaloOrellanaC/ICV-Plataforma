@@ -62,26 +62,6 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
     const closePdfModal = () => {
         setOpenPdfModal(false)
     }
-
-    useEffect(() => {
-        setLista([])
-        let l = []
-        list.forEach(async (item, i) => {
-            item.date = dateSimple(item.datePrev)
-            item.end = dateSimple(item.endReport)
-            item.init = dateSimple(item.dateInit)
-            machinesRoutes.getMachineByEquid(item.machine).then(data => {
-                item.hourMeter = (Number(data.data[0].hourMeter)/3600000)
-            })
-            let data = await getMachineTypeByEquid(item.machine)
-            item.number = data.number
-            item.model = data.model
-            l.push(item)
-            if(i == (list.length - 1)) {
-                setLista(l)
-            } 
-        })
-    }, [list])
     
 
     const levelToState = (level, usersAssigned, init) => {
@@ -145,7 +125,7 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
             </Grid>
             <div>
                 {
-                    (lista.length == 0) && <Grid container>
+                    (list.length == 0) && <Grid container>
                             <div style={{width: '100%', textAlign: 'center', height: '50vh'}}>
                             <img style={{margin: 0, top: '50%', left: 'calc(100%/1.53)'}} src="../../assets/icons/Arrow.svg" alt="" />
                             <div style={{width: '100%', textAlign: 'center', top: '55%'}}>
@@ -157,7 +137,7 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
             </div>
             <div style={{ height: 'calc(100vh - 370px)', overflowY: 'auto' }}>
                 {
-                    lista.map((item, i) => {
+                    list.map((item, i) => {
                             return(
                                 <Grid container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} >

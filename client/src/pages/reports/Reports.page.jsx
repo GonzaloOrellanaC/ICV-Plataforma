@@ -8,8 +8,8 @@ import { faArrowUp, faArrowDown, faCircle, faClipboardList } from '@fortawesome/
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useHistory } from 'react-router-dom';
-import { sitesDatabase } from '../../indexedDB';
-import { getWeekReports, useStylesTheme } from '../../config';
+import { machinesDatabase, sitesDatabase } from '../../indexedDB';
+import { dateSimple, getWeekReports, useStylesTheme } from '../../config';
 import { LoadingLogoModal } from '../../modals';
 
 const ReportsPage = () => {
@@ -27,6 +27,7 @@ const ReportsPage = () => {
     const [ rowsPerPage, setRowsPerPage ] = useState(10)
     const [ page, setPage]  = useState(0);
     const [ listToShow, setListToShow ] = useState([])
+    const [ totalItems, setTotalItems ] = useState(0)
     const history = useHistory()
     const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
     const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
@@ -36,6 +37,12 @@ const ReportsPage = () => {
     useEffect(() => {
         initPage()
     }, [])
+    useEffect(() => {
+        console.log(list)
+    }, [list])
+    useEffect(() => {
+        console.log(totalItems)
+    },[totalItems])
     const initPage = async () => {
         setLoading(true)
         let daysOfThisWeek = getWeekReports();
@@ -144,7 +151,21 @@ const ReportsPage = () => {
         })
     }
 
-    const selectList = (list, idButton, index) => {
+    const getMachineTypeByEquid = (item) => {
+        return new Promise(async  resolve => {
+            let db = await machinesDatabase.initDbMachines();
+            const machines = await machinesDatabase.consultar(db.database);
+            let machineFiltered = machines.filter(m => { if(item === m.equid) {return m}});
+            resolve(
+                {
+                    number: machineFiltered[0].equ,
+                    model: machineFiltered[0].model
+                }
+            ) 
+        })
+    }
+
+    const selectList = (lista, idButton, index) => {
         Inspecciones.map((e, i) => {
             document.getElementById(`button_${i}_inspecciones`).style.backgroundColor = '#F9F9F9'
             e.buttonColor = '#F9F9F9'
@@ -159,19 +180,35 @@ const ReportsPage = () => {
                         localStorage.setItem('buttonReportSelected', idButton)
                         setPage(0)
                         setRowsPerPage(10)
-                        console.log(list)
                         setVista(false)
-                        setList(list)
-                        let l = list.sort((a, b) => {
-                            if (Number(a.idIndex) > Number(b.idIndex)) {
-                                return -1
-                            }
-                            if (Number(a.idIndex) < Number(b.idIndex)) {
-                                return 1
-                            }
-                            return 0
+                        let l = []
+                        lista.forEach(async (item, i) => {
+                            item.date = dateSimple(item.datePrev)
+                            item.end = dateSimple(item.endReport)
+                            item.init = dateSimple(item.dateInit)
+                            machinesRoutes.getMachineByEquid(item.machine).then(data => {
+                                item.hourMeter = (Number(data.data[0].hourMeter)/3600000)
                             })
-                        initReadList(l)
+                            let data = await getMachineTypeByEquid(item.machine)
+                            item.number = data.number
+                            item.model = data.model
+                            l.push(item)
+                            if(i == (lista.length - 1)) {
+                                setList(l)
+                                console.log(list.length)
+                                setTotalItems(list.length)
+                                let li = l.sort((a, b) => {
+                                    if (Number(a.idIndex) > Number(b.idIndex)) {
+                                        return -1
+                                    }
+                                    if (Number(a.idIndex) < Number(b.idIndex)) {
+                                        return 1
+                                    }
+                                    return 0
+                                    })
+                                initReadList(li)
+                            } 
+                        })
                     }
                 })
             }
@@ -183,7 +220,6 @@ const ReportsPage = () => {
     }
 
     const initReadList = (list) => {
-        console.log(list)
         let lista = []
         for (let i = (0*rowsPerPage); i < (rowsPerPage+(0*rowsPerPage)); i++) {
             if (list[i]) {
@@ -196,6 +232,7 @@ const ReportsPage = () => {
                     return b.idIndex - a.idIndex
                 })
                 setListToShow(nuevaLista)
+                /* setTotalItems(nuevaLista.length) */
             }
         }
     }
@@ -214,6 +251,7 @@ const ReportsPage = () => {
                     return b.idIndex - a.idIndex
                 })
                 setListToShow(nuevaLista)
+                /* setTotalItems(nuevaLista.length) */
             }
         }
     }
@@ -275,17 +313,22 @@ const ReportsPage = () => {
     const textoFiltrado = (value) => {
         console.log(value)
         const listaCache = [...list]
-        if (value.length > 2) {
-            const nuevaLista = listaCache.filter((element) => {
+        if (value.length > 0) {
+            const lista = []
+            listaCache.forEach((element, index) => {
+                console.log(element.number, value)
                 if (element.idIndex === Number(value) || element.model === value || element.number === value || element.sapId === value) {
-                    return element
-                } else {
-                    return null
+                    lista.push(element)
+                }
+                if (index === (listaCache.length - 1)) {
+                    console.log(lista)
+                    initReadList(lista)
+                    setTotalItems(lista.length)
                 }
             })
-            initReadList(nuevaLista)
         } else {
             initReadList(list)
+            setTotalItems(list.length)
         }
     }
 
@@ -476,7 +519,7 @@ const ReportsPage = () => {
                                 onPageChange={handleChangePage}
                                 rowsPerPage={rowsPerPage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}                          
-                                count={list.length}
+                                count={totalItems}
                                 page={page}
                             />
                                 :
