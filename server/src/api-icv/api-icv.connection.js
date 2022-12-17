@@ -27,18 +27,22 @@ const leerPauta = async (i, machinesListPms, listaPMsConcat, res) => {
     if(i == (machinesListPms.length)) {
         res.send(listaPMsConcat);
     }else{
-        let pIDPM = machinesListPms[i].pIDPM;
-        const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
-            /* myHeaders */
-            headers: myHeaders,
-            method: 'GET',
-            agent: agent
-        })
-        const listaPMs =  await response.json()
-        console.log('Respuesta: ', listaPMs)
-        listaPMsConcat = listaPMsConcat.concat(listaPMs.data)
-        i = i + 1
-        leerPauta(i, machinesListPms, listaPMsConcat, res)
+        try{
+            let pIDPM = machinesListPms[i].pIDPM;
+            const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
+                /* myHeaders */
+                headers: myHeaders,
+                method: 'GET',
+                agent: agent
+            })
+            const listaPMs =  await response.json()
+            console.log('Respuesta: ', listaPMs)
+            listaPMsConcat = listaPMsConcat.concat(listaPMs.data)
+            i = i + 1
+            leerPauta(i, machinesListPms, listaPMsConcat, res)
+        } catch (error) {
+            console.log('ERROR ======> ', error)
+        }
     }
 }
 
@@ -185,11 +189,17 @@ const saveMachineDataById = ( req, res ) => {
     })
 }
 
+const findSitesToActualiceMachines = async () => {
+    const sitios = await Site.find()
+    sitios.forEach((site, index) => {
+
+    })
+}
+
 /* Crear sitios para enviar a FRONT */
 const createSiteToSend = () => {
     return new Promise(async resolve => {
         const sites = await fetch(`${environment.icvApi.url}pmobras`, {
-            /* myHeaders */
             headers: myHeaders,
             method: 'GET',
             agent: agent
@@ -280,8 +290,9 @@ const createMachinesToSend = async (pIDOBRA) => {
         method: 'GET',
         agent: agent
     })
+    console.log(await machines.json())
     if( machines ) {
-        const body = await machines.json();
+        let body = await machines.json();
         if( body ) {
             const machinesOnDb = await readMachinesFromDb();
             let machines = [];
@@ -302,8 +313,18 @@ const createMachinesToSend = async (pIDOBRA) => {
                     machine.brand = machine.marca;
                     machine.model = machine.modelo;
                     machine.hourMeter = machine.horometro;
-                    let newMachine = await new Machine(machine);
-                    newMachine.save();
+                    try {
+                        const findMachine = await Machine.findOne({equid: machine.equid})
+                        if (findMachine) {
+                            console.log('Machine ', machine.equ, ' founded')
+                        } else {
+                            console.log('Machine not founded')
+                        }
+                    } catch (error) {
+                        console.log(index, ' ERROR ====> ', error)
+                    }
+                    /* let newMachine = await new Machine(machine);
+                    newMachine.save(); */
                     if(index == (machines.length - 1)) {
 
                     }
@@ -425,5 +446,6 @@ export default {
     leerPautas,
     getHeaderPauta,
     getStructsPauta,
-    saveMachineDataById
+    saveMachineDataById,
+    findSitesToActualiceMachines
 }

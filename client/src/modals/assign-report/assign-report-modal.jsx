@@ -91,12 +91,30 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
             hableUser === 'inspectionWorker'
             usersRoutes.getOperadores().then(response => {
                 console.log(response)
+                response.data.sort((a, b) => {
+                    if (a.name < b.name) {
+                      return -1;
+                    }
+                    if (a.name > b.name) {
+                      return 1;
+                    }
+                    return 0;
+                });
                 setOperarios(response.data)
             })
         }else if(reportType === 'Mantención') {
             hableUser === 'maintenceOperator'
             usersRoutes.getMantenedores().then(response => {
                 console.log(response)
+                response.data.sort((a, b) => {
+                    if (a.name < b.name) {
+                      return -1;
+                    }
+                    if (a.name > b.name) {
+                      return 1;
+                    }
+                    return 0;
+                });
                 setOperarios(response.data)
             })
         }

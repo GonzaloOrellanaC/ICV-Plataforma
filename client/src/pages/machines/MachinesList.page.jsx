@@ -20,6 +20,7 @@ const MachinesListPage = ({route}) => {
 
     let { id } = useParams();
     const machine = JSON.parse(id);
+    console.log(machine)
     const openCloseModal = () => {
             setTimeout(() => {
                 (localStorage.getItem('isLoading3D') === 'nok') ? setOpen(true) : alert('Debe esperar el término de la descarga de los modelo s 3D.')
@@ -31,7 +32,7 @@ const MachinesListPage = ({route}) => {
             id: machine.id,
             brand: machine.brand,
             model: machine.model,
-            pIDPM: machine.pIDPM,
+            /* pIDPM: machine.pIDPM, */
             type: machine.type,
             machineData: JSON.stringify(machineData)
         }

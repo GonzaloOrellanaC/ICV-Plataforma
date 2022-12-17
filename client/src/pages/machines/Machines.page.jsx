@@ -88,21 +88,21 @@ const MachinesPage = ({ route }) => {
                                 </div>
                             </div>
                             <Grid container spacing={5} justifyContent='flex-start' style={{textAlign: 'center', height: '75vh', overflowY: 'auto'}}>
-                                <Grid item xs={null} sm={null} md={2} lg={2} xl={2}>
+                                {/* <Grid item xs={null} sm={null} md={2} lg={2} xl={2}>
 
-                                </Grid>
+                                </Grid> */}
                                 {
                                     machinesList.map((machine) => {
                                         return (
-                                            <Grid item xs={12} sm={12} md={4} lg={4} xl={4} key={machine.id} style={{margin: 10}}>
+                                            <Grid item xs={12} sm={12} md={4} lg={4} xl={4} key={machine.id}>
                                                 <MachineButton machine={machine} image={machine.image} route={route}/>
                                             </Grid>
                                         )
                                     })
                                 }
-                                <Grid item xs={null} sm={null} md={2} lg={2} xl={2}>
+                                {/* <Grid item xs={null} sm={null} md={2} lg={2} xl={2}>
 
-                                </Grid>
+                                </Grid> */}
                                 
                             </Grid>
                         </Grid>

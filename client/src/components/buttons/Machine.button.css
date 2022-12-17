@@ -1,11 +1,11 @@
 .imageMachine {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 70%;
+    max-height: 70%;
 }
 
 .buttonContent {
     margin: 10px;
     max-width: 400px;
-    min-height: 360px;
+    height: calc(100vh - 550px);
     box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.08);
 }

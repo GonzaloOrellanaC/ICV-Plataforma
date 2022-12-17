@@ -27,6 +27,15 @@ const initAccessControl = async () => {
         const findRoles = await Roles.find({})//await Roles.findOne({ name: environment.roles[0].name });
         const adminResult = await getAdminExist();
         const findSites = await getSites();
+        console.log(findSites)
+        findSites.forEach(async (site, index) => {
+            console.log(site.idobra)
+            try {
+                await ApiIcv.createMachinesToSend(site.idobra)
+            } catch (error) {
+                console.log(error)
+            }
+        })
         if(findSites.length == 0) {
             const sites = await ApiIcv.createSiteToSend();
         }
