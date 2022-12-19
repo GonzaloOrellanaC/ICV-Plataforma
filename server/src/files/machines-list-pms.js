@@ -14,7 +14,7 @@ const list = [
         zone: "Genérico",
         model: "793-F",
         pIDPM: "SPM000236"
-    },
+    }/* ,
     {
         id: 2,
         type: "Camión",
@@ -85,7 +85,7 @@ const list = [
         zone: "Calama",
         model: "D10T",
         pIDPM: "SPM000393"
-    }
+    } */
 ]
 
 export default list

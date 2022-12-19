@@ -29,6 +29,7 @@ const leerPauta = async (i, machinesListPms, listaPMsConcat, res) => {
     }else{
         try{
             let pIDPM = machinesListPms[i].pIDPM;
+            console.log(environment.icvApi.url, pIDPM)
             const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
                 /* myHeaders */
                 headers: myHeaders,

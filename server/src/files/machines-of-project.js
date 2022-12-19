@@ -12,7 +12,7 @@ const machinesOfProject = [
         brand: "Komatsu",
         model: "PC5500",
         pIDPM: "SPM000445"
-    },
+    }/* ,
     {
         id: 1,
         type: "Camión",
@@ -33,7 +33,7 @@ const machinesOfProject = [
         brand: "Caterpillar",
         model: "D10T",
         pIDPM: ""
-    }
+    } */
 ]
 
 export default machinesOfProject
