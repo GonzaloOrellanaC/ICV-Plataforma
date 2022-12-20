@@ -14,7 +14,7 @@ const list = [
         zone: "Genérico",
         model: "793-F",
         pIDPM: "SPM000236"
-    }/* ,
+    },
     {
         id: 2,
         type: "Camión",
@@ -38,7 +38,8 @@ const list = [
         zone: "Genérico",
         model: "PC5500",
         pIDPM: "SPM000902"
-    },{
+    }/*,
+    {
         id: 5,
         type: "Camión",
         brand: "Caterpillar",
