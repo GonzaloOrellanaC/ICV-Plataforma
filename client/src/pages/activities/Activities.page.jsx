@@ -12,6 +12,7 @@ const ActivitiesPage = () => {
     const [ assignments, setAssignments ] = useState([]);
     const [ prioritaryAssignments, setPrioritaryAssignments ] = useState([]);
     const [ assignmentsReadyToSend, setAssignmentsReadyToSend ] = useState([])
+    const [showList, setShowList] = useState(false)
     const theme = useTheme();
     const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
     const isOperator = Boolean(localStorage.getItem('isOperator'))
@@ -25,6 +26,9 @@ const ActivitiesPage = () => {
         setAssignmentsReadyToSend(dataToSend)
         if(navigator.onLine) {
             getAssignments().then((data) => {
+                if (data.length === 0) {
+                    setShowList(true)
+                }
                 if(data) {
                     data.forEach(async (report, i) => {
                         if(report.guide === 'Pauta de Inspección') {
@@ -61,6 +65,7 @@ const ActivitiesPage = () => {
                                     setPrioritaryAssignments(prioritaryAssign)
                                 }
                             })
+                            setShowList(true)
                         }
                     })
                 }
@@ -71,6 +76,7 @@ const ActivitiesPage = () => {
             let dataList = []
             dataList = await reportsDatabase.consultar(database)
             setAssignments(dataList.reverse())
+            setShowList(true)
         }
         return () => go = false;
     }, [])
@@ -187,7 +193,7 @@ const ActivitiesPage = () => {
                                         </Grid>
                                     </div>
                                 </Grid>
-                                <Grid container style={
+                                {showList && <Grid container style={
                                     {
                                         overflowY: 'auto',
                                         maxHeight: 'calc(100vh - 295px)'
@@ -198,6 +204,11 @@ const ActivitiesPage = () => {
                                     (isChiefMachinery || isShiftManager || localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') &&
                                         <div>
                                             <h3 className='item-style'>Mis actividades pendientes</h3>
+                                            {/* {
+                                                (prioritaryAssignments.length === 0 && showList)
+                                                &&
+                                                <p>Sin actividades</p>
+                                            } */}
                                         </div>
                                     }
                                     {prioritaryAssignments && prioritaryAssignments.reverse().map((element, i) => {
@@ -255,12 +266,17 @@ const ActivitiesPage = () => {
                                         )
                                     })}
                                     {
-                                        (isChiefMachinery || isShiftManager || (localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') && prioritaryAssignments.length == 0) && <Grid container><h3 className='item-style'>Sin Asignación pendiente</h3></Grid>
+                                        (isChiefMachinery || isShiftManager || (localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') && prioritaryAssignments.length == 0) && <Grid container><p className='item-style'>Sin Asignación pendiente</p></Grid>
                                     }
                                     {
                                     (isChiefMachinery || isShiftManager || localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') &&
                                         <div>
                                             <h3>Otras asignaciones</h3>
+                                            {
+                                                (assignments.length === 0 && showList)
+                                                &&
+                                                <p>Sin asignaciones</p>
+                                            }
                                         </div>
                                     }
                                     {assignments && assignments.map((element, i) => {
@@ -334,8 +350,10 @@ const ActivitiesPage = () => {
                                             </div>
                                         )
                                     })}
+                                </Grid>}
+                                <Grid>
                                     {
-                                        ((assignments.length == 0) && (prioritaryAssignments.length == 0)) && 
+                                        /* ((assignments.length == 0) && (prioritaryAssignments.length == 0)) */!showList && 
                                         <div style={{ width: '100%', textAlign: 'center', height: 100 }}>
                                             <CircularProgress size={50} />
                                         </div>

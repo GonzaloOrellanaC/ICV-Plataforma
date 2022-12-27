@@ -38,7 +38,7 @@ const list = [
         zone: "Genérico",
         model: "PC5500",
         pIDPM: "SPM000902"
-    }/*,
+    },
     {
         id: 5,
         type: "Camión",
@@ -76,7 +76,7 @@ const list = [
         type: "Bulldozer",
         brand: "Caterpillar",
         zone: "Genérico",
-        model: "D10T",
+        model: "D10-T",
         pIDPM: "SPM000578"
     },
     {
@@ -84,9 +84,9 @@ const list = [
         type: "Bulldozer",
         brand: "Caterpillar",
         zone: "Calama",
-        model: "D10T",
+        model: "D10-T",
         pIDPM: "SPM000393"
-    } */
+    }
 ]
 
 export default list

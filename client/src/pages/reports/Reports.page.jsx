@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react'
-import {Box, Grid, Card, makeStyles, Toolbar, IconButton, ListItem, ListItemIcon, ListItemText, Checkbox, Button, Chip, TablePagination} from '@material-ui/core';
+import {Grid, Toolbar, IconButton, Chip, TablePagination} from '@material-ui/core';
 import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 import { machinesRoutes, reportsRoutes } from '../../routes';
@@ -9,7 +9,7 @@ import './reports.css'
 import { ReportsList } from '../../containers';
 import { useHistory } from 'react-router-dom';
 import { machinesDatabase, sitesDatabase } from '../../indexedDB';
-import { dateSimple, getWeekReports, useStylesTheme } from '../../config';
+import { dateSimple, getWeekReports } from '../../config';
 import { LoadingLogoModal } from '../../modals';
 
 const ReportsPage = () => {
@@ -22,7 +22,6 @@ const ReportsPage = () => {
     const [ mantencionesCompletadas, setMantencionesCompletadas ] = useState(0);
     const [ list, setList ] = useState([]);
     const [ vista, setVista ] = useState(true);
-    const [ cancel, setCancel ] = useState(true);
     const [ loading, setLoading ] = useState(false)
     const [ rowsPerPage, setRowsPerPage ] = useState(10)
     const [ page, setPage]  = useState(0);
@@ -30,10 +29,7 @@ const ReportsPage = () => {
     const [ totalItems, setTotalItems ] = useState(0)
     const history = useHistory()
     const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
-    const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
-    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
-    const [ flechaListaxMaquina, setFlechaListaxMaquina ] = useState(faArrowUp)
     useEffect(() => {
         initPage()
     }, [])
@@ -44,17 +40,42 @@ const ReportsPage = () => {
         console.log(totalItems)
     },[totalItems])
     const initPage = async () => {
+        let isAdmin = false
+        const role = (localStorage.getItem('role') === 'undefined') ? null : localStorage.getItem('role')
+        const roles = JSON.parse(localStorage.getItem('roles'))
+        const site = JSON.parse(localStorage.getItem('sitio'))
+        if (role) {
+            if (role === 'superAdmin' || role === 'admin') {
+                isAdmin = true
+            }
+        } else {
+            roles.forEach(role => {
+                if (role === 'superAdmin' || role === 'admin') {
+                    isAdmin = true
+                }
+            })
+        }
         setLoading(true)
         let daysOfThisWeek = getWeekReports();
-        let completesInspections = await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Inspección');
-        let completesManteinances = await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Mantención');
+        console.log(role, site)
+        let completesInspections = isAdmin 
+        ? 
+        await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Inspección')
+        :
+        await reportsRoutes.getReportsByDateRangeAndSite(daysOfThisWeek[0], daysOfThisWeek[1], 'Inspección', site.idobra)
+        let completesManteinances = isAdmin
+        ?
+        await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Mantención')
+        :
+        await reportsRoutes.getReportsByDateRangeAndSite(daysOfThisWeek[0], daysOfThisWeek[1], 'Mantención', site.idobra)
+        console.log(completesInspections.data.length, completesManteinances.data.length)
         setInspeccionesCompletadas(completesInspections.data.length);
         setMantencionesCompletadas(completesManteinances.data.length);
         let stateInspecciones = false
         let stateMantenciones = false
         Inspecciones.map(async (e, i) => {
             console.log(e)
-            let response = await reportsRoutes.getReportByState(e.name, 'Inspección');
+            let response = isAdmin ? await reportsRoutes.getReportByState(e.name, 'Inspección') : await reportsRoutes.getReportByStateAndSite(e.name, 'Inspección', site.idobra)
             let porAsignar = []
             if(response.data.length > 0) {
                 e.number = response.data.length;
@@ -82,8 +103,9 @@ const ReportsPage = () => {
             }
         });
         Mantenciones.map(async (e, i) => {
-            let response = await reportsRoutes.getReportByState(e.name, 'Mantención');
+            let response =  isAdmin ? await reportsRoutes.getReportByState(e.name, 'Mantención') : await reportsRoutes.getReportByStateAndSite(e.name, 'Mantención', site.idobra)
             let porAsignar = []
+            console.log(response.data)
             if(response.data.length > 0) {
                 e.number = response.data.length;
                 response.data.map(async (item, i) => {
@@ -172,7 +194,7 @@ const ReportsPage = () => {
             if (i === (Inspecciones.length - 1)) {
                 Mantenciones.map((e, n) => {
                     e.buttonColor = '#F9F9F9'
-                    console.log(document.getElementById(`button_${n}_mantenciones`))
+                    /* console.log(document.getElementById(`button_${n}_mantenciones`)) */
                     if (document.getElementById(`button_${n}_mantenciones`))
                     document.getElementById(`button_${n}_mantenciones`).style.backgroundColor = '#F9F9F9'
                     if (n === (Mantenciones.length - 1)) {
@@ -290,7 +312,7 @@ const ReportsPage = () => {
         }
     }
 
-    const ordenarPorNumeroMaquina = (value = new String) => {
+/*     const ordenarPorNumeroMaquina = (value = new String) => {
         if (value === 'mayor') {
             setFlechaListaxMaquina(faArrowDown)
             const listaCache = [...list]
@@ -308,7 +330,7 @@ const ReportsPage = () => {
             })
             initReadList(nuevaLista)
         }
-    }
+    } */
 
     const textoFiltrado = (value) => {
         console.log(value)

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { Box, Card, Grid } from '@material-ui/core'
+import { Box, Button, Card, Grid } from '@material-ui/core'
 import { useStylesTheme } from '../../config'
 import { SiteButton } from '../../components/buttons'
 import { sitesDatabase } from '../../indexedDB'
@@ -17,8 +17,16 @@ const SitesPage = () => {
         sitesDatabase.initDbObras()
         .then(async db => {
             let respuestaConsulta = await sitesDatabase.consultar(db.database);
+            console.log(respuestaConsulta)
             setSites(respuestaConsulta);
         })
+    }
+
+    const seleccionarSitio = (site) => {
+        if (window.confirm('Confirme que cambiará la obra de navegación')) {
+            localStorage.setItem('sitio', JSON.stringify(site));
+            alert(site.descripcion+' seleccionado.')
+        }
     }
 
     return (
@@ -29,13 +37,32 @@ const SitesPage = () => {
                         <div style={{width: '100%'}}>
                         <h1>Para navegar en la plataforma debe seleccionar una obra.</h1>
                         </div>
-                        <Grid container style={{ height: '75vh' }} alignItems='center' justifyContent='center'>
+                        <Grid container style={{ height: '75vh', overflowY: 'auto' }} alignItems='center' justifyContent='center'>
                             
                             {
                                 sites.filter(a => a.toString()).map((site) => {
                                     return (
-                                        <Grid item key={site.id} style={{width: '100%', padding: 20}}>
-                                            <SiteButton site={site} />
+                                        <Grid item xl={4} lg={4} md={4} key={site.id} style={{width: '100%', padding: 20}}>
+                                            <div
+                                                style={{
+                                                    padding: 10,
+                                                    borderRadius: 20,
+                                                    borderWidth: 1,
+                                                    borderColor: 'red',
+                                                    borderStyle: 'solid',
+                                                    textAlign: 'center'
+                                                }}
+                                            >
+                                                <img src={site.image ? site.image : '/logo_icv.png'} width={250} />
+                                                <br />
+                                                <p>{site.descripcion}</p>
+                                                <br />
+                                                <Button onClick={() => { seleccionarSitio(site) }} variant={'contained'} color={'primary'}>
+                                                    Seleccionar
+                                                </Button>
+                                                <br />
+                                            </div>
+                                            {/* <SiteButton site={site} /> */}
                                         </Grid>
                                     )
                                 })

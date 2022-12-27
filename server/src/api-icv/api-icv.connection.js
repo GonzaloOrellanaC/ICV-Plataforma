@@ -78,14 +78,19 @@ const getStructsPauta = async (req, res) => {
 
 const getIdPmInspection = (equi) => {
     return new Promise(async resolve => {
-        const response4 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=I`, {
-            /* myHeaders */
-            headers: myHeaders,
-            method: 'GET',
-            agent: agent
-        })
-        let res = await response4.json();
-        resolve(res.data.idpm);
+        try {
+            const response4 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=I`, {
+                /* myHeaders */
+                headers: myHeaders,
+                method: 'GET',
+                agent: agent
+            })
+            let res = await response4.json();
+            console.log(res.data)
+            resolve(res.data.idpm);
+        } catch (error) {
+            resolve(null)
+        }
     })
 }
 
@@ -162,6 +167,11 @@ const readMachinesByModel = ( req, res ) => {
 
 const getMachineByEquid = ( req, res ) => {
     const {body} = req;
+}
+
+const getMachineBySiteId = async (req, res) => {
+    const machines = await Machine.find({idobra: req.body.siteId})
+    return res.status(200).json(machines)
 }
 
 /* Leer máquinas */
@@ -285,30 +295,45 @@ const leerArchivo = (type) => {
 
 /* Descargar máquinas por obra desde API ICV y guardar en base de datos*/
 const createMachinesToSend = async (pIDOBRA) => {
+    console.log(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`)
     const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`, {
         /* myHeaders */
         headers: myHeaders,
         method: 'GET',
         agent: agent
     })
-    console.log(await machines.json())
+    /* console.log(await machines.json()) */
     if( machines ) {
         let body = await machines.json();
         if( body ) {
             const machinesOnDb = await readMachinesFromDb();
             let machines = [];
             machines = body.data;
-            if(machinesOnDb.length === machines.length) {
-            }else{
-                machines.forEach(async (machine, index) => { 
+            /* if(machinesOnDb.length === machines.length) {
+            }else{ */
+                machines.forEach(async (machine, index) => {
+                    console.log(machine)
                     machine.idpminspeccion = await getIdPmInspection(machine.equid);
                     machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
+                    console.log(machine.idpminspeccion, machine.idpmmantencion)
                     if(machine.modelo.includes('793-F')){
                         machine.modelo='793-F';
                         machine.type = 'Camión'
                     }else if(machine.modelo.includes('pc5500')||machine.modelo.includes('PC5500')) {
                         machine.modelo='PC5500';
                         machine.type = 'Pala'
+                    }else if(machine.modelo.includes('793-D')) {
+                        machine.modelo='793-D';
+                        machine.type = 'Camión'
+                    }else if(machine.modelo.includes('789-D')) {
+                        machine.modelo='789-D';
+                        machine.type = 'Camión'
+                    }else if(machine.modelo.includes('994-K')) {
+                        machine.modelo='994-K';
+                        machine.type = 'Cargador Frontal'
+                    }else if(machine.modelo.includes('D10-T')) {
+                        machine.modelo='D10-T';
+                        machine.type = 'Bulldozer'
                     }
 
                     machine.brand = machine.marca;
@@ -320,6 +345,14 @@ const createMachinesToSend = async (pIDOBRA) => {
                             console.log('Machine ', machine.equ, ' founded')
                         } else {
                             console.log('Machine not founded')
+                            console.log(machine)
+                            try {
+                                const newMachine = await Machine.create(machine);
+                                console.log(newMachine)
+                                /* newMachine.save(); */
+                            } catch (error) {
+                                console.log(error)
+                            }
                         }
                     } catch (error) {
                         console.log(index, ' ERROR ====> ', error)
@@ -330,7 +363,7 @@ const createMachinesToSend = async (pIDOBRA) => {
 
                     }
                 })
-            }
+            /* } */
         }
     }
 }
@@ -434,6 +467,7 @@ export default {
     readMachinesByModel,
     readMachinesByEquid,
     getMachineByEquid,
+    getMachineBySiteId,
     sendFileOfMachines,
     filesPetition,
     filePetition,

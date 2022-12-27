@@ -46,6 +46,7 @@ const UsersList = ({height, hableButton}) => {
         let cancel = true;
         if(cancel) {
             usersRoutes.getAllUsers().then(users=> {
+                console.log(users)
                 if(cancel) {
                     setUsuarios(users.data)
                     setUsuariosCache(users.data)
@@ -163,7 +164,7 @@ const UsersList = ({height, hableButton}) => {
                         <div style={{width: '5%', marginLeft: 5, fontSize: 12}}>
                             
                         </div>
-                        <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
+                        <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>Nombre de usuario</strong> </p>
                             <input
                                 type={'text'}
@@ -171,7 +172,7 @@ const UsersList = ({height, hableButton}) => {
                                 onChange={(e) => {buscarUsuario(e.target.value)}}
                             />
                         </div>
-                        <div style={{width: '20%', marginLeft: 5, fontSize: 12}}>
+                        <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>Correo electrónico</strong> </p>
                             <input
                                 type={'text'}
@@ -195,7 +196,7 @@ const UsersList = ({height, hableButton}) => {
                         <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0, marginBottom: 22}}> <strong>Rol</strong> </p>
                         </div>
-                        <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
+                        <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0, marginBottom: 22}}> <strong>Faena/Obra</strong> </p>
                         </div>
                         <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
@@ -218,10 +219,10 @@ const UsersList = ({height, hableButton}) => {
                                         <div style={{width: '5%', marginLeft: 5, fontSize: 12 }}>
                                             <img style={{height: 50, borderRadius: '50%', objectFit: 'cover', width: 50}} src={!e.imageUrl ? '../assets/no-profile-image.png' : e.imageUrl} alt="" /> 
                                         </div>
-                                        <div style={{width: '15%', marginLeft: 5, fontSize: 12 }}>
+                                        <div style={{width: '10%', marginLeft: 5, fontSize: 12 }}>
                                             {e.name} {e.lastName}    
                                         </div>
-                                        <div style={{width: '20%', marginLeft: 5, fontSize: 12, wordBreak: 'break-all' }}>
+                                        <div style={{width: '10%', marginLeft: 5, fontSize: 12, wordBreak: 'break-all' }}>
                                             {e.email === 'x@x.xx' ? '----' : e.email}  
                                         </div>
                                         <div style={{width: '10%', marginLeft: 5, fontSize: 12 }}>
@@ -244,8 +245,8 @@ const UsersList = ({height, hableButton}) => {
                                                 })
                                             }
                                         </div>
-                                        <div style={{width: '10%', marginLeft: 5, fontSize: 12 }}>
-                                            
+                                        <div style={{width: '15%', marginLeft: 5, fontSize: 12 }}>
+                                            {e.sites && (JSON.parse(e.sites)).descripcion}
                                         </div>
                                         <div style={{width: '10%', marginLeft: 5, fontSize: 12 }}>
                                             {

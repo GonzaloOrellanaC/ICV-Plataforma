@@ -14,7 +14,7 @@ import { SocketConnection } from '../../connections';
 const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) => {
     const [ operarios, setOperarios ] = useState([]);
     const [ colorState, setColorState ] = useState();
-    const { idIndex, guide, state, siteName, usersAssigned } = report;
+    const { idIndex, guide, state, siteName, usersAssigned, site } = report;
     const [ stateAssignment , setStateAssignment ] = useState(false);
     const [ data, setData ] = useState('');
     const [ closeType, setCloseType ] = useState(false)
@@ -100,12 +100,18 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                     }
                     return 0;
                 });
-                setOperarios(response.data)
+                const users = response.data
+                const usersFiltered = users.filter(user => {
+                    if (JSON.parse(user.sites).idobra === site) {
+                        return user
+                    }
+                })
+                setOperarios(usersFiltered)
             })
         }else if(reportType === 'Mantención') {
             hableUser === 'maintenceOperator'
             usersRoutes.getMantenedores().then(response => {
-                console.log(response)
+                console.log(response.data)
                 response.data.sort((a, b) => {
                     if (a.name < b.name) {
                       return -1;
@@ -115,25 +121,19 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                     }
                     return 0;
                 });
-                setOperarios(response.data)
+                const users = response.data
+                const usersFiltered = users.filter(user => {
+                    if (JSON.parse(user.sites).idobra === site) {
+                        return user
+                    }
+                })
+                setOperarios(usersFiltered)
             })
         }
-        /* usersRoutes.getAllUsers().then(response => {
-            let userList = new Array();
-            let users = new Array();
-            userList = response.data;
-            userList.forEach((user, index) => {
-                        users.push(user);
-                if(index == (userList.length - 1)) {
-                    console.log(users)
-                    setOperarios(users)
-                }
-            })
-
-        }) */
     }
 
     useEffect(() => {
+        console.log(report)
         setUserAssigned(usersAssigned[0])
         setCloseType(false)
         getUsers();
@@ -146,7 +146,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         }else if(state === 'Completadas') {
             setColorState('#27AE60');
         }     
-    }, [reportType])
+    }, [guide])
     
     return(
         <Modal

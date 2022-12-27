@@ -240,6 +240,24 @@ const getReportsByDateRange = (req, res) => {
     }   
 }
 
+const getReportsByDateRangeAndSite = (req, res) => {
+    const { body } = req
+    let dateInit = body.dateInit
+    let dateEnd = body.dateEnd
+    let reportType = body.reportType
+    let idobra = body.site
+    try {
+        Reports.find({ site: idobra, deleted: false, dateClose: { $gte: new Date(dateInit) , $lt: new Date(dateEnd) },  reportType: reportType }, (err, reports) => {
+            if(err) {
+                console.log('El error es: ', err)
+            }
+            res.send(reports)
+        })
+    } catch (err) {
+        console.log('ERRRRRRR',err)
+    }   
+}
+
 const getReportById = (req, res) => {
     const { body } = req
     const { _id } = body
@@ -283,6 +301,18 @@ const getReportByState = (req, res) => {
     }
 }
 
+const getReportByStateAndSite = (req, res) => {
+    const { body } = req
+    try {
+        Reports.find({ site: body.site, deleted: false, state: body.state, reportType: body.reportType }, (err, reports) => {
+
+            res.json(reports)
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 const getReportsByUser = (req, res) => {
     const { body } = req
 
@@ -307,7 +337,7 @@ const getReportsByUser = (req, res) => {
 const findMyAssignations = (req, res) => {
     const { body } = req
     try {
-        Reports.find({deleted: false, usersAssigned: [body.userId]}, (err, reports) => {
+        Reports.find({site: body.site, deleted: false, usersAssigned: [body.userId]}, (err, reports) => {
             res.json(reports)
         })
     } catch (err) {
@@ -325,6 +355,17 @@ const getReportByIdpm = async (req, res) => {
     })
     const pmResponse =  await response.json()
     res.send(pmResponse.data)
+}
+
+const getAllReportsbySite = async (req, res) => {
+    const { body : { site } } = req
+    try {
+        Reports.find({ deleted: false, site: site }, (err, reports) => {
+            res.json(reports)
+        })
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 const getReportByEquid = async (req, res) => {
@@ -388,11 +429,14 @@ export default {
     getReportByGuide,
     getReportByType,
     getReportByState,
+    getReportByStateAndSite,
     getReportsByUser,
     findMyAssignations,
+    getAllReportsbySite,
     getReportByIdpm,
     getReportByEquid,
     getReportsByDateRange,
+    getReportsByDateRangeAndSite,
     getAllReports,
     getTotalReportsToIndex,
     countTotalReportsLength,

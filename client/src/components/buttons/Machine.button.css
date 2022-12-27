@@ -6,6 +6,6 @@
 .buttonContent {
     margin: 10px;
     max-width: 400px;
-    height: calc(100vh - 550px);
+    height: 250px/* calc(100vh - 700px) */;
     box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.08);
 }

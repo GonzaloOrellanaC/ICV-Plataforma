@@ -82,8 +82,10 @@ const UserProfilePage = ({route}) => {
                                         </div>}
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={4} lg={4}>
-                                        <div style={{padding: 20}}>
+                                        <div style={{ padding: 20 }}>
                                             <h1>Otros usuarios</h1>
+                                        </div>
+                                        <div style={{padding: 20, maxHeight: 'calc(100vh - 320px)', overflowY: 'auto'}}>
                                             {
                                                 users.map((e, i) => {
                                                     if(!e.imageUrl) {

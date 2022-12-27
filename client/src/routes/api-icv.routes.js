@@ -20,6 +20,12 @@ export default {
         }
         return axios.post('/machines/readMachineByEquid', requestBody)
     },
+    getMachineBySiteId: (siteId) => {
+        const requestBody = {
+            siteId: siteId,
+        }
+        return axios.post('/machines/getMachineBySiteId', requestBody)
+    },
     getPMList: () => {
         return axios.get('/icv/petitionFiles')
     },

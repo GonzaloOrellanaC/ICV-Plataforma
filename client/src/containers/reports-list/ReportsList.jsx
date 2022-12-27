@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Grid} from '@material-ui/core'
+import { Button, Grid, Popover, Typography } from '@material-ui/core'
 import { machinesRoutes } from '../../routes'
 import { AssignReportModal, PdfModal, ReviewReportModal } from '../../modals'
 import './style.css'
@@ -14,7 +14,39 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
     const [ openModalState, setOpenModalState ] = useState(false)
     const [ openReviewModalState, setOpenReviewModalState ] = useState(false)
     const [ openPdfModal , setOpenPdfModal ] = useState(false)
-    const [ lista, setLista ] = useState([])
+    const [ siteName, setSiteName ] = useState([])
+    const [ isAdmin, setIsAdmin ] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+
+    useEffect(() => {
+        console.log(list)
+        let isAdminCache = false
+        const role = (localStorage.getItem('role') === 'undefined') ? null : localStorage.getItem('role')
+        const roles = JSON.parse(localStorage.getItem('roles'))
+        if (role) {
+            if (role === 'superAdmin' || role === 'admin') {
+                isAdminCache = true
+            }
+        } else {
+            roles.forEach(role => {
+                if (role === 'superAdmin' || role === 'admin') {
+                    isAdminCache = true
+                }
+            })
+        }
+        setIsAdmin(isAdminCache)
+    }, [])
+    
+    const handleClick = (event, siteName) => {
+        setSiteName(siteName)
+        setAnchorEl(event.currentTarget);
+    };
+    
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     const openModal = (report) => {
         setReportData(report)
@@ -113,6 +145,9 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
                 <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
                     <p style={{textAlign: 'center'}}> <strong>Responsable</strong> </p>
                 </Grid>
+                {isAdmin && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
+                    <p style={{textAlign: 'center', minWidth: 70}}> <strong>Obra</strong> </p>
+                </Grid>}
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
                     <p style={{textAlign: 'center', minWidth: 70}}> <strong>Download</strong> </p>
                 </Grid>
@@ -174,6 +209,29 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
                                         <p style={{textAlign: 'center'}}> <button disabled style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Terminado</button> </p>
                                     </Grid>
                                     }
+                                    {
+                                        isAdmin &&
+                                        
+                                        <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{ textAlign: 'center' }} >
+                                            <Button aria-describedby={id} style={{textAlign: 'center', minWidth: 70, marginTop: 5}} onClick={(e) => {handleClick(e, item.siteName)}}> {item.site} </Button>
+                                            <Popover
+                                                id={id}
+                                                open={open}
+                                                anchorEl={anchorEl}
+                                                onClose={handleClose}
+                                                anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'center',
+                                                }}
+                                                transformOrigin={{
+                                                vertical: 'top',
+                                                horizontal: 'center',
+                                                }}
+                                            >
+                                                <div style={{padding: 5}}><p>{siteName}</p></div>
+                                            </Popover>
+                                        </Grid>
+                                    }
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
                                         {/* <p style={{textAlign: 'center', minWidth: 70}}> {item.urlPdf ? item.urlPdf : 'Sin URL'} </p> */}
                                         {item.urlPdf ? <p style={{textAlign: 'center', minWidth: 70}}><a href={`${item.urlPdf}`}>Link</a></p> : <p style={{textAlign: 'center', minWidth: 70}}> Sin URL </p>}
@@ -182,7 +240,7 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
                                         <p style={{textAlign: 'center', minWidth: 70}}> {item.model} </p>
                                     </Grid>
                             
-                                    <Grid item xs={1} sm={1} md={1} lg={2} xl={2} >                                
+                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >                                
                                         <Grid container>
                                             <Grid item>
                                                 <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  

@@ -14,8 +14,13 @@ const VersionControlModal = ({open, closeModal}) => {
             <Box sx={styleModal}>
                 <div style={{textAlign: 'left', width: '100%'}}>
                     <h2>Versión {environment.version}</h2>
+                    <li>
+                        Nuevas Obras y Nuevas máquinas.
+                    </li>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <br />
+                    <strong>v.2.3.1</strong>
                     <li>
                         Reparaciones menores en lista de Ordenes
                     </li>

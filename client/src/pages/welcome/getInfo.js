@@ -115,16 +115,18 @@ const getPautasInstepctList = (setProgress, machines) => {
             n = n + punto;
             setProgress(n);
             let res = await reportsRoutes.getReportByIdpm(machine.idpminspeccion);
-            if(res.data[0].typepm) {
+            if(res.data[0] && res.data[0].typepm) {
                 res.data[0].typepm = encodeURIComponent(res.data[0].typepm);
             }
-            let header = await apiIvcRoutes.getHeaderPauta(res.data[0]);
-            let struct = await apiIvcRoutes.getStructsPauta(res.data[0]);
-            let newPauta = res.data[0];
-            newPauta.header = header;
-            newPauta.struct = struct;
-            newPauta.action = 'Inspección';
-            pautas.push(newPauta);
+            if (res.data[0]) {
+                let header = await apiIvcRoutes.getHeaderPauta(res.data[0]);
+                let struct = await apiIvcRoutes.getStructsPauta(res.data[0]);
+                let newPauta = res.data[0];
+                newPauta.header = header;
+                newPauta.struct = struct;
+                newPauta.action = 'Inspección';
+                pautas.push(newPauta);
+            }
             if(index == (machines.length -1)) {
                 resolve(pautas)
                 setProgress(100);

@@ -253,6 +253,7 @@ const WelcomePage = ({ readyToLoad }) => {
         return new Promise(resolve => {
             apiIvcRoutes.getAllMachines()
             .then(data => {
+                console.log(data.data)
                 resolve(data.data)
             })
         })

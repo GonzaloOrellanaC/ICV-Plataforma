@@ -94,6 +94,7 @@ export const AuthProvider = (props) => {
                 authRoutes.loginRut(rut, password)
                 .then(response => {
                     let userDataToSave = response.data
+                    console.log(userDataToSave)
                     if(response.data.enabled) {
                         localStorage.setItem('email', userDataToSave.email)
                         localStorage.setItem('fullName', userDataToSave.fullName)
@@ -125,7 +126,7 @@ export const AuthProvider = (props) => {
                                 })
                             }
                         }
-                        if (userDataToSave.role.length > 0) {
+                        if (userDataToSave.role && userDataToSave.role.length > 0) {
                             if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
                                 localStorage.setItem('isAdmin', true)
                                 setAdmin(true)
@@ -144,6 +145,7 @@ export const AuthProvider = (props) => {
                             response: response
                         })
                     } else {
+                        localStorage.setItem('isauthenticated', false)
                         setIsAuthenticated(false)
                         alert('Su cuenta no está habilitada, debe confirmarla.')
                         resolve({
@@ -152,6 +154,8 @@ export const AuthProvider = (props) => {
                     }
                 })
                 .catch(error => {
+                    console.log(error)
+                    localStorage.setItem('isauthenticated', false)
                     alert('Error de autenticación: '+error)
                     setIsAuthenticated(false)
                 })
@@ -191,7 +195,7 @@ export const AuthProvider = (props) => {
                                 }
                             })
                         }
-                        if (userDataToSave.role.length > 0) {
+                        if (userDataToSave.role && userDataToSave.role.length > 0) {
                             if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
                                 localStorage.setItem('isAdmin', true)
                                 setAdmin(true)
@@ -211,6 +215,7 @@ export const AuthProvider = (props) => {
                             response: response
                         }) 
                     } else {
+                        localStorage.setItem('isauthenticated', false)
                         setIsAuthenticated(false);
                         alert('Su cuenta no está habilitada, debe confirmarla.')
                         resolve({
@@ -219,9 +224,9 @@ export const AuthProvider = (props) => {
                     }
                 })
                 .catch(error => {
+                    localStorage.setItem('isauthenticated', false)
                     alert('Error de autenticación: '+error)
                     setIsAuthenticated(false)
-                    localStorage.setItem('isauthenticated', false)
                 })
             })
         }

@@ -7,11 +7,15 @@ import { ArrowBackIos } from '@material-ui/icons';
 import { MVAvatar } from '../../containers';
 import { machinesDatabase } from '../../indexedDB';
 import { apiIvcRoutes } from '../../routes';
+import { LoadingPage } from '../loading';
 
 const MachinesListPage = ({route}) => {  
     const [ routeData, setRouteData ] = useState('');
     const [ machinesList, setMachinesList ] = useState([]);
+    /* const [machine, setMachine] = useState() */
     const [open, setOpen] = useState(false);
+    const [idSite, setIdSite] = useState()
+    const [showMachinesList, setShowMachinesList] = useState(false)
 
     const history = useHistory();
     const classes = useStylesTheme();
@@ -19,8 +23,7 @@ const MachinesListPage = ({route}) => {
     const idobra = JSON.parse(localStorage.getItem('sitio')).idobra;
 
     let { id } = useParams();
-    const machine = JSON.parse(id);
-    console.log(machine)
+    const machine = JSON.parse(id)
     const openCloseModal = () => {
             setTimeout(() => {
                 (localStorage.getItem('isLoading3D') === 'nok') ? setOpen(true) : alert('Debe esperar el término de la descarga de los modelo s 3D.')
@@ -56,15 +59,21 @@ const MachinesListPage = ({route}) => {
     }
 
     useEffect(() => {
+        /* setMachine(JSON.parse(id)) */
         let cancel = false;
         if(navigator.onLine) {
-            apiIvcRoutes.getAllMachines().then(machines => {
+            const site = JSON.parse(localStorage.getItem('sitio'))
+            apiIvcRoutes./* getAllMachines */getMachineBySiteId(site.idobra).then(machines => {
+                console.log(machines)
                 if(cancel) return
                 setMachinesList(
                     machines.data
                     .filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
                     .sort((a, b) => {return a.equ - b.equ})
                 )
+                setTimeout(() => {
+                    setShowMachinesList(true)
+                }, 1000);
             })
         } else {
             machinesDatabase.initDbMachines().then(db => {
@@ -75,6 +84,9 @@ const MachinesListPage = ({route}) => {
                         .filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
                         .sort((a, b) => {return a.equ - b.equ})
                     )
+                    setTimeout(() => {
+                        setShowMachinesList(true)
+                    }, 1000);
                 })
             })
         }
@@ -108,19 +120,32 @@ const MachinesListPage = ({route}) => {
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 
                                         <p style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
-                                            {`${routeData}/${site}/${machine.type} ${machine.brand} ${machine.model}`}
+                                            {machine && `${routeData}/${site}/${machine.type} ${machine.brand} ${machine.model}`}
                                         </p>
                                     </Toolbar>
                                 </div>
                             </div>
                             <div style={{width: '100%', paddingLeft: 20, height: 40, textAlign: 'center'}}>
-                                <button style={{height: 30, borderRadius: 20, position: 'relative', right: 10, paddingLeft: 30, paddingRight: 30}} onClick={() => openCloseModal()}>
+                                {
+                                    (machine.model === '793-F' || machine.model === 'PC5500')
+                                    &&
+                                    <button style={{height: 30, borderRadius: 20, position: 'relative', right: 10, paddingLeft: 30, paddingRight: 30}} onClick={() => openCloseModal()}>
                                     <strong>{`Ver modelo 3D de ${machine.type} ${machine.brand} ${machine.model}`}</strong>
-                                </button>
+                                </button>}
                             </div>
                             <List style={{width: '100vw', marginRight: 11, overflowY: 'scroll', maxHeight: '70vh', paddingLeft: 20, paddingRight: 20}}>
                             {
-                                machinesList.map((machine, i) => {
+                                !showMachinesList
+                                &&
+                                <LoadingPage />
+                                /* <Grid container style={{minHeight: 148, marginBottom: 20, padding: 20, borderStyle: 'solid', borderWidth: 2, borderColor: '#CCC', borderRadius: 20}}>
+                                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                                        <p>Cargando máquinas. Espere un momento...</p>
+                                    </Grid>
+                                </Grid> */
+                            }
+                            {
+                                showMachinesList && machinesList.map((machine, i) => {
                                     return(
                                         
                                             <Grid key={i} container style={{minHeight: 148, marginBottom: 20, padding: 20, borderStyle: 'solid', borderWidth: 2, borderColor: '#CCC', borderRadius: 20}}>
@@ -156,6 +181,15 @@ const MachinesListPage = ({route}) => {
                                             </Grid>
                                     )
                                 })
+                            }
+                            {
+                                ((machinesList.length === 0) && showMachinesList)
+                                &&
+                                <Grid container style={{minHeight: 148, marginBottom: 20, padding: 20, borderStyle: 'solid', borderWidth: 2, borderColor: '#CCC', borderRadius: 20}}>
+                                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                                        <p>Obra no gestiona máquina seleccionada.</p>
+                                    </Grid>
+                                </Grid>
                             }
                             </List>
                             <div>

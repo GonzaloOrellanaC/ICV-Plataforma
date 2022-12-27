@@ -11,6 +11,10 @@ const SitesSchema = new Schema(
         idobra: {
             type: Schema.Types.String,
             required: true
+        },
+        image: {
+            type: Schema.Types.String,
+            required: false
         }
     },
     {

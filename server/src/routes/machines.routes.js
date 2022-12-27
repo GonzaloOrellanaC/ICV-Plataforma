@@ -8,6 +8,7 @@ router.get('/readAllMachines', ApiIcv.readAllMachinesFromDb);
 router.post('/readMachineByEquid', ApiIcv.readMachinesByEquid);
 router.post('/getAllMachinesByModel', ApiIcv.readMachinesByModel);
 router.post('/getMachineByEquid', ApiIcv.getMachineByEquid);
+router.post('/getMachineBySiteId', ApiIcv.getMachineBySiteId);
 router.post('/saveMachineDataById', ApiIcv.saveMachineDataById)
 
 

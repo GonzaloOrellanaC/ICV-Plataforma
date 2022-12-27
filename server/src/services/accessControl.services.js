@@ -36,11 +36,13 @@ const initAccessControl = async () => {
                 console.log(error)
             }
         })
-        if(findSites.length == 0) {
+        if(findSites.length === 1) {
             const sites = await ApiIcv.createSiteToSend();
         }
-        if(adminResult.length == 0) {
+        if(adminResult.length === 0) {
             createAdminDefault();
+        } else {
+            console.log('No se crea admin')
         }
         if (!findRoles) {
             environment.roles.forEach(async (role, index) => {

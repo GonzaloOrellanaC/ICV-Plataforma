@@ -41,6 +41,12 @@ export default {
     getAllReports: () => {
         return axios.get('/reports/getAllReports')
     },
+    getAllReportsbySite: (site) => {
+        const requestBody = {
+            site,
+        }
+        return axios.post('/reports/getAllReportsbySite', requestBody);
+    },
     getReportByIndex: (indexNumber) => {
         const requestBody = {
             indexNumber,
@@ -67,15 +73,24 @@ export default {
         }
         return axios.post('/reports/getReportByState', requestBody);
     },
+    getReportByStateAndSite: (state, reportType, site) => {
+        const requestBody = {
+            state,
+            reportType,
+            site
+        }
+        return axios.post('/reports/getReportByStateAndSite', requestBody);
+    },
     getReportsByUser: (userId) => {
         const requestBody = {
             userId
         }
         return axios.post('/reports/getReportsByUser', requestBody);
     },
-    findMyAssignations: (userId) => {
+    findMyAssignations: (userId, site) => {
         const requestBody = {
-            userId
+            userId,
+            site
         };
         return axios.post('/reports/findMyAssignations', requestBody);
     },
@@ -98,6 +113,15 @@ export default {
             reportType
         };
         return axios.post('/reports/getReportsByDateRange', requestBody);
+    },
+    getReportsByDateRangeAndSite: (dateInit, dateEnd, reportType, site) => {
+        const requestBody = {
+            dateInit,
+            dateEnd,
+            reportType,
+            site
+        };
+        return axios.post('/reports/getReportsByDateRangeAndSite', requestBody);
     },
     getTotalReportsToIndex: () => {
         return axios.get('/reports/getTotalReportsToIndex')

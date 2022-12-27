@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { useHistory, useParams } from 'react-router-dom';
-import { trucksDatabase, pautasDatabase, machinesDatabase } from '../../indexedDB'
+import { trucksDatabase, pautasDatabase, machinesDatabase, sitesDatabase } from '../../indexedDB'
 import { apiIvcRoutes, machinesRoutes, reportsRoutes } from '../../routes';
 import './reports.css'
 
@@ -23,7 +23,6 @@ const CreateReports = () => {
     const [ maquinas, setMaquinas ] = useState([])
     const [ machineModel, setMachineModel ] = useState('')
     const [ pauta, setPauta ] = useState()
-    //const [ pautaAction, setPautaAction ] = useState()
     const [ pautaIndex, setPautaIndex ] = useState()
     const [ reportType, setReportType ] = useState()
     const [ truckSelected, setTruck ] = useState()
@@ -41,6 +40,9 @@ const CreateReports = () => {
     const [ canEdit, setCanEdit ] = useState(true)
     const [ iDPM, setIDPM ] = useState('')
     const [ isTest, setIsTest ] = useState(false)
+    const [ idObra, setIdObra ] = useState('')
+    const [ isAdmin, setIsAdmin ] = useState(false)
+    const [ sites, setSites ] = useState([])
 
     const classes = useStylesTheme();
 
@@ -48,12 +50,21 @@ const CreateReports = () => {
 
     const {id} = useParams();
 
+    useEffect(() => {
+        /* console.log(pautas) */
+    }, [pautas])
+    
+
     const saveReportData = async (activate) => {
         if(activate) {
             setDisablePautas(true)
             setChanged(true)
             const pts = await readPautas();
-            let pautasLista = pts.filter((item, i) => {if((item.header[3].typeDataDesc === machineModel) && (item.action.includes(pautaIndex))) {  return item }})
+            console.log(pts)
+            console.log(machineModel)
+            let pautasLista = pts.filter((item, i) => {
+                /* console.log(item.header, machineModel) */
+                if(((item.header[3].typeDataDesc === machineModel)||(item.header[2].typeDataDesc === machineModel)) && (item.action.includes(pautaIndex))) { return item }})
             setPautas(pautasLista)
             setTimeout(() => {
                 setDisablePautas(false)
@@ -82,8 +93,9 @@ const CreateReports = () => {
         if(db) {
             machinesDatabase.consultar(db.database).then((machines) => {
                 let m = new Array()
-                m = machines.filter(machine => {if(machine.model === machineModel) {return machine}});
+                m = machines.filter(machine => {console.log(machine.idobra, idObra); if(machine.model === machineModel && machine.idobra === idObra) {return machine}});
                 const allMachines = m.sort((a, b) => {return Number(a.equ) - Number(b.equ)})
+                console.log(allMachines)
                 setMaquinas(allMachines)
             })
         }
@@ -100,7 +112,7 @@ const CreateReports = () => {
             guide: pauta,
             reportType: reportType,
             machine: JSON.parse(machineSelected).equid,
-            site: JSON.parse(localStorage.getItem('sitio')).idobra,
+            site: idObra,/* (idObra.length > 1) ? idObra : JSON.parse(localStorage.getItem('sitio')).idobra, */
             sapId: sapId,
             idPm: iDPM,
             testMode: isTest
@@ -131,7 +143,7 @@ const CreateReports = () => {
             guide: pauta,
             reportType: reportType,
             machine: JSON.parse(machineSelected).equid,
-            site: JSON.parse(localStorage.getItem('sitio')).idobra
+            site: idObra/* JSON.parse(localStorage.getItem('sitio')).idobra */
         }
         if(!report.machine || (!report.guide || report.guide === "Selección no cuenta con pautas.") || (!report.reportType || report.reportType === 'Seleccione...')) {
             alert('Falta información')
@@ -147,6 +159,7 @@ const CreateReports = () => {
     const readTrucks = () => {
         trucksDatabase.initDbMachines().then(async res => {
             let respuestaConsulta = await trucksDatabase.consultar(res.database);
+            /* console.log(respuestaConsulta) */
             setTrucks(respuestaConsulta);
         })
     }
@@ -170,6 +183,30 @@ const CreateReports = () => {
     }
 
     useEffect(() => {
+        let isAdminCache = false
+        const role = (localStorage.getItem('role') === 'undefined') ? null : localStorage.getItem('role')
+        const roles = JSON.parse(localStorage.getItem('roles'))
+        if (role) {
+            if (role === 'superAdmin' || role === 'admin') {
+                isAdminCache = true
+            }
+        } else {
+            roles.forEach(role => {
+                if (role === 'superAdmin' || role === 'admin') {
+                    isAdminCache = true
+                }
+            })
+        }
+        if (isAdminCache) {
+            sitesDatabase.initDbObras()
+            .then(async db => {
+                let respuestaConsulta = await sitesDatabase.consultar(db.database);
+                setSites(respuestaConsulta);
+            })
+        } else {
+            setIdObra(JSON.parse(localStorage.getItem('sitio')).idobra)
+        }
+        setIsAdmin(isAdminCache)
         readTrucks()
         activateIfEdit(id)
         formatDateToDay()
@@ -199,7 +236,9 @@ const CreateReports = () => {
 
     const activateIfEdit = async (id) => {
         const pautasData = await readPautas();
+        console.log(pautasData)
         if((id)) {
+            console.log(id)
             const report = JSON.parse(id);
             let pIndex = settingTypePautaWithReturn(report.reportType);
             setPautaIndex(pIndex)
@@ -217,6 +256,7 @@ const CreateReports = () => {
             let list = await machinesDatabase.consultar(db.database)
             let listaMaquinas = new Array();
             listaMaquinas = list;
+            console.log(listaMaquinas)
             let machine = listaMaquinas.filter((machine) => {if(machine.equid === report.machine) { return machine } });
             setMachineModel(machine[0].model);
             let pautasLista = pautasData.filter((item, i) => {if((item.header[3].typeDataDesc === machine[0].model) && (item.action === report.reportType) ) { return item }})
@@ -230,10 +270,11 @@ const CreateReports = () => {
             const machineFromDb = await apiIvcRoutes.getMachineByEquid(machine[0].equid);
             setHourMeter((Number(machineFromDb.data[0].hourMeter))/3600000);
             setEqID(machine[0].equid);
+            console.log(machinesList)
             setMaquinas(machinesList);
             setTruck(machine[0].model);
             setMachineSelected(JSON.stringify(machine[0]));
-            setMaquinas(machinesList);
+            /* setMaquinas(machinesList); */
         }else{
             readReports();
         }
@@ -277,6 +318,29 @@ const CreateReports = () => {
                             </div>
                             <Grid container>
                                 <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
+                                    {isAdmin && <div style={{width: '100%'}}>
+                                        <FormControl >
+                                            <p style={{margin: 5}}>Seleccionar Obra</p>
+                                            <select 
+                                                onBlur={()=>saveReportData(true)}
+                                                className={classes.inputsStyle} 
+                                                name="userType" 
+                                                id="userType" 
+                                                style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
+                                                onChange={(e)=> {setIdObra(e.target.value)}}
+                                                value={idObra}
+                                            >
+                                                <option>Seleccione...</option>
+                                                {
+                                                    sites.map((site, index) => {
+                                                        return(
+                                                            <option key={index} value={site.idobra}>{site.descripcion}</option>
+                                                        )
+                                                    })
+                                                } 
+                                            </select>
+                                        </FormControl>
+                                    </div>}
                                     <div style={{width: '100%'}}>
                                         <FormControl>
                                             <p style={{margin: 5}}>N° OT</p>
@@ -391,7 +455,6 @@ const CreateReports = () => {
                                                 <option>Seleccione...</option>
                                                 {
                                                     (pautas.length > 0) && pautas.map((pauta, index) => {
-                                                        console.log(pauta)
                                                         return(
                                                             <option key={index} value={[pauta.idpm, pauta.typepm]}> {(pauta.idpm === 'SPM000787') ? 'Motor LMR' : 'Motor Estándar'} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
                                                         )
