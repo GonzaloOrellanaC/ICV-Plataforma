@@ -30,8 +30,10 @@ const ReportsPage = () => {
     const history = useHistory()
     const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
+    const [sites, setSites] = useState([])
     useEffect(() => {
         initPage()
+        getSites()
     }, [])
     useEffect(() => {
         console.log(list)
@@ -169,6 +171,14 @@ const ReportsPage = () => {
                         }
                     })
                 })
+            })
+        })
+    }
+
+    const getSites = () => {
+        sitesDatabase.initDbObras().then(db => {
+            sitesDatabase.consultar(db.database).then(sites => {
+                setSites(sites)
             })
         })
     }
@@ -354,6 +364,27 @@ const ReportsPage = () => {
         }
     }
 
+    const seleccionFiltrada = (value) => {
+        const listaCache = [...list]
+        if (value === 'nada') {
+            initReadList(list)
+            setTotalItems(list.length)
+        } else {
+            const lista = []
+            listaCache.forEach((element, index) => {
+                console.log(element.number, value)
+                if (element.site === value.toString()) {
+                    lista.push(element)
+                }
+                if (index === (listaCache.length - 1)) {
+                    console.log(lista)
+                    initReadList(lista)
+                    setTotalItems(lista.length)
+                }
+            })
+        }
+    }
+
     return(
         <div className='container-width' >
             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
@@ -521,8 +552,23 @@ const ReportsPage = () => {
                                     <Grid item xl={'auto'}>
                                         <p style={{ width: 80 }}>Filtros: </p>
                                     </Grid>
-                                    <Grid item xl={2}>
+                                    <Grid item xl={3}>
                                         <input style={{ marginRight: 10, marginTop: 14, marginBottom: 14, width: 300 }} placeholder={'Ingrese N° OT, Máquina, Flota o Cód. SAP'} onChange={(e) => { textoFiltrado(e.target.value) }}  />
+                                    </Grid>
+                                    <Grid item xl={'auto'}>
+                                        <p style={{ width: 80 }}>Obra: </p>
+                                    </Grid>
+                                    <Grid item xl={2}>
+                                        <select style={{ marginRight: 10, marginTop: 14, marginBottom: 14, width: 300 }} name="select"  onChange={(e) => { seleccionFiltrada(e.target.value) }}>
+                                            <option value={'nada'}>SELECCIONE OBRA...</option>
+                                            {
+                                                sites.map((site, i) => {
+                                                    return (
+                                                        <option key={i} value={site.idobra}>{site.descripcion}</option>
+                                                    )
+                                                })
+                                            }
+                                        </select>
                                     </Grid>
                                 </Grid>
                             </div>
