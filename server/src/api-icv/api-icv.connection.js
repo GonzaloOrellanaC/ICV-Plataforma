@@ -23,12 +23,12 @@ const leerPautas = (req, res) => {
     leerPauta(i, machinesListPms, listaPMsConcat, res);
 }
 
-const leerPauta = async (i, machinesListPms, listaPMsConcat, res) => {
-    if(i == (machinesListPms.length)) {
+const leerPauta = async (i, machinesListPmsData, listaPMsConcat, res) => {
+    if(i === (machinesListPms.length)) {
         res.send(listaPMsConcat);
     }else{
         try{
-            let pIDPM = machinesListPms[i].pIDPM;
+            let pIDPM = machinesListPmsData[i].pIDPM;
             console.log(environment.icvApi.url, pIDPM)
             const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
                 /* myHeaders */
@@ -40,8 +40,10 @@ const leerPauta = async (i, machinesListPms, listaPMsConcat, res) => {
             console.log('Respuesta: ', listaPMs)
             listaPMsConcat = listaPMsConcat.concat(listaPMs.data)
             i = i + 1
-            leerPauta(i, machinesListPms, listaPMsConcat, res)
+            leerPauta(i, machinesListPmsData, listaPMsConcat, res)
         } catch (error) {
+            i = i + 1
+            leerPauta(i, machinesListPmsData, listaPMsConcat, res)
             console.log('ERROR ======> ', error)
         }
     }
