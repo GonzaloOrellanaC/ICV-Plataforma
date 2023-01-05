@@ -51,7 +51,13 @@ const leerPauta = async (i, machinesListPmsData, listaPMsConcat, res) => {
 
 const getHeaderPauta = async (req, res) => {
     const {body} = req;
-    const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${body.idpm}&pTypePm=${body.typepm}`, {
+    let pautaName
+    if (body.idpm === 'Pauta%20de%20Inspecci%C3%B3n') {
+        pautaName = 'Pauta de Inspección'
+    } else {
+        pautaName = body.idpm
+    }
+    const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${pautaName}&pTypePm=${body.typepm}`, {
         /* myHeaders */
         headers: myHeaders,
         method: 'GET',
@@ -65,8 +71,14 @@ const getHeaderPauta = async (req, res) => {
 
 const getStructsPauta = async (req, res) => {
     const {body} = req;
+    let pautaName
+    if (body.idpm === 'Pauta%20de%20Inspecci%C3%B3n') {
+        pautaName = 'Pauta de Inspección'
+    } else {
+        pautaName = body.idpm
+    }
     console.log(body)
-    const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${body.idpm}&pTypePm=${body.typepm}`, {
+    const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${pautaName}&pTypePm=${body.typepm}`, {
         /* myHeaders */
         headers: myHeaders,
         method: 'GET',
