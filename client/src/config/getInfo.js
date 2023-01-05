@@ -78,6 +78,7 @@ const descargarPautas = (setProgress) => {
                         }
                         const res = await getStructs(pa)
                         pa.struct = res;
+                        console.log(pa)
                         if(n == (pautas.length - 1)) {
                             const db = await pautasDatabase.initDbPMs();
                             if(db) {

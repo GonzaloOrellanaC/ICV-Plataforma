@@ -77,17 +77,16 @@ const getStructsPauta = async (req, res) => {
     } else {
         pautaName = body.idpm
     }
-    console.log(body)
+    console.log(`${environment.icvApi.url}PmStruct?pIDPM=${pautaName}&pTypePm=${body.typepm}`)
     const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${pautaName}&pTypePm=${body.typepm}`, {
         /* myHeaders */
         headers: myHeaders,
         method: 'GET',
         agent: agent
     })
-    const headers = await response3.json();
-    if(headers) {
-        res.send(headers)
-    }
+    const structs = await response3.json();
+    console.log(structs)
+    res.send(structs)
 }
 
 const getIdPmInspection = (equi) => {

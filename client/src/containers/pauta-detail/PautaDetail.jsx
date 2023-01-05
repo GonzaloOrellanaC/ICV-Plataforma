@@ -207,6 +207,7 @@ const PautaDetail = (
     }
 
     const readData = async () => {
+        console.log(pauta)
         let groupD
         let executionReportData
         let executionReportDataElement
@@ -251,8 +252,23 @@ const PautaDetail = (
         }
         console.log(executionReportData)
         if (!executionReportData) {
-            alert('No se logra obtener la información de la ejecución de la pauta. Revise su conexión, puede ser inestable o inexistente. Si el problema persiste contacte al Administrador.')
-            history.goBack()
+            executionReportData = {
+                reportId: reportAssigned._id,
+                createdBy: localStorage.getItem('_id'),
+                group: [],
+                offLineGuard: null
+            }
+            groupD = pauta.struct.reduce((r, a) => {
+                r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
+                return r
+            }, {})
+            setGroup(groupD)
+            executionReportData.group = groupD
+            setGroupData(Object.keys(groupD), groupD, true)
+            setTotalProgress(groupD)
+            await executionReportsRoutes.saveExecutionReport(executionReportData)
+            setExecutionReport(executionReportData)
+            /* await saveExecutionReport(executionReportData, reportAssigned) */
         }
         if(reportAssigned.testMode) {
             if(executionReportData.group) {

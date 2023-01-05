@@ -16,7 +16,8 @@ const getExecutionReportById = (req, res) => {
                     message: "Error"
                 })
             }
-            if(doc.length == 0) {
+            res.json(doc)
+            /* if(doc.length == 0) {
                 const newDoc = await createNewExecutionReport(body.reportData);
                 console.log(newDoc)
                 if(newDoc) {
@@ -24,7 +25,7 @@ const getExecutionReportById = (req, res) => {
                 }
             }else{
                 res.json(doc)
-            }
+            } */
         })
     }catch(err) {
         res.json(err);

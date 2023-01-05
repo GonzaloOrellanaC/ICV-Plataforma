@@ -52,6 +52,7 @@ const descargarPautas = (setProgress) => {
     }
     return new Promise(async resolve => {
         const pautas = await getPautas();
+        console.log(pautas)
         if(pautas) {
             pautas.forEach(async (pauta, number ) => {
                 let progressNumber = 0;
@@ -64,12 +65,16 @@ const descargarPautas = (setProgress) => {
                 }else{
                     pauta.action = 'Mantención'
                 }
+                console.log(pautas.length, number)
                 if(number == (pautas.length - 1)) {
                     progressNumber = progressNumber + everyProgress1;
                     if(setProgress) {
                         setProgress(progressNumber)
                     }
                     pautas.forEach(async (pa, n) => {
+                        const res = await getStructs(pa)
+                        pa.struct = res;
+                        console.log(pa)
                         progressNumber = progressNumber + everyProgress1;
                         if(setProgress) {
                             setProgress(progressNumber)
