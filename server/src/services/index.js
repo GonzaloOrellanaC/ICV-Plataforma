@@ -11,7 +11,7 @@ import AzureServices from './azure.services'
 import internalMessagesServices from './internal-messages.services'
 import PdfMakerServices from './pdf-maker.services'
 import NotificationService from './notification.service'
-
+import PatternsServices from './patterns.services'
 export {
     AccessControlServices,
     EmailServices,
@@ -25,5 +25,6 @@ export {
     AzureServices,
     internalMessagesServices,
     PdfMakerServices,
-    NotificationService
+    NotificationService,
+    PatternsServices
 }

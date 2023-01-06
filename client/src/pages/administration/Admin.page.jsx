@@ -38,6 +38,9 @@ const AdminPage = () => {
                             <Grid item xs={12} sm={12} md={6} lg={3} style={{padding: 10}}>
                                 <CardButton variant='roles' disableButton={disable}/>
                             </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={3} style={{padding: 10}}>
+                                <CardButton variant='patterns'/>
+                            </Grid>
                             {/* <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                                 
                             </div>   */}      

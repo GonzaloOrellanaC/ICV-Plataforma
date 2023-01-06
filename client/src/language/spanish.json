@@ -28,6 +28,9 @@
     "roles": {
         "rolesUsersButton": "Roles"
     },
+    "patterns": {
+        "patternsButton": "Pautas"
+    },
     "machines": {
         "title": "Selecciona tipo de máquina"
     },

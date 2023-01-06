@@ -15,10 +15,15 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{textAlign: 'left', width: '100%'}}>
                     <h2>Versión {environment.version}</h2>
                     <li>
-                        Nuevas Obras y Nuevas máquinas.
+                        Nueva máquina Bulldozer Caterpillar D10-T2
                     </li>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <br />
+                    <strong>v.2.5</strong>
+                    <li>
+                        Nuevas Obras y Nuevas máquinas.
+                    </li>
                     <br />
                     <strong>v.2.3.1</strong>
                     <li>

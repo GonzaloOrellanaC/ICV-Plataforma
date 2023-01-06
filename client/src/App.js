@@ -41,7 +41,7 @@ import {
     NotificationsPage,
     OptionsPage
 } from './pages';
-import { RolesPage, UserProfilePage } from './pages/administration'
+import { PatternsPage, RolesPage, UserProfilePage } from './pages/administration'
 import { Notifications } from 'react-push-notification';
 import { SocketConnection } from './connections'
 import { Close } from '@material-ui/icons'
@@ -327,6 +327,13 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>}
+                <Route path={['/patterns']}>
+                    <Switch>
+                        <Route exact path='/patterns'>
+                            <PatternsPage route={'roles'}/>
+                        </Route>
+                    </Switch>
+                </Route>
                 <Route path={['/edit-user']}>
                     <Switch>
                         <Route exact path='/edit-user/:id'>

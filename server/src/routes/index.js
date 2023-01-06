@@ -14,6 +14,7 @@ import AzureStorageRoutes from './azure-storage.routes'
 import InternalMessagesRoutes from './internal-messages.routes'
 import PdfMakerRoutes from './pdf-maker.routes'
 import NotificationsRoutes from './notifications.routes'
+import PatternsRoutes from './patterns.routes'
 
 const router = new Router()
 
@@ -30,5 +31,6 @@ router.use('/azure-storage', AzureStorageRoutes)
 router.use('/internalMessagesData', InternalMessagesRoutes)
 router.use('/pdf-maker', PdfMakerRoutes)
 router.use('/notifications', NotificationsRoutes)
+router.use('/patterns', PatternsRoutes)
 
 export default router

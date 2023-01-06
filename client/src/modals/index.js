@@ -11,6 +11,7 @@ import { ReportCommitModal } from './reportCommit';
 import { ReportMessagesModal } from './reportMessages';
 import { CameraModal } from "./camera"
 import { FirmaUsuario } from "./firma"
+import PatternDetailModal from './patterns/pattern-detail.modal'
 
 export {
     AssignReportModal,
@@ -28,5 +29,6 @@ export {
     ReportCommitModal,
     ReportMessagesModal,
     CameraModal,
-    FirmaUsuario
+    FirmaUsuario,
+    PatternDetailModal
 }

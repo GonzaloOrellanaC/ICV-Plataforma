@@ -14,6 +14,7 @@ import Reports from './reports'
 import ExecutionReport from './executionReport'
 import InternalMessage from './internalMessages'
 import Notification from './notifications'
+import Patterns from './patterns'
 
 export {
     AssignedMaintenance,
@@ -30,5 +31,6 @@ export {
     Reports,
     ExecutionReport,
     InternalMessage,
-    Notification
+    Notification,
+    Patterns
 }

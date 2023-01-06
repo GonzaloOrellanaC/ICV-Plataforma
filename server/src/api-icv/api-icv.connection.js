@@ -1,10 +1,10 @@
-import fs from 'fs';
+import fs from 'fs'
 import fetch from 'node-fetch'
 import https from 'https'
-import { environment } from '../config';
-import { SiteController } from '../controller';
-import { Site, Machine } from '../models';
-import { machinesOfProject, machinesListPms } from '../files'
+import { environment } from '../config'
+import { SiteController } from '../controller'
+import { Site, Machine, Patterns } from '../models'
+import { machinesOfProject/* , machinesListPms */ } from '../files'
 
 const myHeaders = {
     'Authorization': 'Token ' + environment.icvApi.token,
@@ -16,22 +16,22 @@ const agentOptions = {
   
 const agent = new https.Agent(agentOptions)
 
-const leerPautas = (req, res) => {
+const leerPautas = async (req, res) => {
     let listaPMsConcat = [];
     let i = 0;
     console.log('leer pautas')
-    leerPauta(i, machinesListPms, listaPMsConcat, res);
+    const machinesList = await Patterns.find()
+    leerPauta(i, machinesList, listaPMsConcat, res);
 }
 
 const leerPauta = async (i, machinesListPmsData, listaPMsConcat, res) => {
-    if(i === (machinesListPms.length)) {
+    if(i === (machinesListPmsData.length)) {
         res.send(listaPMsConcat);
     }else{
         try{
             let pIDPM = machinesListPmsData[i].pIDPM;
             console.log(environment.icvApi.url, pIDPM)
             const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
-                /* myHeaders */
                 headers: myHeaders,
                 method: 'GET',
                 agent: agent
@@ -58,7 +58,6 @@ const getHeaderPauta = async (req, res) => {
         pautaName = body.idpm
     }
     const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${pautaName}&pTypePm=${body.typepm}`, {
-        /* myHeaders */
         headers: myHeaders,
         method: 'GET',
         agent: agent
@@ -79,7 +78,6 @@ const getStructsPauta = async (req, res) => {
     }
     console.log(`${environment.icvApi.url}PmStruct?pIDPM=${pautaName}&pTypePm=${body.typepm}`)
     const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${pautaName}&pTypePm=${body.typepm}`, {
-        /* myHeaders */
         headers: myHeaders,
         method: 'GET',
         agent: agent
@@ -93,14 +91,17 @@ const getIdPmInspection = (equi) => {
     return new Promise(async resolve => {
         try {
             const response4 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=I`, {
-                /* myHeaders */
                 headers: myHeaders,
                 method: 'GET',
                 agent: agent
             })
             let res = await response4.json();
             console.log(res.data)
-            resolve(res.data.idpm);
+            if (res.data && res.data.idpm) {
+                resolve(res.data.idpm)
+            } else {
+                resolve(null)
+            }
         } catch (error) {
             resolve(null)
         }
@@ -110,13 +111,16 @@ const getIdPmInspection = (equi) => {
 const getIdPmMaintenance = (equi) => {
     return new Promise(async resolve => {
         const response5 = await fetch(`${environment.icvApi.url}Pm?pIdEqui=${equi}&pPmClass=M`, {
-            /* myHeaders */
             headers: myHeaders,
             method: 'GET',
             agent: agent
         })
         let res = await response5.json();
-        resolve(res.data.idpm);
+        if (res.data && res.data.idpm) {
+            resolve(res.data.idpm)
+        } else {
+            resolve(null)
+        }
     })
 }
 
@@ -316,69 +320,65 @@ const createMachinesToSend = async (pIDOBRA) => {
         agent: agent
     })
     /* console.log(await machines.json()) */
-    if( machines ) {
-        let body = await machines.json();
-        if( body ) {
-            const machinesOnDb = await readMachinesFromDb();
-            let machines = [];
-            machines = body.data;
-            /* if(machinesOnDb.length === machines.length) {
-            }else{ */
-                machines.forEach(async (machine, index) => {
-                    console.log(machine)
-                    machine.idpminspeccion = await getIdPmInspection(machine.equid);
-                    machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
-                    console.log(machine.idpminspeccion, machine.idpmmantencion)
-                    if(machine.modelo.includes('793-F')){
-                        machine.modelo='793-F';
-                        machine.type = 'Camión'
-                    }else if(machine.modelo.includes('pc5500')||machine.modelo.includes('PC5500')) {
-                        machine.modelo='PC5500';
-                        machine.type = 'Pala'
-                    }else if(machine.modelo.includes('793-D')) {
-                        machine.modelo='793-D';
-                        machine.type = 'Camión'
-                    }else if(machine.modelo.includes('789-D')) {
-                        machine.modelo='789-D';
-                        machine.type = 'Camión'
-                    }else if(machine.modelo.includes('994-K')) {
-                        machine.modelo='994-K';
-                        machine.type = 'Cargador Frontal'
-                    }else if(machine.modelo.includes('D10-T')) {
-                        machine.modelo='D10-T';
-                        machine.type = 'Bulldozer'
-                    }
-
-                    machine.brand = machine.marca;
-                    machine.model = machine.modelo;
-                    machine.hourMeter = machine.horometro;
-                    try {
-                        const findMachine = await Machine.findOne({equid: machine.equid})
-                        if (findMachine) {
-                            console.log('Machine ', machine.equ, ' founded')
-                        } else {
-                            console.log('Machine not founded')
-                            console.log(machine)
-                            try {
-                                const newMachine = await Machine.create(machine);
-                                console.log(newMachine)
-                                /* newMachine.save(); */
-                            } catch (error) {
-                                console.log(error)
-                            }
-                        }
-                    } catch (error) {
-                        console.log(index, ' ERROR ====> ', error)
-                    }
-                    /* let newMachine = await new Machine(machine);
-                    newMachine.save(); */
-                    if(index == (machines.length - 1)) {
-
-                    }
-                })
-            /* } */
+    let b = await machines.json();
+    /* const machinesOnDb = await readMachinesFromDb(); */
+    let machinesData = []
+    machinesData = b.data
+    machinesData.forEach(async (machine, index) => {
+        console.log(machine)
+        machine.idpminspeccion = await getIdPmInspection(machine.equid);
+        machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
+        if (machine.modelo.includes('D10-T2')) {
+            console.log(machine.modelo, machine.idpminspeccion, machine.idpmmantencion, machine.equid)
         }
-    }
+        if(machine.modelo.includes('793-F')){
+            machine.modelo='793-F';
+            machine.type = 'Camión'
+        }else if(machine.modelo.includes('pc5500')||machine.modelo.includes('PC5500')) {
+            machine.modelo='PC5500';
+            machine.type = 'Pala'
+        }else if(machine.modelo.includes('793-D')) {
+            machine.modelo='793-D';
+            machine.type = 'Camión'
+        }else if(machine.modelo.includes('789-D')) {
+            machine.modelo='789-D';
+            machine.type = 'Camión'
+        }else if(machine.modelo.includes('994-K')) {
+            machine.modelo='994-K';
+            machine.type = 'Cargador Frontal'
+        }else if(machine.modelo === 'D10-T') {
+            machine.modelo='D10-T';
+            machine.type = 'Bulldozer'
+        }else if(machine.modelo === 'D10-T2') {
+            machine.modelo='D10-T2';
+            machine.type = 'Bulldozer'
+        }
+
+        machine.brand = machine.marca;
+        machine.model = machine.modelo;
+        machine.hourMeter = machine.horometro;
+        try {
+            const findMachine = await Machine.findOne({equid: machine.equid})
+            if (findMachine) {
+                console.log('Machine ', machine.equ, ' founded')
+            } else {
+                console.log('Machine not founded')
+                console.log(machine)
+                try {
+                    const newMachine = await Machine.create(machine);
+                    console.log(newMachine)
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        } catch (error) {
+            console.log(index, ' ERROR ====> ', error)
+        }
+        if(index == (machines.length - 1)) {
+
+        }
+    })
+    
 }
 
 const editMachineToSend = async (pIDOBRA) => {

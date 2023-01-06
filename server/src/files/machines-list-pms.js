@@ -76,14 +76,14 @@ const list = [
         type: "Bulldozer",
         brand: "Caterpillar",
         zone: "Genérico",
-        model: "D10-T",
+        model: "D10-T2",
         pIDPM: "SPM000578"
     },
     {
         id: 10,
         type: "Bulldozer",
         brand: "Caterpillar",
-        zone: "Calama",
+        zone: "Genérico",
         model: "D10-T",
         pIDPM: "SPM000393"
     }

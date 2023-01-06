@@ -33,6 +33,13 @@ const machinesOfProject = [
         brand: "Caterpillar",
         model: "D10-T",
         pIDPM: ""
+    },
+    {
+        id: 1,
+        type: "Bulldozer",
+        brand: "Caterpillar",
+        model: "D10-T2",
+        pIDPM: ""
     }
 ]
 

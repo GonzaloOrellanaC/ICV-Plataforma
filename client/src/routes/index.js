@@ -10,6 +10,7 @@ import azureStorageRoutes from './azure-storage.routes'
 import internalMessagesRoutes from './internal-messages.routes'
 import pdfMakeRoutes from './pdf-make.routes'
 import notificationsRoutes from './notifications.routes'
+import patternsRoutes from './patterns.routes'
 
 export {
     authRoutes,
@@ -23,5 +24,6 @@ export {
     azureStorageRoutes,
     internalMessagesRoutes,
     pdfMakeRoutes,
-    notificationsRoutes
+    notificationsRoutes,
+    patternsRoutes
 }

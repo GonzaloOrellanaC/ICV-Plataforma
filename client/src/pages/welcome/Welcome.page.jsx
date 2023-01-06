@@ -161,6 +161,7 @@ const WelcomePage = ({ readyToLoad }) => {
         return new Promise(async resolve => {
             let machines = []
             machines = await getAllMachines()
+            console.log(machines)
             let db = await machinesDatabase.initDbMachines()
             if(db) {
                 machines.forEach(async (machine, index) => {
