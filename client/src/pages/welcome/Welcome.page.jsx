@@ -168,11 +168,13 @@ const WelcomePage = ({ readyToLoad }) => {
                     machine.id = index
                     await machinesDatabase.actualizar(machine, db.database)
                     if(index === (machines.length - 1)) {
-                        const response = await machinesDatabase.consultar(db.database)
+                        /* const response = await machinesDatabase.consultar(db.database) */
+                        resolve(true)
+                        /* const response = await machinesDatabase.consultar(db.database)
                         if(response) {
                             getInfo.getPautasInstepctList(setProgress, response)
-                            resolve(response)
-                        }
+                            
+                        } */
                     } 
                 })
             }

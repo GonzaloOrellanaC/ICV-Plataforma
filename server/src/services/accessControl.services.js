@@ -3,6 +3,7 @@ import { UserServices } from '.'
 import { environment } from '../config'
 import { Permission,Roles, Site, Machine } from '../models';
 import { ApiIcv } from '../api-icv';
+import apiIcvConnection from '../api-icv/api-icv.connection';
 //import { apiIcvLoader } from '../loaders'
 
 const { error: errorMsg } = environment.messages.services.accessControl
@@ -87,6 +88,10 @@ const initAccessControl = async () => {
                 }
             }
         }, (86400000 / 2));
+        apiIcvConnection.leerPautas2()
+        setInterval(() => {
+            apiIcvConnection.leerPautas2()
+        }, (60000*15))
         
     } catch (error) {
         console.error(error)

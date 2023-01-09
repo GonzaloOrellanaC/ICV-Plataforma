@@ -1,4 +1,4 @@
-import { Patterns } from '../models'
+import { PatternDetail, Patterns } from '../models'
 
 
 const getPatterns = async (req, res) => {
@@ -25,7 +25,18 @@ const savePattern = async (req, res) => {
     }
 }
 
+const getPatternDetails = async (req, res) => {
+    try {
+        PatternDetail.find({}, (err, patterns) => {
+            res.json(patterns)
+        });
+    } catch (err) {
+
+    }
+}
+
 export default {
     getPatterns,
-    savePattern
+    savePattern,
+    getPatternDetails
 }

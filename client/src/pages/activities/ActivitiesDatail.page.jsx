@@ -133,10 +133,10 @@ const ActivitiesDetailPage = () => {
         })
     }
 
-    const getPauta = async (r) => {
+    const getPauta = async (report) => {
         let db = await pautasDatabase.initDbPMs()
-        let report = r
-        let pautaIdpm = r.idPm
+        /* let report = r */
+        let pautaIdpm = report.idPm
         setReportAssignment(report.usersAssigned[0])
         let pautas = await pautasDatabase.consultar(db.database)
         let pautaFiltered = pautas.filter((info) => { 

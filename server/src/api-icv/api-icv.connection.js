@@ -3,8 +3,8 @@ import fetch from 'node-fetch'
 import https from 'https'
 import { environment } from '../config'
 import { SiteController } from '../controller'
-import { Site, Machine, Patterns } from '../models'
-import { machinesOfProject/* , machinesListPms */ } from '../files'
+import { Site, Machine, Patterns, PatternDetail } from '../models'
+import { machinesOfProject } from '../files'
 
 const myHeaders = {
     'Authorization': 'Token ' + environment.icvApi.token,
@@ -18,10 +18,85 @@ const agent = new https.Agent(agentOptions)
 
 const leerPautas = async (req, res) => {
     let listaPMsConcat = [];
+    let listaPautas = []
     let i = 0;
     console.log('leer pautas')
     const machinesList = await Patterns.find()
-    leerPauta(i, machinesList, listaPMsConcat, res);
+    leerPauta2(i, machinesList, listaPautas)
+    res.send({data: 'ok'})
+    /* leerPauta(i, machinesList, listaPMsConcat, res); */
+}
+
+const leerPautas2 = async () => {
+    let listaPautas = []
+    let i = 0;
+    console.log('leer pautas')
+    const machinesList = await Patterns.find()
+    leerPauta2(i, machinesList, listaPautas)
+    res.send({data: 'ok'})
+}
+
+const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {
+    if(i === (machinesListPmsData.length)) {
+        listaPMsConcat.map(async (pauta, number) => {
+            pauta.id = number
+            if (!pauta.hmEstandar) {
+                pauta.hhEstandar = 0
+            }
+            let pautaName
+            if (pauta.idpm === 'Pauta%20de%20Inspecci%C3%B3n') {
+                pautaName = 'Pauta de Inspección'
+            } else {
+                pautaName = pauta.idpm
+            }
+            const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${pautaName}&pTypePm=${pauta.typepm}`, {
+                headers: myHeaders,
+                method: 'GET',
+                agent: agent
+            })
+            pauta.header = await response2.json();
+            const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${pautaName}&pTypePm=${pauta.typepm}`, {
+                headers: myHeaders,
+                method: 'GET',
+                agent: agent
+            })
+            pauta.struct = await response3.json();
+            const patternFind = await PatternDetail.findOne({idpm: pauta.idpm, typepm: pauta.typepm})
+            if (!patternFind) {
+                await PatternDetail.create(pauta)
+            } else {
+                if (JSON.stringify(patternFind.struct) === JSON.stringify(pauta.struct) || JSON.stringify(patternFind.header) === JSON.stringify(pauta.header)) {
+                    console.log('Estructura de pauta no cambia')
+                } else {
+                    console.log('Pauta ', patternFind._id, ' actualizada')
+                    await PatternDetail.findByIdAndUpdate(patternFind._id, pauta)
+                }
+                console.log('Pauta ', pautaName, pauta.typepm, ' existe' )
+            }
+            if (number === (listaPMsConcat.length - 1)) {
+                console.log('Guardados.')
+            }
+        })
+    }else{
+        try{
+            let pIDPM = machinesListPmsData[i].pIDPM;
+            console.log(environment.icvApi.url, pIDPM)
+            const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
+                headers: myHeaders,
+                method: 'GET',
+                agent: agent
+            })
+            const listaPMs =  await response.json()
+            console.log('Respuesta: ', listaPMs)
+            listaPMsConcat = listaPMsConcat.concat(listaPMs.data)
+            i = i + 1
+            leerPauta2(i, machinesListPmsData, listaPMsConcat)
+        } catch (error) {
+            i = i + 1
+            leerPauta2(i, machinesListPmsData, listaPMsConcat)
+            console.log('ERROR ======> ', error)
+        }
+    }
 }
 
 const leerPauta = async (i, machinesListPmsData, listaPMsConcat, res) => {
@@ -83,7 +158,7 @@ const getStructsPauta = async (req, res) => {
         agent: agent
     })
     const structs = await response3.json();
-    console.log(structs)
+    /* console.log(structs) */
     res.send(structs)
 }
 
@@ -492,6 +567,7 @@ export default {
     createMachinesToSend,
     editMachineToSend,
     leerPautas,
+    leerPautas2,
     getHeaderPauta,
     getStructsPauta,
     saveMachineDataById,

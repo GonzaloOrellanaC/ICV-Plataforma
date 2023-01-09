@@ -6,5 +6,8 @@ export default {
     },
     savePattern: (pattern) => {
         return axios.post('/patterns/savePattern', pattern)
+    },
+    getPatternDetails: () => {
+        return axios.get('/patterns/getPatternDetails')
     }
 }

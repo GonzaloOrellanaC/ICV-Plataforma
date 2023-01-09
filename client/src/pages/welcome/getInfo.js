@@ -1,5 +1,5 @@
 import { executionReportsDatabase, pautasDatabase, reportsDatabase, sitesDatabase } from "../../indexedDB";
-import { apiIvcRoutes, executionReportsRoutes, reportsRoutes } from "../../routes";
+import { apiIvcRoutes, executionReportsRoutes, patternsRoutes, reportsRoutes } from "../../routes";
 import getMyReports from './getMyReports'
 import getAllAssignment from './getAllAssignment'
 
@@ -54,7 +54,33 @@ const descargarPautas = (setProgress) => {
         const pautas = await getPautas();
         console.log(pautas)
         if(pautas) {
-            pautas.forEach(async (pauta, number ) => {
+            const db = await pautasDatabase.initDbPMs();
+            if(db) {
+                let progressNumber = 0;
+                let everyProgress1 = (100 / pautas.length) / 2;
+                pautas.forEach(async (p, i) => {
+                    if(p.typepm === 'Pauta de Inspección') {
+                        p.action = 'Inspección'
+                    }else{
+                        p.action = 'Mantención'
+                    }
+                    progressNumber = progressNumber + everyProgress1;
+                    if(setProgress) {
+                        setProgress(progressNumber)
+                    }
+                    await pautasDatabase.actualizar(p, db.database);
+                    if(i == (pautas.length - 1)) {
+                        if(setProgress) {
+                            setProgress(100)
+                        }
+                        resolve({
+                            progress: 100,
+                            state: true
+                        })
+                    }
+                })
+            }
+            /* pautas.forEach(async (pauta, number ) => {
                 let progressNumber = 0;
                 let everyProgress1 = (100 / pautas.length) / 2;        
                 const response = await getHeader(pauta);
@@ -103,7 +129,7 @@ const descargarPautas = (setProgress) => {
                     })
 
                 }
-            })
+            }) */
             
         }
     })
@@ -169,7 +195,8 @@ const getPautasMaintenanceList = (setProgress, machines) => {
 
 const getPautas = () => {
     return new Promise(resolve => {
-        apiIvcRoutes.getPautas()
+        /* apiIvcRoutes.getPautas() */
+        patternsRoutes.getPatternDetails()
         .then(data => {
             resolve(data.data)
         })
