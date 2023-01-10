@@ -87,8 +87,13 @@ const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {
                 agent: agent
             })
             const listaPMs =  await response.json()
-            console.log('Respuesta: ', listaPMs)
-            listaPMsConcat = listaPMsConcat.concat(listaPMs.data)
+            listaPMs.data.forEach(l => {
+                l.zone = machinesListPmsData[i].zone
+            })
+            let dataToSend = {}
+            dataToSend = listaPMs.data
+            console.log(dataToSend)
+            listaPMsConcat = listaPMsConcat.concat(dataToSend)
             i = i + 1
             leerPauta2(i, machinesListPmsData, listaPMsConcat)
         } catch (error) {

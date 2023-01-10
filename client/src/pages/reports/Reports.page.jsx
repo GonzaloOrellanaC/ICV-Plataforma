@@ -188,12 +188,21 @@ const ReportsPage = () => {
             let db = await machinesDatabase.initDbMachines();
             const machines = await machinesDatabase.consultar(db.database);
             let machineFiltered = machines.filter(m => { if(item === m.equid) {return m}});
-            resolve(
+            if (machineFiltered.length > 0) {
+                resolve({
+                    number: machineFiltered[0].equ,
+                    model: machineFiltered[0].model
+                })
+            } else {
+                console.log(machine)
+                resolve(null)
+            }
+            /* resolve(
                 {
                     number: machineFiltered[0].equ,
                     model: machineFiltered[0].model
                 }
-            ) 
+            ) */ 
         })
     }
 
@@ -222,9 +231,11 @@ const ReportsPage = () => {
                                 item.hourMeter = (Number(data.data[0].hourMeter)/3600000)
                             })
                             let data = await getMachineTypeByEquid(item.machine)
-                            item.number = data.number
-                            item.model = data.model
-                            l.push(item)
+                            if (data) {
+                                item.number = data.number
+                                item.model = data.model
+                                l.push(item)
+                            }
                             if(i == (lista.length - 1)) {
                                 setList(l)
                                 console.log(list.length)

@@ -458,7 +458,7 @@ const CreateReports = () => {
                                                 {
                                                     (pautas.length > 0) && pautas.map((pauta, index) => {
                                                         return(
-                                                            <option key={index} value={[pauta.idpm, pauta.typepm]}> {(pauta.idpm === 'SPM000787') ? 'Motor LMR' : 'Motor Estándar'} - {pauta.typepm} / {pauta.header[1].typeDataDesc} </option>
+                                                            <option key={index} value={[pauta.idpm, pauta.typepm]}> {(pauta.idpm === 'SPM000787') ? 'Motor LMR' : 'Motor Estándar'} - {pauta.typepm} / {pauta.header[1].typeDataDesc} {pauta.zone === 'Genérico' ? '' : `${[pauta.zone]}`} </option>
                                                         )
                                                     })
                                                 }

@@ -41,12 +41,18 @@ const ActivitiesPage = () => {
                         report.end = date(report.endReport);
                         report.init = date(report.dateInit);
                         report.getMachine = await getMachineTypeByEquid(report.machine);
-                        report.modelMachine = report.getMachine.model
-                        report.numberMachine = report.getMachine.number
-                        if(report.getMachine.model === 'PC5500') {
-                            report.machineType = 'Pala'
-                        }else if(report.getMachine.model === '793-F') {
-                            report.machineType = 'Camión'
+                        if (report.getMachine) {
+                            report.modelMachine = report.getMachine.model
+                            report.numberMachine = report.getMachine.number
+                            if(report.getMachine.model === 'PC5500') {
+                                report.machineType = 'Pala'
+                            }else if(report.getMachine.model === '793-F') {
+                                report.machineType = 'Camión'
+                            }
+                        } else {
+                            report.modelMachine = 'Sin asignar'
+                            report.numberMachine = ''
+                            report.machineType = 'Sin asignar'
                         }
                         if(i == (data.length - 1)) {
                             let rs = data.filter((report) => {if(report.enabled) {return report}});
@@ -101,16 +107,23 @@ const ActivitiesPage = () => {
     }
 
     const getMachineTypeByEquid = (machine) => {
+        console.log(machine)
         return new Promise(async resolve => {
             let db = await machinesDatabase.initDbMachines();
             if(db) {
                 const machines = await machinesDatabase.consultar(db.database);
                 if(machines) {
                     let machineFiltered = machines.filter(m => { if(machine === m.equid) {return m}});
-                    resolve({
-                        number: machineFiltered[0].equ,
-                        model: machineFiltered[0].model
-                    })
+                    console.log(machineFiltered)
+                    if (machineFiltered.length > 0) {
+                        resolve({
+                            number: machineFiltered[0].equ,
+                            model: machineFiltered[0].model
+                        })
+                    } else {
+                        console.log(machine)
+                        resolve(null)
+                    }
                 }
             } else {
                 resolve(null)

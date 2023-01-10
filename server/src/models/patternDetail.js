@@ -57,6 +57,11 @@ const patternDetailSchema = new Schema(
             required: true,
             unique: false
         },
+        zone: {
+            type: Schema.Types.String,
+            required: true,
+            unique: false
+        },
         header: [
             {
                 type: Object
