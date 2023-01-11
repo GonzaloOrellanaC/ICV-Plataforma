@@ -64,7 +64,7 @@ const CreateReports = () => {
             console.log(machineModel)
             let pautasLista = pts.filter((item, i) => {
                 if (item.header[3] && item.action)
-                if(((item.header[3].typeDataDesc === machineModel)||(item.header[2].typeDataDesc === machineModel)) && (item.action.includes(pautaIndex))) {
+                if(((item.header[3].typeDataDesc === machineModel)||(item.header[2].typeDataDesc === machineModel)||(item.header[5].typeDataDesc === machineModel)) && (item.action.includes(pautaIndex))) {
                     return item 
                 }})
             setPautas(pautasLista)
