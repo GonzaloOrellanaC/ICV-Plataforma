@@ -9,6 +9,7 @@ import ImageDialog from './ImageDialog'
 import ImageAstDialog from './ImageAstDialog'
 import {isMobile} from 'react-device-detect'
 import InputTextDialog from './InputTextDialog'
+import { usersRoutes } from '../routes'
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -64,16 +65,20 @@ const ReportDataDialog = (
     }
     setUnidad(item.unidadData)
     if(item.messages) {
-      setMessages(item.messages)
       const total = []
-      item.messages.forEach((m, i) => {
+      item.messages.forEach(async (m, i) => {
+        const user = await usersRoutes.getUser(m.user)
+        console.log(user)
+        m.name = `${user.data.name} ${user.data.lastName}`
         if (m.urlBase64) {
           total.push(m)
         }
         if (i == (item.messages.length - 1)) {
           setPicturesOfItem(total.length + 1)
+          setMessages(item.messages)
         }
       })
+
       setTimeout(() => {
         document.getElementById('commits').scrollTop = document.getElementById('commits').scrollHeight
       }, 100);
@@ -265,6 +270,7 @@ const ReportDataDialog = (
             <div id='commits' style={{width: '100%', height: 190, overflowY: 'auto', scrollBehavior: 'smooth'/* borderWidth: 2, borderStyle: 'solid', borderColor: '#ccc', borderRadius: 20 */}}>
               {
                 messages.map((message, index) => {
+                  console.log(message)
                   return(
                     <div key={index} style={
                       {
@@ -280,8 +286,8 @@ const ReportDataDialog = (
                         }
                         }>
                           {
-                            ((localStorage.getItem('_id' === message.user) || (localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role')==='shiftManager'))) &&
-                            <IconButton onClick={()=>{deleteMessage(index)}} style={{position: 'absolute', top: 10, right: 10}}><Close style={{fontSize: 14}}/></IconButton>
+                            ((localStorage.getItem('_id' === message.user) || (localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role')==='shiftManager' ))) &&
+                            <IconButton onClick={()=>{deleteMessage(index)}} style={{position: 'absolute', top: 10, right: 10}}><Close style={{fontSize: 14, color: 'black'}}/></IconButton>
                           }
                       <p style={{marginBottom: 0, fontSize: 10}}><strong>{message.name}</strong></p>
                       {(message.urlBase64 || message.urlImageMessage) && <img src={(message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage} height={70} onClick={() => openImage((message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage)} />}

@@ -10,8 +10,9 @@ import { LoadingLogoModal, LoadingModal, ReportCommitModal, ReportMessagesModal 
 import { SocketConnection } from '../../connections'
 import sendnotificationToManyUsers from './sendnotificationToManyUsers'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClock, faPaperPlane, faComment } from '@fortawesome/free-solid-svg-icons'
+import { faClock, faPaperPlane, faComment, faEye } from '@fortawesome/free-solid-svg-icons'
 import toPDF from '../../modals/pdf/toPDF'
+import PreviewModal from '../../modals/preview/Preview.modal'
 
 const ActivitiesDetailPage = () => {
     const classes = useStylesTheme()
@@ -43,6 +44,8 @@ const ActivitiesDetailPage = () => {
     const [ subSistem, setSubSistem ] = useState()
     const [ open3D, setOpen3D ] = useState(false)
     const [ ultimoGuardadoDispositivo, setUltimoGuardadoDispositivo ] = useState()
+    const [openPreviewModal, setOpenPreviewModal] = useState(false)
+    const [materialesPreview, setMaterialesPreview] = useState()
 
     useEffect(async () => {
         window.addEventListener('resize', (ev) => {
@@ -585,6 +588,54 @@ const ActivitiesDetailPage = () => {
         setOpen3D(false)
     }
 
+    const vistaPrevia = async () => {
+        const listaMateriales = []
+        const db = await executionReportsDatabase.initDb()
+        const data = await executionReportsDatabase.consultar(db.database)
+        const executionReportFiltered = data.filter((execution) => {
+                                            if(execution.reportId === reportAssigned._id) {
+                                                return execution
+                                            }
+                                        })
+        Object.keys(executionReportFiltered[0].group).forEach((element, index) => {
+            const hoja = {
+                nombre: element,
+                data: []
+            }
+            /* console.log(executionReportFiltered[0].group[element]) */
+            executionReportFiltered[0].group[element].forEach((item, i) => {
+                if (item.unidad === '*') {
+
+                } else {
+                    const materialData = {
+                        task: item.task,
+                        taskdesc: item.taskdesc,
+                        obs01: item.obs01,
+                        partnumberUtl: item.partnumberUtl,
+                        cantidad: item.cantidad,
+                        unidad: item.unidad,
+                        unidadData: item.unidadData ? Number(item.unidadData) : 0,
+                        diferencia: parseFloat(item.cantidad.toString()) - parseFloat(item.unidadData ? item.unidadData.toString() : '0')
+                    }
+                    hoja.data.push(materialData)
+                }
+                if (i === (executionReportFiltered[0].group[element].length - 1)) {
+                    if (hoja.data.length > 0) {
+                        listaMateriales.push(hoja)
+                    }
+                }
+            })
+            if (index === (Object.keys(executionReportFiltered[0].group).length - 1)) {
+                setMaterialesPreview(listaMateriales)
+            }
+        })
+        setOpenPreviewModal(true)
+    }
+
+    const closePreviewModal = () => {
+        setOpenPreviewModal(false)
+    }
+
     return (
         <Box height='80vh'>
             <Grid className={classes.pageRoot} container spacing={0}>
@@ -647,6 +698,10 @@ const ActivitiesDetailPage = () => {
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Cerrar OT
                                         </Button>
                                         }
+                                        {((isSapExecutive && reportLevel===3) || localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') && <Button /* disabled={!canEdit} */ variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={vistaPrevia}>
+                                            <FontAwesomeIcon icon={faEye} style={{marginRight: 10}} /> Vista Previa
+                                        </Button>
+                                        }
                                         {(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') && <Button /* disabled={!canEdit}  */variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{syncData()}}>
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Sincronizar
                                         </Button>
@@ -675,6 +730,9 @@ const ActivitiesDetailPage = () => {
                     </Card>
                 </Grid>
             </Grid>
+            {
+                openPreviewModal && <PreviewModal open={openPreviewModal} data={materialesPreview} closePreviewModal={closePreviewModal} />
+            }
             {
                 <LoadingModal open={loading} withProgress={false} loadingData={loadingMessage} />
             }

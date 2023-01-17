@@ -1,7 +1,6 @@
-import { Modal, ListItem, Fab, Switch, Box } from '@material-ui/core';
-import { Close, Undo } from '@material-ui/icons';
-import { styleModal } from '../../config';
-import { environment } from '../../config';
+import { Modal, Fab, Box } from '@material-ui/core'
+import { Close, Undo } from '@material-ui/icons'
+import { environment, styleModal } from '../../config'
 
 const VersionControlModal = ({open, closeModal}) => {
 
@@ -15,10 +14,18 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{textAlign: 'left', width: '100%'}}>
                     <h2>Versión {environment.version}</h2>
                     <li>
-                        Reparación errore de carga de datos.
+                        Se genera vista previa de la OT para Ejecutivo SAP y los administradores 
+                    </li>
+                    <li>
+                        Se crea botón de eliminación de mensajes de tareas para OTs 
                     </li>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <br />
+                    <strong>v2.6</strong>
+                    <li>
+                        Reparación errore de carga de datos
+                    </li>
                     <br />
                     <strong>v2.5.5</strong>
                     <li>
