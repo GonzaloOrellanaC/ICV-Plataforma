@@ -3,12 +3,14 @@ import { ArrowBackIos } from "@material-ui/icons"
 import { useEffect, useState } from "react"
 import { useHistory } from "react-router-dom"
 import { dateWithTime, useStylesTheme } from "../../config"
+import { PatternsDownloadedModal } from "../../modals"
 import LoadingLogoModal from "../../modals/loadings/loading-logo.modal"
 import { notificationsRoutes } from "../../routes"
 
 const OptionsPage = () => {
     const classes = useStylesTheme();
     const history = useHistory();
+    const [openPatternsModal, setOpenPatternsModal] = useState(false)
 
     const clearAndLogout = () => {
         if(confirm('Limpiará toda la data del sistema y cerrará la sesión. Una vez terminado vuelva a iniciar.')) {
@@ -26,8 +28,19 @@ const OptionsPage = () => {
         }
     }
 
+    const openPautas = () => {
+        setOpenPatternsModal(true)
+    }
+
+    const closePatternsModal = () => {
+        setOpenPatternsModal(false)
+    }
+
     return (
         <Box height='100%'>
+            {
+                openPatternsModal && <PatternsDownloadedModal open={openPatternsModal} closeModal={closePatternsModal} />
+            }
             <Grid className={classes.pageRoot} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
                     <Card elevation={0} className={classes.pageCard}>
@@ -48,6 +61,36 @@ const OptionsPage = () => {
                             </div>
                         </Grid>
                         <Grid alignItems='center' justifyContent='center' style={{padding: 10, borderRadius: 20}}>
+                            <Grid container>
+                                <Grid item>
+                                    <Grid container style={
+                                        {
+                                            borderBottomWidth: 1,
+                                            borderBottomColor: '#ccc',
+                                            borderBottomStyle: 'solid',
+                                            padding: 10
+                                        }
+                                    }>
+                                        <Grid item>
+                                            <div>
+                                                <p><strong>Ver pautas descargadas</strong></p>
+                                            </div>
+                                        </Grid>
+                                        <Grid item>
+                                            <div style={
+                                                {
+                                                    marginTop: 10,
+                                                    marginLeft: 15
+                                                }
+                                            }>
+                                                <Button color={'primary'} onClick={() => {openPautas()}}>
+                                                    Abrir
+                                                </Button>
+                                            </div>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
                             <Grid container>
                                 <Grid item>
                                     <Grid container style={

@@ -14,13 +14,21 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{textAlign: 'left', width: '100%'}}>
                     <h2>Versión {environment.version}</h2>
                     <li>
+                        Reparación visualización de pautas 
+                    </li>
+                    <li>
+                        Se agrega en opciones un botón para ver las pautas descargadas en el dispositivo 
+                    </li>
+                </div>
+                <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <br />
+                    <strong>v2.6.1</strong>
+                    <li>
                         Se genera vista previa de la OT para Ejecutivo SAP y los administradores 
                     </li>
                     <li>
                         Se crea botón de eliminación de mensajes de tareas para OTs 
                     </li>
-                </div>
-                <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                     <br />
                     <strong>v2.6</strong>
                     <li>

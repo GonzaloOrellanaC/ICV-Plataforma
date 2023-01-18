@@ -217,6 +217,7 @@ const PautaDetail = (
             console.log(executionReportDataElement)
             executionReportDataElementGuard = await getExecutionReportFromDb(reportAssigned._id)
             if(isOperator||(localStorage.getItem('role')==='inspectionWorker')||(localStorage.getItem('role')==='maintenceOperator')) {
+                if (executionReportDataElement)
                 if(executionReportDataElement.offLineGuard) {
                     setUltimoGuardadoDispositivo(executionReportDataElement.offLineGuard)
                     if(executionReportDataElementGuard) {
