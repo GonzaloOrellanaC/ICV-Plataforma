@@ -14,13 +14,21 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{textAlign: 'left', width: '100%'}}>
                     <h2>Versión {environment.version}</h2>
                     <li>
+                        Se permite el borrado de mensajes a usuarios que crean los mensajes o Admins 
+                    </li>
+                    <li>
+                        Se agrega nueva vista de resumen de insumos o materiales, para ejecutivos SAP o Administradores 
+                    </li>
+                </div>
+                <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <br />
+                    <strong>v2.6.2</strong>
+                    <li>
                         Reparación visualización de pautas 
                     </li>
                     <li>
                         Se agrega en opciones un botón para ver las pautas descargadas en el dispositivo 
                     </li>
-                </div>
-                <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                     <br />
                     <strong>v2.6.1</strong>
                     <li>

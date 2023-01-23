@@ -16,7 +16,7 @@ const PreviewModal = ({open, data, closePreviewModal}) => {
         >
             <Box sx={styleInternalMessageModal}>
                 <div>
-                    <h2>Resumen</h2>
+                    <h2>Resumen de Insumos y Materiales</h2>
                 </div>
                 <div style={{height: 'calc(100vh - 290px)', overflowY: 'auto', borderColor: '#ccc', borderWidth: 1, borderStyle: 'solid', borderRadius: 20, padding: 10, marginTop: 50 }}>
                     {

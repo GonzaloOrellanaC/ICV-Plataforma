@@ -286,7 +286,7 @@ const ReportDataDialog = (
                         }
                         }>
                           {
-                            ((localStorage.getItem('_id' === message.user) || (localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role')==='shiftManager' ))) &&
+                            ((localStorage.getItem('_id') === message.user || (localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role')==='shiftManager' ))) &&
                             <IconButton onClick={()=>{deleteMessage(index)}} style={{position: 'absolute', top: 10, right: 10}}><Close style={{fontSize: 14, color: 'black'}}/></IconButton>
                           }
                       <p style={{marginBottom: 0, fontSize: 10}}><strong>{message.name}</strong></p>

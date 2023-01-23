@@ -223,6 +223,7 @@ const ReportsPage = () => {
                         setRowsPerPage(10)
                         setVista(false)
                         let l = []
+                        if (lista)
                         if (lista.length > 0)
                         lista.forEach(async (item, i) => {
                             item.date = dateSimple(item.datePrev)

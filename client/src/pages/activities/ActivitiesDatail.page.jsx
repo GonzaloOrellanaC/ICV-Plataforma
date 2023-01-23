@@ -589,47 +589,51 @@ const ActivitiesDetailPage = () => {
     }
 
     const vistaPrevia = async () => {
-        const listaMateriales = []
-        const db = await executionReportsDatabase.initDb()
-        const data = await executionReportsDatabase.consultar(db.database)
-        const executionReportFiltered = data.filter((execution) => {
-                                            if(execution.reportId === reportAssigned._id) {
-                                                return execution
-                                            }
-                                        })
-        Object.keys(executionReportFiltered[0].group).forEach((element, index) => {
-            const hoja = {
-                nombre: element,
-                data: []
-            }
-            /* console.log(executionReportFiltered[0].group[element]) */
-            executionReportFiltered[0].group[element].forEach((item, i) => {
-                if (item.unidad === '*') {
-
-                } else {
-                    const materialData = {
-                        task: item.task,
-                        taskdesc: item.taskdesc,
-                        obs01: item.obs01,
-                        partnumberUtl: item.partnumberUtl,
-                        cantidad: item.cantidad,
-                        unidad: item.unidad,
-                        unidadData: item.unidadData ? Number(item.unidadData) : 0,
-                        diferencia: parseFloat(item.cantidad.toString()) - parseFloat(item.unidadData ? item.unidadData.toString() : '0')
-                    }
-                    hoja.data.push(materialData)
+        if (reportLevel>3) {
+            const listaMateriales = []
+            const db = await executionReportsDatabase.initDb()
+            const data = await executionReportsDatabase.consultar(db.database)
+            const executionReportFiltered = data.filter((execution) => {
+                                                if(execution.reportId === reportAssigned._id) {
+                                                    return execution
+                                                }
+                                            })
+            Object.keys(executionReportFiltered[0].group).forEach((element, index) => {
+                const hoja = {
+                    nombre: element,
+                    data: []
                 }
-                if (i === (executionReportFiltered[0].group[element].length - 1)) {
-                    if (hoja.data.length > 0) {
-                        listaMateriales.push(hoja)
+                /* console.log(executionReportFiltered[0].group[element]) */
+                executionReportFiltered[0].group[element].forEach((item, i) => {
+                    if (item.unidad === '*') {
+
+                    } else {
+                        const materialData = {
+                            task: item.task,
+                            taskdesc: item.taskdesc,
+                            obs01: item.obs01,
+                            partnumberUtl: item.partnumberUtl,
+                            cantidad: item.cantidad,
+                            unidad: item.unidad,
+                            unidadData: item.unidadData ? Number(item.unidadData) : 0,
+                            diferencia: parseFloat(item.cantidad.toString()) - parseFloat(item.unidadData ? item.unidadData.toString() : '0')
+                        }
+                        hoja.data.push(materialData)
                     }
+                    if (i === (executionReportFiltered[0].group[element].length - 1)) {
+                        if (hoja.data.length > 0) {
+                            listaMateriales.push(hoja)
+                        }
+                    }
+                })
+                if (index === (Object.keys(executionReportFiltered[0].group).length - 1)) {
+                    setMaterialesPreview(listaMateriales)
                 }
             })
-            if (index === (Object.keys(executionReportFiltered[0].group).length - 1)) {
-                setMaterialesPreview(listaMateriales)
-            }
-        })
-        setOpenPreviewModal(true)
+            setOpenPreviewModal(true)
+        } else {
+            alert('Orden aún no está listo para revisar el listado de materiales o insumos.')
+        }
     }
 
     const closePreviewModal = () => {
@@ -699,7 +703,7 @@ const ActivitiesDetailPage = () => {
                                         </Button>
                                         }
                                         {((isSapExecutive && reportLevel===3) || localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') && <Button /* disabled={!canEdit} */ variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={vistaPrevia}>
-                                            <FontAwesomeIcon icon={faEye} style={{marginRight: 10}} /> Vista Previa
+                                            <FontAwesomeIcon icon={faEye} style={{marginRight: 10}} /> Resumen Insumos/Materiales
                                         </Button>
                                         }
                                         {(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') && <Button /* disabled={!canEdit}  */variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{syncData()}}>
