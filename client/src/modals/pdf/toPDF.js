@@ -159,14 +159,14 @@ const getImageBase64 = (imageUrl) => {
 
 let verification = 0
 
-const createImagesTables2 = () => {
+const createImagesTables2 = (executionReportData) => {
     console.log('Creando tabla de imágenes')
     let arrayTable = []
     console.log(imagesList)
     try {
         return new Promise(resolve => {
             imagesList.forEach(async (e, i) => {
-                console.log(e.namePicture)
+                console.log(e)
                 let namePicture = e.namePicture.replace('Pregunta', 'Tarea')
                 let imgBase64
                 if (e.urlImageMessage) {
@@ -188,7 +188,7 @@ const createImagesTables2 = () => {
                     {
                         width: 100,
                         alignment: 'center',
-                        text: 'Comentario id: ' + e.id + '\n\ "' + namePicture + '"' + '\n\ Imágen: ' + dateWithTime(e.id) + '\n\ Usuario: ' + '\n\ ' + e.name + '\n\ \n\ \n\ \n\ __________________',
+                        text: 'Hoja: \n\ '+ e.title + '\n\ \n\ ' + 'Descripción: \n\ '+ e.descr + '\n\ \n\ ' + 'Observaciones: \n\ '+ e.obs + '\n\ \n\ ' + 'Comentario id: \n\ ' + e.id + '\n\ \n\ "' + namePicture + '"' + '\n\ \n\  Imágen: \n\ ' + dateWithTime(e.id) + '\n\ \n\ Usuario: ' + '\n\ ' + e.name + '\n\ \n\ \n\ \n\ __________________',
                     }
                 ]
                 if(i == (imagesList.length - 1)) {
@@ -248,6 +248,7 @@ const createSubTables = async (list, index, indexNumber) => {
     ];
     return new Promise(resolve => {
         list.forEach(async (e, i) => {
+            console.log(e)
             let commit;
             let date;
             let timeData;
@@ -278,6 +279,10 @@ const createSubTables = async (list, index, indexNumber) => {
                 if(e.messages.length > 0) {
                     e.messages.forEach((commitItem, index) => {
                         if(commitItem.urlBase64 || commitItem.urlImageMessage) {
+                            console.log(commitItem)
+                            commitItem.title = e.strpmdesc
+                            commitItem.descr = e.taskdesc
+                            commitItem.obs = e.obs01
                             imagesList.push(commitItem)
                         }
                     })
@@ -434,6 +439,7 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
         const executionUser = await getUserNameById(reportData.usersAssigned[0])
         const executionUserSign = await getSignById(reportData.usersAssigned[0])
         const executionReportData = await getExecutionReportData(reportData)
+        console.log(executionReportData)
         if (chiefMachinerySign) {
             console.log('Firma de jefe maquinaria')
         }
@@ -596,7 +602,7 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
                     table: {
                         widths: ['*', 100],
                         body: 
-                            await createImagesTables2(),
+                            await createImagesTables2(executionReportData),
                     }
                 } : {},
                 /* await createImagesTables2() */

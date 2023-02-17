@@ -7,7 +7,7 @@ const createPdf = (req, res) => {
     let resp = ''
     Sentry.captureMessage('Iniciando descarga de pdf', 'info')
     const { pdfContent, nroOT, sapId, guide, numEquip } = req.body
-
+    console.log(pdfContent)
     if(pdfContent) {
         console.log(pdfContent)
         console.log('Contenido descargado')

@@ -5,12 +5,11 @@ import { environment } from "./src/config"
 import { Socket } from "./src/controller"
 import { databaseLoader, expressLoader } from "./src/loaders"
 import { AccessControlServices } from "./src/services"
-import reportsService from "./src/services/reports.service"
+/* import reportsService from "./src/services/reports.service" */
 import * as Sentry from "@sentry/node"
 // or use es6 import statements
 // import * as Sentry from '@sentry/node';
 
-import Tracing from "@sentry/tracing"
 // or use es6 import statements
 // import * as Tracing from '@sentry/tracing';
 

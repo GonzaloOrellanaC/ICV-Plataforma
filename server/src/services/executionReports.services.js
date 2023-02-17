@@ -1,15 +1,11 @@
 import { ExecutionReport, Reports } from "../models"
-import { environment } from '../config'
 import { AzureServices } from "."
-const { error: errorMsg, success: successMsg } = environment.messages.services.user
 
 const getExecutionReportById = (req, res) => {
     const { body } = req
-    console.log(body);
 
     try{
         ExecutionReport.find({reportId: body.reportData._id}, async (err, doc) => {
-            console.log('Report!!', doc)
             if(err) {
                 res.json({
                     state: false,
@@ -17,15 +13,6 @@ const getExecutionReportById = (req, res) => {
                 })
             }
             res.json(doc)
-            /* if(doc.length == 0) {
-                const newDoc = await createNewExecutionReport(body.reportData);
-                console.log(newDoc)
-                if(newDoc) {
-                    res.json(newDoc);
-                }
-            }else{
-                res.json(doc)
-            } */
         })
     }catch(err) {
         res.json(err);
@@ -38,10 +25,14 @@ const getExecutionReportByIdInternal = async (reportId) => {
 
 const createNewExecutionReport = async (executionReport) => {
     return new Promise(async resolve => {
-        const createExecutionReportState = new ExecutionReport(executionReport);
         try{
-            await createExecutionReportState.save()
-            resolve(createExecutionReportState);
+            const response = await ExecutionReport.findOne({reportId: executionReport.reportId})
+            if (!response) {
+                const executionReportCreated = await ExecutionReport.create(executionReport)
+                resolve(executionReportCreated)
+            } else {
+                resolve(response)
+            }
         }catch(err) {
             resolve(err);
         } 
@@ -53,11 +44,9 @@ let numberVerification2 = 0
 
 const saveExecutionReport = async (req, res) => {
     const { body } = req
-    console.log(body);
     const executionReportData = body.reportData
     const response = await Reports.findById(executionReportData.reportId)
     const report = response.toJSON()
-    console.log(report.idIndex)
     Object.keys(executionReportData.group).forEach(async (key, index) => {
         executionReportData.group[key].forEach((item) => {
             if (item.messages) {
@@ -71,7 +60,6 @@ const saveExecutionReport = async (req, res) => {
                                 key,
                                 mensaje.id
                             )
-                            console.log(imageData)
                             if (imageData) {
                                 numberVerification2 = numberVerification2 + 1
                             }
@@ -94,7 +82,6 @@ const saveExecutionReport = async (req, res) => {
                             report.idIndex,
                             ast.id
                         )
-                        console.log(imageAstData)
                         if (imageAstData) {
                             numberVerification2 = numberVerification2 + 1
                         }
@@ -115,16 +102,13 @@ const saveExecutionReport = async (req, res) => {
 }
 
 const timeout = (executionReportData, res) => {
-    console.log('Verificaciones: ', numberVerification1, numberVerification2)
     setTimeout(async() => {
         if (numberVerification1 == numberVerification2) {
             let response = await saveExecutionReportInternal(executionReportData)
-            console.log(response)
             if (response) {
                 res.json({data: 'ok'})
             } else {
                 const newDoc = await createNewExecutionReport(executionReportData);
-                console.log(newDoc)
                 if(newDoc) {
                     res.json(newDoc);
                 } else {
@@ -139,8 +123,7 @@ const timeout = (executionReportData, res) => {
 
 const saveExecutionReportInternal = async (executionReportData) => {
     try{
-        const updated = await ExecutionReport.findByIdAndUpdate(executionReportData._id, executionReportData, { new: true })
-        /* console.log(updated) */
+        const updated = await ExecutionReport.findByIdAndUpdate(executionReportData._id, executionReportData)
         return updated
     }catch(err) {
         return err

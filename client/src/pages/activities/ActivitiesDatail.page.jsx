@@ -589,7 +589,7 @@ const ActivitiesDetailPage = () => {
     }
 
     const vistaPrevia = async () => {
-        if (reportLevel>3) {
+        if (reportLevel>0) {
             const listaMateriales = []
             const db = await executionReportsDatabase.initDb()
             const data = await executionReportsDatabase.consultar(db.database)

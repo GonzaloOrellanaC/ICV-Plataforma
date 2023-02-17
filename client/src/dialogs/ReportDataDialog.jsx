@@ -120,9 +120,11 @@ const ReportDataDialog = (
   }
 
   const saveMessage = (image, messagePicture) => {
-    if(message !== ''||messagePicture) {
+    if(message.length > 0 || messagePicture) {
+      /* let haveMessage = true */
       if(image) {
         item.haveClip = true
+        /* haveMessage = false */
       }
       let m
       if(messagePicture) {
@@ -141,6 +143,27 @@ const ReportDataDialog = (
       messages.push(messageData)
       setMessages(messages)
       item.messages = messages
+      let haveMessage = false
+      let haveClip = false
+      item.messages.forEach((mess, i) => {
+        if (mess.urlBase64 || mess.urlImageMessage) {
+          haveClip = true
+        }
+        if (mess.content === 'Se indica estado ejecutado sin dejar mensajes') {
+
+        } else {
+          haveMessage = true
+        }
+        if (i === (item.messages.length - 1)) {
+          item.haveMessage = haveMessage
+          item.haveClip = haveClip
+        }
+      })
+      /* if (!item.haveMessage && haveMessage) {
+        item.haveMessage = true
+      } else {
+        item.haveMessage = false
+      } */
       setMessage('')
       setTimeout(() => {
         document.getElementById('commits').scrollTop = document.getElementById('commits').scrollHeight
@@ -163,6 +186,13 @@ const ReportDataDialog = (
       alert('Debe dejar un comentario')
     }
   }
+
+/*   const desmarcar = (itemData) => {
+    console.log(itemData)
+    if (confirm('Confirme que desea desmarcar la tarea')) {
+      itemData.isChecked = false
+    }
+  } */
 
   const openImage = (image) => {
     setImagePreview(image)
@@ -208,17 +238,42 @@ const ReportDataDialog = (
         }
         if (i === (messages.length - 1)) {
           setMessages(messagesNew)
+          item.messages = messagesNew
+          if (item.messages.length === 0) {
+            item.haveMessage = false
+            item.haveClip = false
+          } else {
+            let haveClip = false
+            let haveMessage = false
+            item.messages.forEach((mess, index) => {
+              console.log(mess)
+              if (mess.content === 'Se indica estado ejecutado sin dejar mensajes') {
+
+              } else {
+                haveMessage = true
+              }
+              if (mess.urlBase64 || mess.urlImageMessage) {
+                haveClip = true
+              }
+              console.log('Clip', haveClip)
+              if (index === (item.messages.length - 1)) {
+                item.haveClip = haveClip
+                item.haveMessage = haveMessage
+              }
+            })
+          }
         }
       })
     }
   }
 
   const close = () => {
-    if (isEdited) {
+    handleClose()
+    /* if (isEdited) {
       alert('Existen cambios que no se han guardado. Confirme los cambios presionando "Guardar Sin Ejecutar" o "Guardar Ejecutado"')
     } else {
       handleClose()
-    }
+    } */
   }
   
   return (
@@ -324,6 +379,7 @@ const ReportDataDialog = (
         <DialogActions style={{minWidth: 400}}>
           <Button style={{backgroundColor: '#D5CC41', color: '#fff'}} onClick={() => {saveItem(index, false, item)}}>Guardar sin ejecutar</Button>
           <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {saveItem(index, true, item)}}>Guardar ejecutado</Button>
+          {/* {item.isChecked && <Button style={{backgroundColor: 'red', color: '#fff'}} onClick={() => {desmarcar(item)}}>Desmarcar</Button>} */}
         </DialogActions>
         {
           openImageDialog && <ImageDialog open={openImageDialog} image={imagePreview} handleClose={handleCloseImage}/>

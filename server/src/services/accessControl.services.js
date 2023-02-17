@@ -1,9 +1,10 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permission,Roles, Site, Machine } from '../models';
+import { Permission,Roles, Site, Machine, ExecutionReport } from '../models';
 import { ApiIcv } from '../api-icv';
 import apiIcvConnection from '../api-icv/api-icv.connection';
+import { isValidObjectId } from 'mongoose';
 //import { apiIcvLoader } from '../loaders'
 
 const { error: errorMsg } = environment.messages.services.accessControl
@@ -25,12 +26,22 @@ const ac = new AccessControl()
  */
 const initAccessControl = async () => {
     try {
+
+        /* LIMPIADOR DE DATOS DE EJECUCIÓN */
+        /* const responseData = await ExecutionReport.find({reportId: '63bedd7a9755fd0086c74717'})
+        if (responseData.length > 0) {
+            console.log('**********************************************BORRANDO')
+            responseData.forEach(async (res, index) => {
+                await ExecutionReport.findByIdAndDelete(res._id)
+            })
+        }
+        console.log('**********************************************', responseData.length) */
         const findRoles = await Roles.find({})//await Roles.findOne({ name: environment.roles[0].name });
         const adminResult = await getAdminExist();
         const findSites = await getSites();
-        console.log(findSites)
+        /* console.log(findSites) */
         findSites.forEach(async (site, index) => {
-            console.log(site.idobra)
+            /* console.log(site.idobra) */
             try {
                 await ApiIcv.createMachinesToSend(site.idobra)
             } catch (error) {
@@ -50,7 +61,7 @@ const initAccessControl = async () => {
                 let roleCreated = await createRole(role.name, role.dbName);
                 if(roleCreated) {
                     let result = `${role.name} created`;
-                    console.log(result)
+                    /* console.log(result) */
                 }
                 if(index == (environment.roles.length - 1)) {
                     environment.permisos.forEach(async (permiso, i) => {
@@ -72,7 +83,7 @@ const initAccessControl = async () => {
                         let roleCreated = await createRole(role.name, role.dbName);
                         if(roleCreated) {
                             let result = `${role.name} created`;
-                            console.log(result)
+                            /* console.log(result) */
                         }
                     })
                 }

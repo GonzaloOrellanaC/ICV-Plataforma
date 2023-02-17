@@ -30,6 +30,7 @@ const PdfModal = ({open, reportData, close}) => {
                 close()
             })
         }catch (err) {
+            console.log(err)
             alert('Error al descargar. Cerrando ventana.')
             setPrinting(false)
             close()

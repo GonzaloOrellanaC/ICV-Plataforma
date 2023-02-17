@@ -24,6 +24,7 @@ const AppliancePage = ({ route }) => {
     const [ loading, setLoading ] = useState(false)
     const [ openMachineImage, setOpenMachineImage ] = useState(false)
     const [ machineImage, setMachineImage ] = useState('')
+    const [ value, setValue ] = useState('Todos')
     let { id } = useParams();
     const [ machine, setMachine ] = useState({})
     let r = new String();
@@ -51,6 +52,7 @@ const AppliancePage = ({ route }) => {
                 setMachine(data.data[0])
                 reportsRoutes.getReportByEquid(data.data[0].equid).then(d => {
                     if(d.data) {
+                        console.log(d.data.reverse())
                         setMantenciones(d.data.reverse())
                         setMantencionesCache(d.data.reverse())
                         setTimeout(() => {
@@ -84,9 +86,14 @@ const AppliancePage = ({ route }) => {
 
     const filterList = (value) => {
         if (value === 'all') {
-            setMantenciones(mantencionesCache)
+            setValue('Todos')
+            setMantenciones(mantencionesCache.reverse())
+        } else if ((value === 'Mantención')||(value === 'Inspección')) {
+            setValue(value)
+            setMantenciones(mantencionesCache.filter(mantencion => {if(mantencion.reportType===value) {return mantencion}}).reverse())
         } else {
-            setMantenciones(mantencionesCache.filter(mantencion => {if(mantencion.state===value) {return mantencion}}))
+            setValue(value)
+            setMantenciones(mantencionesCache.filter(mantencion => {if(mantencion.state===value) {return mantencion}}).reverse())
         }
     }
 
@@ -182,6 +189,12 @@ const AppliancePage = ({ route }) => {
                                     <div style={{width: '100%', textAlign: 'left', padding: 10}}>
                                         <div style={{padding: 15, backgroundColor: '#F9F9F9', width: '100%', height: 'calc(100vh - 220px)', position: 'relative', borderRadius: 10}}>
                                             <div style={{position: 'absolute', top: 10, right: 10}}>
+                                                <button style={{float: 'left', marginRight: 10}} onClick={()=>{filterList('Mantención')}}>
+                                                    Mantenciones
+                                                </button>
+                                                <button style={{float: 'left', marginRight: 10}} onClick={()=>{filterList('Inspección')}}>
+                                                    Inspecciones
+                                                </button>
                                                 <button style={{float: 'left', marginRight: 10}} onClick={()=>{filterList('all')}}>
                                                     Todos
                                                 </button>
@@ -195,7 +208,7 @@ const AppliancePage = ({ route }) => {
                                                     Por asignar
                                                 </button>
                                             </div>
-                                            <h3>Listado de mantenciones</h3>
+                                            <h3>Listado de mantenciones. <b style={{ color: 'red' }}>Filtro: {value}</b></h3>
                                             <div style={{overflowY: 'auto', height: 'calc(100vh - 300px)', width: '100%', padding: 20}}>
                                                 {
                                                     (navigator.onLine && mantenciones.length === 0) && <p>No hay mantenciones</p>
@@ -209,7 +222,7 @@ const AppliancePage = ({ route }) => {
                                                                     <p style={{margin: 0}}>Código SAP {mantencion.sapId}</p>
                                                                     <p style={{margin: 0}}>Estado: {mantencion.state}</p>
                                                                     {
-                                                                        (mantencion.state === 'Completadas') && <a href={mantencion.urlPdf} target='_blank'>Enlace Documento</a>
+                                                                        (mantencion.state === 'Completadas') && <a href={mantencion.urlPdf} target='_blank'>Imprimir OT</a>
                                                                     }
                                                                 </div>
                                                                 <button style={{float: 'right'}} onClick={() => initDialog(mantencion)}>

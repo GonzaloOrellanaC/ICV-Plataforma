@@ -33,7 +33,7 @@ const leerPautas2 = async () => {
     console.log('leer pautas')
     const machinesList = await Patterns.find()
     leerPauta2(i, machinesList, listaPautas)
-    res.send({data: 'ok'})
+    /* res.send({data: 'ok'}) */
 }
 
 const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {
@@ -66,21 +66,21 @@ const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {
                 await PatternDetail.create(pauta)
             } else {
                 if (JSON.stringify(patternFind.struct) === JSON.stringify(pauta.struct) || JSON.stringify(patternFind.header) === JSON.stringify(pauta.header)) {
-                    console.log('Estructura de pauta no cambia')
+                    /* console.log('Estructura de pauta no cambia') */
                 } else {
-                    console.log('Pauta ', patternFind._id, ' actualizada')
+                    /* console.log('Pauta ', patternFind._id, ' actualizada') */
                     await PatternDetail.findByIdAndUpdate(patternFind._id, pauta)
                 }
-                console.log('Pauta ', pautaName, pauta.typepm, ' existe' )
+                /* console.log('Pauta ', pautaName, pauta.typepm, ' existe' ) */
             }
             if (number === (listaPMsConcat.length - 1)) {
-                console.log('Guardados.')
+                /* console.log('Guardados.') */
             }
         })
     }else{
         try{
             let pIDPM = machinesListPmsData[i].pIDPM;
-            console.log(environment.icvApi.url, pIDPM)
+            /* console.log(environment.icvApi.url, pIDPM) */
             const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
                 headers: myHeaders,
                 method: 'GET',
@@ -97,7 +97,7 @@ const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {
                 listaPMsConcat = listaPMsConcat.concat(dataToSend)
             }
             i = i + 1
-            console.log(i)
+            /* console.log(i) */
             leerPauta2(i, machinesListPmsData, listaPMsConcat)
         } catch (error) {
             i = i + 1
@@ -113,14 +113,14 @@ const leerPauta = async (i, machinesListPmsData, listaPMsConcat, res) => {
     }else{
         try{
             let pIDPM = machinesListPmsData[i].pIDPM;
-            console.log(environment.icvApi.url, pIDPM)
+            /* console.log(environment.icvApi.url, pIDPM) */
             const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
                 headers: myHeaders,
                 method: 'GET',
                 agent: agent
             })
             const listaPMs =  await response.json()
-            console.log('Respuesta: ', listaPMs)
+            /* console.log('Respuesta: ', listaPMs) */
             listaPMsConcat = listaPMsConcat.concat(listaPMs.data)
             i = i + 1
             leerPauta(i, machinesListPmsData, listaPMsConcat, res)
@@ -159,7 +159,7 @@ const getStructsPauta = async (req, res) => {
     } else {
         pautaName = body.idpm
     }
-    console.log(`${environment.icvApi.url}PmStruct?pIDPM=${pautaName}&pTypePm=${body.typepm}`)
+    /* console.log(`${environment.icvApi.url}PmStruct?pIDPM=${pautaName}&pTypePm=${body.typepm}`) */
     const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${pautaName}&pTypePm=${body.typepm}`, {
         headers: myHeaders,
         method: 'GET',
@@ -179,7 +179,7 @@ const getIdPmInspection = (equi) => {
                 agent: agent
             })
             let res = await response4.json();
-            console.log(res.data)
+            /* console.log(res.data) */
             if (res.data && res.data.idpm) {
                 resolve(res.data.idpm)
             } else {
@@ -289,9 +289,9 @@ const readMachinesFromDb = () => {
 const saveMachineDataById = ( req, res ) => {
     const { body } = req;
     const machine = body.machine
-    console.log(machine)
+    /* console.log(machine) */
     Machine.findByIdAndUpdate(machine._id, machine, {new: false, timestamps: false}, (err, response) => {
-        console.log(response)
+        /* console.log(response) */
         if(err) {
             res.status(502).json({message: 'Error de lectura en Base de Datos'})
             throw err
@@ -395,7 +395,7 @@ const leerArchivo = (type) => {
 
 /* Descargar máquinas por obra desde API ICV y guardar en base de datos*/
 const createMachinesToSend = async (pIDOBRA) => {
-    console.log(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`)
+    /* console.log(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`) */
     const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`, {
         /* myHeaders */
         headers: myHeaders,
@@ -408,11 +408,11 @@ const createMachinesToSend = async (pIDOBRA) => {
     let machinesData = []
     machinesData = b.data
     machinesData.forEach(async (machine, index) => {
-        console.log(machine)
+        /* console.log(machine) */
         machine.idpminspeccion = await getIdPmInspection(machine.equid);
         machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
         if (machine.modelo.includes('D10-T2')) {
-            console.log(machine.modelo, machine.idpminspeccion, machine.idpmmantencion, machine.equid)
+            /* console.log(machine.modelo, machine.idpminspeccion, machine.idpmmantencion, machine.equid) */
         }
         if(machine.modelo.includes('793-F')){
             machine.modelo='793-F';
@@ -443,19 +443,19 @@ const createMachinesToSend = async (pIDOBRA) => {
         try {
             const findMachine = await Machine.findOne({equid: machine.equid})
             if (findMachine) {
-                console.log('Machine ', machine.equ, ' founded')
+                /* console.log('Machine ', machine.equ, ' founded') */
             } else {
-                console.log('Machine not founded')
-                console.log(machine)
+                /* console.log('Machine not founded')
+                console.log(machine) */
                 try {
                     const newMachine = await Machine.create(machine);
-                    console.log(newMachine)
+                    /* console.log(newMachine) */
                 } catch (error) {
-                    console.log(error)
+                    /* console.log(error) */
                 }
             }
         } catch (error) {
-            console.log(index, ' ERROR ====> ', error)
+            /* console.log(index, ' ERROR ====> ', error) */
         }
         if(index == (machines.length - 1)) {
 

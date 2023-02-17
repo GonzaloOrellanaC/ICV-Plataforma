@@ -576,7 +576,8 @@ const PautaDetail = (
         })
     }
 
-    const changeState = (element, number) => {
+    const changeState = async (element, number) => {
+        console.log(element)
         if (!element.isChecked) {
             if (confirm('¿Desea indicar estado ejecutado, sin dejar un mensaje?')) {
                 /* element.isChecked = true */
@@ -592,6 +593,45 @@ const PautaDetail = (
                 ]
                 element.messages = messages
                 save(number, true, element)
+            }
+        } else {
+            if (confirm('Confirme que desea desmarcar la tarea')) {
+                setTotalProgress(executionReport.group)
+                checks[number] = false
+                let checkedList = checks
+                let checkedTrue = []
+                let checkedFalse = []
+                checkedList.map((check, i) => {
+                    if(check) {
+                        checkedTrue.push(check)
+                    }else{
+                        checkedFalse.push(check)
+                    }
+                    if(i == (checkedList.length - 1)) {
+                        let newProgress = ( (checkedTrue.length) * 100) / checkedList.length
+                        setProgress(newProgress)
+                    }
+                })
+                const contentDataCache = [...contentData]
+                contentDataCache[number].isChecked = false
+                console.log(contentDataCache)
+                setContentData(contentDataCache)
+                const response = await saveOnNavigator(executionReport)
+                if (response) {
+                    if(navigator.onLine) {
+                        setLoadingLogo(true)
+                        executionReportsRoutes.saveExecutionReport(executionReport).then(() => {
+                            reportsRoutes.editReport(reportAssigned).then(() => {
+                                setLoadingLogo(false)
+                                /* readData().then(() => {
+                                    setLoadingLogo(false)
+                                }) */
+                            })
+                        })
+                    }
+                } else {
+                    alert('No se logra guardar la información. Intente nuevamente.')
+                }
             }
         }
     }
@@ -656,13 +696,13 @@ const PautaDetail = (
                         </Grid>}
                     </Hidden>
                     <Grid item xl={1} md={'auto'}>
-                        <p style={{margin: 0, textAlign: 'center', width: 50}}> <strong>Ejecutar <br /> Tarea</strong> </p>
+                        <p style={{margin: 0, textAlign: 'center', width: 50}}> <strong>Acción</strong> </p>
                     </Grid>
                     <Grid item xl={1} md={1}>
                         <p style={{margin: 0, textAlign: 'center'}}> <strong>Estado</strong> </p>
                     </Grid>
                 </Grid>
-                {contentData && <div style={{height: height, overflowY: 'scroll'}}>
+                <div style={{height: height, overflowY: 'scroll'}}>
                     {
                         contentData.map((e, n) => {
                             return(
@@ -701,8 +741,8 @@ const PautaDetail = (
                                         </div>
                                     </Grid>
                                     <Grid item xl={1} md={1}>
-                                        <Checkbox checked={checks[n]} disabled={checks[n] ? true : false} onClick={() => { changeState(e, n) }} style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} />
-                                        {e.messages && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon icon={faCommentDots} /></IconButton>}
+                                        <Checkbox checked={e.isChecked} /* disabled={checks[n] ? true : false} */ onClick={() => { changeState(e, n) }} style={{transform: "scale(1.2)"}} icon={<CircleUnchecked />} checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} />
+                                        {e.haveMessage && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon icon={faCommentDots} /></IconButton>}
                                         {!e.messages && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faCommentDots} /></IconButton>}
                                         {e.haveClip && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon icon={faPaperclip} /></IconButton>}
                                         {!e.haveClip && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faPaperclip} /></IconButton>}
@@ -711,7 +751,7 @@ const PautaDetail = (
                             )
                         })
                     }
-                </div>}
+                </div>
                 {openDialog1 && <ReportDataDialog 
                     open={openDialog1} 
                     handleClose={closeDialog} 
