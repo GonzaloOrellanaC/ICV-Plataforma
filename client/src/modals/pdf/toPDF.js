@@ -292,9 +292,10 @@ const createSubTables = async (list, index, indexNumber) => {
                     date = dateSimple(e.messages[0].id)
                     timeData = time(e.messages[0].id)
                 }else{
-                    commit = `${e.messages[0].name}: ${e.messages[0].content}`
-                    date = dateSimple(e.messages[0].id)
-                    timeData = time(e.messages[0].id)
+                    console.log(e.messages[0])
+                    commit = `${e.messages[0] ? e.messages[0].name : 'N/A'}: ${e.messages[0] ? e.messages[0].content : 'N/A'}`
+                    date = dateSimple(e.messages[0] ? e.messages[0].id : 'N/A')
+                    timeData = time(e.messages[0] ? e.messages[0].id : 'N/A')
                 }
             }
             if(e.isWarning) {
