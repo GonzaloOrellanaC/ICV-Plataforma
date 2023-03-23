@@ -39,18 +39,19 @@ const initAccessControl = async () => {
         const findRoles = await Roles.find({})//await Roles.findOne({ name: environment.roles[0].name });
         const adminResult = await getAdminExist();
         const findSites = await getSites();
-        /* console.log(findSites) */
+        await ApiIcv.createSiteToSend();
+        console.log(findSites)
         findSites.forEach(async (site, index) => {
-            /* console.log(site.idobra) */
+            console.log(site.idobra)
             try {
                 await ApiIcv.createMachinesToSend(site.idobra)
             } catch (error) {
                 console.log(error)
             }
         })
-        if(findSites.length === 1) {
+        /* if(findSites.length === 1) {
             const sites = await ApiIcv.createSiteToSend();
-        }
+        } */
         if(adminResult.length === 0) {
             createAdminDefault();
         } else {
@@ -89,6 +90,9 @@ const initAccessControl = async () => {
                 }
             })
         }
+        /* 
+            CADA 12 HRS SE ACTUALIZA DATA DE MÁQUINAS Y SITIOS
+        */
         setInterval(async () => {
             const findMachines = await Machine.find();
             if(findMachines) {
@@ -98,7 +102,22 @@ const initAccessControl = async () => {
                     })
                 }
             }
+            await ApiIcv.createSiteToSend();
+            console.log(findSites)
+            findSites.forEach(async (site, index) => {
+                console.log(site.idobra)
+                try {
+                    await ApiIcv.createMachinesToSend(site.idobra)
+                } catch (error) {
+                    console.log(error)
+                }
+            })
         }, (86400000 / 2));
+        
+        /* 
+            CADA 15 MINUTOS SE ACTUALIZA DATA PAUTAS
+        */
+       
         apiIcvConnection.leerPautas2()
         setInterval(() => {
             apiIcvConnection.leerPautas2()

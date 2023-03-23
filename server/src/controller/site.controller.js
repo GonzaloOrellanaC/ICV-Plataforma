@@ -19,6 +19,20 @@ const readSites = () => {
     })
 }
 
+const detectSiteIfExist = async (site) => {
+    try {
+        const siteExist = await Site.findOne({idobra: site.idobra})
+        console.log(siteExist)
+        if (siteExist) {
+            return true
+        } else {
+            return false
+        }
+    } catch (error) {
+        return false
+    }
+}
+
 const createSite = (site) => {
     return new Promise(async resolve => {
         try{
@@ -33,5 +47,6 @@ const createSite = (site) => {
 
 export default {
     readSites,
+    detectSiteIfExist,
     createSite
 }

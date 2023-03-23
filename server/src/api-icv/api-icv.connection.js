@@ -318,20 +318,30 @@ const createSiteToSend = () => {
         if( sites ) {
             const body = await sites.json();
             if( body ) {
-                const readSitesFromDb = await SiteController.readSites();
-                let sitios = [] = body.data;
-                if(readSitesFromDb.length == sitios.length) {
-                    resolve(true)
-                }else{
-                    sitios.forEach(async (site, i) => {
-                        await createMachinesToSend(site.idobra);
-                        await SiteController.createSite(site);
-                        if(i == (sitios.length - 1)) {
-                            resolve(true)
+                const readSitesFromDb = await SiteController.readSites()
+                let sitios = body.data
+                sitios.forEach((sitioSap, i) => {
+                    let compareResult = false
+                    readSitesFromDb.forEach(async (sitioLocal, index) => {
+                        if (sitioLocal.idobra === sitioSap.idobra) {
+                            console.log(sitioLocal.idobra, sitioSap.idobra)
+                            compareResult = true
                         }
-                        
+                        if (index === (readSitesFromDb.length - 1)) {
+                            if(!compareResult) {
+                                console.log(sitioSap)
+                                const response = await SiteController.detectSiteIfExist(sitioSap)
+                                console.log(response)
+                                if (!response) {
+                                    await SiteController.createSite(sitioSap)
+                                }
+                            }
+                        }
                     })
-                }
+                    if (i === (sitios.length - 1)) {
+                        resolve(true)
+                    }
+                })
             }else{
                 resolve(false)
             }
@@ -395,20 +405,16 @@ const leerArchivo = (type) => {
 
 /* Descargar máquinas por obra desde API ICV y guardar en base de datos*/
 const createMachinesToSend = async (pIDOBRA) => {
-    /* console.log(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`) */
     const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`, {
         /* myHeaders */
         headers: myHeaders,
         method: 'GET',
         agent: agent
     })
-    /* console.log(await machines.json()) */
     let b = await machines.json();
-    /* const machinesOnDb = await readMachinesFromDb(); */
     let machinesData = []
     machinesData = b.data
     machinesData.forEach(async (machine, index) => {
-        /* console.log(machine) */
         machine.idpminspeccion = await getIdPmInspection(machine.equid);
         machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
         if (machine.modelo.includes('D10-T2')) {
@@ -445,8 +451,8 @@ const createMachinesToSend = async (pIDOBRA) => {
             if (findMachine) {
                 /* console.log('Machine ', machine.equ, ' founded') */
             } else {
-                /* console.log('Machine not founded')
-                console.log(machine) */
+                console.log('Machine not founded')
+                /* console.log(machine) */
                 try {
                     const newMachine = await Machine.create(machine);
                     /* console.log(newMachine) */
