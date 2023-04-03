@@ -8,8 +8,10 @@ import RolesRoutes from './roles.routes'
 import PermissionRoutes from './permisos.routes'
 import UserRoutes from './user.routes'
 import ReportsRoutes from './reports.routes'
+import Reports2Routes from './reports2.routes'
 import MachinesRoutes from './machines.routes'
 import ExecutionReportsRoutes from './execution-reports.routes'
+import ExecutionReports2Routes from './execution-reports2.routes'
 import AzureStorageRoutes from './azure-storage.routes'
 import InternalMessagesRoutes from './internal-messages.routes'
 import PdfMakerRoutes from './pdf-maker.routes'
@@ -25,8 +27,10 @@ router.use('/roles', RolesRoutes)
 router.use('/permisos', PermissionRoutes)
 router.use('/users', UserRoutes)
 router.use('/reports', ReportsRoutes)
+router.use('/reports2', Reports2Routes)
 router.use('/machines', MachinesRoutes)
 router.use('/execution-report', ExecutionReportsRoutes)
+router.use('/execution-report2', ExecutionReports2Routes)
 router.use('/azure-storage', AzureStorageRoutes)
 router.use('/internalMessagesData', InternalMessagesRoutes)
 router.use('/pdf-maker', PdfMakerRoutes)

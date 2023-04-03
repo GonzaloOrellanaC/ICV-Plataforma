@@ -2,18 +2,21 @@
 import { model, Schema } from 'mongoose'
 
 /* User Schema */
-const ReportShema = new Schema({
+const Report2Shema = new Schema({
     sapId: {
         type: Schema.Types.String
     },
     createdBy: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     updatedBy: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     shiftManagerApprovedBy: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     shiftManagerApprovedDate: {
         type: Schema.Types.Date
@@ -22,7 +25,8 @@ const ReportShema = new Schema({
         type: Schema.Types.String
     },
     chiefMachineryApprovedBy: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     chiefMachineryApprovedDate: {
         type: Schema.Types.Date
@@ -31,7 +35,8 @@ const ReportShema = new Schema({
         type: Schema.Types.String
     },
     sapExecutiveApprovedBy: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     sapExecutiveApprovedDate: {
         type: Schema.Types.Date
@@ -45,7 +50,8 @@ const ReportShema = new Schema({
     },
     usersAssigned: [
         {
-            type: Schema.Types.ObjectId
+            type: Schema.Types.ObjectId,
+            ref: 'User'
         }
     ],
     state: {
@@ -85,7 +91,8 @@ const ReportShema = new Schema({
         type: Schema.Types.Number
     },
     idPm: {
-        type: Schema.Types.ObjectId /* Se modifica IDPM por ID Mongo */
+        type: Schema.Types.ObjectId, /* Se modifica IDPM por ID Mongo */
+        ref: 'Patterns'
     },
     testMode: {
         type: Schema.Types.Boolean
@@ -110,6 +117,6 @@ const ReportShema = new Schema({
 }
 )
 
-const Reports = model('Reports', ReportShema)
+const Reports2 = model('Reports2', Report2Shema)
 
-export default Reports
+export default Reports2

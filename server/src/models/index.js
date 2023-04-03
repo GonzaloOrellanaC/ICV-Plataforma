@@ -13,6 +13,7 @@ import Permission from './permission'
 import Reports from './reports'
 import Reports2 from './reports2'
 import ExecutionReport from './executionReport'
+import ExecutionReport2 from './executionReport2'
 import InternalMessage from './internalMessages'
 import Notification from './notifications'
 import Patterns from './patterns'
@@ -33,6 +34,7 @@ export {
     Reports,
     Reports2,
     ExecutionReport,
+    ExecutionReport2,
     InternalMessage,
     Notification,
     Patterns,
