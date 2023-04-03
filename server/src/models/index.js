@@ -11,6 +11,7 @@ import Users from './users'
 import Roles from './roles'
 import Permission from './permission'
 import Reports from './reports'
+import Reports2 from './reports2'
 import ExecutionReport from './executionReport'
 import InternalMessage from './internalMessages'
 import Notification from './notifications'
@@ -30,6 +31,7 @@ export {
     Roles,
     Permission,
     Reports,
+    Reports2,
     ExecutionReport,
     InternalMessage,
     Notification,

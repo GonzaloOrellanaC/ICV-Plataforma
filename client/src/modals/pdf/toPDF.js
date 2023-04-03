@@ -1,4 +1,4 @@
-import { date, dateSimple, dateWithTime, environment, getExecutionReportData, getSignById, getUserNameById, imageToBase64, time } from "../../config";
+import { date, dateSimple, dateWithTime, getExecutionReportData, getSignById, getUserNameById, imageToBase64, time } from "../../config";
 import { pdfMakeRoutes } from "../../routes";
 import logo from '../../assets/logo_icv_gris.png';
 import check from '../../assets/check.png'
@@ -674,7 +674,8 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
             setLoadingMessage('Enviando documento compilado al servidor...')
         }
         
-        pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex, reportData.sapId, (reportData.guide === 'Pauta de Inspección') ? 'PI' : reportData.guide, reportData.number).then(data=> {
+        pdfMakeRoutes.createPdf(docDefinition, reportData.idIndex, reportData.sapId, (reportData.guide === 'Pauta de Inspección') ? 'PI' : reportData.guide, reportData.number)
+        .then(data=> {
             console.log(data)
             setTimeout(() => {
                 if (setLoadingMessage){
