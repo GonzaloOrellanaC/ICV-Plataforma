@@ -113,6 +113,15 @@
   .header-bar {
     padding-left: 15vw;
   }
+  .pageCard {
+    margin-left: 15vw
+  }
+}
+
+@media screen and (min-width: 660px) {
+  .pageCard {
+    margin-left: 99px
+  }
 }
 
 @media screen and (max-width: 560px) {
@@ -131,4 +140,41 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.pageRoot {
+  height: 90%;
+  font-family:'Raleway';
+  margin-top: 70px;
+}
+
+.pageCard {
+  margin-left: 99px;
+  font-family:'Raleway';
+  border-radius: 0px;
+  box-shadow: none;
+  padding: 20px;
+  overflow-y: auto
+}
+
+.noNavBarMargin {
+  margin-left: 0px;
+}
+
+.loginBacgroundImage {
+  background: url(./assets/images/login-bg.png) no-repeat 100% 100%;
+  background-position: center;
+  background-size: cover;
+  float: left;
+  width: 50%;
+  height: 100vh;
+  display: block
+}
+
+.pageTitle {
+  padding: 40px 0px;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  /* color: theme.palette.primary.main */
 }

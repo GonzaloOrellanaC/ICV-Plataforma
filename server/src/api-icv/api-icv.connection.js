@@ -16,6 +16,31 @@ const agentOptions = {
   
 const agent = new https.Agent(agentOptions)
 
+const getSites = () => {
+    try{
+        return new Promise(resolve => {
+            Site.find({}, (err, sites) => {
+                resolve(sites)
+            });
+            
+        })
+    } catch (err) {
+    }
+}
+
+const sincronizar = async (req, res) => {
+    const findSites = await getSites()
+    findSites.forEach(async (site, index) => {
+        console.log(site.idobra)
+        try {
+            const response = await createMachinesToSend(site.idobra, true)
+            res.send(response)
+        } catch (error) {
+            console.log(error)
+        }
+    })
+}
+
 const leerPautas = async (req, res) => {
     let listaPMsConcat = [];
     let listaPautas = []
@@ -404,9 +429,8 @@ const leerArchivo = (type) => {
 }
 
 /* Descargar máquinas por obra desde API ICV y guardar en base de datos*/
-const createMachinesToSend = async (pIDOBRA) => {
+const createMachinesToSend = async (pIDOBRA, isSync = false) => {
     const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`, {
-        /* myHeaders */
         headers: myHeaders,
         method: 'GET',
         agent: agent
@@ -415,6 +439,7 @@ const createMachinesToSend = async (pIDOBRA) => {
     let machinesData = []
     machinesData = b.data
     machinesData.forEach(async (machine, index) => {
+        console.log(machine)
         machine.idpminspeccion = await getIdPmInspection(machine.equid);
         machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
         if (machine.modelo.includes('D10-T2')) {
@@ -449,15 +474,25 @@ const createMachinesToSend = async (pIDOBRA) => {
         try {
             const findMachine = await Machine.findOne({equid: machine.equid})
             if (findMachine) {
-                /* console.log('Machine ', machine.equ, ' founded') */
+                console.log(machine.idobra, findMachine.idobra)
+                if (machine.idobra === findMachine.idobra) {
+                    console.log('Pertenece a obra')
+                } else {
+                    console.log('no pertenece a obra')
+                }
+                /* console.log(findMachine)
+                await Machine.findOneAndUpdate({equid: machine.equid}, machine) */
             } else {
                 console.log('Machine not founded')
-                /* console.log(machine) */
                 try {
-                    const newMachine = await Machine.create(machine);
-                    /* console.log(newMachine) */
+                    await Machine.create(machine);
                 } catch (error) {
                     /* console.log(error) */
+                }
+            }
+            if (isSync) {
+                return {
+                    message: 'Máquinas sincronizadas.'
                 }
             }
         } catch (error) {
@@ -585,5 +620,6 @@ export default {
     getHeaderPauta,
     getStructsPauta,
     saveMachineDataById,
-    findSitesToActualiceMachines
+    findSitesToActualiceMachines,
+    sincronizar
 }

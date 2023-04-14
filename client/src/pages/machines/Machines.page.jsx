@@ -69,9 +69,9 @@ const MachinesPage = ({ route }) => {
 
     return (
         <Box height='90%'>
-            <Grid className={classes.pageRoot} container spacing={0}>
+            <Grid className={'pageRoot'} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
-                    <div className={classes.pageCard}>
+                    <div className={'pageCard'}>
                         <Grid container alignItems='flex-start' justifyContent='flex-start'>
                             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>

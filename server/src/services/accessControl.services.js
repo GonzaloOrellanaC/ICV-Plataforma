@@ -1,10 +1,11 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permission,Roles, Site, Machine, ExecutionReport } from '../models';
+import { Permission,Roles, Site, Machine, Users, Reports } from '../models';
 import { ApiIcv } from '../api-icv';
 import apiIcvConnection from '../api-icv/api-icv.connection';
 import { isValidObjectId } from 'mongoose';
+import userServices from './user.services';
 //import { apiIcvLoader } from '../loaders'
 
 const { error: errorMsg } = environment.messages.services.accessControl
@@ -36,27 +37,43 @@ const initAccessControl = async () => {
             })
         }
         console.log('**********************************************', responseData.length) */
-        const findRoles = await Roles.find({})//await Roles.findOne({ name: environment.roles[0].name });
+        const users = await Users.find({})
+        users.forEach(async (user, index) => {
+            if(user.sites) {
+                console.log((JSON.parse(user.sites)).idobra)
+                if ((JSON.parse(user.sites)).idobra === '0369') {
+                    user.obras = ['641c8e48c58d0f4c9485debb']
+                    await Users.findByIdAndUpdate(user._id, user)
+                } else if ((JSON.parse(user.sites)).idobra === '0370') {
+                    user.obras = ['641c8e48c58d0f4c9485debd']
+                    await Users.findByIdAndUpdate(user._id, user)
+                }
+            }
+        })
+        const findRoles = await Roles.find({})
         const adminResult = await getAdminExist();
         const findSites = await getSites();
         await ApiIcv.createSiteToSend();
-        console.log(findSites)
         findSites.forEach(async (site, index) => {
-            console.log(site.idobra)
             try {
-                await ApiIcv.createMachinesToSend(site.idobra)
+                await ApiIcv.createMachinesToSend(site.idobra, false)
             } catch (error) {
                 console.log(error)
             }
         })
-        /* if(findSites.length === 1) {
-            const sites = await ApiIcv.createSiteToSend();
-        } */
         if(adminResult.length === 0) {
             createAdminDefault();
         } else {
             console.log('No se crea admin')
         }
+        const reports = await Reports.find({})
+        reports.forEach(async (report, index) => {
+            if (report.site === '0369') {
+                await Reports.findByIdAndUpdate(report._id, {site: '0380'})
+            } else if (report.site === '0370') {
+                await Reports.findByIdAndUpdate(report._id, {site: '0383'})
+            }
+        })
         if (!findRoles) {
             environment.roles.forEach(async (role, index) => {
                 let roleCreated = await createRole(role.name, role.dbName);
@@ -103,11 +120,9 @@ const initAccessControl = async () => {
                 }
             }
             await ApiIcv.createSiteToSend();
-            console.log(findSites)
             findSites.forEach(async (site, index) => {
-                console.log(site.idobra)
                 try {
-                    await ApiIcv.createMachinesToSend(site.idobra)
+                    await ApiIcv.createMachinesToSend(site.idobra, false)
                 } catch (error) {
                     console.log(error)
                 }

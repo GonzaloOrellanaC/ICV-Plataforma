@@ -1,18 +1,14 @@
 import React, {useEffect} from 'react'
-import { Box, Card, Grid, Hidden } from '@material-ui/core'
-import clsx from 'clsx'
+import { Card, Hidden } from '@material-ui/core'
 
 import { Login } from '../../containers'
-import { environment, useStylesTheme } from '../../config'
-import imageBackground from '../../assets/Iniciar sesión-1.png';
+import { environment } from '../../config'
 import logoICV from '../../assets/ICV-transparent.png'
 
 const LoginPage = () => {
-    const classes = useStylesTheme();
-
     const addCard = () => {
         return (
-            <Card elevation={0} className={clsx(classes.pageCard, classes.noNavBarMargin)}>
+            <Card elevation={0} className={`pageCard noNavBarMargin`}>
                 <div style={{textAlign: 'center', width: '100%', marginTop: 60}}>
                     <img src={logoICV} height={100} alt="" />
                     <p style={{marginTop: 0, fontSize: 6.5, textDecoration: 'underline'}}> <strong>INGENIERÍA CIVIL VICENTE</strong> </p>
@@ -49,8 +45,8 @@ const LoginPage = () => {
                     </div>
                 </Hidden>
                 <Hidden smDown>
-                    <div style={{float: 'left', width: '50%', height: '100vh', display: 'block'}}>
-                        <img src={imageBackground} style={{objectFit: 'cover', width: '100%', height: '100%'}}/>
+                    <div className='loginBacgroundImage'>
+
                     </div>
                 </Hidden>
                 <Hidden mdUp>

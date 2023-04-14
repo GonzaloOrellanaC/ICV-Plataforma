@@ -20,7 +20,7 @@ import {
     MachinesPage, 
     WelcomePage, 
     ResetPasswordPage, 
-    DivisionsPage, 
+    /* DivisionsPage, */
     ReportsPage, 
     AlertPage, 
     InfoPage, 
@@ -46,7 +46,7 @@ import { Notifications } from 'react-push-notification';
 import { SocketConnection } from './connections'
 import { Close } from '@material-ui/icons'
 
-const errorLink = onError(({ graphQLErrors, networkError, response }) => {
+const errorLink = onError(({ networkError }) => {
     if (networkError?.statusCode === 401) {
     }else{
 
@@ -116,13 +116,13 @@ const OnApp = () => {
                 <Route exact path={['/', '/welcome']} render={() => (
                     <WelcomePage readyToLoad={readyToLoad} />
                 )}/>
-                <Route path={['/divisions']}>
+                {/* <Route path={['/divisions']}>
                     <Switch>
                         <Route exact path='/divisions'>
                             <DivisionsPage route={'divisions'}/>
                         </Route>
                     </Switch>
-                </Route>
+                </Route> */}
                 {(
                     localStorage.getItem('role') === ('admin') ||
                     (localStorage.getItem('role') === 'sapExecutive') ||

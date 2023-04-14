@@ -4,7 +4,6 @@ import { ArrowBackIos } from '@material-ui/icons'
 import { changeTypeUser, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
 import { usersRoutes } from '../../routes'
-import { imageDatabase } from '../../indexedDB'
 
 const UserProfilePage = ({route}) => {
     const [userData, setUserData ] = useState();
@@ -12,20 +11,22 @@ const UserProfilePage = ({route}) => {
     const classes = useStylesTheme();
     const history = useHistory();
 
-
     useEffect(() => {
         const _id = localStorage.getItem('_id');
         if(navigator.onLine) {
             usersRoutes.getAllUsers().then(async users => {
                 let usersList = new Array();
                 usersList = users.data;
-                let me = usersList.filter(u => {if(u._id === _id){return u}});
-                if(!me[0].imageUrl) {
-                    me[0].imageUrl = '../assets/no-profile-image.png'
+                if(usersList) {
+                    let me = usersList.filter(u => {if(u._id === _id){return u}});
+                    console.log(me)
+                    if(!me[0].imageUrl) {
+                        me[0].imageUrl = '../assets/no-profile-image.png'
+                    }
+                    setUserData(me[0]);
+                    let list = usersList.filter(u => {if((u._id != _id)&&(u.role != 'admin')){return u}});
+                    setUsers(list);
                 }
-                setUserData(me[0]);
-                let list = usersList.filter(u => {if((u._id != _id)&&(u.role != 'admin')){return u}});
-                setUsers(list);
             })
         }else{
             setTimeout(() => {
@@ -35,12 +36,11 @@ const UserProfilePage = ({route}) => {
         }
     }, [])
     
-
     return (
         <Box height='100%'>
-            <Grid className={classes.pageRoot} container spacing={0}>
+            <Grid className={'pageRoot'} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
-                    <Card elevation={0} className={classes.pageCard}>
+                    <Card elevation={0} className={'pageCard'}>
                         <Grid container alignItems='center' justifyContent='center'>
                             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>

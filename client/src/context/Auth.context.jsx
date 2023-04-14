@@ -1,7 +1,7 @@
 import { useLazyQuery } from '@apollo/client'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { UsersGraphQL } from '../graphql'
-import { authRoutes } from '../routes'
+import { authRoutes, sitesRoutes } from '../routes'
 
 const AuthContext = createContext()
 
@@ -164,7 +164,8 @@ export const AuthProvider = (props) => {
         login: (email, password) => {
             return new Promise(resolve => {
                 authRoutes.login(email, password)
-                .then(response => {
+                .then(async response => {
+                    console.log(response)
                     let userDataToSave = response.data
                     if(response.data.enabled) {
                         localStorage.setItem('email', userDataToSave.email)
@@ -206,7 +207,13 @@ export const AuthProvider = (props) => {
                         }
                         
                         if(userDataToSave.sites) {
-                            localStorage.setItem('sitio', userDataToSave.sites)
+                            if (userDataToSave.obras) {
+                                const response = await sitesRoutes.getSiteById(userDataToSave.obras[0])
+                                console.log(response.data)
+                                localStorage.setItem('sitio', JSON.stringify(response.data.data))
+                            } else {
+                                localStorage.setItem('sitio', userDataToSave.sites)
+                            }
                         }
                         localStorage.setItem('isauthenticated', true)
                         setIsAuthenticated(true)

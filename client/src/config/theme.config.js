@@ -1,7 +1,6 @@
 /* Material UI */
 import { createTheme, makeStyles } from '@material-ui/core'
 import { esES } from '@material-ui/core/locale'
-import backgroundimg from '../assets/slider_home_01.jpg'
 
 export const theme = createTheme({
     palette: {
@@ -74,11 +73,11 @@ if (window.matchMedia("(min-width: 660px)").matches) {
 }
 
 export const useStylesTheme = makeStyles(theme => ({
-    pageRoot: {
+    /* pageRoot: {
         height: '90%',
         fontFamily:'Raleway',
         marginTop: 70
-    },
+    }, */
     pageContainer: {
         //height: '100%',
         //maxHeight: 'calc(100vh - 90px)',
@@ -86,32 +85,29 @@ export const useStylesTheme = makeStyles(theme => ({
             padding: 0
         }
     },
-    pageCard: {
+    /* pageCard: {
         marginLeft: marginLeftPageCard,
-        //height: '90vh',
-        //backgroundColor: 'rgba(255,255,255, 0.8)',
         fontFamily:'Raleway',
         borderRadius: 0,
         boxShadow: 'none',
         padding: 20,
         overflowY: 'auto'
-    },
-    pageTitle: {
+    }, */
+    /* pageTitle: {
         padding: '40px 0px',
         textAlign: 'center',
         textTransform: 'uppercase',
-        // fontWeight: 'bold',
         fontSize: '1.5rem',
         color: theme.palette.primary.main
-    },
+    }, */
     backDrop: {
         zIndex: theme.zIndex.drawer - 1,
         marginTop: 90,
         color: '#fff'
     },
-    noNavBarMargin: {
+    /* noNavBarMargin: {
         marginLeft: 0
-    }
+    } */
 }))
 
 let width;

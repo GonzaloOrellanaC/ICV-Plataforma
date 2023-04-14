@@ -12,7 +12,7 @@ const RestorePasswordPage = () => {
     const classes = useStylesTheme()
     const addCard = () => {
         return (
-            <Card elevation={0} className={clsx(classes.pageCard, classes.noNavBarMargin)}>
+            <Card elevation={0} className={clsx('pageCard', classes.noNavBarMargin)}>
                 <div style={{textAlign: 'center', width: '100%', marginTop: 60}}>
                     <img src={logoICV} height={100} alt="" />
                     <p style={{marginTop: 0, fontSize: 6.5, textDecoration: 'underline'}}> <strong>INGENIERÍA CIVIL VICENTE</strong> </p>

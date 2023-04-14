@@ -25,7 +25,7 @@ const RolesPage = ({route}) => {
         <Box height='100%'>
             <Grid className='root' container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
-                    <Card elevation={0} className={classes.pageCard}>
+                    <Card elevation={0} className={'pageCard'}>
                         <Grid container alignItems='center' justifyContent='center'>
                             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>

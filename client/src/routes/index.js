@@ -11,6 +11,7 @@ import internalMessagesRoutes from './internal-messages.routes'
 import pdfMakeRoutes from './pdf-make.routes'
 import notificationsRoutes from './notifications.routes'
 import patternsRoutes from './patterns.routes'
+import sitesRoutes from './sites.routes'
 
 export {
     authRoutes,
@@ -25,5 +26,6 @@ export {
     internalMessagesRoutes,
     pdfMakeRoutes,
     notificationsRoutes,
-    patternsRoutes
+    patternsRoutes,
+    sitesRoutes
 }

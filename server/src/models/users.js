@@ -72,6 +72,12 @@ const UsersSchema = new Schema({
         type: Schema.Types.Boolean,
         default: true
     },
+    obras: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Sites'
+        }
+    ],
     sign: {
         type: Schema.Types.String
     },

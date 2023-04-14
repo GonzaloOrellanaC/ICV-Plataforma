@@ -17,6 +17,7 @@ import InternalMessagesRoutes from './internal-messages.routes'
 import PdfMakerRoutes from './pdf-maker.routes'
 import NotificationsRoutes from './notifications.routes'
 import PatternsRoutes from './patterns.routes'
+import SitesRoutes from './sites.routes'
 
 const router = new Router()
 
@@ -36,5 +37,6 @@ router.use('/internalMessagesData', InternalMessagesRoutes)
 router.use('/pdf-maker', PdfMakerRoutes)
 router.use('/notifications', NotificationsRoutes)
 router.use('/patterns', PatternsRoutes)
+router.use('/sites', SitesRoutes)
 
 export default router

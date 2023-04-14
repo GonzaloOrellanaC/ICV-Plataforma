@@ -37,6 +37,8 @@ const ReportsPage = () => {
     }, [])
     useEffect(() => {
         console.log(list)
+        if (list)
+        initReadList(list)
     }, [list])
     useEffect(() => {
         console.log(totalItems)
@@ -240,8 +242,6 @@ const ReportsPage = () => {
                             }
                             if(i == (lista.length - 1)) {
                                 setList(l)
-                                console.log(list.length)
-                                setTotalItems(list.length)
                                 let li = l.sort((a, b) => {
                                     if (Number(a.idIndex) > Number(b.idIndex)) {
                                         return -1
@@ -251,7 +251,7 @@ const ReportsPage = () => {
                                     }
                                     return 0
                                     })
-                                initReadList(li)
+                                /* initReadList(li) */
                             } 
                         })
                     }
@@ -272,12 +272,11 @@ const ReportsPage = () => {
             }
             if (i === ((rowsPerPage+(0*rowsPerPage)) - 1)) {
                 const listaCache = [...lista]
-                console.log(listaCache)
                 const nuevaLista = listaCache.sort((a, b) => {
                     return b.idIndex - a.idIndex
                 })
                 setListToShow(nuevaLista)
-                /* setTotalItems(nuevaLista.length) */
+                setTotalItems(nuevaLista.length)
             }
         }
     }
@@ -295,7 +294,7 @@ const ReportsPage = () => {
                 const nuevaLista = listaCache.sort((a, b) => {
                     return b.idIndex - a.idIndex
                 })
-                setListToShow(nuevaLista)
+                /* setListToShow(nuevaLista) */
                 /* setTotalItems(nuevaLista.length) */
             }
         }
@@ -310,7 +309,7 @@ const ReportsPage = () => {
                 lista.push(list[i])
             }
             if (i === ((parseInt(event.target.value, 10) + (page*parseInt(event.target.value, 10))) - 1)) {
-                setListToShow(lista)
+                /* setListToShow(lista) */
             }
         }
     }

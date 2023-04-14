@@ -12,6 +12,7 @@ router.get('/getSites', ApiIcv.readSites)
 router.get('/getPautas', ApiIcv.leerPautas)
 router.post('/getHeaderPauta', ApiIcv.getHeaderPauta)
 router.post('/getStructsPauta', ApiIcv.getStructsPauta)
+router.get('/sincronizar', ApiIcv.sincronizar)
 //router.post('/getMachines', ApiIcv.readMachines)
 
 export default router
