@@ -92,7 +92,7 @@ export const AuthProvider = (props) => {
             return new Promise(resolve => {
                 console.log(rut)
                 authRoutes.loginRut(rut, password)
-                .then(response => {
+                .then(async response => {
                     let userDataToSave = response.data
                     console.log(userDataToSave)
                     if(response.data.enabled) {
@@ -136,7 +136,13 @@ export const AuthProvider = (props) => {
                             }
                         }
                         if(userDataToSave.sites) {
-                            localStorage.setItem('sitio', userDataToSave.sites)
+                            if (userDataToSave.obras) {
+                                const response = await sitesRoutes.getSiteById(userDataToSave.obras[0])
+                                console.log(response.data)
+                                localStorage.setItem('sitio', JSON.stringify(response.data.data))
+                            } else {
+                                localStorage.setItem('sitio', userDataToSave.sites)
+                            }
                         }
                         localStorage.setItem('isauthenticated', true)
                         setIsAuthenticated(true)
