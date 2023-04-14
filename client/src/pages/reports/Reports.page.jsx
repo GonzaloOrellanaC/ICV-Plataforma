@@ -39,6 +39,7 @@ const ReportsPage = () => {
         console.log(list)
         if (list)
         initReadList(list)
+        setTotalItems(list.length)
     }, [list])
     useEffect(() => {
         console.log(totalItems)
@@ -283,7 +284,11 @@ const ReportsPage = () => {
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
+        console.log(newPage)
         let lista = []
+        /* list.forEach((element, index) => {
+            if (index )
+        }) */
         for (let i = (newPage*rowsPerPage); i < (rowsPerPage+(newPage*rowsPerPage)); i++) {
             if (list[i]) {
                 lista.push(list[i])
@@ -294,7 +299,8 @@ const ReportsPage = () => {
                 const nuevaLista = listaCache.sort((a, b) => {
                     return b.idIndex - a.idIndex
                 })
-                /* setListToShow(nuevaLista) */
+                setListToShow(nuevaLista)
+                console.log(nuevaLista)
                 /* setTotalItems(nuevaLista.length) */
             }
         }

@@ -75,7 +75,7 @@ const UsersSchema = new Schema({
     obras: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Sites'
+            ref: 'Site'
         }
     ],
     sign: {

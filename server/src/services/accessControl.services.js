@@ -47,6 +47,9 @@ const initAccessControl = async () => {
                 } else if ((JSON.parse(user.sites)).idobra === '0370') {
                     user.obras = ['641c8e48c58d0f4c9485debd']
                     await Users.findByIdAndUpdate(user._id, user)
+                } else {
+                    user.obras = [(JSON.parse(user.sites))._id]
+                    await Users.findByIdAndUpdate(user._id, user)
                 }
             }
         })

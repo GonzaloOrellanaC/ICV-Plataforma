@@ -1,12 +1,15 @@
 import { AuthProvider, useAuth } from './Auth.context'
 import { LanguageProvider, useLanguage } from './Language.context'
 import { NavigationProvider, useNavigation } from './Navigation.context'
+import { ReportsProvider, useReportsContext } from './Reports.context'
 
 export {
     AuthProvider,
     LanguageProvider,
     NavigationProvider,
+    ReportsProvider,
     useAuth,
     useLanguage,
-    useNavigation
+    useNavigation,
+    useReportsContext
 }

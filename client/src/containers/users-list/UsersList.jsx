@@ -3,7 +3,7 @@ import { Toolbar, ListItem, IconButton, Grid } from "@material-ui/core";
 import { faInfoCircle, faPen, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, useHistory } from 'react-router-dom';
-import { usersRoutes } from '../../routes';
+import { sitesRoutes, usersRoutes } from '../../routes';
 import { changeTypeUser } from '../../config';
 import { UserListDataModal } from '../../modals'
 import { LoadingPage } from "../../pages";
@@ -43,19 +43,59 @@ const UsersList = ({height, hableButton}) => {
     }
 
     useEffect(() => {
-        let cancel = true;
+        init()
+        /* let cancel = true;
         if(cancel) {
             usersRoutes.getAllUsers().then(users=> {
                 console.log(users)
                 if(cancel) {
-                    setUsuarios(users.data)
-                    setUsuariosCache(users.data)
+                    let userList = users.data
+                    userList.forEach((user) => {
+                        user.obrasList = []
+                        if (user.obras) {
+                            user.obras.forEach(async (obraId) => {
+                                const obra = await sitesRoutes.getSiteById(obraId)
+                                user.obrasList.push(obra.data.data)
+                            })
+                        }
+                    })
+                    setUsuarios(userList)
+                    setUsuariosCache(userList)
                 }
             }) 
             localStorage.removeItem('userDataToSave');
         }
-        return () => {cancel = false}
+        return () => {cancel = false} */
     }, []);
+
+    const init = async () => {
+        console.log('Iniciando consulta de usuarios')
+        const response = await usersRoutes.getAllUsers()
+        if (response) {
+            const users = response.data
+            setUsuarios(users)
+            setUsuariosCache(users)
+            /* users.forEach((user, index) => {
+                user.obrasList = []
+                if (user.obras) {
+                    user.obras.forEach(async (obraId) => {
+                        const obra = await sitesRoutes.getSiteById(obraId)
+                        user.obrasList.push(obra.data.data)
+                    })
+                }
+                if (index === (users.length - 1)) {
+                    setTimeout(() => {
+                        setUsuarios(users)
+                    setUsuariosCache(users)
+                    }, 1000);
+                }
+            }) */
+        }
+    }
+
+    useEffect(() => {
+        console.log(usuarios)
+    },[usuarios])
 
 
     const readAllUsers = () => {
@@ -213,7 +253,7 @@ const UsersList = ({height, hableButton}) => {
                             <LoadingPage />
                         }
                         {
-                            usuarios.map((e, n) => {
+                            (usuarios.length > 0) && usuarios.map((e, n) => {
                                 return(
                                     <ListItem key={n} style={well}>
                                         <div style={{width: '5%', marginLeft: 5, fontSize: 12 }}>
@@ -246,7 +286,7 @@ const UsersList = ({height, hableButton}) => {
                                             }
                                         </div>
                                         <div style={{width: '15%', marginLeft: 5, fontSize: 12 }}>
-                                            {e.sites && (JSON.parse(e.sites)).descripcion}
+                                            {(e.obras && e.obras[0]) ? e.obras[0].descripcion : ''}
                                         </div>
                                         <div style={{width: '10%', marginLeft: 5, fontSize: 12 }}>
                                             {

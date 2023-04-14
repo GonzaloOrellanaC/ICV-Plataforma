@@ -88,11 +88,14 @@ const findByRole = async  (req, res, next) => {
     
 }
 
-const readAllUsers = (req, res, next) => {
+const readAllUsers = async (req, res, next) => {
     try {
-        Users.find({}, (err, users) => {
+        const users = await Users.find().populate('obras')
+        console.log(users.length)
+        res.status(200).json(users)
+        /* Users.find({}, (err, users) => {
             res.json(users)
-        });
+        }); */
     } catch (err) {
 
     }
