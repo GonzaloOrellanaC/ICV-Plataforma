@@ -101,31 +101,29 @@ const readAllUsers = async (req, res, next) => {
     }
 }
 
-const getMantenedores = (req, res, next) => {
+const getMantenedores = async (req, res, next) => {
     try {
-        Users.find({$or : [{role:'maintenceOperator'}, {roles:'maintenceOperator'}]}, (err, users) => {
+        /* Users.find({$or : [{role:'maintenceOperator'}, {roles:'maintenceOperator'}]}, (err, users) => {
             res.json(users)
-            /* Users.find({roles:'maintenceOperator'}, (err, users2) => {
-                console.log(users2)
-                userList.concat(users2)
-                console.log(userList)
-                res.json(userList)
-            }) */
-        })
+        }) */
+        const users = await Users.find({$or : [{role:'maintenceOperator'}, {roles:'maintenceOperator'}]}).populate('obras')
+        res.status(200).json({data: users})
     } catch (err) {
 
     }
 }
 
-const getOperadores = (req, res, next) => {
+const getOperadores = async (req, res, next) => {
     try {
-        Users.find({$or : [{role:'inspectionWorker'}, {roles:'inspectionWorker'}]}, (err, users) => {
+        /* Users.find({$or : [{role:'inspectionWorker'}, {roles:'inspectionWorker'}]}, (err, users) => { */
         /* Users.find({role:'inspectionWorker'}, (err, users) => { */
-            res.json(users)
+            /* res.json(users) */
             /* Users.find({roles:'inspectionWorker'}, (err, users2) => {
                 res.json(userList.concat(users2))
             }) */
-        })
+        /* }) */
+        const users = await Users.find({$or : [{role:'inspectionWorker'}, {roles:'inspectionWorker'}]}).populate('obras')
+        res.status(200).json({data: users})
     } catch (err) {
 
     }

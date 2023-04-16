@@ -12,15 +12,23 @@ import { reportsRoutes, usersRoutes } from '../../routes';
 import { SocketConnection } from '../../connections';
 
 const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) => {
-    const [ operarios, setOperarios ] = useState([]);
+    const [ operarios, setOperarios ] = useState();
     const [ colorState, setColorState ] = useState();
     const { idIndex, guide, state, siteName, usersAssigned, site } = report;
     const [ stateAssignment , setStateAssignment ] = useState(false);
     const [ data, setData ] = useState('');
     const [ closeType, setCloseType ] = useState(false)
     const [ userAssigned, setUserAssigned ] = useState()
+    const [reading, setReading] = useState(true)
+    useEffect(() => {
+        if (open) {
+            getUsers();
+        }
+    },[open])
+    useEffect(() => {
+        console.log(operarios)
+    },[operarios])
     const setUserToReport = async (userId) => {
-
         if(userId === '') {
             let usersAssigned = new Array();
             usersAssigned[0] = userId;
@@ -90,8 +98,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         if(reportType === 'Inspección') {
             hableUser === 'inspectionWorker'
             usersRoutes.getOperadores().then(response => {
-                console.log(response)
-                response.data.sort((a, b) => {
+                const users = response.data.data.sort((a, b) => {
                     if (a.name < b.name) {
                       return -1;
                     }
@@ -100,19 +107,18 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                     }
                     return 0;
                 });
-                const users = response.data
                 const usersFiltered = users.filter(user => {
-                    if (JSON.parse(user.sites).idobra === site) {
+                    if (user.obras[0].idobra === site) {
                         return user
                     }
                 })
                 setOperarios(usersFiltered)
+                setReading(false)
             })
         }else if(reportType === 'Mantención') {
             hableUser === 'maintenceOperator'
-            usersRoutes.getMantenedores().then(response => {
-                console.log(response.data)
-                response.data.sort((a, b) => {
+            usersRoutes.getMantenedores().then(response => {                
+                const users = response.data.data.sort((a, b) => {
                     if (a.name < b.name) {
                       return -1;
                     }
@@ -121,13 +127,13 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                     }
                     return 0;
                 });
-                const users = response.data
                 const usersFiltered = users.filter(user => {
-                    if (JSON.parse(user.sites).idobra === site) {
+                    if (user.obras[0].idobra === site) {
                         return user
                     }
                 })
                 setOperarios(usersFiltered)
+                setReading(false)
             })
         }
     }
@@ -136,7 +142,6 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         console.log(report)
         setUserAssigned(usersAssigned[0])
         setCloseType(false)
-        getUsers();
         if(state === 'Asignar') {
             setColorState('#DE4343');
         }else if(state === 'En proceso') {
@@ -194,10 +199,10 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                 <div style={{width: '100%', height: 59}}>
                 <label>Asignar Pauta a:</label>
                 <br />
-                <select value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value); setCloseType(true)}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
-                    <option value={""}>Seleccionar operario</option>
+                <select disabled={reading} value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value); setCloseType(true)}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
+                    <option value={""}>{reading ? 'Leyendo operarios. Espere...' : 'Seleccionar operario'}</option>
                     {
-                        operarios.map((user, i) => {
+                        operarios && operarios.map((user, i) => {
                             return(
                                 <option key={i} value={user._id}>{`${user.name} ${user.lastName}`}</option>
                             )

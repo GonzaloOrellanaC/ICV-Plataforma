@@ -227,34 +227,39 @@ const ReportsPage = () => {
                         setVista(false)
                         let l = []
                         if (lista)
-                        if (lista.length > 0)
-                        lista.forEach(async (item, i) => {
-                            item.date = dateSimple(item.datePrev)
-                            item.end = dateSimple(item.endReport)
-                            item.init = dateSimple(item.dateInit)
-                            machinesRoutes.getMachineByEquid(item.machine).then(data => {
-                                item.hourMeter = (Number(data.data[0].hourMeter)/3600000)
+                        if (lista.length > 0) {
+                            lista.forEach(async (item, i) => {
+                                item.date = dateSimple(item.datePrev)
+                                item.end = dateSimple(item.endReport)
+                                item.init = dateSimple(item.dateInit)
+                                machinesRoutes.getMachineByEquid(item.machine).then(data => {
+                                    item.hourMeter = (Number(data.data[0].hourMeter)/3600000)
+                                })
+                                let data = await getMachineTypeByEquid(item.machine)
+                                if (data) {
+                                    item.number = data.number
+                                    item.model = data.model
+                                    l.push(item)
+                                }
+                                if(i == (lista.length - 1)) {
+                                    setList(l)
+                                    let li = l.sort((a, b) => {
+                                        if (Number(a.idIndex) > Number(b.idIndex)) {
+                                            return -1
+                                        }
+                                        if (Number(a.idIndex) < Number(b.idIndex)) {
+                                            return 1
+                                        }
+                                        return 0
+                                        })
+                                    /* initReadList(li) */
+                                } 
                             })
-                            let data = await getMachineTypeByEquid(item.machine)
-                            if (data) {
-                                item.number = data.number
-                                item.model = data.model
-                                l.push(item)
-                            }
-                            if(i == (lista.length - 1)) {
-                                setList(l)
-                                let li = l.sort((a, b) => {
-                                    if (Number(a.idIndex) > Number(b.idIndex)) {
-                                        return -1
-                                    }
-                                    if (Number(a.idIndex) < Number(b.idIndex)) {
-                                        return 1
-                                    }
-                                    return 0
-                                    })
-                                /* initReadList(li) */
-                            } 
-                        })
+                        } else {
+                            setListToShow([])
+                            setRowsPerPage(10)
+                            setTotalItems(0)
+                        }
                     }
                 })
             }
@@ -315,7 +320,7 @@ const ReportsPage = () => {
                 lista.push(list[i])
             }
             if (i === ((parseInt(event.target.value, 10) + (page*parseInt(event.target.value, 10))) - 1)) {
-                /* setListToShow(lista) */
+                setListToShow(lista)
             }
         }
     }
