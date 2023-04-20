@@ -17,13 +17,13 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
 
     const [ userData, setUserData ] = useState()
     /* const [ userType, setUserType ] = useState(''); */
-    const [ obra, setObra ] = useState('')
+    /* const [ obra, setObra ] = useState('') */
     const [ permisosReportes, setPermisosReportes ] = useState([]);
     const [ permisosUsuarios, setPermisosUsuarios ] = useState([]);
 
     useEffect(() => {
         setUserData(JSON.parse(localStorage.getItem('userDataToSave')))
-        setObra(JSON.parse(JSON.parse(localStorage.getItem('userDataToSave')).sites).descripcion)
+        /* setObra(JSON.parse(JSON.parse(localStorage.getItem('userDataToSave')).sites).descripcion) */
         /* getPermisos(); */
         /* renameUserType(); */
     }, []);
@@ -135,7 +135,7 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
 
                                     <div style={{width: '100%', marginBottom: 15}}>
                                         <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Obra</p>
-                                        <p style={{margin: 0, fontSize: 16}}>{obra}</p>
+                                        <p style={{margin: 0, fontSize: 16}}>{/* obra */}</p>
                                     </div>
 
                                     <div style={{width: '100%', marginBottom: 15}}>

@@ -13,7 +13,9 @@ export const changeTypeUser = (userType) => {
         return 'Jefe de turno - Inspección y Mantención'
     }else if(userType === 'chiefMachinery') {
         return 'Jefe de maquinaria'
-    } 
+    }else if(userType === 'observer') {
+        return 'Observador'
+    }
 }
 
 export const returnTypeUser = (userType) => {

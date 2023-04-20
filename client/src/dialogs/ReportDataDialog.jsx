@@ -54,12 +54,15 @@ const ReportDataDialog = (
     ) 
       {
         setCanEdit(true)
+      } else {
+        setCanEdit(false)
       }
     gruposKeys.map((k, n) => {
       if(k.data === indexGroup) {
         setIndexKey(n)
       }
     })
+    if (executionReport)
     if(executionReport.astList) {
       setAstList(executionReport.astList)
     }
@@ -177,13 +180,27 @@ const ReportDataDialog = (
   const saveItem = (index, state, item) => {
     item.messages = messages
     setIsEdited(false)
-    item.unidadData = unidad
-    if(messages.length > 0) {
-      save(index, state, item)
-      executionReport.offLineGuard = Date.now()
-      handleClose()
-    }else{
-      alert('Debe dejar un comentario')
+    if (item.unidad !== '*') {
+      if (unidad) {
+        item.unidadData = unidad
+        /* if(messages.length > 0) { */
+        save(index, state, item)
+        executionReport.offLineGuard = Date.now()
+        handleClose()
+        /* }else{
+          alert('Debe dejar un comentario')
+        } */
+      } else {
+        alert('Debe ingresar el total utilizado. Si no utilizó insumo o repuesto solicitado debe ingresar 0')
+      }
+    } else {
+      if(messages.length > 0) {
+        save(index, state, item)
+        executionReport.offLineGuard = Date.now()
+        handleClose()
+      }else{
+        alert('Debe dejar un comentario')
+      }
     }
   }
 
@@ -297,7 +314,14 @@ const ReportDataDialog = (
           <Grid item xl={3}>
             <div style={{marginLeft: 24, marginBottom: 16}}>
               <h3>Total utilizado</h3>
-              <TextField id="standard-basic" label={item.unidad} variant="standard" type='number' value={unidad} onChange={(e)=>{changeUnidad(e.target.value)}}/>
+              <TextField
+                id="standard-basic"
+                label={item.unidad}
+                variant="standard"
+                type='number'
+                value={unidad}
+                onChange={(e)=>{changeUnidad(e.target.value)}}
+              />
             </div>
           </Grid>
           <Grid item xl={2} lg={2} md={2} sm={2}>
@@ -323,6 +347,11 @@ const ReportDataDialog = (
         <div style={{paddingLeft: 24, paddingRight: 24, marginBottom: 50}}>
           <div style={{width: '100%', height: 250, borderWidth: 2, borderStyle: 'solid', borderColor: '#ccc', borderRadius: 20, position: 'relative'}}>
             <div id='commits' style={{width: '100%', height: 190, overflowY: 'auto', scrollBehavior: 'smooth'/* borderWidth: 2, borderStyle: 'solid', borderColor: '#ccc', borderRadius: 20 */}}>
+              {
+                (messages.length === 0)
+                &&
+                <p>No hay mensajes</p>
+              }
               {
                 messages.map((message, index) => {
                   console.log(message)
@@ -355,32 +384,31 @@ const ReportDataDialog = (
             </div>
             <div style={{width: '100%', height: 50, borderTopWidth: 2, borderTopStyle: 'solid', borderTopColor: '#ccc', position: 'absolute', bottom: 0, left: 0, paddingLeft: 10, paddingRight: 10}}>
               <form>
-                <div style={{width: '70%', float: 'left'}}>
+                {canEdit && <div style={{width: '70%', float: 'left'}}>
                   {
                     !isMobile && <textarea disabled={!canEdit} value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onChange={(e) => {inputMessage(e.target.value)}}/>
                   }
                   {
                     isMobile && <textarea disabled={!canEdit} id="mobileTextArea" value={message} placeholder='Ingrese comentarios' type="text" style={{width: '100%', borderColor: 'transparent', resize: 'none'}} onChange={(e) => {console.log(e.target.value)}} onClick={()=>{setOpenInputTextDialog(true); document.getElementById('mobileTextArea').blur()}} />
                   }
-                </div>
+                </div>}
                 <div style={{width: '30%', float: 'right', textAlign: 'right'}}>
-                  <IconButton onClick={() => {upImage(); setAst(false)}}>
+                  {canEdit && <IconButton onClick={() => {upImage(); setAst(false)}}>
                     <FontAwesomeIcon icon={faImage} />
-                  </IconButton>
-                  <IconButton onClick={() => saveMessage()}>
+                  </IconButton>}
+                  {canEdit && <IconButton onClick={() => saveMessage()}>
                     <FontAwesomeIcon icon={faArrowRight} />
-                  </IconButton>
+                  </IconButton>}
                   <input autoComplete="off" type="file" id="foto" accept="image/x-png,image/jpeg" onChange={(e)=>{uploadImageReport(e.target.files[0])}} hidden />
                 </div>
               </form>
             </div>
           </div>
         </div>
-        <DialogActions style={{minWidth: 400}}>
+        {canEdit && <DialogActions style={{minWidth: 400}}>
           <Button style={{backgroundColor: '#D5CC41', color: '#fff'}} onClick={() => {saveItem(index, false, item)}}>Guardar sin ejecutar</Button>
           <Button style={{backgroundColor: '#9ACF26', color: '#fff'}} onClick={() => {saveItem(index, true, item)}}>Guardar ejecutado</Button>
-          {/* {item.isChecked && <Button style={{backgroundColor: 'red', color: '#fff'}} onClick={() => {desmarcar(item)}}>Desmarcar</Button>} */}
-        </DialogActions>
+        </DialogActions>}
         {
           openImageDialog && <ImageDialog open={openImageDialog} image={imagePreview} handleClose={handleCloseImage}/>
         }

@@ -72,7 +72,7 @@ const UserProfilePage = ({route}) => {
                                             <h3>{userData.rut}</h3>
                                             <h3>{userData.email}</h3>
                                             <h3>+56{userData.phone}</h3>
-                                            <h3>{(JSON.parse(userData.sites)).idobra} - {(JSON.parse(userData.sites)).descripcion}</h3>
+                                            <h3>{userData.sites ? userData.sites(JSON.parse(userData.sites)).idobra : ''} - {userData.sites ? (JSON.parse(userData.sites)).descripcion : ''}</h3>
                                             <div style={{width: '100%', textAlign: 'center'}}>
                                                 <div style={{width: 200, height: 200}}>
                                                     <h3>Firma</h3>

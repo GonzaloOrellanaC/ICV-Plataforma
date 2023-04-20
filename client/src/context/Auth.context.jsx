@@ -3,41 +3,44 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { UsersGraphQL } from '../graphql'
 import { authRoutes, sitesRoutes } from '../routes'
 
-const AuthContext = createContext()
+export const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
     const defaultAuthenticated  = Boolean(window.localStorage.getItem('isauthenticated'))
     const defaultAdmin = Boolean(window.localStorage.getItem('isAdmin'));
     const [ isAuthenticated, setIsAuthenticated ] = useState(defaultAuthenticated || false)
-    const [ getSelf, { loading, error, data } ] = useLazyQuery(UsersGraphQL.query.GET_SELF)
+    /* const [ getSelf, { loading, error , data } ] = useLazyQuery(UsersGraphQL.query.GET_SELF) */
     const [ userData, setUserData ] = useState({});
     const [ admin, setAdmin ] = useState(defaultAdmin || false);
+    const [ roles, setRoles ] = useState([])
+    const [ sites, setSites ] = useState([])
 
-     useEffect(() => {
+/*      useEffect(() => {
         if (data?.self) {
+            console.log(data?.self)
             setUserData(data.self)
         }
         if(!data) {
 
         }
-    }, [data])
+    }, [data]) */
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (error) {
-            /* setIsAuthenticated(false)
-            window.localStorage.setItem('isauthenticated', false) */
+            setIsAuthenticated(false)
+            window.localStorage.setItem('isauthenticated', false)
         }
-    }, [error])
+    }, [error]) */
 
     useEffect(() => {
         console.log(isAuthenticated)
     }, [isAuthenticated])
 
-    useEffect(() => {
+    /* useEffect(() => {
         getSelf()
-    }, [])
+    }, []) */
 
-    const guardarDatos = (userDataToSave) => {
+    /* const guardarDatos = (userDataToSave) => {
         localStorage.setItem('email', userDataToSave.email)
         localStorage.setItem('fullName', userDataToSave.fullName)
         localStorage.setItem('name', userDataToSave.name)
@@ -80,14 +83,21 @@ export const AuthProvider = (props) => {
         if(userDataToSave.sites) {
             localStorage.setItem('sitio', userDataToSave.sites)
         }
+    } */
+
+    const loginRut = async (rut, password) => {
+        const response = await authRoutes.loginRut(rut, password)
+
     }
 
     const provider = {
-        userData,
+        /* userData, */
         isAuthenticated,
-        loading,
-        error,
+        /* loading,
+        error, */
         admin,
+        roles,
+        sites,
         loginRut: (rut, password) => {
             return new Promise(resolve => {
                 console.log(rut)
@@ -103,6 +113,7 @@ export const AuthProvider = (props) => {
                         localStorage.setItem('_id', userDataToSave._id)
                         localStorage.setItem('role', userDataToSave.role)
                         localStorage.setItem('roles', JSON.stringify(userDataToSave.roles))
+                        setRoles(userDataToSave.roles)
                         if (userDataToSave.roles && userDataToSave.roles[0]) {
                             let roles = new Array
                             roles = userDataToSave.roles
@@ -135,7 +146,16 @@ export const AuthProvider = (props) => {
                                 setAdmin(false);
                             }
                         }
+                        /* setSites(userData.obras) */
                         if(userDataToSave.sites) {
+                            if (userDataToSave.obras) {
+                                const response = await sitesRoutes.getSiteById(userDataToSave.obras[0])
+                                console.log(response.data)
+                                localStorage.setItem('sitio', JSON.stringify(response.data.data))
+                            } else {
+                                localStorage.setItem('sitio', userDataToSave.sites)
+                            }
+                        } else {
                             if (userDataToSave.obras) {
                                 const response = await sitesRoutes.getSiteById(userDataToSave.obras[0])
                                 console.log(response.data)
@@ -181,6 +201,7 @@ export const AuthProvider = (props) => {
                         localStorage.setItem('_id', userDataToSave._id)
                         localStorage.setItem('role', userDataToSave.role)
                         localStorage.setItem('roles', JSON.stringify(userDataToSave.roles))
+                        setRoles(userDataToSave.roles)
                         let roles = new Array
                         roles = userDataToSave.roles
                         if (roles.length > 0) {
@@ -211,7 +232,7 @@ export const AuthProvider = (props) => {
                                 setAdmin(false);
                             }
                         }
-                        
+                        /* setSites(userData.obras) */
                         if(userDataToSave.sites) {
                             if (userDataToSave.obras) {
                                 const response = await sitesRoutes.getSiteById(userDataToSave.obras[0])

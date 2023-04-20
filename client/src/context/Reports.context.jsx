@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { AuthContext } from './Auth.context'
+import { reportsRoutes } from '../routes'
 
 const ReportsContext = createContext()
 
 export const ReportsProvider = (props) => {
-
+    const {admin, roles, sites} = useContext(AuthContext)
     const [reports, setReports] = useState([])
 
     useEffect(() => {
@@ -11,6 +13,14 @@ export const ReportsProvider = (props) => {
 
         }
     }, [reports])
+
+    const getReports = async () => {
+        if (admin) {
+            const response = await reportsRoutes.getAllReports()
+        } else {
+
+        }
+    }
 
     const provider = {
         reports,
