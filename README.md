@@ -49,7 +49,50 @@ Explicación de los npm scripts en package.json:
 - ```prestart```: script pre npm run start, el cual ejecuta npm install y el script de build:client
 - ```start```: inicia el servidor en produccion (se debe cambiar npm run start-dev en este script una vez se pase a producción)
 
+## Carpeta server
 
+Acá se debe crear un archivo ```.env```
+
+```properties
+STATE='development'
+NODE_ENV='development'
+# MongoDB Connection
+DB_URL='mongodb://localhost:27017/icvmantencion'
+#DB_URL='mongodb+srv://azure:CcqMmYgR6xqUN3x@cluster0.qtnw7.mongodb.net/mantencion?retryWrites=true&w=majority'
+# Port Server
+PORT=5001
+#Sentry
+SENTRY_DSN='https://85bd356928264d658825f95e5601c085@o939500.ingest.sentry.io/6390186'
+# SuperAdmin Test
+EMAIL='gonzalo.orellana@kauel.com'
+NOMBRE='ADMINISTRADOR'
+APELLIDO='PLATAFORMA'
+PASSWORD='kauelicv2021'
+# Storage Azure
+AZURE_ACCOUNT='icvmantencion'
+STORAGE_URL='https://icvmantencion.blob.core.windows.net'
+TOKEN_SAS_BLOB='sp=racwdli&st=2022-01-10T00:14:05Z&se=2022-01-10T08:14:05Z&spr=https&sv=2020-08-04&sr=c&sig=D8MVsycwMtEXXvscpnkpEussrqUujrbMUjplXCwU0HQ%3D'
+URL_SAS_BLOB='https://icvmantencion.blob.core.windows.net/plataforma-mantencion?sp=racwdli&st=2022-01-10T00:14:05Z&se=2022-01-10T08:14:05Z&spr=https&sv=2020-08-04&sr=c&sig=D8MVsycwMtEXXvscpnkpEussrqUujrbMUjplXCwU0HQ%3D'
+ACCESS_KEYS='DefaultEndpointsProtocol=https;AccountName=icvmantencion;AccountKey=cz+hJzm3PrM0bYun7IU1OjlFJH7xrHcrgqtI4pGxPBmyT0PEl/+fc+o32YKZRzYt68H/zrTFKJ3HyY+zk9eC0A==;EndpointSuffix=core.windows.net'
+REPORT_IMAGES_CONTAINER='reports-images'
+PDF_CONTAINER='pdf-dev'
+# API ICV
+ICV_URL='https://apmv2.icv.cl/api/apm/'
+ICV_API_TOKEN='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
+# Sandbox
+MAIL_KEY='faea6105f3ea3029c6b2b511c56e4bb7-b2f5ed24-0daf1a56'
+MAIL_DOMAIN='mantencion.icv.cl'
+MAIL_SENDER='postmaster@mantencion.icv.cl'
+# KEY
+JWT_KEY='secret1'
+RESET_KEY='secret2'
+# Mail Settings
+PLATFORM_NAME='ICV Plataforma Inspección y Mantenimiento'
+PLATFORM_LOGO_ROUTE='https://icvmantencion.blob.core.windows.net/plataforma-mantencion/assets/ICV.jpg'
+PLATFORM_LOGO_ALT='LOGO'
+PLATFORM_BASE_URL='https://icv-plataforma-mantencion.azurewebsites.net'
+ROUTE_RESET_PASS='/restore-password/'
+```
 
 # Actualizaciones
 <h3>Semana 16 y 17</h3>
