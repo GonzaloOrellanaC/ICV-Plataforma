@@ -11,6 +11,7 @@ import activitiesDatabase from './activities.database'
 import executionReportsDatabase from './executionReports.database'
 import machinesPartsDatabase from './machinesParts.database'
 import imageDatabase from './image.database'
+import userDatabase from './user.database'
 import readyToSendReportsDatabase from './readyToSendReports.database'
 
 export {
@@ -27,5 +28,6 @@ export {
     executionReportsDatabase,
     machinesPartsDatabase,
     imageDatabase,
-    readyToSendReportsDatabase
+    readyToSendReportsDatabase,
+    userDatabase
 }

@@ -474,11 +474,11 @@ const createMachinesToSend = async (pIDOBRA, isSync = false) => {
         try {
             const findMachine = await Machine.findOne({equid: machine.equid})
             if (findMachine) {
-                console.log(machine.idobra, findMachine.idobra)
+                /* console.log(machine.idobra, findMachine.idobra) */
                 if (machine.idobra === findMachine.idobra) {
-                    console.log('Pertenece a obra')
+                    /* console.log('Pertenece a obra') */
                 } else {
-                    console.log('no pertenece a obra')
+                    /* console.log('no pertenece a obra') */
                 }
                 /* console.log(findMachine)
                 await Machine.findOneAndUpdate({equid: machine.equid}, machine) */

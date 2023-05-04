@@ -1,7 +1,6 @@
-import { useLazyQuery } from '@apollo/client'
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { UsersGraphQL } from '../graphql'
 import { authRoutes, sitesRoutes } from '../routes'
+import { userDatabase } from '../indexedDB'
 
 export const AuthContext = createContext()
 
@@ -10,12 +9,15 @@ export const AuthProvider = (props) => {
     const defaultAdmin = Boolean(window.localStorage.getItem('isAdmin'));
     const [ isAuthenticated, setIsAuthenticated ] = useState(defaultAuthenticated || false)
     /* const [ getSelf, { loading, error , data } ] = useLazyQuery(UsersGraphQL.query.GET_SELF) */
-    const [ userData, setUserData ] = useState({});
+    const [ userData, setUserData ] = useState();
     const [ admin, setAdmin ] = useState(defaultAdmin || false);
     const [ roles, setRoles ] = useState([])
-    const [ sites, setSites ] = useState([])
-
-/*      useEffect(() => {
+    const [ site, setSite ] = useState()
+    const [ isOperator, setIsOperator ] = useState(false)
+    const [ isSapExecutive, setIsSapExecutive ] = useState(false)
+    const [ isShiftManager, setIsShiftManager ] = useState(false)
+    const [ isChiefMachinery, setIsChiefMachinery ] = useState(false)
+    /*useEffect(() => {
         if (data?.self) {
             console.log(data?.self)
             setUserData(data.self)
@@ -33,8 +35,31 @@ export const AuthProvider = (props) => {
     }, [error]) */
 
     useEffect(() => {
-        console.log(isAuthenticated)
+        if (isAuthenticated) {
+            setIsOperator(Boolean(localStorage.getItem('isOperator')))
+            setSite(JSON.parse(window.localStorage.getItem('sitio')))
+            if (!userData) {
+                getUserDataFromIndexedDb()
+            }
+        }
     }, [isAuthenticated])
+
+    useEffect(() => {
+        if (userData) {
+            saveUserToDb()
+        }
+    },[userData])
+
+    const saveUserToDb = async () => {
+        const {database} = await userDatabase.initDb()
+        await userDatabase.actualizar(userData, database)
+    }
+
+    const getUserDataFromIndexedDb = async () => {
+        const {database} = await userDatabase.initDb()
+        const response = await userDatabase.consultar(database)
+        setUserData(response[0])
+    }
 
     /* useEffect(() => {
         getSelf()
@@ -91,20 +116,24 @@ export const AuthProvider = (props) => {
     }
 
     const provider = {
-        /* userData, */
+        userData,
         isAuthenticated,
         /* loading,
         error, */
         admin,
         roles,
-        sites,
+        site,
+        isOperator,
+        isSapExecutive,
+        isShiftManager,
+        isChiefMachinery,
         loginRut: (rut, password) => {
             return new Promise(resolve => {
                 console.log(rut)
                 authRoutes.loginRut(rut, password)
                 .then(async response => {
                     let userDataToSave = response.data
-                    console.log(userDataToSave)
+                    setUserData(userDataToSave)
                     if(response.data.enabled) {
                         localStorage.setItem('email', userDataToSave.email)
                         localStorage.setItem('fullName', userDataToSave.fullName)
@@ -124,12 +153,16 @@ export const AuthProvider = (props) => {
                                         setAdmin(true)
                                     }else if(rol === 'inspectionWorker' || rol === 'maintenceOperator') {
                                         localStorage.setItem('isOperator', true)
+                                        setIsOperator(true)
                                     }else if(rol === 'sapExecutive') {
                                         localStorage.setItem('isSapExecutive', true)
+                                        setIsSapExecutive(true)
                                     }else if(rol === 'shiftManager') {
                                         localStorage.setItem('isShiftManager', true)
+                                        setIsShiftManager(true)
                                     }else if(rol === 'chiefMachinery') {
                                         localStorage.setItem('isChiefMachinery', true)
+                                        setIsChiefMachinery(true)
                                     }else{
                                         localStorage.setItem('isAdmin', false);
                                         setAdmin(false);
@@ -191,8 +224,8 @@ export const AuthProvider = (props) => {
             return new Promise(resolve => {
                 authRoutes.login(email, password)
                 .then(async response => {
-                    console.log(response)
                     let userDataToSave = response.data
+                    setUserData(userDataToSave)
                     if(response.data.enabled) {
                         localStorage.setItem('email', userDataToSave.email)
                         localStorage.setItem('fullName', userDataToSave.fullName)

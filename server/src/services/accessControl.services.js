@@ -1,7 +1,7 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permission,Roles, Site, Machine, Users, Reports } from '../models';
+import { Permission,Roles, Site, Machine, Users, Reports, ExecutionReport } from '../models';
 import { ApiIcv } from '../api-icv';
 import apiIcvConnection from '../api-icv/api-icv.connection';
 import { isValidObjectId } from 'mongoose';
@@ -70,12 +70,22 @@ const initAccessControl = async () => {
             console.log('No se crea admin')
         }
         const reports = await Reports.find({})
+        /* const executionReports = await ExecutionReport.find()
+        executionReports.forEach(async (ex, i) => {
+            const execution = ex
+            execution.report = ex.reportId
+            execution.reportId = null
+            const executionCache = execution
+            await ExecutionReport.findByIdAndUpdate(executionCache._id, executionCache)
+
+        }) */
         reports.forEach(async (report, index) => {
-            if (report.site === '0369') {
+            /* if (report.site === '0369') {
                 await Reports.findByIdAndUpdate(report._id, {site: '0380'})
             } else if (report.site === '0370') {
                 await Reports.findByIdAndUpdate(report._id, {site: '0383'})
-            }
+            } */
+            /* await Reports.findByIdAndUpdate(report._id, report) */
         })
         if (!findRoles) {
             environment.roles.forEach(async (role, index) => {

@@ -334,12 +334,22 @@ const getReportsByUser = (req, res) => {
     }
 }
 
-const findMyAssignations = (req, res) => {
-    const { body } = req
+const findMyAssignations = async (req, res) => {
+    const { body: {site, userId} } = req
+    console.log(site, userId)
     try {
-        Reports.find({site: body.site, deleted: false, usersAssigned: [body.userId]}, (err, reports) => {
+        const response = await Reports.find({
+            site: site,
+            deleted: false,
+            usersAssigned: {
+                $in: [userId]
+            }
+        }).populate('usersAssigned').populate('createdBy').populate('updatedBy')
+        /* console.log(response) */
+        res.json(response)
+        /* Reports.find({site: body.site, deleted: false, usersAssigned: [body.userId]}, (err, reports) => {
             res.json(reports)
-        })
+        }) */
     } catch (err) {
 
     }

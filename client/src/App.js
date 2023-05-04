@@ -11,7 +11,7 @@ import { createUploadLink } from 'apollo-upload-client'
 import { CircularProgress, CssBaseline, IconButton, LinearProgress, ThemeProvider } from '@material-ui/core'
 import { theme, download3DFiles, detectExecutionState } from './config'
 import './App.css'
-import { AuthProvider, LanguageProvider, NavigationProvider, ReportsProvider, useAuth } from './context'
+import { AuthProvider, ConnectionProvider, ExecutionReportProvider, LanguageProvider, NavigationProvider, ReportsProvider, useAuth } from './context'
 import { Header, Navbar } from './containers'
 import { 
     AppliancePage, 
@@ -409,18 +409,22 @@ const App = () => {
         <Router>
             <Notifications />
             <ApolloProvider client={client}>
-                <AuthProvider>
-                    <LanguageProvider>
-                        <NavigationProvider>
-                            <ReportsProvider>
-                                <ThemeProvider theme={theme} >
-                                    <CssBaseline />
-                                    <OnApp />
-                                </ThemeProvider>
-                            </ReportsProvider>
-                        </NavigationProvider>
-                    </LanguageProvider>
-                </AuthProvider>
+                <ConnectionProvider>
+                    <AuthProvider>
+                        <LanguageProvider>
+                            <NavigationProvider>
+                                <ReportsProvider>
+                                    <ExecutionReportProvider>
+                                        <ThemeProvider theme={theme} >
+                                            <CssBaseline />
+                                            <OnApp />
+                                        </ThemeProvider>
+                                    </ExecutionReportProvider>
+                                </ReportsProvider>
+                            </NavigationProvider>
+                        </LanguageProvider>
+                    </AuthProvider>
+                </ConnectionProvider>
             </ApolloProvider>
         </Router>
     )

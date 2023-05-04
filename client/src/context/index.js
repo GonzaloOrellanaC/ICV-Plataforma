@@ -1,7 +1,13 @@
 import { AuthProvider, AuthContext, useAuth } from './Auth.context'
 import { LanguageProvider, useLanguage } from './Language.context'
 import { NavigationProvider, useNavigation } from './Navigation.context'
-import { ReportsProvider, useReportsContext } from './Reports.context'
+import { ReportsProvider, ReportsContext, useReportsContext } from './Reports.context'
+import { ExecutionReportContext, ExecutionReportProvider, useExecutionReportContext } from './Execution.context'
+import {
+    ConnectionContext,
+    ConnectionProvider,
+    useConnectionContext
+} from './Connection.context'
 
 export {
     AuthProvider,
@@ -9,8 +15,15 @@ export {
     LanguageProvider,
     NavigationProvider,
     ReportsProvider,
+    ReportsContext,
+    ExecutionReportProvider,
+    ExecutionReportContext,
     useAuth,
     useLanguage,
     useNavigation,
-    useReportsContext
+    useReportsContext,
+    useExecutionReportContext,
+    ConnectionContext,
+    ConnectionProvider,
+    useConnectionContext,
 }

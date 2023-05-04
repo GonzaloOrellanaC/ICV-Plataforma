@@ -7,13 +7,19 @@ const ReportShema = new Schema({
         type: Schema.Types.String
     },
     createdBy: {
-        type: Schema.Types.String
+        /* type: Schema.Types.String */
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     updatedBy: {
-        type: Schema.Types.String
+        /* type: Schema.Types.String */
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     shiftManagerApprovedBy: {
-        type: Schema.Types.String
+        /* type: Schema.Types.String */
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     shiftManagerApprovedDate: {
         type: Schema.Types.Date
@@ -22,7 +28,9 @@ const ReportShema = new Schema({
         type: Schema.Types.String
     },
     chiefMachineryApprovedBy: {
-        type: Schema.Types.String
+        /* type: Schema.Types.String */
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     chiefMachineryApprovedDate: {
         type: Schema.Types.Date
@@ -31,7 +39,9 @@ const ReportShema = new Schema({
         type: Schema.Types.String
     },
     sapExecutiveApprovedBy: {
-        type: Schema.Types.String
+        /* type: Schema.Types.String */
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     sapExecutiveApprovedDate: {
         type: Schema.Types.Date
@@ -43,9 +53,13 @@ const ReportShema = new Schema({
         type: Schema.Types.Boolean,
         default: true
     },
-    usersAssigned: {
-        type: Schema.Types.Array
-    },
+    usersAssigned: [
+        {
+            /* type: Schema.Types.Array */
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
     state: {
         type: Schema.Types.String
     },

@@ -24,9 +24,9 @@ export default () => {
 const getMyReports = (userId) => {
     const site = JSON.parse(localStorage.getItem('sitio'))
     return new Promise( resolve => {
-        reportsRoutes.findMyAssignations(userId, site.idobra).then(data => {
+        /* reportsRoutes.findMyAssignations(userId, site.idobra).then(data => {
             resolve(data.data)
-        })
+        }) */
     })
 }
 
