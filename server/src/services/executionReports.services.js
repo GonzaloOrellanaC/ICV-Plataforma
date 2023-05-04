@@ -1,11 +1,12 @@
 import { ExecutionReport, Reports } from "../models"
 import { AzureServices } from "."
 
-const getExecutionReportById = (req, res) => {
+const getExecutionReportById = async (req, res) => {
     const { body } = req
+    console.log(body.reportData._id)
 
     try{
-        ExecutionReport.find({reportId: body.reportData._id}, async (err, doc) => {
+        /* ExecutionReport.find({reportId: body.reportData._id}, async (err, doc) => {
             if(err) {
                 res.json({
                     state: false,
@@ -13,7 +14,10 @@ const getExecutionReportById = (req, res) => {
                 })
             }
             res.json(doc)
-        })
+        }) */
+        const executionReport = await ExecutionReport.find({report: body.reportData._id}).populate('report').populate('createdBy')
+        console.log(executionReport)
+        res.json(executionReport)
     }catch(err) {
         res.json(err);
     }

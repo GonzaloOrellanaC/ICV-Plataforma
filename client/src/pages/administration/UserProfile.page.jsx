@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { changeTypeUser, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
 import { usersRoutes } from '../../routes'
+import { AuthContext } from '../../context'
 
 const UserProfilePage = ({route}) => {
-    const [userData, setUserData ] = useState();
+    const {userData} = useContext(AuthContext)
+    /* const [userData, setUserData ] = useState(); */
     const [ users, setUsers ] = useState([])
     const classes = useStylesTheme();
     const history = useHistory();
@@ -18,12 +20,12 @@ const UserProfilePage = ({route}) => {
                 let usersList = new Array();
                 usersList = users.data;
                 if(usersList) {
-                    let me = usersList.filter(u => {if(u._id === _id){return u}});
+                    /* let me = usersList.filter(u => {if(u._id === _id){return u}});
                     console.log(me)
                     if(!me[0].imageUrl) {
                         me[0].imageUrl = '../assets/no-profile-image.png'
                     }
-                    setUserData(me[0]);
+                    setUserData(me[0]); */
                     let list = usersList.filter(u => {if((u._id != _id)&&(u.role != 'admin')){return u}});
                     setUsers(list);
                 }
@@ -72,7 +74,7 @@ const UserProfilePage = ({route}) => {
                                             <h3>{userData.rut}</h3>
                                             <h3>{userData.email}</h3>
                                             <h3>+56{userData.phone}</h3>
-                                            <h3>{(JSON.parse(userData.sites)).idobra} - {(JSON.parse(userData.sites)).descripcion}</h3>
+                                            <h3>{userData.sites ? (JSON.parse(userData.sites)).idobra : ''} - {userData.sites ? (JSON.parse(userData.sites)).descripcion : ''}</h3>
                                             <div style={{width: '100%', textAlign: 'center'}}>
                                                 <div style={{width: 200, height: 200}}>
                                                     <h3>Firma</h3>

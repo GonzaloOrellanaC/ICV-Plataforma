@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button, Modal, Fab } from '@material-ui/core'
 import { ArrowBackIos, Close } from '@material-ui/icons'
 import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, getMachineData, useStylesTheme, detectIf3DModelExist, translateSubSystem, styleModal3D, dateSimple, dateWithTime, saveExecutionReport } from '../../config'
@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock, faPaperPlane, faComment, faEye } from '@fortawesome/free-solid-svg-icons'
 import toPDF from '../../modals/pdf/toPDF'
 import PreviewModal from '../../modals/preview/Preview.modal'
+import { ExecutionReportContext } from '../../context'
 
 const ActivitiesDetailPage = () => {
     const classes = useStylesTheme()
@@ -22,6 +23,10 @@ const ActivitiesDetailPage = () => {
     const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
     const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
     const {id} = useParams()
+    const {executionReport, report, setReport, reportId, sapId, serieEquipo, modoTest, loading, setLoading} = useContext(ExecutionReportContext)
+    /* REPORTE */
+    /* const [reporte, setReporte] = useState() */
+    /*  */
     const [ pauta, setPauta ] = useState()
     const [ progress, resutProgress ] = useState(0)
     const [ itemProgress, resultThisItemProgress ] = useState(0)
@@ -30,7 +35,6 @@ const ActivitiesDetailPage = () => {
     const [ canEdit, setCanEdit ] = useState()
     const [ reportAssigned, setReportAssigned ] = useState()
     const [ openReportCommitModal, setOpenReportCommitModal ] = useState(false)
-    const [ loading, setLoading ] = useState(false)
     const [ loadingMessage, setLoadingMessage ] = useState(false)
     const [ indexGroup, setIndexGroup] = useState([])
     const [ loadingLogo, setLoadingLogo ] = useState(false)
@@ -67,14 +71,16 @@ const ActivitiesDetailPage = () => {
         }
         setLoadingLogo(true)
         if(navigator.onLine) {
-            initData()
+            /* initData() */
         }else{
             const db = await reportsDatabase.initDbReports()
             const {database} = db
             const list = await reportsDatabase.consultar(database)
             const reportFiltered = list.filter(item => {if(Number(item.idIndex) == id){return item}})
+            /* setReporte(reportFiltered) */
             let report = reportFiltered[0]
-            getPauta(report)
+            console.log(report)
+            /* getPauta(report) */
             if(!report.level) {
                 report.level = 0
             }
@@ -102,11 +108,15 @@ const ActivitiesDetailPage = () => {
         }
     }, [])
 
+    useEffect(() => {
+        console.log(pauta)
+    },[pauta])
+
     const initData = () => {
         reportsRoutes.getReportByIndex(id).then(r => {
             let report = r.data
-            console.log(report)
-            getPauta(report)
+            /* setReporte(report) */
+            /* getPauta(report) */
             if(!report.level) {
                 report.level = 0
             }
@@ -683,10 +693,13 @@ const ActivitiesDetailPage = () => {
                                     <div style={{marginTop: 20, padding: 20, backgroundColor: '#F9F9F9', borderRadius: 10, height: '71vh', overflowY: 'auto'}}>
                                         <div style={{textAlign: 'center', width: '100%'}}>
                                             <h2 style={{margin: 0}}>OT {id}</h2>
-                                            <p style={{margin: 0}}>Último guardado en dispositivo: {dateWithTime(ultimoGuardadoDispositivo)}</p>
+                                            <p style={{margin: 0}}>OM SAP: {sapId && sapId}</p>
+                                            <p style={{margin: 0}}>Serie Equipo: {serieEquipo && serieEquipo}</p>
+                                            {/* <p style={{margin: 0}}>OM SAP: {reporte && reporte.sapId}</p>
+                                            <p style={{margin: 0}}>Serie Equipo: {reporte && reporte.machine}</p> */}
                                             <p style={{margin: 0}}>Tipo de pauta: <strong>{pauta && pauta.typepm}</strong></p>
                                             <p style={{backgroundColor: 'red', color: 'white', marginBottom: 0}}><strong>{reportAssigned && reportAssigned.testMode ? 'Modo test' : ''}</strong></p>
-                                            {machineData && <p style={{margin: 0}}>Máquina: {machineData.brand}, modelo {machineData.model}, N°{machineData.equ}</p>}
+                                            {machineData && <p style={{margin: 0}}>Modelo Máquina {machineData.model}, N°{machineData.equ}</p>}
                                             <br />
                                             {habilite3D && <Button variant="contained" disabled={!habilite3D} style={{paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}} onClick={()=>{setOpen3D(true)}}><strong>3D</strong></Button>}
                                         </div>
@@ -706,10 +719,10 @@ const ActivitiesDetailPage = () => {
                                             <FontAwesomeIcon icon={faEye} style={{marginRight: 10}} /> Resumen Insumos/Materiales
                                         </Button>
                                         }
-                                        {(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') && <Button /* disabled={!canEdit}  */variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{syncData()}}>
+                                        {/* {(localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superAdmin') && <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{syncData()}}>
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Sincronizar
                                         </Button>
-                                        }
+                                        } */}
                                         {!(isOperator || (localStorage.getItem('role') === 'inspectionWorker')||(localStorage.getItem('role') === 'maintenceOperator')) && 
                                         <Button disabled={!canSendReport || !canRejectReport} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={()=>{rejectReport()}}>
                                             <Close />

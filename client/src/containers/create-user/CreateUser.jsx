@@ -62,7 +62,7 @@ const CreateUser = ({typeDisplay, uData}) => {
                 email: email,
                 phone: phone,
                 password: password,
-                sites: userSite,
+                obras: [userSite],
                 confirmPassword: confirmPassword,
                 createdBy: localStorage.getItem('_id'),
                 imageUrl: imageUrl
@@ -345,7 +345,7 @@ const CreateUser = ({typeDisplay, uData}) => {
                                         {
                                             sites.map((obra, index) => {
                                                 return(
-                                                    <option key={index} value={JSON.stringify(obra)}>{obra.descripcion}</option>
+                                                    <option key={index} value={obra._id}>{obra.descripcion}</option>
                                                 )
                                             })
                                         }

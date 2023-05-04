@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { 
     Box, 
     Modal,
@@ -16,8 +16,10 @@ import { LoadingLogoModal } from '../loadings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowCircleLeft, faArrowUp, faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useHistory } from 'react-router-dom';
+import { AuthContext } from '../../context';
 
 const ReviewReportModal = ({open, report, onlyClose}) => {
+    const {admin} = useContext(AuthContext)
     const [ colorState, setColorState ] = useState();
     const { idIndex, guide, state, siteName, usersAssigned, sapId } = report;
     const [ userAssignedName, setUserAssignedName ] = useState('')
@@ -211,9 +213,9 @@ const ReviewReportModal = ({open, report, onlyClose}) => {
                         </div>
                     </Grid>
                     <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
-                        <div style={{padding: 10}}>
+                        {admin && <div style={{padding: 10}}>
                             <button style={{ height: 50 , width: '100%', backgroundColor: 'red', color: '#fff', fontSize: 20 }} onClick={()=>{removeOt()}}> <strong> <FontAwesomeIcon icon={faTrash} /> Borrar OT {idIndex} </strong> </button>
-                        </div>
+                        </div>}
                     </Grid>
                 </Grid>
                 <Fab onClick={onlyClose} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>

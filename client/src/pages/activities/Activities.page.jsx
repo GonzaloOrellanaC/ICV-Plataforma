@@ -1,26 +1,30 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme, CircularProgress } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { date, reportPriority, saveReport, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
 import { machinesDatabase, readyToSendReportsDatabase, reportsDatabase } from '../../indexedDB'
 import getAssignments from './getAssignemt'
+import { AuthContext, ExecutionReportContext, ReportsContext } from '../../context'
 
 const ActivitiesPage = () => {
     const classes = useStylesTheme();
     const history = useHistory();
-    const [ assignments, setAssignments ] = useState([]);
+    const {isOperator} = useContext(AuthContext)
+    const {setReport} = useContext(ExecutionReportContext)
+    const {assignments} = useContext(ReportsContext)
+    /* const [ assignments, setAssignments ] = useState([]); */
     const [ prioritaryAssignments, setPrioritaryAssignments ] = useState([]);
     const [ assignmentsReadyToSend, setAssignmentsReadyToSend ] = useState([])
-    const [showList, setShowList] = useState(false)
+    const [showList, setShowList] = useState(true)
     const theme = useTheme();
     const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
-    const isOperator = Boolean(localStorage.getItem('isOperator'))
-    const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
+    /* const isOperator = Boolean(localStorage.getItem('isOperator')) */
+    /* const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
     const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
-    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
+    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery')) */
     useEffect(async () => {
-        console.log(isShiftManager,isChiefMachinery)
+        /* console.log(isShiftManager,isChiefMachinery) */
         let db = await  readyToSendReportsDatabase.initDb()
         let dataToSend = await readyToSendReportsDatabase.consultar(db.database)
         setAssignmentsReadyToSend(dataToSend)
@@ -67,7 +71,7 @@ const ActivitiesPage = () => {
                                 }
                                 if(index == (rs.length - 1)) {
                                     writeDatabaseReports(assign.concat(prioritaryAssign))
-                                    setAssignments(assign.reverse())
+                                    /* setAssignments(assign.reverse()) */
                                     setPrioritaryAssignments(prioritaryAssign)
                                 }
                             })
@@ -81,7 +85,7 @@ const ActivitiesPage = () => {
             const {database} = db
             let dataList = []
             dataList = await reportsDatabase.consultar(database)
-            setAssignments(dataList.reverse())
+            /* setAssignments(dataList.reverse()) */
             setShowList(true)
         }
         return () => go = false;
@@ -103,25 +107,27 @@ const ActivitiesPage = () => {
     }
 
     const goToDetail = (element) => {
+        console.log(element)
+        setReport(element)
         history.push(`/assignment/${element.idIndex}`)
     }
 
     const getMachineTypeByEquid = (machine) => {
-        console.log(machine)
+        /* console.log(machine) */
         return new Promise(async resolve => {
             let db = await machinesDatabase.initDbMachines();
             if(db) {
                 const machines = await machinesDatabase.consultar(db.database);
                 if(machines) {
                     let machineFiltered = machines.filter(m => { if(machine === m.equid) {return m}});
-                    console.log(machineFiltered)
+                    /* console.log(machineFiltered) */
                     if (machineFiltered.length > 0) {
                         resolve({
                             number: machineFiltered[0].equ,
                             model: machineFiltered[0].model
                         })
                     } else {
-                        console.log(machine)
+                        /* console.log(machine) */
                         resolve(null)
                     }
                 }
@@ -213,17 +219,12 @@ const ActivitiesPage = () => {
                                     }
                                 }
                                 >
-                                    {
+                                    {/* {
                                     (isChiefMachinery || isShiftManager || localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') &&
                                         <div>
                                             <h3 className='item-style'>Mis actividades pendientes</h3>
-                                            {/* {
-                                                (prioritaryAssignments.length === 0 && showList)
-                                                &&
-                                                <p>Sin actividades</p>
-                                            } */}
                                         </div>
-                                    }
+                                    } */}
                                     {prioritaryAssignments && prioritaryAssignments.reverse().map((element, i) => {
                                         return(
                                             <div key={i}
@@ -278,7 +279,7 @@ const ActivitiesPage = () => {
                                             </div>
                                         )
                                     })}
-                                    {
+                                    {/* {
                                         (isChiefMachinery || isShiftManager || (localStorage.getItem('role')==='shiftManager' || localStorage.getItem('role')==='chiefMachinery') && prioritaryAssignments.length == 0) && <Grid container><p className='item-style'>Sin Asignación pendiente</p></Grid>
                                     }
                                     {
@@ -291,9 +292,9 @@ const ActivitiesPage = () => {
                                                 <p>Sin asignaciones</p>
                                             }
                                         </div>
-                                    }
+                                    } */}
                                     {assignments && assignments.map((element, i) => {
-                                        console.log(element)
+                                        /* console.log(element) */
                                         element.readyToSend = false
                                         assignmentsReadyToSend.forEach((data) => {
                                             if(data.idIndex === element.idIndex) {
