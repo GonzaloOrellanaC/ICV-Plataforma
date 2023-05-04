@@ -81,7 +81,7 @@
     },
     "scripts": {
         "build-app": "rm -f build && npm run build",
-        "start": "react-scripts start",
+        "start": "react-scripts --openssl-legacy-provider start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
@@ -109,5 +109,5 @@
         "path": false,
         "os": false
     },
-    "proxy": "http://localhost:5001/"
+    "proxy": "http://127.0.0.1:5001/"
 }
