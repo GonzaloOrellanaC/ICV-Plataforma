@@ -44,13 +44,13 @@ export const ReportsProvider = (props) => {
     const getReports = async () => {
         if (admin) {
             const response = await reportsRoutes.getAllReports()
-            console.log(response)
+            setReports(response.data.reverse())
         } else {
             if (isOperator) {
                 console.log(isAuthenticated, site, userData)
                 const response = await reportsRoutes.findMyAssignations(userData._id, site.idobra)
                 console.log(response)
-                setReports(response.data)
+                setReports(response.data.reverse())
             }
         }
     }

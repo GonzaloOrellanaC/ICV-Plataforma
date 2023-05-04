@@ -69,8 +69,8 @@ const initAccessControl = async () => {
         } else {
             console.log('No se crea admin')
         }
-        const reports = await Reports.find({})
-        /* const executionReports = await ExecutionReport.find()
+        /* const reports = await Reports.find({}) */
+       /*  const executionReports = await ExecutionReport.find()
         executionReports.forEach(async (ex, i) => {
             const execution = ex
             execution.report = ex.reportId
@@ -79,14 +79,22 @@ const initAccessControl = async () => {
             await ExecutionReport.findByIdAndUpdate(executionCache._id, executionCache)
 
         }) */
-        reports.forEach(async (report, index) => {
+        /* reports.forEach(async (report, index) => { */
+            /* const rep = report */
+            /* await Reports.findByIdAndUpdate(report._id, report) */
+            /* rep.createdBy = report.createdBy
+            rep.updatedAt = report.updatedAt
+            rep.shiftManagerApprovedBy = report.shiftManagerApprovedBy
+            rep.chiefMachineryApprovedBy = report.chiefMachineryApprovedBy
+            rep.sapExecutiveApprovedBy = report.sapExecutiveApprovedBy
+            rep.userAsigned = report.userAsigned */
             /* if (report.site === '0369') {
                 await Reports.findByIdAndUpdate(report._id, {site: '0380'})
             } else if (report.site === '0370') {
                 await Reports.findByIdAndUpdate(report._id, {site: '0383'})
             } */
             /* await Reports.findByIdAndUpdate(report._id, report) */
-        })
+        /* }) */
         if (!findRoles) {
             environment.roles.forEach(async (role, index) => {
                 let roleCreated = await createRole(role.name, role.dbName);

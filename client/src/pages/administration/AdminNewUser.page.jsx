@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton, Button, Modal,  Fab } from '@material-ui/core'
 import { ArrowBackIos, Close } from '@material-ui/icons'
 import { useStylesTheme } from '../../config'
@@ -8,6 +8,7 @@ import { usersRoutes } from '../../routes'
 import { validate } from 'rut.js';
 import { LoadingLogoModal, LoadingModal } from '../../modals';
 import transformInfo from './transform-info'
+import { CreateUserContext } from '../../context'
 
 const styleModal = {
     position: 'absolute',
@@ -30,7 +31,7 @@ const AdminNewUserPage = () => {
     const [ loadingData, setLoadingData ] = useState('');
     const [ routingData, setRoutingData ] = useState('');
     const [ usageModule, setUsageModule ] = useState();
-    const [ userData, setUserData ] = useState({})
+    const {userData, setUserData} = useContext(CreateUserContext)
 
     let { id } = useParams();
 
@@ -126,8 +127,9 @@ const AdminNewUserPage = () => {
     }
 
     const getUserInfo = async () => {
-        let user = JSON.parse(localStorage.getItem('userDataToSave'));
+        let user = userData/* JSON.parse(localStorage.getItem('userDataToSave')); */
         let habilitado = true;
+        console.log(user)
         if(user) {
             if(user.rut) {
                 if(validate(user.rut)) {

@@ -11,7 +11,7 @@ import { createUploadLink } from 'apollo-upload-client'
 import { CircularProgress, CssBaseline, IconButton, LinearProgress, ThemeProvider } from '@material-ui/core'
 import { theme, download3DFiles, detectExecutionState } from './config'
 import './App.css'
-import { AuthProvider, ConnectionProvider, ExecutionReportProvider, LanguageProvider, NavigationProvider, ReportsProvider, useAuth } from './context'
+import { AuthProvider, ConnectionProvider, CreateUserProvider, ExecutionReportProvider, LanguageProvider, NavigationProvider, ReportsProvider, useAuth } from './context'
 import { Header, Navbar } from './containers'
 import { 
     AppliancePage, 
@@ -415,10 +415,12 @@ const App = () => {
                             <NavigationProvider>
                                 <ReportsProvider>
                                     <ExecutionReportProvider>
-                                        <ThemeProvider theme={theme} >
-                                            <CssBaseline />
-                                            <OnApp />
-                                        </ThemeProvider>
+                                        <CreateUserProvider>
+                                            <ThemeProvider theme={theme} >
+                                                <CssBaseline />
+                                                <OnApp />
+                                            </ThemeProvider>
+                                        </CreateUserProvider>
                                     </ExecutionReportProvider>
                                 </ReportsProvider>
                             </NavigationProvider>

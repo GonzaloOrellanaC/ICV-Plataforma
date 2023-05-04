@@ -8,6 +8,11 @@ import {
     ConnectionProvider,
     useConnectionContext
 } from './Connection.context'
+import {
+    CreateUserContext,
+    CreateUserProvider,
+    useCreateUser
+} from './CreateUser.context'
 
 export {
     AuthProvider,
@@ -26,4 +31,7 @@ export {
     ConnectionContext,
     ConnectionProvider,
     useConnectionContext,
+    CreateUserContext,
+    CreateUserProvider,
+    useCreateUser
 }
