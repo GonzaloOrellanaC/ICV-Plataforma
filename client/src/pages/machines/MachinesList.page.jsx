@@ -5,94 +5,28 @@ import { useHistory, useParams } from 'react-router-dom';
 import { styleModal3D, useStylesTheme } from '../../config';
 import { ArrowBackIos } from '@material-ui/icons';
 import { MVAvatar } from '../../containers';
-import { machinesDatabase } from '../../indexedDB';
-import { apiIvcRoutes } from '../../routes';
 import { LoadingPage } from '../loading';
+import { useAuth, useMachineContext } from '../../context';
 
 const MachinesListPage = ({route}) => {  
+    const {userData} = useAuth()
+    const {machinesBySite, setMachineSelected} = useMachineContext()
     const [ routeData, setRouteData ] = useState('');
     const [ machinesList, setMachinesList ] = useState([]);
-    /* const [machine, setMachine] = useState() */
     const [open, setOpen] = useState(false);
-    const [idSite, setIdSite] = useState()
     const [showMachinesList, setShowMachinesList] = useState(false)
+    const [machine, setMachine] = useState()
 
     const history = useHistory();
     const classes = useStylesTheme();
-    const site = JSON.parse(localStorage.getItem('sitio')).descripcion;
-    const idobra = JSON.parse(localStorage.getItem('sitio')).idobra;
 
     let { id } = useParams();
-    const machine = JSON.parse(id)
-    const openCloseModal = () => {
-            setTimeout(() => {
-                (localStorage.getItem('isLoading3D') === 'nok') ? setOpen(true) : alert('Debe esperar el término de la descarga de los modelo s 3D.')
-            }, 500);
-    }
-
-    const goToMachineDetail = (machineData) => {
-        const newMachine = {
-            id: machine.id,
-            brand: machine.brand,
-            model: machine.model,
-            /* pIDPM: machine.pIDPM, */
-            type: machine.type,
-            machineData: JSON.stringify(machineData)
-        }
-        history.push(`machine-detail/${machineData.equid}`)
-    }
-
-    const readAllMachinesFromIndexedDB = (model) => {
-        machinesDatabase.initDbMachines().then(db => {
-            machinesDatabase.consultar(db.database).then(readAllMachines => {
-                setMachinesList(
-                    readAllMachines
-                    .filter(machine => {if(machine.model === model) { return machine}})
-                    .sort((a, b) => {return a.equ - b.equ})
-                )
-            })
-        })
-    }
-
-    const closeModal = () => {
-        setOpen(false)
-    }
 
     useEffect(() => {
-        /* setMachine(JSON.parse(id)) */
-        let cancel = false;
-        if(navigator.onLine) {
-            const site = JSON.parse(localStorage.getItem('sitio'))
-            apiIvcRoutes./* getAllMachines */getMachineBySiteId(site.idobra).then(machines => {
-                console.log(machines)
-                if(cancel) return
-                setMachinesList(
-                    machines.data
-                    .filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
-                    .sort((a, b) => {return a.equ - b.equ})
-                )
-                setTimeout(() => {
-                    setShowMachinesList(true)
-                }, 1000);
-            })
-        } else {
-            machinesDatabase.initDbMachines().then(db => {
-                machinesDatabase.consultar(db.database).then(readAllMachines => {
-                    if(cancel) return
-                    setMachinesList(
-                        readAllMachines
-                        .filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
-                        .sort((a, b) => {return a.equ - b.equ})
-                    )
-                    setTimeout(() => {
-                        setShowMachinesList(true)
-                    }, 1000);
-                })
-            })
-        }
-        if(!site) {
-            history.goBack()
-        }
+        setMachine(JSON.parse(id))
+    },[])
+
+    useEffect(() => {
         if(route === 'inspection') {
             setRouteData('Inspección')
         }else if(route === 'maintenance') {
@@ -100,17 +34,32 @@ const MachinesListPage = ({route}) => {
         }else if(route === 'machines') {
             setRouteData('Máquinas')
         }
-        return () => {
-            cancel = true;
+    },[route])
+
+    useEffect(() => {
+        if (machinesBySite.length > 0 && machine) {
+            const machinesTemps = machinesBySite.filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
+            .sort((a, b) => {return a.equ - b.equ})
+            setMachinesList(machinesTemps)
+            setShowMachinesList(true)
         }
-    }, [])
+    }, [machinesBySite, machine])
+
+    const goToMachineDetail = (machineData) => {
+        setMachineSelected(machineData)
+        history.push(`machine-detail/${machineData.equid}`)
+    }
+
+    const closeModal = () => {
+        setOpen(false)
+    }
 
     return(
         <Box height='100%'>
             <Grid className={'pageRoot'} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
                     <Card elevation={0} className={'pageCard'}>
-                        <Grid container alignItems='center' justifyContent='center'>
+                        {machine && <Grid container alignItems='center' justifyContent='center'>
                             <div style={{width: '100%', textAlign: 'center', padding: 10 }}>
                                 <div style={{width: '100%', textAlign: 'center', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10,}}>
@@ -120,7 +69,7 @@ const MachinesListPage = ({route}) => {
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 
                                         <p style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
-                                            {machine && `${routeData}/${site}/${machine.type} ${machine.brand} ${machine.model}`}
+                                            {machine && `${routeData}/${userData.obras[0].descripcion}/${machine.type} ${machine.brand} ${machine.model}`}
                                         </p>
                                     </Toolbar>
                                 </div>
@@ -138,11 +87,6 @@ const MachinesListPage = ({route}) => {
                                 !showMachinesList
                                 &&
                                 <LoadingPage />
-                                /* <Grid container style={{minHeight: 148, marginBottom: 20, padding: 20, borderStyle: 'solid', borderWidth: 2, borderColor: '#CCC', borderRadius: 20}}>
-                                    <Grid item xs={12} sm={12} md={12} lg={12}>
-                                        <p>Cargando máquinas. Espere un momento...</p>
-                                    </Grid>
-                                </Grid> */
                             }
                             {
                                 showMachinesList && machinesList.map((machine, i) => {
@@ -195,15 +139,11 @@ const MachinesListPage = ({route}) => {
                             <div>
                                 <Modal
                                     open={open}
-                                    //close={!open}
-                                    //onClose={handleClose}
                                     aria-labelledby="modal-modal-title"
                                     aria-describedby="modal-modal-description"
                                 >
-                                    <Box sx={styleModal3D/* {height: '100%', width: '70%', backgroundColor: '#333'} */}>
-                                        {/* <VRAvatar machine={machine}/> */} 
+                                    <Box sx={styleModal3D}>
                                         <MVAvatar machine={machine}/>
-                                        {/* <Test /> */}
                                         <Fab onClick={() => closeModal()} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}} color="primary">
                                             <Close />
                                         </Fab>
@@ -211,7 +151,7 @@ const MachinesListPage = ({route}) => {
                                     
                                 </Modal>
                             </div>
-                        </Grid>
+                        </Grid>}
                     </Card>
                 </Grid>
             </Grid>

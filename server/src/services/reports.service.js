@@ -1,4 +1,4 @@
-import { ExecutionReport, Reports } from "../models"
+import { ExecutionReport, Machine, Reports } from "../models"
 import { environment } from '../config'
 const { error: errorMsg, success: successMsg } = environment.messages.services.user
 import fetch from 'node-fetch'
@@ -173,13 +173,62 @@ const deleteReport = async (req, res) => {
     
 }
 
-const getReports = (req, res) => {
+const getReports = async (req, res) => {
     try {
-        Reports.find({deleted: false}, (err, reports) => {
-            res.json(reports)
-        })
+        const reports = await Reports.find({deleted: false})
+        if (reports.length > 0) {
+            const reportsToSend = []
+            const n = 0
+            addMachineData(reports, reportsToSend, n, res)
+        }
     } catch (err) {
         console.log(err)
+    }
+}
+
+
+
+const addMachineData = async (reports, reportsToSend, n, res) => {
+    if ((reports.length - 1) === n) {
+        res.json(reportsToSend)
+    } else {
+        const machineData = await Machine.findOne({equid: reports[n].machine})
+        if (machineData) {
+            let newReport = {
+                level: reports[n].level,
+                createdAt: reports[n].createdAt,
+                createdBy: reports[n].createdBy,
+                datePrev: reports[n].datePrev,
+                deleted: reports[n].deleted,
+                enabled: reports[n].enabled,
+                endPrev: reports[n].endPrev,
+                guide: reports[n].guide,
+                history: reports[n].history,
+                idIndex: reports[n].idIndex,
+                idPm: reports[n].idPm,
+                machine: reports[n].machine,
+                reportType: reports[n].reportType,
+                sapId: reports[n].sapId,
+                site: reports[n].site,
+                state: reports[n].state,
+                testMode: reports[n].testMode,
+                updatedAt: reports[n].updatedAt,
+                updatedBy: reports[n].updatedBy,
+                usersAssigned: reports[n].usersAssigned,
+                machineData: machineData,
+                urlPdf:reports[n].urlPdf,
+                sapExecutiveApprovedBy:reports[n].sapExecutiveApprovedBy,
+                dateClose:reports[n].dateClose,
+                chiefMachineryApprovedDate:reports[n].chiefMachineryApprovedDate,
+                chiefMachineryApprovedBy:reports[n].chiefMachineryApprovedBy,
+                shiftManagerApprovedDate:reports[n].shiftManagerApprovedDate,
+                shiftManagerApprovedBy:reports[n].shiftManagerApprovedBy,
+                endReport: reports[n].endReport
+            }
+            reportsToSend.push(newReport)
+            n = n + 1
+            addMachineData(reports, reportsToSend, n, res)
+        }
     }
 }
 
@@ -345,7 +394,7 @@ const findMyAssignations = async (req, res) => {
                 $in: [userId]
             }
         }).populate('usersAssigned').populate('createdBy').populate('updatedBy')
-        /* console.log(response) */
+        console.log(response)
         res.json(response)
         /* Reports.find({site: body.site, deleted: false, usersAssigned: [body.userId]}, (err, reports) => {
             res.json(reports)
@@ -367,12 +416,20 @@ const getReportByIdpm = async (req, res) => {
     res.send(pmResponse.data)
 }
 
+/* 
+
+ljedcbnkjsde cbjklcsbkjds ckjsd cksj ckjsd cjks ckjds
+*/
+
 const getAllReportsbySite = async (req, res) => {
     const { body : { site } } = req
     try {
-        Reports.find({ deleted: false, site: site }, (err, reports) => {
-            res.json(reports)
-        })
+        const reports = await Reports.find({deleted: false, site: site})
+        if (reports.length > 0) {
+            const reportsToSend = []
+            const n = 0
+            addMachineData(reports, reportsToSend, n, res)
+        }
     } catch (err) {
         console.log(err)
     }

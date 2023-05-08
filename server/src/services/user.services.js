@@ -117,6 +117,7 @@ const getUserByRole = (role) => {
  * @returns resolves or rejects the request, on resolve returns passportUser
  */
 const authenticateUser = (req, res, next) => {
+    console.log(req)
     return new Promise((resolve, reject) => {
         passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
             Sentry.captureException(err)
@@ -137,6 +138,7 @@ const authenticateUser = (req, res, next) => {
 }
 
 const authenticateUserWithRut = (req, res, next) => {
+    console.log(req)
     return new Promise((resolve, reject) => {
         passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
             Sentry.captureException(err)

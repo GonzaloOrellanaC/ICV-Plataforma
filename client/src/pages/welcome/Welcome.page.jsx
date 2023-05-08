@@ -5,23 +5,26 @@ import { apiIvcRoutes, notificationsRoutes } from '../../routes'
 import { trucksDatabase, machinesDatabase, machinesImagesDatabase, imageDatabase, pautasDatabase, readyToSendReportsDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import './style.css'
-import getInfo from './getInfo'
+/* import getInfo from './getInfo'
 import readDataSite from './readDataSite'
-import readData from './readData'
+import readData from './readData' */
 import Files from './3dFiles'
 import { useHistory } from 'react-router-dom'
-import { dateWithTime, download3DFiles, imageToBase64 } from '../../config'
+import { dateWithTime, /* download3DFiles, imageToBase64 */ } from '../../config'
 import addNotification from 'react-push-notification'
 import { io } from "socket.io-client"
+import { useAuth, useTimeContext } from '../../context'
 
 const WelcomePage = ({ readyToLoad }) => {
-    const [ date, setDate ] = useState('')
-    const [ hora, setHora ] = useState('')
+    const {admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
+    const {date, hour} = useTimeContext()
+    /* const [ date, setDate ] = useState('')
+    const [ hora, setHora ] = useState('') */
     const [ openLoader, setOpenLoader ] = useState(false)
     const [ openVersion, setOpenVersion ] = useState(false)
     const [ progress, setProgress ] = useState(0)
     const [ loadingData, setLoadingData ] = useState('')
-    const [ disableButton, setDisableButtons ] = useState(true)
+    const [ disableButton, setDisableButtons ] = useState(false)
     const [ disableButtonNoSAP, setDisableButtonsNoSAP ] = useState(true)
     const [ disableButtonNoAdmin, setDisableButtonNoAdmin ] = useState(true)
     const [ disableIfNoMaintenance, setDisableIfNoMaintenance ] = useState(false)
@@ -34,7 +37,20 @@ const WelcomePage = ({ readyToLoad }) => {
     const [ notificaciones2, setNotificaciones2 ] = useState('Sin informaciones pendientes')
 
     const [ cancel, setCancel ] = useState(true)
-    const isOperator = Boolean(localStorage.getItem('isOperator'))
+
+    useEffect(() => {
+        /* console.log('Es admin: ', admin)
+        console.log('Es ejecutivo sap: ', isSapExecutive)
+        console.log('Es operador: ', isOperator)
+        console.log('Es jefe de turno: ', isShiftManager)
+        console.log('Es jefe de maquinaria: ', isChiefMachinery) */
+        if (admin || isSapExecutive || isShiftManager || isChiefMachinery) {
+            setDisableButtonsNoSAP(false)
+        }
+        if (admin) {
+            setDisableButtonNoAdmin(false)
+        }
+    }, [admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery])
 
  
     const history = useHistory()
@@ -121,7 +137,7 @@ const WelcomePage = ({ readyToLoad }) => {
                 } else {
                     setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt))
                 }
-                if(isOperator || localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') {
+                if(isOperator /* || localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator' */) {
                     if(data2.length > 0) {
                         setNotificaciones2('Existen ' + data2.length + ' Ordenes de trabajo listos a enviar.')
                     }else{
@@ -133,7 +149,7 @@ const WelcomePage = ({ readyToLoad }) => {
     }
 
     const init = async () => {
-        readData(
+        /* readData(
             setOpenLoader,
             setLoadingData,
             getTrucksList,
@@ -144,8 +160,8 @@ const WelcomePage = ({ readyToLoad }) => {
             setOpenVersion,
             network,
             readyToLoad
-        )
-        readDataSite(
+        ) */
+        /* readDataSite(
             setDisableButtons,
             setNotificaciones2,
             setDisableButtonsNoSAP,
@@ -154,7 +170,7 @@ const WelcomePage = ({ readyToLoad }) => {
             setDisableButtonNoAdmin,
             setHora,
             setDate
-        )
+        ) */
     }
 
     const getMachinesList = () => {
@@ -283,7 +299,7 @@ const WelcomePage = ({ readyToLoad }) => {
                     <Grid item xs={12} sm={12} md={6} lg={4}>
                         <div className='notificaciones reloj'>
                             <p className='reloj-fecha'> {date} </p>
-                            <p className='reloj-hora'> {hora} hs </p>
+                            <p className='reloj-hora'> {hour} hs </p>
                         </div>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={4}>

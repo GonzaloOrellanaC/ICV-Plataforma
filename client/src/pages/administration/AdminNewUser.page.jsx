@@ -8,7 +8,7 @@ import { usersRoutes } from '../../routes'
 import { validate } from 'rut.js';
 import { LoadingLogoModal, LoadingModal } from '../../modals';
 import transformInfo from './transform-info'
-import { CreateUserContext } from '../../context'
+import { CreateUserContext, useUsersContext } from '../../context'
 
 const styleModal = {
     position: 'absolute',
@@ -24,6 +24,7 @@ const styleModal = {
 };
 
 const AdminNewUserPage = () => {
+    const {getUsers} = useUsersContext()
     const classes = useStylesTheme();
     const history = useHistory();
     const [ open, setOpen ] = useState(false);
@@ -31,7 +32,7 @@ const AdminNewUserPage = () => {
     const [ loadingData, setLoadingData ] = useState('');
     const [ routingData, setRoutingData ] = useState('');
     const [ usageModule, setUsageModule ] = useState();
-    const {userData, setUserData} = useContext(CreateUserContext)
+    const {userData, setUserData, setChangeModule, set} = useContext(CreateUserContext)
 
     let { id } = useParams();
 
@@ -68,9 +69,7 @@ const AdminNewUserPage = () => {
     }, [])
 
     const saveUser = async () => {
-        let userData = JSON.parse(localStorage.getItem('userDataToSave'));
-        userData.confirmPassword = null;
-        setOpenLoader(true);
+        setOpenLoader(true)
         if(routingData === 'Nuevo usuario') {
             try{
                 setLoadingData('Inscribiendo nuevo usuario');
@@ -78,6 +77,7 @@ const AdminNewUserPage = () => {
                 if(userState.status == 200) {
                     setOpenLoader(false)
                     openCloseModal()
+                    getUsers()
                 }else{
                     alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
                     setOpenLoader(false)
@@ -95,6 +95,7 @@ const AdminNewUserPage = () => {
                 if(userState.status == 200) {
                     setOpenLoader(false)
                     openCloseModal()
+                    getUsers()
                 }else{
                     alert('Error al editar usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
                     setOpenLoader(false)
@@ -127,10 +128,56 @@ const AdminNewUserPage = () => {
     }
 
     const getUserInfo = async () => {
-        let user = userData/* JSON.parse(localStorage.getItem('userDataToSave')); */
-        let habilitado = true;
-        console.log(user)
-        if(user) {
+        if (userData.rut) {
+            if (validate(userData.rut)) {
+                if (userData.name) {
+                    if(userData.lastName) {
+                        /* if (userData.email) { */
+                            if (userData.obras.length > 0) {
+                                if (userData.roles.length > 0) {
+                                    if (id) {
+                                        setUsageModule(usageModule + 1)
+                                    } else {
+                                        if (userData.password.length > 5) {
+                                            if (userData.confirmPassword.length > 5) {
+                                                if (userData.confirmPassword === userData.password) {
+                                                    setUsageModule(usageModule + 1)
+                                                } else {
+                                                    alert('Password y su confirmación deben ser iguales')
+                                                }
+                                            } else {
+                                                alert('Password debe contar con al menos 6 carácteres')
+                                            }
+                                        } else {
+                                            alert('Password debe contar con al menos 6 carácteres')
+                                        }
+                                    }
+                                } else {
+                                    alert('Seleccione al menos un rol')
+                                }
+                            } else {
+                                alert('Debe seleccionar una obra')
+                            }
+                        /* } else {
+                            alert('Ingrese correo')
+                        } */
+                    } else {
+                        alert('Ingrese un apellido')
+                    }
+                } else {
+                    alert('Ingrese un nombre')
+                }
+            } else {
+                alert('Rut inválido')
+            }
+        } else {
+            alert('Falta Rut')
+        }
+        /*let user = userData JSON.parse(localStorage.getItem('userDataToSave')); */
+        /* let habilitado = true;
+        console.log(user) */
+
+        /* if(user) {
             if(user.rut) {
                 if(validate(user.rut)) {
                     if(user.phone) {
@@ -143,7 +190,7 @@ const AdminNewUserPage = () => {
                             userData.name = user.name
                             userData.lastName = user.lastName
                             userData.phone = user.phone
-                            /* userData.role = user.role */
+                            userData.role = user.role
                             userData.roles = user.roles
                             userData.rut = user.rut
                             userData.sites = user.sites
@@ -218,7 +265,7 @@ const AdminNewUserPage = () => {
             }
         }else{
             alert('Sin datos')
-        }
+        } */
         
     }
 
@@ -251,7 +298,7 @@ const AdminNewUserPage = () => {
                             </div>
                         </Grid>
                         <Grid container alignItems='center' justifyContent='center'>
-                            <div style={{width: '100%', textAlign: 'left', padding: 10, overflowY: 'auto' }}>
+                            <div style={{width: '100%', textAlign: 'left', padding: 10, overflowY: 'auto', /* height: 'calc(100vh-700px)' */ }}>
                                 {
                                     (usageModule === 0) &&
                                         <CreateUser /* width={'calc(100vw - 450px)'} height={'calc(100vh - 320px)'} */ typeDisplay={routingData} uData={userData} />
@@ -264,7 +311,7 @@ const AdminNewUserPage = () => {
                                         <div style={{float: 'right'}}>
                                         {
                                             usageModule == 1 &&
-                                                <button onClick={()=>setUsageModule(usageModule - 1)} style={{width: 189, height: 48, marginRight: 17, borderRadius: 23, fontSize: 20, color: '#fff',  backgroundColor: '#BB2D2D', borderColor: '#BB2D2D'}}>
+                                                <button onClick={()=>{setUsageModule(usageModule - 1); setChangeModule(false)}} style={{width: 189, height: 48, marginRight: 17, borderRadius: 23, fontSize: 20, color: '#fff',  backgroundColor: '#BB2D2D', borderColor: '#BB2D2D'}}>
                                                     Modificar Datos
                                                 </button>
                                         }

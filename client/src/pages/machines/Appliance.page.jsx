@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Box, Card, Grid, makeStyles, Modal, Button, IconButton, Fab, Toolbar, LinearProgress } from '@material-ui/core'
+import { Box, Card, Grid, Modal, IconButton, Fab, Toolbar } from '@material-ui/core'
 import { Close, ArrowBackIos } from '@material-ui/icons'
 import { useParams } from "react-router-dom";
-import { getUserNameById, imageToBase64, useStylesTheme } from '../../config'
+import { imageToBase64, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
-import { pautasDatabase, reportsDatabase } from '../../indexedDB';
-/* import { MVAvatar, PautaDetail } from '../../containers'; */
 import { apiIvcRoutes, machinesRoutes, reportsRoutes } from '../../routes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faEye } from '@fortawesome/free-solid-svg-icons';
 import { ImageDialog, ReportDetailDialog } from '../../dialogs';
-import { LoadingModal } from '../../modals';
 import { LoadingLogoModal } from '../../modals';
+import { useAuth, useConnectionContext, useMachineContext } from '../../context';
 
 const AppliancePage = ({ route }) => {
     const classes = useStylesTheme();
+    const {isOnline} = useConnectionContext()
+    const {userData} = useAuth()
+    const {machineSelected} = useMachineContext()
     const [open, setOpen] = useState(false);
     const [ mantenciones, setMantenciones ] = useState([])
     const [ mantencionesCache, setMantencionesCache ] = useState([])
+    const [ routeData, setRouteData ] = useState('');
     const [ openDialog, setOpenDialog ] = useState(false)
     const [ report, setReport ] = useState({})
     const [ loading, setLoading ] = useState(false)
@@ -29,6 +31,37 @@ const AppliancePage = ({ route }) => {
     const [ machine, setMachine ] = useState({})
     let r = new String();
     r = route.toString();
+
+    useEffect(() => {
+        if(route === 'inspection') {
+            setRouteData('Inspección')
+        }else if(route === 'maintenance') {
+            setRouteData('Mantención')
+        }else if(route === 'machines') {
+            setRouteData('Máquinas')
+        }
+    },[route])
+
+    useEffect(() => {
+        console.log(machineSelected)
+        if (machineSelected) {
+            setMachine(machineSelected)
+            if (isOnline) {
+                reportsRoutes.getReportByEquid(machineSelected.equid).then(d => {
+                    if(d.data) {
+                        console.log(d.data.reverse())
+                        setMantenciones(d.data.reverse())
+                        setMantencionesCache(d.data.reverse())
+                        setTimeout(() => {
+                            setLoading(false)
+                        }, 500);
+                    }
+                })
+            } else {
+                alert('Dispoitivo sin conexión a internet. No se podrá mostrar el histórico.')
+            }
+        }
+    }, [machineSelected])
 
     const openCloseModal = () => {
         setTimeout(() => {
@@ -45,7 +78,7 @@ const AppliancePage = ({ route }) => {
         setOpenDialog(false)
     }
 
-    useEffect( () => {
+/*     useEffect( () => {
         setLoading(true)
         if(navigator.onLine) {
             machinesRoutes.getMachineByEquid(id).then(data => {
@@ -64,25 +97,11 @@ const AppliancePage = ({ route }) => {
         } else {
             setLoading(false)
         }
-    }, [])
+    }, []) */
 
-    let site = JSON.parse(localStorage.getItem('sitio')).descripcion;
-
+    /* let site = JSON.parse(localStorage.getItem('sitio')).descripcion;
+ */
     const history = useHistory()
-
-    if(!site) {
-        history.goBack()
-    }
-
-    let routeData;
-
-    if(route === 'inspection/machine-detail') {
-        routeData = 'Inspección'
-    }else if(route === 'maintenance/machine-detail') {
-        routeData = 'Mantención'
-    }else if(route === 'machines/machine-detail') {
-        routeData = 'Máquinas'
-    }
 
     const filterList = (value) => {
         if (value === 'all') {
@@ -140,7 +159,7 @@ const AppliancePage = ({ route }) => {
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 
                                         <p style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
-                                            {routeData}/{site}/{machine.type} {machine.brand} {machine.model}/Número interno: <b>{machine.equ}</b>
+                                            {routeData}/{userData.obras[0].descripcion}/{machine.type} {machine.brand} {machine.model}/Número interno: <b>{machine.equ}</b>
                                         </p>
                                     </Toolbar>
                                 </div>

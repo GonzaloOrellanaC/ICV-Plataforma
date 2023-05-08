@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 export const ConnectionContext = createContext()
 
 export const ConnectionProvider = props => {
-    const [isOnline, setIsOnline] = useState(false)
+    const [isOnline, setIsOnline] = useState(true)
 
     useEffect(() => {
         window.addEventListener('online', () => {
@@ -12,7 +12,11 @@ export const ConnectionProvider = props => {
         window.addEventListener('offline', () => {
             setIsOnline(false)
         })
-    },[])
+    },[window.navigator.onLine])
+
+    useEffect(() => {
+        console.log('Network: ', isOnline)
+    },[isOnline])
 
     const provider = {
         isOnline

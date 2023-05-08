@@ -39,6 +39,7 @@ const initAccessControl = async () => {
         console.log('**********************************************', responseData.length) */
         const users = await Users.find({})
         users.forEach(async (user, index) => {
+            /* user.isTest = false */
             if(user.sites) {
                 console.log((JSON.parse(user.sites)).idobra)
                 if ((JSON.parse(user.sites)).idobra === '0369') {
@@ -51,6 +52,8 @@ const initAccessControl = async () => {
                     user.obras = [(JSON.parse(user.sites))._id]
                     await Users.findByIdAndUpdate(user._id, user)
                 }
+            } else {
+                await Users.findByIdAndUpdate(user._id, user)
             }
         })
         const findRoles = await Roles.find({})

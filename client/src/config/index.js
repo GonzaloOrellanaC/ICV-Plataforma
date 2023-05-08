@@ -30,6 +30,7 @@ import download3DFiles from './download3DFiles'
 import detectIf3DModelExist from './detectIf3DModelExist'
 import translateSubSystem from './translateSubSystem'
 import detectExecutionState from './detectExecutionState'
+import hour from './hour'
 export {
     theme,
     getUserNameById,
@@ -72,5 +73,6 @@ export {
     download3DFiles,
     detectIf3DModelExist,
     translateSubSystem,
-    detectExecutionState
+    detectExecutionState,
+    hour
 }

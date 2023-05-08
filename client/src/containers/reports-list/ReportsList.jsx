@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { Button, Grid, Popover, Typography } from '@material-ui/core'
 import { machinesRoutes } from '../../routes'
 import { AssignReportModal, PdfModal, ReviewReportModal } from '../../modals'
@@ -7,8 +7,10 @@ import { dateSimple } from "../../config"
 import { machinesDatabase } from "../../indexedDB"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons"
+import { ReportsContext, useReportsContext } from "../../context"
 
-const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => {
+const ReportsList = ({list}/* {list, reloadData, ordenarPorNumeroOT, flechaListaxOT} */) => {
+    /* const {listSelected} = useContext(ReportsContext) */
     const [ reportData, setReportData ] = useState(null)
     const [ reportDataReview, setReportDataReview ] = useState(null)
     const [ openModalState, setOpenModalState ] = useState(false)
@@ -17,27 +19,31 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
     const [ siteName, setSiteName ] = useState([])
     const [ isAdmin, setIsAdmin ] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
+    const [listData, setListData] = useState([])
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
     useEffect(() => {
-        console.log(list)
         let isAdminCache = false
-        const role = (localStorage.getItem('role') === 'undefined') ? null : localStorage.getItem('role')
-        const roles = JSON.parse(localStorage.getItem('roles'))
-        if (role) {
-            if (role === 'superAdmin' || role === 'admin') {
-                isAdminCache = true
-            }
-        } else {
-            roles.forEach(role => {
-                if (role === 'superAdmin' || role === 'admin') {
-                    isAdminCache = true
-                }
-            })
-        }
         setIsAdmin(isAdminCache)
     }, [])
+
+    useEffect(() => {
+        console.log(list)
+        /* if (list.length > 0) {
+            getElementsFromItem()
+        } */
+    }, [list])
+
+    const getElementsFromItem = async () => {
+        const listToShow = [...list]
+        /* listToShow.forEach(async  item => {
+            console.log(item)
+            const response = await getMachineTypeByEquid(item.machine)
+            item.machineData = response
+        }) */
+        setListData(listToShow)
+    }
     
     const handleClick = (event, siteName) => {
         setSiteName(siteName)
@@ -55,7 +61,7 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
 
     const closeModal = () => {
         setOpenModalState(false)
-        reloadData();
+        /* reloadData(); */
     }
 
     const onlyCloseReview = () => {
@@ -82,10 +88,11 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
             let db = await machinesDatabase.initDbMachines();
             const machines = await machinesDatabase.consultar(db.database);
             let machineFiltered = machines.filter(m => { if(item === m.equid) {return m}});
+            /* console.log(machineFiltered) */
             resolve(
                 {
-                    number: machineFiltered[0].equ,
-                    model: machineFiltered[0].model
+                    /* number: machineFiltered[0].equ,
+                    model: machineFiltered[0].model */
                 }
             ) 
         })
@@ -179,22 +186,22 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
                                         <p style={{textAlign: 'center', width: 50}}> {item.idIndex} </p>
                                     </Grid>
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}  >
-                                        <p style={{textAlign: 'center', minWidth: 70}}> {item.number} </p>
+                                        <p style={{textAlign: 'center', minWidth: 70}}> {item.machineData && item.machineData.equ} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                         <p style={{textAlign: 'center'}}> {item.guide} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                                        <p style={{textAlign: 'center'}}> {item.date} </p>
+                                        <p style={{textAlign: 'center'}}> {dateSimple(item.datePrev)} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                                        <p style={{textAlign: 'center'}}> {item.init} </p>
+                                        <p style={{textAlign: 'center'}}> {dateSimple(item.dateInit)} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                                        <p style={{textAlign: 'center'}}> {item.end} </p>
+                                        <p style={{textAlign: 'center'}}> {dateSimple(item.endPrev)} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                                        <p style={{textAlign: 'center'}}> {item.hourMeter} hrs </p>
+                                        <p style={{textAlign: 'center'}}> {parseInt(item.machineData.hourMeter / 1000 / 60 / 60)} hrs </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                         <div style={{textAlign: 'center'}}>
@@ -237,7 +244,7 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
                                         {item.urlPdf ? <p style={{textAlign: 'center', minWidth: 70}}><a href={`${item.urlPdf}`}>Link</a></p> : <p style={{textAlign: 'center', minWidth: 70}}> Sin URL </p>}
                                     </Grid>
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}  >
-                                        <p style={{textAlign: 'center', minWidth: 70}}> {item.model} </p>
+                                        <p style={{textAlign: 'center', minWidth: 70}}> {item.machineData && item.machineData.model} </p>
                                     </Grid>
                             
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >                                
@@ -247,7 +254,7 @@ const ReportsList = ({list, reloadData, ordenarPorNumeroOT, flechaListaxOT}) => 
                                             </Grid>
                                             <Grid item>
                                                 {!item.enabled &&
-                                                    <p style={{textAlign: 'center', marginLeft: 10}}> <button disabled={(localStorage.getItem('role') === 'chiefMachinery') ? true : false } onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
+                                                    <p style={{textAlign: 'center', marginLeft: 10}}> <button /* disabled={(localStorage.getItem('role') === 'chiefMachinery') ? true : false } */ onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
                                                 }
                                             </Grid>
                                         </Grid>

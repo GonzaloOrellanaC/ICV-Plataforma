@@ -15,11 +15,13 @@ import { useHistory, useParams } from 'react-router-dom';
 import { trucksDatabase, pautasDatabase, machinesDatabase, sitesDatabase } from '../../indexedDB'
 import { apiIvcRoutes, machinesRoutes, reportsRoutes } from '../../routes';
 import './reports.css'
+import {useAuth, useReportsContext} from '../../context'
 
 const CreateReports = () => {
-
+    const {userData} = useAuth()
+    const {pautas} = useReportsContext()
     const [ trucks, setTrucks ] = useState([])
-    const [ pautas, setPautas ] = useState([])
+    const [ pautasParaMostrar, setPautas ] = useState([])
     const [ maquinas, setMaquinas ] = useState([])
     const [ machineModel, setMachineModel ] = useState('')
     const [ pauta, setPauta ] = useState()
@@ -51,20 +53,34 @@ const CreateReports = () => {
     const {id} = useParams();
 
     useEffect(() => {
-        /* console.log(pautas) */
-    }, [pautas])
+        if(userData) {
+            console.log(userData)
+        }
+    }, [userData])
+
+    useEffect(() => {
+        console.log(reportType, pautaIndex, truckSelected, machineModel)
+        if (machineModel) {
+            getMachine(machineModel)
+        }
+        if (machineModel && reportType) {
+            let pautasLista = pautas.filter((item, i) => {
+                if (item.header != 'error')
+                if(((item.header[3].typeDataDesc === machineModel)||(item.header[2].typeDataDesc === machineModel)||(item.header[5].typeDataDesc === machineModel))) {
+                    return item 
+                }})
+            setPautas(pautasLista)
+        }
+    }, [reportType, pautaIndex, truckSelected, machineModel])
     
 
     const saveReportData = async (activate) => {
-        if(activate) {
+        /* if(activate) {
             setDisablePautas(true)
             setChanged(true)
-            const pts = await readPautas();
-            console.log(pts)
-            console.log(machineModel)
-            let pautasLista = pts.filter((item, i) => {
-                if (item.header[3] && item.action)
-                if(((item.header[3].typeDataDesc === machineModel)||(item.header[2].typeDataDesc === machineModel)||(item.header[5].typeDataDesc === machineModel)) && (item.action.includes(pautaIndex))) {
+            let pautasLista = pautas.filter((item, i) => {
+                if (item.header != 'error')
+                if(((item.header[3].typeDataDesc === machineModel)||(item.header[2].typeDataDesc === machineModel)||(item.header[5].typeDataDesc === machineModel))) {
                     return item 
                 }})
             setPautas(pautasLista)
@@ -72,8 +88,16 @@ const CreateReports = () => {
                 setDisablePautas(false)
                 setChanged(false)
             }, 500);
-        }
+        } */
     }
+
+    useEffect(() => {
+        console.log(truckSelected)
+        if (truckSelected) {
+            getMachine(truckSelected)
+            console.log(idObra)
+        }
+    }, [truckSelected])
 
 
     const settingTypePauta = (type) => {
@@ -90,14 +114,12 @@ const CreateReports = () => {
 
     const getMachine = async (machineModel) => {
         setMachineModel(machineModel);
-        
         let db = await machinesDatabase.initDbMachines();
         if(db) {
             machinesDatabase.consultar(db.database).then((machines) => {
                 let m = new Array()
-                m = machines.filter(machine => {console.log(machine.idobra, idObra); if(machine.model === machineModel && machine.idobra === idObra) {return machine}});
+                m = machines.filter(machine => {if(machine.model === machineModel && machine.idobra === userData.obras && userData.obras [0] ? [0].idobra : idObra) {return machine}});
                 const allMachines = m.sort((a, b) => {return Number(a.equ) - Number(b.equ)})
-                console.log(allMachines)
                 setMaquinas(allMachines)
             })
         }
@@ -114,7 +136,7 @@ const CreateReports = () => {
             guide: pauta,
             reportType: reportType,
             machine: JSON.parse(machineSelected).equid,
-            site: idObra,/* (idObra.length > 1) ? idObra : JSON.parse(localStorage.getItem('sitio')).idobra, */
+            site: idObra,
             sapId: sapId,
             idPm: iDPM,
             testMode: isTest
@@ -193,11 +215,11 @@ const CreateReports = () => {
                 isAdminCache = true
             }
         } else {
-            roles.forEach(role => {
+            /* roles.forEach(role => {
                 if (role === 'superAdmin' || role === 'admin') {
                     isAdminCache = true
                 }
-            })
+            }) */
         }
         if (isAdminCache) {
             sitesDatabase.initDbObras()
@@ -206,7 +228,8 @@ const CreateReports = () => {
                 setSites(respuestaConsulta);
             })
         } else {
-            setIdObra(JSON.parse(localStorage.getItem('sitio')).idobra)
+            console.log(userData)
+            setIdObra(userData.obras[0].idobra)
         }
         setIsAdmin(isAdminCache)
         readTrucks()
@@ -402,7 +425,7 @@ const CreateReports = () => {
                                     <p style={{margin: 5}}>Seleccionar tipo de reporte</p>
                                         <FormControl>
                                             <select 
-                                                onBlur={()=>saveReportData(true)}
+                                                /* onBlur={()=>saveReportData(true)} */
                                                 className={classes.inputsStyle} 
                                                 name="userType" 
                                                 id="userType" 
@@ -420,7 +443,7 @@ const CreateReports = () => {
                                         <FormControl >
                                             <p style={{margin: 5}}>Seleccionar modelo de máquina</p>
                                             <select 
-                                                onBlur={()=>saveReportData(true)}
+                                                /* onBlur={()=>saveReportData(true)} */
                                                 className={classes.inputsStyle} 
                                                 name="userType" 
                                                 id="userType" 
@@ -446,7 +469,7 @@ const CreateReports = () => {
                                             <p style={{margin: 0}}>Seleccionar Pauta  {(disablePautas && changed) && <b>ESPERE...</b>}</p>
                                             <select 
                                                 disabled={disablePautas}
-                                                onBlur={()=>saveReportData()} 
+                                                /* onBlur={()=>saveReportData()}  */
                                                 className={classes.inputsStyle} 
                                                 name="userType" 
                                                 id="userType" 
@@ -456,14 +479,14 @@ const CreateReports = () => {
                                             >
                                                 <option>Seleccione...</option>
                                                 {
-                                                    (pautas.length > 0) && pautas.map((pauta, index) => {
+                                                    (pautasParaMostrar.length > 0) && pautasParaMostrar.map((pauta, index) => {
                                                         return(
                                                             <option key={index} value={[pauta.idpm, pauta.typepm]}> {(pauta.idpm === 'SPM000787') ? 'Motor LMR' : 'Motor Estándar'} - {pauta.typepm} / {pauta.header[1].typeDataDesc} {pauta.zone === 'Genérico' ? '' : `${[pauta.zone]}`} </option>
                                                         )
                                                     })
                                                 }
                                                 {
-                                                    (pautas.length == 0) && <option> Selección no cuenta con pautas. </option>
+                                                    (pautasParaMostrar.length == 0) && <option> Selección no cuenta con pautas. </option>
                                                 } 
                                             </select>
                                         </FormControl>

@@ -22,6 +22,10 @@ const UsersSchema = new Schema({
         },
         required: false,
     },
+    isTest: {
+        type: Schema.Types.Boolean,
+        default: false
+    },
     name: {
         type: Schema.Types.String,
         required: true,

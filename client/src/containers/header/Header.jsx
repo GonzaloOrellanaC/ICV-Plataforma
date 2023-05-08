@@ -6,13 +6,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import logo from '../../assets/logo_icv_gris.png'
 import logoNotification from '../../assets/logo_icv_notification_push.png'
 import { ConnectionContext, useAuth, useNavigation } from '../../context'
-import { changeTypeUser, styleModal, sync } from '../../config'
-import { useState } from 'react'
+import { changeTypeUser } from '../../config'
 import './style.css'
-import { usersRoutes } from '../../routes'
 import addNotification from 'react-push-notification';
 import { SocketConnection } from '../../connections'
-import { FirmaUsuario } from '../../modals'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -53,18 +50,16 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = () => {
     const classes = useStyles()
-    const {isOnLine} = useContext(ConnectionContext)
+    const {isOnline} = useContext(ConnectionContext)
     const { navBarOpen } = useNavigation()
     const { isAuthenticated, userData } = useAuth()
-    const [ network, setIfHavNetwork ] = useState(false)
-    const [ openSign, setOpenSign ] = useState(false)
-    const [ refCanvas, setRefCanvas ] = useState()
     const history = useHistory();
     useEffect(() => {
-        if (isOnLine) {
-            setIfHavNetwork(true)
+        console.log('La red está o no conectada: ', isOnline)
+        if (isOnline) {
+            /* setIfHavNetwork(true) */
         } else {
-            setIfHavNetwork(false);
+            /* setIfHavNetwork(false); */
             addNotification({
                 icon: logoNotification,
                 title: 'Alerta',
@@ -74,10 +69,10 @@ const Header = () => {
                 native: true // when using native, your OS will handle theming.
             })
         }
-    },[isOnLine])
+    },[isOnline])
     useEffect(() => {
         if(isAuthenticated) {
-            if(navigator.onLine) {
+            /* if(navigator.onLine) {
                 usersRoutes.getUser(localStorage.getItem('_id')).then(data => {
                     if(data.data) {
                         if(!data.data.sign || (data.data.sign.length < 1)) {
@@ -85,12 +80,12 @@ const Header = () => {
                         }
                     }
                 })
-            }
-            if (navigator.onLine) {
+            } */
+            /* if (navigator.onLine) {
                 setIfHavNetwork(true)
             } else {
                 setIfHavNetwork(false)
-            }
+            } */
             Notification.requestPermission().then((res) => {
                 if(res === 'denied' || res === 'default') {
                     
@@ -98,21 +93,6 @@ const Header = () => {
             })
         }
     }, [])
-
-    const setRefCanvasFunction = (ref) => {
-        setRefCanvas(ref);
-    }
-
-    const clear = () => {
-        refCanvas.clear();
-    }
-
-    const getImage = () => {
-        usersRoutes.editUser({sign: refCanvas.toDataURL()}, localStorage.getItem('_id')).then(data => {
-            setOpenSign(false);
-            alert('Muchas gracias. Su firma ha sido actualizada.')
-        })
-    }
 
     const sendTestNotification = () => {
         SocketConnection.sendnotificationToAllUsers(
@@ -160,11 +140,10 @@ const Header = () => {
                             {
                                 (localStorage.getItem('role')==='admin'||localStorage.getItem('role')==='superAdmin') && <button onClick={() => sendTestNotification()}>Notif. Test</button>
                             }
-                            <p><FontAwesomeIcon icon={faCircle} color={network ? '#2FB83F' : '#B62800'} /> {network ? 'Online' : 'Offline'}</p>
-                            {!network && <p>Sin red</p>}
+                            <p><FontAwesomeIcon icon={faCircle} color={isOnline ? '#2FB83F' : '#B62800'} /> {isOnline ? 'Online' : 'Offline'}</p>
+                            {!isOnline && <p>Sin red</p>}
                         </div>
                 </Toolbar>
-                <FirmaUsuario openSign={openSign} styleModal={styleModal} setRefCanvasFunction={setRefCanvasFunction} getImage={getImage} clear={clear} />
             </div>
         </AppBar>
     )

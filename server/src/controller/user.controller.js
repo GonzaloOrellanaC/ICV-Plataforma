@@ -90,7 +90,11 @@ const findByRole = async  (req, res, next) => {
 
 const readAllUsers = async (req, res, next) => {
     try {
-        const users = await Users.find().populate('obras')
+        const query = {
+            isTest: false
+        }
+        const queryAdmin = {}
+        const users = await Users.find(req.body.admin ? queryAdmin : query).populate('obras')
         console.log(users.length)
         res.status(200).json(users)
         /* Users.find({}, (err, users) => {
@@ -103,10 +107,14 @@ const readAllUsers = async (req, res, next) => {
 
 const getMantenedores = async (req, res, next) => {
     try {
-        /* Users.find({$or : [{role:'maintenceOperator'}, {roles:'maintenceOperator'}]}, (err, users) => {
-            res.json(users)
-        }) */
-        const users = await Users.find({$or : [{role:'maintenceOperator'}, {roles:'maintenceOperator'}]}).populate('obras')
+        const query = {
+            $or : [{role:'inspectionWorker'}, {roles:'inspectionWorker'}],
+            isTest: false
+        }
+        const queryAdmin = {
+            $or : [{role:'inspectionWorker'}, {roles:'inspectionWorker'}]
+        }
+        const users = await Users.find(req.body.admin ? queryAdmin : query).populate('obras')
         res.status(200).json({data: users})
     } catch (err) {
 
@@ -115,14 +123,14 @@ const getMantenedores = async (req, res, next) => {
 
 const getOperadores = async (req, res, next) => {
     try {
-        /* Users.find({$or : [{role:'inspectionWorker'}, {roles:'inspectionWorker'}]}, (err, users) => { */
-        /* Users.find({role:'inspectionWorker'}, (err, users) => { */
-            /* res.json(users) */
-            /* Users.find({roles:'inspectionWorker'}, (err, users2) => {
-                res.json(userList.concat(users2))
-            }) */
-        /* }) */
-        const users = await Users.find({$or : [{role:'inspectionWorker'}, {roles:'inspectionWorker'}]}).populate('obras')
+        const query = {
+            $or : [{role:'inspectionWorker'}, {roles:'inspectionWorker'}],
+            isTest: false
+        }
+        const queryAdmin = {
+            $or : [{role:'inspectionWorker'}, {roles:'inspectionWorker'}]
+        }
+        const users = await Users.find(req.body.admin ? queryAdmin : query).populate('obras')
         res.status(200).json({data: users})
     } catch (err) {
 

@@ -15,14 +15,14 @@ export default {
         }
         return axios.post('/users/editUser', requestBody)
     },
-    getAllUsers: () => {
-        return axios.get('/users/getUsers')
+    getAllUsers: (admin) => {
+        return axios.post('/users/getUsers', {admin: admin})
     },
-    getMantenedores: () => {
-        return axios.get('/users/getMantenedores')
+    getMantenedores: (admin) => {
+        return axios.post('/users/getMantenedores', {admin: admin})
     },
-    getOperadores: () => {
-        return axios.get('/users/getOperadores')
+    getOperadores: (admin) => {
+        return axios.post('/users/getOperadores', {admin: admin})
     },
     getUser: (id) => {
         const requestBody = {

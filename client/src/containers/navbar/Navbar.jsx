@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Drawer, Grid, IconButton, makeStyles } from '@material-ui/core';
 import { Menu, Close } from '@material-ui/icons';
 import clsx from 'clsx';
@@ -18,13 +18,10 @@ import {
     faTruck,
     faUser,
     faCube,
-    faTrash,
     faSlidersH} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation } from '../../context';
 import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
-import { io } from "socket.io-client";
-import logoNotification from '../../assets/logo_icv_notification_push.png'
-import addNotification from 'react-push-notification';
+import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -117,22 +114,18 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 'bold'
     }
 }))
-const Navbar = ({getNotification}) => {
+const Navbar = () => {
+    const {isSapExecutive, isShiftManager, isChiefMachinery, admin, userData} = useAuth()
     const classes = useStyles()
     const { navBarOpen, handleNavBar } = useNavigation()
-    const { userData } = useAuth()
-    const [ useButton, setUseButton ] = useState()
     const [ path, setPath ] = useState('')
-    const history = useHistory()
+    const location = useLocation()
     const [ disableButtonNoAdmin, setDisableButtonsNoAdmin ] = useState(true)
     const [ disabled, setDisabled ] = useState(true)
     const [ openVersionModal, setOpenVersionModal ] = useState(false)
     const [ openIAModal, setOpenIAModal ] = useState(false)
     const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false)
-    const [ cancel, setCancel ] = useState(true)
-    const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
-    const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
-    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
+
     const logout = async () => {
         if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
             window.localStorage.clear();
@@ -145,7 +138,7 @@ const Navbar = ({getNotification}) => {
         let databases = await window.indexedDB.databases();
         if(databases.length > 0) {
             databases.forEach((database, index) => {
-                if(database.name === '3Ds' || database.name === 'MachinesParts' || database.name === 'Executions') {
+                if(database.name === '3Ds' || database.name === 'MachinesParts' || database.name === 'Executions' || database.name === 'Trucks') {
 
                 }else{
                     window.indexedDB.deleteDatabase(database.name)
@@ -214,72 +207,20 @@ const Navbar = ({getNotification}) => {
         }
     }
 
-    const clearAndLogout = () => {
-        if(confirm('Limpiará toda la data del sistema y cerrará la sesión. Una vez terminado vuelva a iniciar.')) {
-            window.indexedDB.databases().then((db) => {
-                console.log(db)
-                db.forEach((database, index) => {
-                    window.indexedDB.deleteDatabase(database.name)
-                    if(index == (db.length - 1)) {
-                        window.localStorage.clear();
-                        window.location.reload();
-                        removeDatabases();
-                    }
-                })
-            })
+    useEffect(() => {
+        if(admin) { 
+            setDisableButtonsNoAdmin(false);
         }
-    }
+        if(admin || isSapExecutive || isShiftManager || isChiefMachinery) {
+            setDisabled(false);
+        }
+    },[admin, isSapExecutive, isShiftManager, isChiefMachinery])
 
     useEffect(() => {
-        if(cancel) {
-            const socket = io()
-            if (navigator.onLine) {
-                socket.on(`test_${localStorage.getItem('_id')}`, data => {
-                    addNotification({
-                        icon: logoNotification,
-                        title: 'Test',
-                        subtitle: 'Notifications',
-                        message: data.message,
-                        theme: 'red',
-                        duration: 5000,
-                        native: true
-                    })
-                })
-                socket.on(`notification_${localStorage.getItem('_id')}`, data => {
-                    addNotification({
-                        icon: logoNotification,
-                        title: data.title,
-                        subtitle: data.subtitle,
-                        message: data.message,
-                        theme: 'red',
-                        duration: 5000,
-                        native: true
-                    })
-                })
-            }
-            
-            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin')) { 
-                setDisableButtonsNoAdmin(false);
-            }
-            if((localStorage.getItem('role') === 'admin') || (localStorage.getItem('role') === 'superAdmin') || (localStorage.getItem('role') === 'sapExecutive') || isSapExecutive || (localStorage.getItem('role') === 'shiftManager') || isShiftManager || (localStorage.getItem('role') === 'chiefMachinery') || isChiefMachinery) {
-                setDisabled(false);
-            }
-            setPath(history.location.pathname)
-            if(history.listen(data => {
-                setPath(data.pathname)
-            }))
-            setUseButton(true)
-            const timer = setInterval(() => {
-                if(!(localStorage.getItem('sitio'))) {
-                    setUseButton(false)
-                }else{
-                    setUseButton(true)
-                    clearInterval(timer);
-                }
-            }, 1000);
+        if(location) {
+            setPath(location.pathname)
         }
-        return () => setCancel(false);
-    }, [cancel])
+    },[location])
 
     return (
         <div>

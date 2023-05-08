@@ -7,7 +7,7 @@ import { usersRoutes } from '../../routes'
 import { AuthContext } from '../../context'
 
 const UserProfilePage = ({route}) => {
-    const {userData} = useContext(AuthContext)
+    const {userData, admin} = useContext(AuthContext)
     /* const [userData, setUserData ] = useState(); */
     const [ users, setUsers ] = useState([])
     const classes = useStylesTheme();
@@ -16,7 +16,7 @@ const UserProfilePage = ({route}) => {
     useEffect(() => {
         const _id = localStorage.getItem('_id');
         if(navigator.onLine) {
-            usersRoutes.getAllUsers().then(async users => {
+            usersRoutes.getAllUsers(admin).then(async users => {
                 let usersList = new Array();
                 usersList = users.data;
                 if(usersList) {

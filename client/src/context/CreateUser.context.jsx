@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min'
+import { useUsersContext } from '.'
 
 export const CreateUserContext = createContext()
 
 export const CreateUserProvider = (props) => {
+    const [ rolesListSelectionCache, setRolesListSelectionCache ] = useState([]);
+    const [changeModule, setChangeModule] = useState(false)
 
     const userDataDefault = {
         rut:'',
@@ -43,14 +46,25 @@ export const CreateUserProvider = (props) => {
     },[location])
 
     useEffect(() => {
-        if (userData) {
-            console.log(userData)
+        if (changeModule) {
+            const isRoleSelected = []
+            console.log(rolesListSelectionCache)
+            rolesListSelectionCache.forEach((role) => {
+                if (role.selected) {
+                    isRoleSelected.push(role.dbName)
+                }
+            })
+            setUserData({...userData, roles: isRoleSelected})
+            setChangeModule(false)
         }
-    }, [userData])
+    }, [changeModule])
 
     const provider = {
         userData,
-        setUserData
+        setUserData,
+        rolesListSelectionCache,
+        setRolesListSelectionCache,
+        setChangeModule
     }
 
     return (

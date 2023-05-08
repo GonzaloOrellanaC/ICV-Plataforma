@@ -1,88 +1,34 @@
-import { useState, useEffect, useContext } from "react";
-import { makeStyles, Grid, Box, FormControl, IconButton, Checkbox } from "@material-ui/core";
-import { faEyeDropper, faEyeSlash, faPaperclip } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Link, useHistory } from 'react-router-dom'
-import UserInfo from "./userInfoData";
-import { permisosRoutes } from "../../routes";
+import { useEffect, useContext, useState } from "react";
+import { Grid } from "@material-ui/core";
+import { sitesRoutes } from "../../routes";
 import { changeTypeUser } from '../../config'
-import { CreateUserContext } from "../../context";
-
-/* const useStyles = makeStyles(theme => ({
-    inputsStyle: {
-        borderColor: '#C4C4C4'
-    }
-})); */
+import { CreateUserContext, useSitesContext } from "../../context";
 
 const PermissionUser = ({width, height, typeDisplay, id}) => {
 
     const {userData, setUserData} = useContext(CreateUserContext)
-    const [ permisosReportes, setPermisosReportes ] = useState([]);
-    const [ permisosUsuarios, setPermisosUsuarios ] = useState([]);
+    const {siteSelected} = useSitesContext()
+    const [siteName, setSiteName] = useState('')
 
-    /* SELECCION DE CHECKBOX */
-    
-    /* const handleChange = (checked, i, list, nameList) => {
-        list[i].isChecked = checked;
-        setPermisosReportes([]);
-        setPermisosUsuarios([]);
-        if(nameList === 'reportes') {
-            setPermisosReportes(list);
-            localStorage.setItem('listaPermisosReportes', JSON.stringify(permisosReportes))
-            setTimeout(() => {
-                setPermisosUsuarios(permisosUsuarios);
-            }, 5);
-        }else if(nameList === 'usuarios') {
-            setTimeout(() => {
-                setPermisosReportes(permisosReportes);
-            }, 5);
-            localStorage.setItem('listaPermisosUsuarios', JSON.stringify(permisosUsuarios))
-            setPermisosUsuarios(list);
+    useEffect(() => {
+        console.log(userData)
+        if (userData.obras) {
+            getSiteName()
         }
-    } */
+    }, [userData.obras])
 
-    /* OBTENER PERMISOS DESDE BASE DE DATOS */
-
-    /* const getPermisos = async () => {
-        if(typeDisplay === 'Nuevo usuario') {
-            const responseData = await permisosRoutes.getPermisos();
-            return new Promise(resolve => {
-                responseData.data.forEach((responseType, index) => {
-                    if(responseType.name === 'reportes') {
-                        setPermisosReportes(responseType.resources)
-                    }else if(responseType.name === 'usuarios') {
-                        setPermisosUsuarios(responseType.resources)
-                    }
-                    if(index == (responseData.data.length - 1)) {
-                        resolve(true)
-                    }
-                })
-            })
-        }else if(typeDisplay === 'Editar usuario') {
-            const responseData = await permisosRoutes.getPermisosByUser(id);
-            return new Promise(resolve => {
-                Object.keys(responseData.data).map((e, i) => {
-                    if(e === 'permissionsReports') {
-                        setPermisosReportes(responseData.data[e])
-                    }else if(e === 'permissionsUsers') {
-                        setPermisosUsuarios(responseData.data[e])
-                    }
-                    if(i == (Object.keys(responseData.data).length - 1)) {
-                        resolve(true)
-                    }
-                })
-            })
+    const getSiteName = async () => {
+        const userDataCache = userData
+        let id = ''
+        if (userDataCache.obras[0]._id) {
+            id = userDataCache.obras[0]._id
+        } else {
+            id = userDataCache.obras[0]
         }
-    } */
-
-    /* EN BASE DE DATOS SE GUARDA NOMBRE, EL CUAL DEBE MOSTRARSE SEGÚN ROL */
-
-/*     const renameUserType = async () => {
-        let userDataRole = await changeTypeUser(JSON.parse(localStorage.getItem('userDataToSave')).role);
-        setUserType(userDataRole);
-    } */
-
-    /* const classes = useStyles() */
+        const response = await sitesRoutes.getSiteById(id)
+        console.log(response)
+        setSiteName(response.data.data.descripcion)
+    }
 
     return (
             <Grid container style={{height: height}}>
@@ -103,9 +49,9 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
                         <div style={{width: '100%', marginBottom: 15}}>
                             <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Tipo de usuario</p>
                             {
-                                userData.roles.map(el => {
+                                userData.roles.map((el, i) => {
                                     return (
-                                        <p>{changeTypeUser(el)}</p>
+                                        <p key={i}>{changeTypeUser(el)}</p>
                                     )
                                 })
                             }
@@ -113,7 +59,7 @@ const PermissionUser = ({width, height, typeDisplay, id}) => {
 
                         <div style={{width: '100%', marginBottom: 15}}>
                             <p style={{margin: 0, fontSize: 12, fontWeight: 'bold'}}>Obra</p>
-                            <p style={{margin: 0, fontSize: 16}}>{/* obra */}</p>
+                            <p style={{margin: 0, fontSize: 16}}>{siteName}</p>
                         </div>
 
                         <div style={{width: '100%', marginBottom: 15}}>

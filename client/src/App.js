@@ -11,7 +11,7 @@ import { createUploadLink } from 'apollo-upload-client'
 import { CircularProgress, CssBaseline, IconButton, LinearProgress, ThemeProvider } from '@material-ui/core'
 import { theme, download3DFiles, detectExecutionState } from './config'
 import './App.css'
-import { AuthProvider, ConnectionProvider, CreateUserProvider, ExecutionReportProvider, LanguageProvider, NavigationProvider, ReportsProvider, useAuth } from './context'
+import { AuthProvider, ConnectionProvider, CreateUserProvider, ExecutionReportProvider, LanguageProvider, MachineProvider, NavigationProvider, ReportsProvider, SitesProvider, TimeProvider, UsersProvider, useAuth } from './context'
 import { Header, Navbar } from './containers'
 import { 
     AppliancePage, 
@@ -72,13 +72,13 @@ const OnApp = () => {
     const [ openDownload3D, setOpenDownload3D ] = useState(false)
     const [ progressDownload3D, setProgressDownload3D ] = useState(0)
     const [ loadingData3D, setLoadingData3D ] = useState('')
-    const { loading } = useAuth()
+    const { loading, admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery } = useAuth()
     const isAuthenticated = localStorage.getItem('isauthenticated') //==='true'
     const isNotAuthenticated = (localStorage.getItem('isauthenticated')==='false')||!localStorage.getItem('isauthenticated')
-    const isOperator = Boolean(localStorage.getItem('isOperator'))
-    const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
+    /* const isOperator = Boolean(localStorage.getItem('isOperator')) */
+    /* const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
     const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
-    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery'))
+    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery')) */
     const readyToLoad = () => {
         initLoad3D()
     }
@@ -106,7 +106,7 @@ const OnApp = () => {
     return (
         <div style={{fontFamily: 'Roboto'}}>
             {isAuthenticated && <Route path={['/']}>
-            {isAuthenticated && !loading && <Navbar iniciarDescarga3D={iniciarDescarga3D}/>} {isAuthenticated && !loading && <Header/>}
+            {isAuthenticated && !loading && <Navbar/>} {isAuthenticated && !loading && <Header/>}
                 </Route>}
             <Switch>
                 {isNotAuthenticated && <Route exact path={['/reset-password']} render={() => (<ResetPasswordPage />)}/>}
@@ -124,8 +124,7 @@ const OnApp = () => {
                     </Switch>
                 </Route> */}
                 {(
-                    localStorage.getItem('role') === ('admin') ||
-                    (localStorage.getItem('role') === 'sapExecutive') ||
+                    admin ||
                     (localStorage.getItem('role') === 'superAdmin') ||
                     isSapExecutive) && <Route path={['/internal-messages']}>
                     <Switch>
@@ -181,7 +180,7 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                {!(localStorage.getItem('role') === 'maintenceOperator') && <Route path={['/maintenance']}>
+                {!isOperator && <Route path={['/maintenance']}>
                     <Switch>
                         <Route exact path='/maintenance'>
                             <NoPermissionPage route={'maintenance'}/>
@@ -190,8 +189,7 @@ const OnApp = () => {
                 </Route>}
                 {(
                     isSapExecutive ||
-                    localStorage.getItem('role') === ('admin') ||
-                    (localStorage.getItem('role') === 'sapExecutive') ||
+                    admin ||
                     (localStorage.getItem('role') === 'superAdmin')
                     ) && <Route path={['/sites']}>
                     <Switch>
@@ -201,11 +199,11 @@ const OnApp = () => {
                     </Switch>
                 </Route>}
                 {(
-                    isOperator ||
+                    /* isOperator ||
                     isShiftManager ||
-                    isChiefMachinery ||
-                    localStorage.getItem('role') !== ('admin') ||
-                    localStorage.getItem('role') !== 'sapExecutive'
+                    isChiefMachinery || */
+                    /* localStorage.getItem('role') !== ('admin') || */
+                    !isSapExecutive
                     ) && <Route path={['/sites']}>
                     <Switch>
                         <Route exact path='/sites'>
@@ -241,35 +239,21 @@ const OnApp = () => {
                         </Route>
                     </Switch>
                 </Route>
-                {(
-                    isSapExecutive ||
-                    localStorage.getItem('role') === ('admin') ||
-                    (localStorage.getItem('role') === 'sapExecutive') ||
-                    (localStorage.getItem('role') === 'superAdmin')
-                    ) && <Route path={['/administration']}>
+                <Route path={['/administration']}>
                     <Switch>
                         <Route exact path='/administration'>
-                            <AdminPage route={'administration'}/>
+                            {
+                                admin ?
+                                <AdminPage route={'administration'} />
+                                :
+                                <NoPermissionPage route={'administration'}/>
+                            }
                         </Route>
                     </Switch>
-                </Route> }
-                {((
-                    isOperator ||
-                    isShiftManager ||
-                    isChiefMachinery ||
-                    localStorage.getItem('role') !== ('admin')) ||
-                    (localStorage.getItem('role') !== 'sapExecutive') ||
-                    (localStorage.getItem('role') !== 'superAdmin')
-                    ) && <Route path={['/administration']}>
-                    <Switch>
-                        <Route exact path='/administration'>
-                            <NoPermissionPage route={'administration'}/>
-                        </Route>
-                    </Switch>
-                </Route>}
+                </Route>
                 {(
                     isSapExecutive ||
-                    localStorage.getItem('role') === ('admin') ||
+                    admin ||
                     (localStorage.getItem('role') === 'sapExecutive') ||
                     (localStorage.getItem('role') === 'superAdmin')
                     ) && <Route path={['/users']}>
@@ -293,7 +277,7 @@ const OnApp = () => {
                 </Route>}
                 {(
                     isSapExecutive ||
-                    localStorage.getItem('role') === ('admin') ||
+                    admin ||
                     (localStorage.getItem('role') === 'sapExecutive') ||
                     (localStorage.getItem('role') === 'superAdmin')
                     ) && <Route path={['/new-users']}>
@@ -318,7 +302,7 @@ const OnApp = () => {
                     </Switch>
                 </Route>}
                 {(
-                    localStorage.getItem('role') === ('admin') ||
+                    admin ||
                     (localStorage.getItem('role') === 'superAdmin')
                     ) && <Route path={['/roles']}>
                     <Switch>
@@ -411,20 +395,28 @@ const App = () => {
             <ApolloProvider client={client}>
                 <ConnectionProvider>
                     <AuthProvider>
-                        <LanguageProvider>
-                            <NavigationProvider>
-                                <ReportsProvider>
-                                    <ExecutionReportProvider>
-                                        <CreateUserProvider>
-                                            <ThemeProvider theme={theme} >
-                                                <CssBaseline />
-                                                <OnApp />
-                                            </ThemeProvider>
-                                        </CreateUserProvider>
-                                    </ExecutionReportProvider>
-                                </ReportsProvider>
-                            </NavigationProvider>
-                        </LanguageProvider>
+                        <SitesProvider>
+                            <LanguageProvider>
+                                <NavigationProvider>
+                                    <UsersProvider>
+                                        <ReportsProvider>
+                                            <ExecutionReportProvider>
+                                                <CreateUserProvider>
+                                                    <TimeProvider>
+                                                        <MachineProvider>
+                                                            <ThemeProvider theme={theme} >
+                                                                <CssBaseline />
+                                                                <OnApp />
+                                                            </ThemeProvider>
+                                                        </MachineProvider>
+                                                    </TimeProvider>
+                                                </CreateUserProvider>
+                                            </ExecutionReportProvider>
+                                        </ReportsProvider>
+                                    </UsersProvider>
+                                </NavigationProvider>
+                            </LanguageProvider>
+                        </SitesProvider>
                     </AuthProvider>
                 </ConnectionProvider>
             </ApolloProvider>

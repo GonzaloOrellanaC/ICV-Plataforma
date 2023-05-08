@@ -1,7 +1,7 @@
 
 
 export default (time) => {
-    let day = new Date(time).getDay() + 1
+    let day = new Date(time).getDay()
     let dayName;
     if(day == 1) {
         dayName = 'Lunes'

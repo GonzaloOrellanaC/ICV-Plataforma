@@ -12,7 +12,7 @@ const LoadingLogoModal = ({open}) => {
             open={open}
         >
             <Box sx={styleModalLogo}>
-                <CircularProgress size={300} />
+                <CircularProgress size={300} color={'primary'} />
                 <img src="../../assets/logo_icv_blanco.png" width={150} style={{position: 'absolute', top: 120, right: 40}} />
             </Box>
         </Modal>

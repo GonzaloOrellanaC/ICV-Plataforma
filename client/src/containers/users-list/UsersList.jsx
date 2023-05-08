@@ -7,8 +7,10 @@ import { sitesRoutes, usersRoutes } from '../../routes';
 import { changeTypeUser } from '../../config';
 import { UserListDataModal } from '../../modals'
 import { LoadingPage } from "../../pages";
+import { useUsersContext } from "../../context";
 
 const UsersList = ({height, hableButton}) => {
+    const {users} = useUsersContext()
     const [ usuarios, setUsuarios ] = useState([])
     const [ usuariosCache, setUsuariosCache ] = useState([])
     const [ open, setOpen ] = useState(false);
@@ -43,7 +45,7 @@ const UsersList = ({height, hableButton}) => {
     }
 
     useEffect(() => {
-        init()
+        /* init() */
         /* let cancel = true;
         if(cancel) {
             usersRoutes.getAllUsers().then(users=> {
@@ -68,13 +70,13 @@ const UsersList = ({height, hableButton}) => {
         return () => {cancel = false} */
     }, []);
 
-    const init = async () => {
+    /* const init = async () => {
         console.log('Iniciando consulta de usuarios')
         const response = await usersRoutes.getAllUsers()
         if (response) {
             const users = response.data
             setUsuarios(users)
-            setUsuariosCache(users)
+            setUsuariosCache(users) */
             /* users.forEach((user, index) => {
                 user.obrasList = []
                 if (user.obras) {
@@ -90,8 +92,8 @@ const UsersList = ({height, hableButton}) => {
                     }, 1000);
                 }
             }) */
-        }
-    }
+       /*  }
+    } */
 
     useEffect(() => {
         console.log(usuarios)
@@ -248,12 +250,12 @@ const UsersList = ({height, hableButton}) => {
                 {
                     hableButton && <div style={{overflowY: 'auto', height: 'calc(100vh - 350px)'}}>
                         {
-                            (usuarios.length === 0)
+                            (users.length === 0)
                             &&
                             <LoadingPage />
                         }
                         {
-                            (usuarios.length > 0) && usuarios.map((e, n) => {
+                            (users.length > 0) && users.map((e, n) => {
                                 return(
                                     <ListItem key={n} style={well}>
                                         <div style={{width: '5%', marginLeft: 5, fontSize: 12 }}>

@@ -16,14 +16,22 @@ const login = async (req, res, next) => {
         return res.status(400).end(errorMsg.credentialsRequired)
     }
     try {
-        const authenticatedUser = await UserServices.authenticateUser(req, res, next);
+        const userFind = await Users.findOne({email: user.email}).populate('obras')
+        if (userFind) {
+            const hash = crypto.pbkdf2Sync(user.password, userFind.salt, 200000, 64, 'sha512').toString('hex')
+            if (userFind.hash === hash) {
+                Sentry.captureMessage('Login por email ' + user.rut + ' aceptado', 'info')
+                return res.status(200).json(userFind);
+            }
+        }
+        /* const authenticatedUser = await UserServices.authenticateUser(req, res, next);
         res.cookie('jwt', authenticatedUser.generateJWT(), {
             httpOnly: true,
             ...(environment.env === 'production' && { secure: true }),
             ...(environment.env === 'production' && { sameSite: 'strict' })
         })
         Sentry.captureMessage('Login por email ' + user.email + ' aceptado', 'info')
-        return res.status(200).json(authenticatedUser);
+        return res.status(200).json(authenticatedUser); */
     } catch (error) {
         Sentry.captureException(error)
         console.error(error.message)
@@ -39,7 +47,7 @@ const loginRut = async (req, res, next) => {
         return res.status(400).end(errorMsg.credentialsRequired)
     }
     try {
-        const userFind = await Users.findOne({rut: user.rut})
+        const userFind = await Users.findOne({rut: user.rut}).populate('obras')
         if (userFind) {
             const hash = crypto.pbkdf2Sync(user.password, userFind.salt, 200000, 64, 'sha512').toString('hex')
             if (userFind.hash === hash) {

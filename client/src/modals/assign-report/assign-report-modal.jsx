@@ -10,8 +10,10 @@ import { Close } from '@material-ui/icons';
 import { styleModalReport } from '../../config';
 import { reportsRoutes, usersRoutes } from '../../routes';
 import { SocketConnection } from '../../connections';
+import { useAuth } from '../../context';
 
 const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) => {
+    const {admin} = useAuth()
     const [ operarios, setOperarios ] = useState();
     const [ colorState, setColorState ] = useState();
     const { idIndex, guide, state, siteName, usersAssigned, site } = report;
@@ -97,7 +99,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         console.log(reportType)
         if(reportType === 'Inspección') {
             hableUser === 'inspectionWorker'
-            usersRoutes.getOperadores().then(response => {
+            usersRoutes.getOperadores(admin).then(response => {
                 const users = response.data.data.sort((a, b) => {
                     if (a.name < b.name) {
                       return -1;
@@ -117,7 +119,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
             })
         }else if(reportType === 'Mantención') {
             hableUser === 'maintenceOperator'
-            usersRoutes.getMantenedores().then(response => {                
+            usersRoutes.getMantenedores(admin).then(response => {                
                 const users = response.data.data.sort((a, b) => {
                     if (a.name < b.name) {
                       return -1;
