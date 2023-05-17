@@ -96,7 +96,7 @@ const getUser = async (userId) => {
 const getUserByRole = (role) => {
     try{
         return new Promise(resolve => {
-            Users.find({role: role}, (err, user) => {
+            Users.find({roles: {$in: [role]}}, (err, user) => {
                 Sentry.captureException(err)
                 resolve(user)
             });

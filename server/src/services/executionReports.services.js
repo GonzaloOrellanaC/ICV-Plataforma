@@ -4,19 +4,9 @@ import { AzureServices } from "."
 const getExecutionReportById = async (req, res) => {
     const { body } = req
     console.log(body.reportData._id)
-
     try{
-        /* ExecutionReport.find({reportId: body.reportData._id}, async (err, doc) => {
-            if(err) {
-                res.json({
-                    state: false,
-                    message: "Error"
-                })
-            }
-            res.json(doc)
-        }) */
-        const executionReport = await ExecutionReport.find({report: body.reportData._id}).populate('report').populate('createdBy')
-        console.log(executionReport)
+        const executionReport = await ExecutionReport.findOne({reportId: body.reportData._id}).populate('report').populate('createdBy')
+        console.log('Excution: ', executionReport._id)
         res.json(executionReport)
     }catch(err) {
         res.json(err);
@@ -55,6 +45,7 @@ const saveExecutionReport = async (req, res) => {
         executionReportData.group[key].forEach((item) => {
             if (item.messages) {
                 item.messages.forEach(async (mensaje, i) => {
+                    if (mensaje)
                     if (mensaje.urlBase64) {
                         if (mensaje.urlBase64.length > 0) {
                             numberVerification1 = numberVerification1 + 1

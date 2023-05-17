@@ -9,7 +9,8 @@ import ImageDialog from './ImageDialog'
 import ImageAstDialog from './ImageAstDialog'
 import {isMobile} from 'react-device-detect'
 import InputTextDialog from './InputTextDialog'
-import { usersRoutes } from '../routes'
+import { useAuth, useConnectionContext, useExecutionReportContext, useUsersContext } from '../context'
+import { azureStorageRoutes } from '../routes'
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -17,7 +18,7 @@ const ReportDataDialog = (
   {
     open,
     handleClose,
-    report,
+    /* report, */
     item,
     index,
     executionReport,
@@ -25,9 +26,13 @@ const ReportDataDialog = (
     indexActivity,
     indexGroup,
     save,
-    setChecks
-  }
-  ) => {
+    setChecks,
+    canEdit
+  }) => {
+    const {userData, admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
+    const {usersFilteredBySite} = useUsersContext()
+    const {report} = useExecutionReportContext()
+    const {isOnline} = useConnectionContext()
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
   const [unidad, setUnidad] = useState()
@@ -39,24 +44,27 @@ const ReportDataDialog = (
   const [openCamera, setOpenCamera] = useState(false)
   const [astList, setAstList] = useState([])
   const [ast, setAst] = useState(false)
-  const [totalMessagesWithPictures, setPicturesOfItem] = useState(1)
+  const [totalMessagesWithPictures, setPicturesOfItem] = useState(0)
   const [indexKey, setIndexKey] = useState()
   const [isEdited, setIsEdited] = useState(false)
-  const [canEdit, setCanEdit] = useState(false)
-  const isOperator = Boolean(localStorage.getItem('isOperator'))
+  /* const [canEdit, setCanEdit] = useState(false) */
 
   useEffect(() => {
-    if (
+    console.log(report)
+  }, [report])
+
+  useEffect(() => {
+    /* if (
       isOperator ||
-      (localStorage.getItem('role') === 'inspectionWorker')||
-      (localStorage.getItem('role') === 'maintenceOperator')||
-      (localStorage.getItem('role') === 'shiftManager')
+      isSapExecutive||
+      isShiftManager||
+      isChiefMachinery
     ) 
       {
         setCanEdit(true)
       } else {
         setCanEdit(false)
-      }
+      } */
     gruposKeys.map((k, n) => {
       if(k.data === indexGroup) {
         setIndexKey(n)
@@ -70,9 +78,13 @@ const ReportDataDialog = (
     if(item.messages) {
       const total = []
       item.messages.forEach(async (m, i) => {
-        const user = await usersRoutes.getUser(m.user)
-        console.log(user)
-        m.name = `${user.data.name} ${user.data.lastName}`
+        const findUser = usersFilteredBySite.filter(user =>{if (user._id === m.user) return user})[0]
+        console.log(findUser)
+        if (findUser) {
+          m.name = `${findUser.name} ${findUser.lastName}`
+        } else {
+          m.name = 'User Test'
+        }
         if (m.urlBase64) {
           total.push(m)
         }
@@ -88,6 +100,32 @@ const ReportDataDialog = (
     }
   }, [])
 
+  useEffect(() => {
+    if (messages.length > 0) {
+      let haveMessage = false
+      let haveClip = false
+      const messagesCache = [...messages]
+      messagesCache.forEach(async (mess, i) => {
+        if (mess.urlBase64 || mess.urlImageMessage) {
+          haveClip = true
+        }
+        if (mess.content === 'Se indica estado ejecutado sin dejar mensajes') {
+
+        } else {
+          haveMessage = true
+        }
+        if (i === (messages.length - 1)) {
+          item.haveMessage = haveMessage
+          item.haveClip = haveClip
+        }
+      })
+      setMessage('')
+      setTimeout(() => {
+        document.getElementById('commits').scrollTop = document.getElementById('commits').scrollHeight
+      }, 50);
+    }
+  }, [messages])
+
   const changeUnidad = (value) => {
     setUnidad(value)
   }
@@ -102,32 +140,28 @@ const ReportDataDialog = (
   
   const uploadImageReport = async (file) => {
     if(file) {
-      setOpenLoadinModal(true)
       let res = await imageToBase64(file)
-      setTimeout(() => {
-        if(res) {
-          if (ast) {
-            astList.push({
-              id: Date.now(),
-              image: res
-            })
-            executionReport.astList = astList
-          } else {
-            saveMessage(res, `Imagen ${Date.now()}`)
-          }
-          setOpenLoadinModal(false)
-          setIsEdited(true)
-        }
-      }, 1000);
+      if (isOnline) {
+        const response = await azureStorageRoutes.uploadImage(
+          file,
+          `${new Date().getFullYear()}/${report.idIndex}/${indexGroup}/${Date.now()}`,
+          'reports-test'
+        )
+        console.log(response.data.data.url)
+        saveMessage(res, `Imagen ${Date.now()}`, response.data.data.url)
+      } else {
+        saveMessage(res, `Imagen ${Date.now()}`, null)
+      }
     }
   }
 
-  const saveMessage = (image, messagePicture) => {
+  const saveMessage = async (image, messagePicture, url) => {
     if(message.length > 0 || messagePicture) {
-      /* let haveMessage = true */
+      let totalImages = totalMessagesWithPictures
       if(image) {
         item.haveClip = true
-        /* haveMessage = false */
+        totalImages = totalImages + 1
+        setPicturesOfItem(totalImages)
       }
       let m
       if(messagePicture) {
@@ -137,43 +171,19 @@ const ReportDataDialog = (
       }
       let messageData = {
         id: Date.now(),
-        namePicture: image ? `${indexKey}_Tarea_${index + 1}_Foto_${totalMessagesWithPictures}` : null,
+        namePicture: url ? `${indexKey}_Tarea_${index + 1}_Foto_${totalImages}` : null,
         content: m,
-        name: `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`,
-        user: localStorage.getItem('_id'),
-        urlBase64: image
+        name: `${userData.name} ${userData.lastName}`,
+        user: userData._id,
+        urlBase64: image,
+        urlImageMessage: url
       }
-      messages.push(messageData)
-      setMessages(messages)
-      item.messages = messages
-      let haveMessage = false
-      let haveClip = false
-      item.messages.forEach((mess, i) => {
-        if (mess.urlBase64 || mess.urlImageMessage) {
-          haveClip = true
-        }
-        if (mess.content === 'Se indica estado ejecutado sin dejar mensajes') {
-
-        } else {
-          haveMessage = true
-        }
-        if (i === (item.messages.length - 1)) {
-          item.haveMessage = haveMessage
-          item.haveClip = haveClip
-        }
-      })
-      /* if (!item.haveMessage && haveMessage) {
-        item.haveMessage = true
-      } else {
-        item.haveMessage = false
-      } */
-      setMessage('')
-      setTimeout(() => {
-        document.getElementById('commits').scrollTop = document.getElementById('commits').scrollHeight
-        if(image) {
-          setPicturesOfItem(totalMessagesWithPictures + 1)
-        }
-      }, 50);
+      /* console.log(messageData) */
+      const messagesCache = [...messages]
+      messagesCache.push(messageData)
+      setMessages(messagesCache)
+      /* item.messages = messages */
+      
     }
   }
 
@@ -183,13 +193,9 @@ const ReportDataDialog = (
     if (item.unidad !== '*') {
       if (unidad) {
         item.unidadData = unidad
-        /* if(messages.length > 0) { */
         save(index, state, item)
         executionReport.offLineGuard = Date.now()
         handleClose()
-        /* }else{
-          alert('Debe dejar un comentario')
-        } */
       } else {
         alert('Debe ingresar el total utilizado. Si no utilizó insumo o repuesto solicitado debe ingresar 0')
       }
@@ -370,11 +376,11 @@ const ReportDataDialog = (
                         }
                         }>
                           {
-                            ((localStorage.getItem('_id') === message.user || (localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive' || localStorage.getItem('role')==='shiftManager' ))) &&
+                            (((userData._id === message.user && canEdit ) || admin)) &&
                             <IconButton onClick={()=>{deleteMessage(index)}} style={{position: 'absolute', top: 10, right: 10}}><Close style={{fontSize: 14, color: 'black'}}/></IconButton>
                           }
                       <p style={{marginBottom: 0, fontSize: 10}}><strong>{message.name}</strong></p>
-                      {(message.urlBase64 || message.urlImageMessage) && <img src={(message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage} height={70} onClick={() => openImage((message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage)} />}
+                      {(message.urlBase64 || message.urlImageMessage) && <img src={message.urlBase64 ? message.urlBase64 : message.urlImageMessage} height={70} onClick={() => openImage((message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage)} />}
                       <p style={{marginBottom: 20, whiteSpace: 'pre-line'}}>{message.content}</p>
                       <p style={{position: 'absolute', fontSize: 10, right: 5, bottom: 0}}>{dateWithTime(message.id)}</p>
                     </div>

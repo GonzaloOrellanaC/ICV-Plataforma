@@ -40,6 +40,14 @@ const initAccessControl = async () => {
         const users = await Users.find({})
         users.forEach(async (user, index) => {
             /* user.isTest = false */
+            if (user.roles && user.roles.length > 0) {
+
+            } else {
+                const roles = [user.role]
+                user.roles = roles
+                await Users.findByIdAndUpdate(user._id, user)
+                console.log(user.name + ' ' + user.lastName, ' added role')
+            }
             if(user.sites) {
                 console.log((JSON.parse(user.sites)).idobra)
                 if ((JSON.parse(user.sites)).idobra === '0369') {
@@ -53,7 +61,7 @@ const initAccessControl = async () => {
                     await Users.findByIdAndUpdate(user._id, user)
                 }
             } else {
-                await Users.findByIdAndUpdate(user._id, user)
+                /* await Users.findByIdAndUpdate(user._id, user) */
             }
         })
         const findRoles = await Roles.find({})

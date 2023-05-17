@@ -2,9 +2,11 @@ import { Box, Button, Fab, Grid, Modal } from "@material-ui/core"
 import { Close } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { dateWithTime, getUserNameById, styleInternalMessageModal } from '../../config';
+import { useAuth } from "../../context";
 
 
 const ReportMessagesModal = ({open, close, report}) => {
+    const {userData} = useAuth()
     const [ messages, setMessages ] = useState([])
 
     useEffect(() => {

@@ -72,8 +72,8 @@ const OnApp = () => {
     const [ openDownload3D, setOpenDownload3D ] = useState(false)
     const [ progressDownload3D, setProgressDownload3D ] = useState(0)
     const [ loadingData3D, setLoadingData3D ] = useState('')
-    const { loading, admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery } = useAuth()
-    const isAuthenticated = localStorage.getItem('isauthenticated') //==='true'
+    const { userData, loading, admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, isAuthenticated } = useAuth()
+    /* const isAuthenticated = localStorage.getItem('isauthenticated') */ //==='true'
     const isNotAuthenticated = (localStorage.getItem('isauthenticated')==='false')||!localStorage.getItem('isauthenticated')
     /* const isOperator = Boolean(localStorage.getItem('isOperator')) */
     /* const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
@@ -89,8 +89,8 @@ const OnApp = () => {
     useEffect(() => {
         console.log(isAuthenticated)
         if(isAuthenticated) {
-            SocketConnection.sendIsActive()
-            detectExecutionState()
+            SocketConnection.sendIsActive(userData)
+            /* detectExecutionState() */
         }
     }, [isAuthenticated])
     const iniciarDescarga3D = () => {

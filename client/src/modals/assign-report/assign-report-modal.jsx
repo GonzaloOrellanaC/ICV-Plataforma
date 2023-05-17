@@ -10,28 +10,79 @@ import { Close } from '@material-ui/icons';
 import { styleModalReport } from '../../config';
 import { reportsRoutes, usersRoutes } from '../../routes';
 import { SocketConnection } from '../../connections';
-import { useAuth } from '../../context';
+import { useAuth, useReportsContext, useSitesContext, useUsersContext } from '../../context';
 
 const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) => {
-    const {admin} = useAuth()
+    const {admin, userData} = useAuth()
+    const {inspectors, maitenances} = useUsersContext()
+    const {sites} = useSitesContext()
+    const {saveReport} = useReportsContext()
     const [ operarios, setOperarios ] = useState();
     const [ colorState, setColorState ] = useState();
-    const { idIndex, guide, state, siteName, usersAssigned, site } = report;
+    const { idIndex, guide, state/* , siteName */, usersAssigned, site } = report;
     const [ stateAssignment , setStateAssignment ] = useState(false);
     const [ data, setData ] = useState('');
     const [ closeType, setCloseType ] = useState(false)
     const [ userAssigned, setUserAssigned ] = useState()
     const [reading, setReading] = useState(true)
+    const [siteName, setSiteName] = useState('')
     useEffect(() => {
         if (open) {
-            getUsers();
+            setSiteNameById()
+            if (reportType === 'Inspección') {
+                setOperarios(inspectors.sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.mane > b.name) {
+                        return 1
+                    }
+                    return 0
+                }))
+            } else {
+                setOperarios(maitenances.sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1
+                    }
+                    if (a.mane > b.name) {
+                        return 1
+                    }
+                    return 0
+                }))
+            }
         }
     },[open])
     useEffect(() => {
         console.log(operarios)
     },[operarios])
+    const setSiteNameById = () => {
+        console.log(sites)
+        const filtered = sites.filter(siteToFilter => {if (site === siteToFilter.idobra) return siteToFilter})
+        setSiteName(filtered[0].descripcion)
+    }
     const setUserToReport = async (userId) => {
-        if(userId === '') {
+        const reportCache = report
+        if (reportCache.usersAssigned) {
+            const usersAssigned = reportCache.usersAssigned
+            usersAssigned.push(userId)
+            reportCache.usersAssigned = usersAssigned
+            if (reportCache.state === 'Asignar') {
+                reportCache.state = 'En proceso'
+                reportCache.level = 0
+            }
+            saveReport(reportCache)
+            SocketConnection.sendnotificationToUser(
+                'nueva-asignacion',
+                `${userData._id}`,
+                userId,
+                'Asignaciones',
+                'Se ha asignado nueva OT',
+                `OT ${reportCache.idIndex} asignada a usted`,
+                '/assignment'
+                )
+        }
+        close()
+        /* if(userId === '') {
             let usersAssigned = new Array();
             usersAssigned[0] = userId;
             setData('Reporte sin asignación.');
@@ -83,7 +134,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                     }
                 }
             })
-        }
+        } */
     }
 
     const close = () => {
@@ -114,7 +165,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                         return user
                     }
                 })
-                setOperarios(usersFiltered)
+                /* setOperarios(usersFiltered) */
                 setReading(false)
             })
         }else if(reportType === 'Mantención') {
@@ -134,14 +185,14 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                         return user
                     }
                 })
-                setOperarios(usersFiltered)
+                /* setOperarios(usersFiltered) */
                 setReading(false)
             })
         }
     }
 
     useEffect(() => {
-        console.log(report)
+        /* console.log(report) */
         setUserAssigned(usersAssigned[0])
         setCloseType(false)
         if(state === 'Asignar') {
@@ -201,8 +252,8 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                 <div style={{width: '100%', height: 59}}>
                 <label>Asignar Pauta a:</label>
                 <br />
-                <select disabled={reading} value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value); setCloseType(true)}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
-                    <option value={""}>{reading ? 'Leyendo operarios. Espere...' : 'Seleccionar operario'}</option>
+                <select /* disabled={reading} */ value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value)/* ; setCloseType(true) */}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
+                    <option value={""}>{/* reading ? 'Leyendo operarios. Espere...' : */ 'Seleccionar operario'}</option>
                     {
                         operarios && operarios.map((user, i) => {
                             return(

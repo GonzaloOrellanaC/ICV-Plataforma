@@ -16,9 +16,10 @@ import { trucksDatabase, pautasDatabase, machinesDatabase, sitesDatabase } from 
 import { apiIvcRoutes, machinesRoutes, reportsRoutes } from '../../routes';
 import './reports.css'
 import {useAuth, useReportsContext} from '../../context'
+import { SocketConnection } from '../../connections';
 
 const CreateReports = () => {
-    const {userData} = useAuth()
+    const {userData, admin} = useAuth()
     const {pautas} = useReportsContext()
     const [ trucks, setTrucks ] = useState([])
     const [ pautasParaMostrar, setPautas ] = useState([])
@@ -43,7 +44,7 @@ const CreateReports = () => {
     const [ iDPM, setIDPM ] = useState('')
     const [ isTest, setIsTest ] = useState(false)
     const [ idObra, setIdObra ] = useState('')
-    const [ isAdmin, setIsAdmin ] = useState(false)
+    /* const [ isAdmin, setIsAdmin ] = useState(false) */
     const [ sites, setSites ] = useState([])
 
     const classes = useStylesTheme();
@@ -64,12 +65,28 @@ const CreateReports = () => {
             getMachine(machineModel)
         }
         if (machineModel && reportType) {
-            let pautasLista = pautas.filter((item, i) => {
+            let pautasLista = []
+            pautas.forEach((item, i) => {
                 if (item.header != 'error')
-                if(((item.header[3].typeDataDesc === machineModel)||(item.header[2].typeDataDesc === machineModel)||(item.header[5].typeDataDesc === machineModel))) {
-                    return item 
-                }})
-            setPautas(pautasLista)
+                item.header.forEach((header) => {
+                    if (header.typeDataDesc === machineModel) {
+                        /* console.log(header.typeDataDesc, machineModel) */
+                        pautasLista.push(item)
+                    }
+                })
+            })
+            console.log(pautasLista)
+            const pautasInspeccionFiltered = []
+            const pautasMantencionFiltered = []
+            pautasLista.forEach((item) => {
+                console.log(item.typepm, reportType)
+                if (item.typepm.includes(reportType)) {
+                    pautasInspeccionFiltered.push(item)
+                } else {
+                    pautasMantencionFiltered.push(item)
+                }
+            })
+            setPautas((reportType === 'Inspección') ? pautasInspeccionFiltered : pautasMantencionFiltered)
         }
     }, [reportType, pautaIndex, truckSelected, machineModel])
     
@@ -114,21 +131,25 @@ const CreateReports = () => {
 
     const getMachine = async (machineModel) => {
         setMachineModel(machineModel);
+        console.log(machineModel)
         let db = await machinesDatabase.initDbMachines();
         if(db) {
-            machinesDatabase.consultar(db.database).then((machines) => {
+            const response = await machinesDatabase.consultar(db.database)/* .then((machines) => {
                 let m = new Array()
                 m = machines.filter(machine => {if(machine.model === machineModel && machine.idobra === userData.obras && userData.obras [0] ? [0].idobra : idObra) {return machine}});
                 const allMachines = m.sort((a, b) => {return Number(a.equ) - Number(b.equ)})
                 setMaquinas(allMachines)
-            })
+            }) */
+            console.log(response)
+            const machinesFiltered = await response.filter((machine) => {if (machine.model === machineModel) return machine})
+            setMaquinas(machinesFiltered)
         }
     }
 
     const saveReport = async () => {
         let report = {
-            createdBy: localStorage.getItem('_id'),
-            updatedBy: localStorage.getItem('_id'),
+            createdBy: userData._id,
+            updatedBy: userData._id,
             state: 'Asignar',
             datePrev: Date.parse(date),
             endPrev: Date.parse(dateEnd),
@@ -144,13 +165,22 @@ const CreateReports = () => {
         if(!report.machine || !report.sapId || (!report.guide || report.guide === "Selección no cuenta con pautas.") || (!report.reportType || report.reportType === 'Seleccione...')) {
             alert('Falta información')
         }else{
-            let reportState = await reportsRoutes.createReport(report);
-            let reportData = {
+            const reportState = await reportsRoutes.createReport(report);
+            /* const reportData = {
                 reportId: reportState.data._id,
-                createdBy: localStorage.getItem('_id')
-            };
-            getExecutionReportData(reportData);
+                createdBy: userData._id
+            }
+            getExecutionReportData(reportData); */
             if(reportState) {
+                SocketConnection.sendnotificationToUser(
+                    'nuevo-reporte',
+                    `${userData._id}`,
+                    userData._id,
+                    '',
+                    '',
+                    ``,
+                    ''
+                    )
                 alert(`Reporte ${reportState.data.idIndex}, para máquina modelo ${reportState.data.machine} creado satisfactoriamente.`)
                 history.goBack();
             }
@@ -203,25 +233,23 @@ const CreateReports = () => {
 
     const readReports = async () => {
         let reports = await reportsRoutes.getTotalReportsToIndex();
-        setIdIndex(reports.data.length)
+        setIdIndex(reports.data)
     }
 
     useEffect(() => {
-        let isAdminCache = false
+        readReports()
+        /* let isAdminCache = false
         const role = (localStorage.getItem('role') === 'undefined') ? null : localStorage.getItem('role')
-        const roles = JSON.parse(localStorage.getItem('roles'))
-        if (role) {
+        const roles = JSON.parse(localStorage.getItem('roles')) */
+        /* if (role) {
             if (role === 'superAdmin' || role === 'admin') {
                 isAdminCache = true
             }
         } else {
-            /* roles.forEach(role => {
-                if (role === 'superAdmin' || role === 'admin') {
-                    isAdminCache = true
-                }
-            }) */
-        }
-        if (isAdminCache) {
+            
+        } */
+        console.log(pautas)
+        if (admin) {
             sitesDatabase.initDbObras()
             .then(async db => {
                 let respuestaConsulta = await sitesDatabase.consultar(db.database);
@@ -231,9 +259,9 @@ const CreateReports = () => {
             console.log(userData)
             setIdObra(userData.obras[0].idobra)
         }
-        setIsAdmin(isAdminCache)
+        /* setIsAdmin(isAdminCache) */
         readTrucks()
-        activateIfEdit(id)
+        /* activateIfEdit(id) */
         formatDateToDay()
     }, [])
 
@@ -259,7 +287,7 @@ const CreateReports = () => {
         boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.08)'
     }
 
-    const activateIfEdit = async (id) => {
+    /* const activateIfEdit = async (id) => {
         const pautasData = await readPautas();
         console.log(pautasData)
         if((id)) {
@@ -299,11 +327,10 @@ const CreateReports = () => {
             setMaquinas(machinesList);
             setTruck(machine[0].model);
             setMachineSelected(JSON.stringify(machine[0]));
-            /* setMaquinas(machinesList); */
         }else{
             readReports();
         }
-    }
+    } */
 
     const deleteReport = () => {
         if(id) {
@@ -343,7 +370,7 @@ const CreateReports = () => {
                             </div>
                             <Grid container>
                                 <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
-                                    {isAdmin && <div style={{width: '100%'}}>
+                                    {admin && <div style={{width: '100%'}}>
                                         <FormControl >
                                             <p style={{margin: 5}}>Seleccionar Obra</p>
                                             <select 

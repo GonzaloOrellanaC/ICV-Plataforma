@@ -16,10 +16,11 @@ import { LoadingLogoModal } from '../loadings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowCircleLeft, faArrowUp, faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useHistory } from 'react-router-dom';
-import { AuthContext } from '../../context';
+import { AuthContext, useExecutionReportContext } from '../../context';
 
 const ReviewReportModal = ({open, report, onlyClose}) => {
     const {admin} = useContext(AuthContext)
+    const {setReport} = useExecutionReportContext()
     const [ colorState, setColorState ] = useState();
     const { idIndex, guide, state, siteName, usersAssigned, sapId } = report;
     const [ userAssignedName, setUserAssignedName ] = useState('')
@@ -65,6 +66,11 @@ const ReviewReportModal = ({open, report, onlyClose}) => {
 
         return ok = false
     }, [])
+
+    const toReport = () => {
+        setReport(report)
+        history.push(`/assignment/${idIndex}`)
+    }
 
     const removeOt = () => {
         if(confirm(`Se borrará la OT ${report.idIndex}. Su eliminación será permanente. ¿Desea continuar?`)) {
@@ -209,7 +215,7 @@ const ReviewReportModal = ({open, report, onlyClose}) => {
                 <Grid container>
                     <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
                         <div style={{padding: 10}}>
-                            <button style={{ height: 50 , width: '100%', backgroundColor: 'green', color: '#fff', fontSize: 20 }} onClick={()=>{history.push(`/assignment/${idIndex}`)}}> <strong> <FontAwesomeIcon icon={faArrowCircleLeft} /> Revisar OT {idIndex} </strong> </button>
+                            <button style={{ height: 50 , width: '100%', backgroundColor: 'green', color: '#fff', fontSize: 20 }} onClick={toReport}> <strong> <FontAwesomeIcon icon={faArrowCircleLeft} /> Revisar OT {idIndex} </strong> </button>
                         </div>
                     </Grid>
                     <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>

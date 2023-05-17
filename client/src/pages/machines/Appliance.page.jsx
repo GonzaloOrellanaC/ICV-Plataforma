@@ -23,7 +23,6 @@ const AppliancePage = ({ route }) => {
     const [ routeData, setRouteData ] = useState('');
     const [ openDialog, setOpenDialog ] = useState(false)
     const [ report, setReport ] = useState({})
-    const [ loading, setLoading ] = useState(false)
     const [ openMachineImage, setOpenMachineImage ] = useState(false)
     const [ machineImage, setMachineImage ] = useState('')
     const [ value, setValue ] = useState('Todos')
@@ -53,7 +52,6 @@ const AppliancePage = ({ route }) => {
                         setMantenciones(d.data.reverse())
                         setMantencionesCache(d.data.reverse())
                         setTimeout(() => {
-                            setLoading(false)
                         }, 500);
                     }
                 })
@@ -131,14 +129,12 @@ const AppliancePage = ({ route }) => {
     
     const uploadImageReport = async (file) => {
         if(file) {
-            setLoading(true)
             let res = await imageToBase64(file)
             setTimeout(() => {
                 if(res) {
                     console.log(res)
                     machine.image = res
                     apiIvcRoutes.saveMachineDataById(machine)
-                    setLoading(false)
                 }
             }, 1000);
         }

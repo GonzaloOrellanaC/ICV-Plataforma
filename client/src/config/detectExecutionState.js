@@ -9,13 +9,20 @@ export default () => {
         response = await executionReportsDatabase.consultar(database)
         response.forEach(async (executionReportData, index) =>{
             const res = await reportsRoutes.getReportById(executionReportData.reportId)
-            console.log(res.data)
-            if (res.data.level === 4) {
-                const state = await executionReportsDatabase.eliminar(executionReportData._id, database)
-                console.log(state)
+            console.log(index, res.data.level)
+            if (index === 21) {
+                console.log(res.data.level)
             }
-            if (index === (response.length - 1)) {
-                resolve(true)
+            if (res.data) {
+                if (res.data.level !== undefined) {
+                    if (res.data.level === 4) {
+                        const state = await executionReportsDatabase.eliminar(executionReportData._id, database)
+                        console.log(state)
+                    }
+                    if (index === (response.length - 1)) {
+                        resolve(true)
+                    }
+                }
             }
         })
     })

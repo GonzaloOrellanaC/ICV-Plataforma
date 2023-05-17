@@ -15,8 +15,8 @@ export default {
         }
         return axios.post('/users/editUser', requestBody)
     },
-    getAllUsers: (admin) => {
-        return axios.post('/users/getUsers', {admin: admin})
+    getAllUsers: (admin, isTest) => {
+        return axios.post('/users/getUsers', {admin: admin, isTest: isTest})
     },
     getMantenedores: (admin) => {
         return axios.post('/users/getMantenedores', {admin: admin})

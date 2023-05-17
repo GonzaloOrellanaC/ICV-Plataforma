@@ -62,8 +62,10 @@ const editReportById = async (req, res) => {
     }
 }
 
-const editReportByIndexIntern = (indexNumber, reportToEdit) => {
-    return new Promise(resolve => {
+const editReportByIndexIntern = async (indexNumber, reportToEdit) => {
+    const response = await Reports.findOneAndUpdate({deleted: false, idIndex: indexNumber}, reportToEdit)
+    return response
+    /* return new Promise(resolve => {
         try {
             Reports.findOneAndUpdate({deleted: false, idIndex: indexNumber}, reportToEdit, (err, report) => {
                 resolve(report)
@@ -71,7 +73,7 @@ const editReportByIndexIntern = (indexNumber, reportToEdit) => {
         } catch (err) {
 
         }
-    })
+    }) */
 }
 
 const editReportFromAudit = async (req, res) => {
@@ -189,12 +191,13 @@ const getReports = async (req, res) => {
 
 
 const addMachineData = async (reports, reportsToSend, n, res) => {
-    if ((reports.length - 1) === n) {
+    if ((reports.length) === n) {
         res.json(reportsToSend)
     } else {
         const machineData = await Machine.findOne({equid: reports[n].machine})
         if (machineData) {
             let newReport = {
+                _id: reports[n]._id,
                 level: reports[n].level,
                 createdAt: reports[n].createdAt,
                 createdBy: reports[n].createdBy,
@@ -223,7 +226,8 @@ const addMachineData = async (reports, reportsToSend, n, res) => {
                 chiefMachineryApprovedBy:reports[n].chiefMachineryApprovedBy,
                 shiftManagerApprovedDate:reports[n].shiftManagerApprovedDate,
                 shiftManagerApprovedBy:reports[n].shiftManagerApprovedBy,
-                endReport: reports[n].endReport
+                endReport: reports[n].endReport,
+                dateInit: reports[n].dateInit
             }
             reportsToSend.push(newReport)
             n = n + 1
@@ -362,7 +366,7 @@ const getReportByStateAndSite = (req, res) => {
     }
 }
 
-const getReportsByUser = (req, res) => {
+const getReportsByUser = async (req, res) => {
     const { body } = req
 
     let reportList = new Array()
@@ -373,10 +377,12 @@ const getReportsByUser = (req, res) => {
                     reportList.push(report)
                 }
                 if(i == (reports.length - 1)) {
-                    res.json(reportList)
+                    /* res.json(reportList) */
+                    const reportsToSend = []
+                    const n = 0
+                    addMachineData(reportList, reportsToSend, n, res)        
                 }
             })
-            
         })
     } catch (err) {
         console.log(err)
@@ -394,8 +400,11 @@ const findMyAssignations = async (req, res) => {
                 $in: [userId]
             }
         }).populate('usersAssigned').populate('createdBy').populate('updatedBy')
-        console.log(response)
-        res.json(response)
+        const reportsToSend = []
+        const n = 0
+        addMachineData(response, reportsToSend, n, res)  
+        /* console.log(response)
+        res.json(response) */
         /* Reports.find({site: body.site, deleted: false, usersAssigned: [body.userId]}, (err, reports) => {
             res.json(reports)
         }) */
@@ -457,7 +466,7 @@ const countTotalReports = () => {
 const getTotalReportsToIndex = (req, res) => {
     try {
         Reports.find({}, (err, reports) => {
-            res.json(reports)
+            res.json(reports.length)
         })
     } catch (err) {
         console.log(err)

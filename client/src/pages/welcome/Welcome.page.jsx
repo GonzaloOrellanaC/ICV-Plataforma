@@ -16,7 +16,7 @@ import { io } from "socket.io-client"
 import { useAuth, useTimeContext } from '../../context'
 
 const WelcomePage = ({ readyToLoad }) => {
-    const {admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
+    const {admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, userData} = useAuth()
     const {date, hour} = useTimeContext()
     /* const [ date, setDate ] = useState('')
     const [ hora, setHora ] = useState('') */
@@ -100,7 +100,7 @@ const WelcomePage = ({ readyToLoad }) => {
         if(cancel) {
             const socket = io()
             if (navigator.onLine) {
-                socket.on(`notification_${localStorage.getItem('_id')}`, data => {
+                socket.on(`notification_${userData._id}`, data => {
                     readNotifications()
                 })
             }

@@ -19,6 +19,11 @@ const languageSelector = (select) => {
  * if they configured a certain language.
  */
 const environment = {
+    images: {
+        logo: process.env.ICV_LOGO,
+        check: process.env.CHECK,
+        noCheck: process.env.NO_CHECK
+    },
     sentry: {
         dsn: process.env.SENTRY_DSN
     },

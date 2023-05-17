@@ -3,6 +3,7 @@ import { authRoutes, sitesRoutes, usersRoutes } from '../routes'
 import { userDatabase } from '../indexedDB'
 import { FirmaUsuario } from '../modals'
 import { styleModal } from '../config'
+import {SocketConnection} from '../connections'
 export const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
@@ -95,11 +96,6 @@ export const AuthProvider = (props) => {
         setUserData(response[0])
     }
 
-    const loginRut = async (rut, password) => {
-        const response = await authRoutes.loginRut(rut, password)
-
-    }
-
     const setRefCanvasFunction = (ref) => {
         setRefCanvas(ref);
     }
@@ -114,6 +110,7 @@ export const AuthProvider = (props) => {
             userDataTemp.sign = refCanvas.toDataURL()
             setUserData(userDataTemp)
             saveUserToDb(userDataTemp)
+            localStorage.setItem('user', JSON.stringify(userDataTemp))
             setOpenSign(false);
             alert('Muchas gracias. Su firma ha sido actualizada.')
         })
@@ -122,8 +119,6 @@ export const AuthProvider = (props) => {
     const provider = {
         userData,
         isAuthenticated,
-        /* loading,
-        error, */
         admin,
         roles,
         site,
@@ -140,41 +135,7 @@ export const AuthProvider = (props) => {
                     setUserData(userDataToSave)
                     localStorage.setItem('user', JSON.stringify(userDataToSave))
                     if(response.data.enabled) {
-                        /* localStorage.setItem('email', userDataToSave.email)
-                        localStorage.setItem('fullName', userDataToSave.fullName)
-                        localStorage.setItem('name', userDataToSave.name)
-                        localStorage.setItem('lastName', userDataToSave.lastName)
-                        localStorage.setItem('_id', userDataToSave._id)
-                        localStorage.setItem('role', userDataToSave.role)
-                        localStorage.setItem('roles', JSON.stringify(userDataToSave.roles)) */
                         setRoles(userDataToSave.roles)
-                        /* if (userDataToSave.roles && userDataToSave.roles[0]) {
-                            let roles = new Array
-                            roles = userDataToSave.roles
-                            if (roles.length > 0) {
-                                roles.map(rol => {
-                                    if(rol === 'admin' || rol === 'superAdmin') {
-                                        localStorage.setItem('isAdmin', true);
-                                        setAdmin(true)
-                                    }else if(rol === 'inspectionWorker' || rol === 'maintenceOperator') {
-                                        localStorage.setItem('isOperator', true)
-                                        setIsOperator(true)
-                                    }else if(rol === 'sapExecutive') {
-                                        localStorage.setItem('isSapExecutive', true)
-                                        setIsSapExecutive(true)
-                                    }else if(rol === 'shiftManager') {
-                                        localStorage.setItem('isShiftManager', true)
-                                        setIsShiftManager(true)
-                                    }else if(rol === 'chiefMachinery') {
-                                        localStorage.setItem('isChiefMachinery', true)
-                                        setIsChiefMachinery(true)
-                                    }else{
-                                        localStorage.setItem('isAdmin', false);
-                                        setAdmin(false);
-                                    }
-                                })
-                            }
-                        } */
                         if (userDataToSave.role && userDataToSave.role.length > 0) {
                             if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
                                 localStorage.setItem('isAdmin', true)
@@ -184,24 +145,6 @@ export const AuthProvider = (props) => {
                                 setAdmin(false);
                             }
                         }
-                        /* setSites(userData.obras) */
-                        /* if(userDataToSave.sites) {
-                            if (userDataToSave.obras) {
-                                const response = await sitesRoutes.getSiteById(userDataToSave.obras[0])
-                                console.log(response.data)
-                                localStorage.setItem('sitio', JSON.stringify(response.data.data))
-                            } else {
-                                localStorage.setItem('sitio', userDataToSave.sites)
-                            }
-                        } else {
-                            if (userDataToSave.obras) {
-                                const response = await sitesRoutes.getSiteById(userDataToSave.obras[0])
-                                console.log(response.data)
-                                localStorage.setItem('sitio', JSON.stringify(response.data.data))
-                            } else {
-                                localStorage.setItem('sitio', userDataToSave.sites)
-                            }
-                        } */
                         localStorage.setItem('isauthenticated', true)
                         setIsAuthenticated(true)
                         resolve({
@@ -233,35 +176,7 @@ export const AuthProvider = (props) => {
                     setUserData(userDataToSave)
                     localStorage.setItem('user', JSON.stringify(userDataToSave))
                     if(response.data.enabled) {
-                        /* localStorage.setItem('email', userDataToSave.email)
-                        localStorage.setItem('fullName', userDataToSave.fullName)
-                        localStorage.setItem('name', userDataToSave.name)
-                        localStorage.setItem('lastName', userDataToSave.lastName)
-                        localStorage.setItem('_id', userDataToSave._id)
-                        localStorage.setItem('role', userDataToSave.role)
-                        localStorage.setItem('roles', JSON.stringify(userDataToSave.roles)) */
                         setRoles(userDataToSave.roles)
-                        /* let roles = new Array
-                        roles = userDataToSave.roles
-                        if (roles.length > 0) {
-                            roles.map(rol => {
-                                if(rol === 'admin' || rol === 'superAdmin') {
-                                    localStorage.setItem('isAdmin', true);
-                                    setAdmin(true)
-                                }else if(rol === 'inspectionWorker' || rol === 'maintenceOperator') {
-                                    localStorage.setItem('isOperator', true)
-                                }else if(rol === 'sapExecutive') {
-                                    localStorage.setItem('isSapExecutive', true)
-                                }else if(rol === 'shiftManager') {
-                                    localStorage.setItem('isShiftManager', true)
-                                }else if(rol === 'chiefMachinery') {
-                                    localStorage.setItem('isChiefMachinery', true)
-                                }else{
-                                    localStorage.setItem('isAdmin', false);
-                                    setAdmin(false);
-                                }
-                            })
-                        } */
                         if (userDataToSave.role && userDataToSave.role.length > 0) {
                             if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
                                 localStorage.setItem('isAdmin', true)
@@ -271,16 +186,6 @@ export const AuthProvider = (props) => {
                                 setAdmin(false);
                             }
                         }
-                        /* setSites(userData.obras) */
-                        /* if(userDataToSave.sites) {
-                            if (userDataToSave.obras) {
-                                const response = await sitesRoutes.getSiteById(userDataToSave.obras[0])
-                                console.log(response.data)
-                                localStorage.setItem('sitio', JSON.stringify(response.data.data))
-                            } else {
-                                localStorage.setItem('sitio', userDataToSave.sites)
-                            }
-                        } */
                         localStorage.setItem('isauthenticated', true)
                         setIsAuthenticated(true)
                         resolve({

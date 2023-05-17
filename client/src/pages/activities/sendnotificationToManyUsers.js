@@ -1,6 +1,6 @@
 import { SocketConnection } from "../../connections"
 
-export default (emailing, idIndex, uid) => {
+export default (emailing, idIndex, uid, userData) => {
     let message;
     let url;
     let subtitle;
@@ -35,7 +35,7 @@ export default (emailing, idIndex, uid) => {
     }
     SocketConnection.sendnotificationToManyUsers(
         emailing,
-        `${localStorage.getItem('_id')}`,
+        `${userData._id}`,
         'Ejecuciones OT',
         subtitle,
         message,

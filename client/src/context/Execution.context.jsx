@@ -1,20 +1,53 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useReportsContext } from "./Reports.context";
+import { executionReportsDatabase } from "../indexedDB";
+import { useAuth, useConnectionContext } from ".";
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { executionReportsRoutes } from "../routes";
+import { LoadingModal } from "../modals";
 
 export const ExecutionReportContext = createContext()
 
 export const ExecutionReportProvider = (props) => {
-
+    const {isOperator} = useAuth()
+    const {isOnline} = useConnectionContext()
+    const {reports, executionReportInternal} = useReportsContext()
     const [report, setReport] = useState()
     const [executionReport, setExecutionReport] = useState()
     const [reportId, setReportId] = useState()
-    const [otIndex, setOtIndex] = useState(0)
+    const [otIndex, setOtIndex] = useState()
     const [sapId, setSapId] = useState()
     const [serieEquipo, setSerieEquipo] = useState()
     const [modoTest, setModoTest] = useState(true)
     const [avanceHoja, setAvanceHoja] = useState(0)
     const [avanceTotal, setAvanceTotal] = useState(0)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
+    const [loadingMessage, setLoadingMessage] = useState('')
+    const location = useLocation()
+
+    useEffect(() => {
+        if (!location.pathname.includes('assignment/')) {
+            setExecutionReport(undefined)
+            setReport(undefined)
+        }
+    }, [location])
+
+    useEffect(() => {
+        if (executionReport) {
+            saveExecutionReportToDb()
+        }
+    }, [executionReport])
+
+    useEffect(() => {
+        if (executionReportInternal) {
+            setExecutionReport(executionReportInternal)
+        }
+    }, [executionReportInternal])
+
+    const saveExecutionReportToDb = async () => {
+        const {database} = await executionReportsDatabase.initDb()
+        await executionReportsDatabase.actualizar(executionReport, database)
+    }
 
     useEffect(() => {
         if (report) {
@@ -25,23 +58,29 @@ export const ExecutionReportProvider = (props) => {
             setModoTest(report.testMode)
             getExecutionReport()
         }
-    },[report])
-
-    useEffect(() => {
-        if (executionReport) {
-            console.log(executionReport)
-            setLoading(false)
+        if (!report && otIndex && (reports.length > 0)) {
+            getReportFromOtIndex()
         }
-    }, [executionReport])
+    },[report, otIndex, reports])
+
+    const getReportFromOtIndex = () => {
+        const reportFiltered = reports.filter(report => {if(report.idIndex === Number(otIndex)) {return report}})
+        setReport(reportFiltered[0])
+    }
 
     const getExecutionReport = async () => {
-        if (navigator.onLine) {
+        if (!isOperator && isOnline) {
             const response = await executionReportsRoutes.getExecutionReportById(report)
-            console.log(response)
-            setExecutionReport(response.data[0])
+            setExecutionReport(response.data)
         } else {
-            setLoading(false)
+            const {database} = await executionReportsDatabase.initDb()
+            const response = await executionReportsDatabase.consultar(database)
+            const excetutionReportCache = response.filter(doc => {if(doc.reportId === report._id) return doc})[0]
+            if (excetutionReportCache) {
+                setExecutionReport(excetutionReportCache)
+            }
         }
+        setLoading(false)
     }
 
     const provider = {
@@ -59,11 +98,16 @@ export const ExecutionReportProvider = (props) => {
         setAvanceHoja,
         setAvanceTotal,
         loading,
-        setLoading
+        setLoading,
+        setOtIndex,
+        setLoadingMessage
     }
 
     return (
+        <>
         <ExecutionReportContext.Provider value={provider} {...props} />
+        <LoadingModal open={loading} withProgress={false} loadingData={loadingMessage} />
+        </>
     )
 }
 

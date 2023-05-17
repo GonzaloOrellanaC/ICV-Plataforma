@@ -3,7 +3,7 @@ import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme, 
 import { ArrowBackIos } from '@material-ui/icons'
 import { date, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
-import { machinesDatabase, reportsDatabase } from '../../indexedDB'
+/* import { machinesDatabase, reportsDatabase } from '../../indexedDB' */
 import { AuthContext, ExecutionReportContext, ReportsContext } from '../../context'
 
 const ActivitiesPage = () => {
@@ -112,7 +112,7 @@ const ActivitiesPage = () => {
                                             }}
                                         >
                                             <h3 className='item-style'>Mis actividades pendientes</h3>
-                                            {priorityAssignments.reverse().map((element, i) => {
+                                            {priorityAssignments.map((element, i) => {
                                                 return(
                                                     <div key={i}
                                                         className={`${'border-color-primary'} item-style`}
@@ -145,13 +145,13 @@ const ActivitiesPage = () => {
                                                                 </div>
                                                             </Grid>
                                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                                <p style={{fontSize: 11, minWidth: 200}}>{element.init}</p>
+                                                                <p style={{fontSize: 11, minWidth: 200}}>{date(element.dateInit)}</p>
                                                             </Grid>
                                                             { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                 <p style={{fontSize: 11, minWidth: 200}}> {date(element.endPrev)} </p>
                                                             </Grid>}
                                                             { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                                <p style={{fontSize: 11, minWidth: 200}}> {element.end} </p>
+                                                                <p style={{fontSize: 11, minWidth: 200}}> {date(element.endReport)} </p>
                                                             </Grid>}
                                                             <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
                                                                 <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> {element.machineData.type} {element.machineData.model} </p>
@@ -183,7 +183,7 @@ const ActivitiesPage = () => {
                                                 </div>
                                             }
                                             {
-                                                normalAssignments.reverse().map((element, i) => {
+                                                normalAssignments.map((element, i) => {
                                                     return(
                                                         <div key={i} style={
                                                             {
@@ -218,7 +218,7 @@ const ActivitiesPage = () => {
                                                                     </div>
                                                                 </Grid>
                                                                 <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                                    <p style={{fontSize: 11, minWidth: 200}}>{element.init}</p>
+                                                                    <p style={{fontSize: 11, minWidth: 200}}>{date(element.dateInit)}</p>
                                                                 </Grid>
                                                                 { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                     <p style={{fontSize: 11, minWidth: 200}}> {date(element.endPrev)} </p>

@@ -12,30 +12,22 @@ import {
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { styleInternalMessageModal } from '../../config';
+import { useAuth } from '../../context';
 
-const ReportCommitModal = ({open, report, closeModal, closeLoading, getResponseState, messageType}) => {
-    const [ message, setMessage ] = useState('');
-
-    useEffect(() => {
-        
-    }, []);
+const ReportCommitModal = ({open, report, closeModal,/* closeLoading, */ /* getResponseState, */ messageType}) => {
+    const {userData} = useAuth()
+    const [ message, setMessage ] = useState('')
 
     const sendMessage = () => {
         if(message.length > 1) {
             const historyType = messageType==='rejectReport' ? 'reject-to-previous-level' : 'sending-to-next-level'
-            /* if(messageType === 'rejectReport') {
-                historyType = 'reject-to-previous-level'
-            } else if (messageType === 'sendReport') {
-                historyType = 'sending-to-next-level'
-            } */
             report.history.push({
                 id: Date.now(),
-                userSendingData: localStorage.getItem('_id'),
+                userSendingData: userData._id,
                 type: historyType,
                 message: message
             })
-            closeModal();
-            getResponseState(true, report)
+            closeModal(true);
         }else{
             alert('Por favor deje un comentario a la actividad.')
         }
@@ -47,9 +39,9 @@ const ReportCommitModal = ({open, report, closeModal, closeLoading, getResponseS
     }
 
     const closeModalActivate = () => {
-        closeModal();
-        closeLoading();
-        getResponseState(false, report)
+        closeModal(false);
+        /* closeLoading(); */
+        /* getResponseState(false, report) */
     }
     
     

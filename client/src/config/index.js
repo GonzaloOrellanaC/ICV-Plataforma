@@ -69,7 +69,7 @@ export {
     checkDisableButtonNotSuperAdmin,
     getPautasInspectList,
     getPautasMaitenanceList,
-    getinfo,
+    /* getinfo, */
     download3DFiles,
     detectIf3DModelExist,
     translateSubSystem,

@@ -41,12 +41,22 @@ const initDb = () => {
 }
 
 const agregar = (data, database) => {
-    const trasaccion = database.transaction(['Reports'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('Reports')
-    const conexion = coleccionObjetos.add(data)
-    conexion.onsuccess = () =>{
-        //consultar()
-    }
+    return new Promise(resolve => {
+        console.log('guardando en base de datos')
+        const trasaccion = database.transaction(['Reports'],'readwrite')
+        const coleccionObjetos = trasaccion.objectStore('Reports')
+        const conexion = coleccionObjetos.add(data)
+        console.log(conexion)
+        conexion.onsuccess = () =>{
+            console.log('success')
+            resolve(true)
+        }
+        
+        conexion.onerror = () =>{
+            console.log('error')
+            resolve(false)
+        }
+    })
 }
 
 const obtener = (clave, database) =>{
@@ -54,9 +64,11 @@ const obtener = (clave, database) =>{
         const trasaccion = database.transaction(['Reports'],'readonly')
         const coleccionObjetos = trasaccion.objectStore('Reports')
         const conexion = coleccionObjetos.get(clave)
-
         conexion.onsuccess = (e) =>{
-            resolve(e.target.result);
+            resolve(e.target.result)
+        }
+        conexion.onerror = (err) => {
+            resolve(false)
         }
     })
     
@@ -71,6 +83,10 @@ const actualizar = (data, database) =>{
             
             conexion.onsuccess = () =>{
                 resolve(true)
+            }
+
+            conexion.onerror = () => {
+                resolve(false)
             }
         
         } catch (err) {

@@ -94,7 +94,7 @@ const readAllUsers = async (req, res, next) => {
             isTest: false
         }
         const queryAdmin = {}
-        const users = await Users.find(req.body.admin ? queryAdmin : query).populate('obras')
+        const users = await Users.find((req.body.admin || req.body.isTest) ? queryAdmin : query).populate('obras')
         console.log(users.length)
         res.status(200).json(users)
         /* Users.find({}, (err, users) => {

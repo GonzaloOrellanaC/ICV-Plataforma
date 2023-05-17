@@ -57,7 +57,9 @@ const startServer = async () => {
 
     /* Solo se ejecuta en producción */
     console.info("The server is in production mode")
+    console.log(__dirname)
     app.use(express.static(path.resolve(__dirname, "../client/build")))
+    app.use(/* '/assets',  */express.static(__dirname+'/assets'))
 
     app.get("/*", (req, res) => {
         res.sendFile(path.resolve(__dirname, "../client/build", "index.html"))

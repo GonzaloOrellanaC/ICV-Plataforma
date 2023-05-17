@@ -1,8 +1,8 @@
 import socketIo from 'socket.io'
 import { Users } from '../models';
-import {NotificationService, UserServices} from '../services';
-import reportsService from '../services/reports.service';
+import { NotificationService, UserServices } from '../services';
 import { Sentry } from '../services/sentry.services';
+import toPDF from '../pdf/toPDF';
 
 export default async (server) => {
     const user = Users
@@ -36,9 +36,12 @@ export default async (server) => {
             })
         })
         socket.on('nueva-asignacion', (data) => {
-            console.log('Get data......', data)
             io.emit(`notification_${data.id}`, {title: data.title, subtitle: data.title, message: data.message})
             NotificationService.createNotification(data)
+        })
+        socket.on('nuevo-reporte', (data) => {
+            io.emit(`nuevo_reporte_${data.id}`, {title: data.title, subtitle: data.title, message: data.message})
+            /* NotificationService.createNotification(data) */
         })
         socket.on('retiro-asignacion', (data) => {
             console.log('Get data......', data)
@@ -52,7 +55,7 @@ export default async (server) => {
             const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
             const all = admins.concat(sapExecutives.concat(shiftManagers.concat(chiefMachineries)))
             all.forEach((user) => {
-                console.log('Se crea notificación a '+user._id)
+                console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
                 let notificationToSave = {
                     id: user._id.toString(),
                     from: data.from,
@@ -71,7 +74,7 @@ export default async (server) => {
             const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
             const all = admins.concat(sapExecutives.concat(chiefMachineries))
             all.forEach((user) => {
-                console.log('Se crea notificación a '+user._id)
+                console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
                 let notificationToSave = {
                     id: user._id.toString(),
                     from: data.from,
@@ -89,7 +92,7 @@ export default async (server) => {
             const sapExecutives = await UserServices.getUserByRole('sapExecutive')
             const all = admins.concat(sapExecutives)
             all.forEach((user) => {
-                console.log('Se crea notificación a '+user._id)
+                console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
                 let notificationToSave = {
                     id: user._id.toString(),
                     from: data.from,
@@ -107,7 +110,7 @@ export default async (server) => {
             const sapExecutives = await UserServices.getUserByRole('sapExecutive')
             const all = admins.concat(sapExecutives)
             all.forEach((user) => {
-                console.log('Se crea notificación a '+user._id)
+                console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
                 let notificationToSave = {
                     id: user._id.toString(),
                     from: data.from,
@@ -198,6 +201,20 @@ export default async (server) => {
                 io.emit(`notification_${user._id}`, {title: data.title, subtitle: data.title, message: data.message})
                 NotificationService.createNotification(notificationToSave)
             })
+        })
+        socket.on('toPDF', async (data) => {
+            const reportData = data.report
+            const user = data.user
+            const responsePDF = await toPDF(reportData)
+            let notificationToSave = {
+                id: user._id.toString(),
+                urlPDF: responsePDF.url,
+                title: `OT${reportData.indexId} PDF`,
+                subtitle: 'Ya puede descargar el documento.',
+                message: 'Documento PDF generado'
+            }
+            io.emit(`notification_${user._id}`, {title: notificationToSave.title, subtitle: notificationToSave.subtitle, message: notificationToSave.message})
+            NotificationService.createNotification(notificationToSave)
         })
         socket.on('test', async (data) => {
             const admins = await UserServices.getUserByRole('admin')

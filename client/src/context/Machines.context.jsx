@@ -26,6 +26,7 @@ export const MachineProvider = props => {
 
     useEffect(() => {
         if (machines.length > 0) {
+            console.log(machines)
             if (isOnline) {
                 getMachinesBySite()
             } else {

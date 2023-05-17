@@ -16,7 +16,7 @@ import { useAuth, useReportsContext, useSitesContext } from '../../context';
 const ReportsPage = () => {
     const {sites} = useSitesContext()
     const {admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
-    const {reports, setListSelected, listSelected} = useReportsContext()
+    const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache} = useReportsContext()
     const [inspeccionesTotales, setInspeccionesTotales] = useState([])
     const [mantencionesTotales, setMantencionesTotales] = useState([])
     const [ inspecciones, setInspecciones ] = useState([]);
@@ -33,12 +33,15 @@ const ReportsPage = () => {
     const [ page, setPage]  = useState(0);
     const [ listToShow, setListToShow ] = useState([])
     const [ totalItems, setTotalItems ] = useState(0)
+    const [site, setSite] = useState('nada')
     const history = useHistory()
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
     useEffect(() => {
         console.log(listSelected)
         if (listSelected.length > 0) {
             initReadList()
+        } else {
+            setListToShow([])
         }
     }, [listSelected])
     useEffect(() => {
@@ -47,7 +50,6 @@ const ReportsPage = () => {
         }
     }, [admin, isSapExecutive])
     useEffect(() => {
-        console.log(reports)
         if (reports.length > 0) {
             const inspeccionesTemp = reports.filter(report => {
                 if (report.reportType === "Inspección") {
@@ -74,7 +76,7 @@ const ReportsPage = () => {
                 }
             })
             const inspeccionesEnProceso = inspeccionesTotales.filter(inspeccion => {
-                if(inspeccion.usersAssigned.length > 0 && (inspeccion.level < 4 && inspeccion.level > 0)) {
+                if(inspeccion.usersAssigned.length > 0 && (inspeccion.level < 3 && inspeccion.level > 0)) {
                     return inspeccion
                 }
             })
@@ -97,7 +99,6 @@ const ReportsPage = () => {
             inspeccionesTable[1].lista = inspeccionesPorCerrar
             inspeccionesTable[2].lista = inspeccionesEnProceso
             inspeccionesTable[3].lista = inspeccionesSinAsignar
-            console.log(inspeccionesTable)
             setInspecciones(inspeccionesTable)
         } else {
             const inspeccionesTable = [...Inspecciones]
@@ -109,7 +110,6 @@ const ReportsPage = () => {
             inspeccionesTable[1].lista = []
             inspeccionesTable[2].lista = []
             inspeccionesTable[3].lista = []
-            console.log(inspeccionesTable)
             setInspecciones(inspeccionesTable)
         }
     },[inspeccionesTotales])
@@ -121,7 +121,7 @@ const ReportsPage = () => {
                 }
             })
             const mantencionesEnProceso = mantencionesTotales.filter(mantencion => {
-                if(mantencion.usersAssigned.length > 0 && (mantencion.level < 4 && (mantencion.level > 0 || !mantencion.level))) {
+                if(mantencion.usersAssigned.length > 0 && (mantencion.level < 3 && (mantencion.level > 0 || !mantencion.level))) {
                     return mantencion
                 }
             })
@@ -155,7 +155,6 @@ const ReportsPage = () => {
             mantencionesTable[1].lista = []
             mantencionesTable[2].lista = []
             mantencionesTable[3].lista = []
-            console.log(mantencionesTable)
             setMantenciones(mantencionesTable)
         }
     },[mantencionesTotales])
@@ -169,7 +168,6 @@ const ReportsPage = () => {
     }, [inspecciones, mantenciones])
 
     const selectList = (lista, idButton, index) => {
-        console.log(lista, idButton, index)
         localStorage.setItem('buttonSelected', idButton)
         const inspecionesCache = [...inspecciones]
         inspecionesCache.forEach((el, i) => {
@@ -181,7 +179,8 @@ const ReportsPage = () => {
         })
         document.getElementById(idButton).style.backgroundColor = '#ccc'
         if (lista.length > 0) {
-            setListSelected(lista)
+            setListSelected(lista/* .reverse() */)
+            setListSelectedCache(lista)
             setVista(false)
         } else {
             setVista(true)
@@ -200,10 +199,9 @@ const ReportsPage = () => {
             }
             if (i === ((rowsPerPage+(0*rowsPerPage)) - 1)) {
                 const listaCache = [...lista]
-                const nuevaLista = listaCache.sort((a, b) => {
+                const nuevaLista = listaCache/* .sort((a, b) => {
                     return b.idIndex - a.idIndex
-                })
-                console.log(nuevaLista)
+                }) */
                 setListToShow(nuevaLista)
                 setTotalItems(listSelected.length)
             }
@@ -212,23 +210,17 @@ const ReportsPage = () => {
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage)
-        console.log(newPage)
         let lista = []
-        /* list.forEach((element, index) => {
-            if (index )
-        }) */
         for (let i = (newPage*rowsPerPage); i < (rowsPerPage+(newPage*rowsPerPage)); i++) {
             if (listSelected[i]) {
                 lista.push(listSelected[i])
             }
             if (i === ((rowsPerPage+(newPage*rowsPerPage)) - 1)) {
                 const listaCache = [...lista]
-                console.log(listaCache)
-                const nuevaLista = listaCache.sort((a, b) => {
+                const nuevaLista = listaCache/* .sort((a, b) => {
                     return b.idIndex - a.idIndex
-                })
+                }) */
                 setListToShow(nuevaLista)
-                console.log(nuevaLista)
                 /* setTotalItems(nuevaLista.length) */
             }
         }
@@ -290,46 +282,74 @@ const ReportsPage = () => {
 
     const textoFiltrado = (value) => {
         console.log(value)
-        const listaCache = [...listSelected]
+        const listaCache = [...listSelectedCache]
         if (value.length > 0) {
             const lista = []
             listaCache.forEach((element, index) => {
-                console.log(element.number, value)
-                if (element.idIndex === Number(value) || element.model === value || element.number === value || element.sapId === value) {
-                    lista.push(element)
+                if (index === 0) {
+                    console.log(element)
+                }
+                if (element.idIndex.toString().match((Number(value)).toString()) /* === Number(value) */ || 
+                    element.machineData.model.match(value)/*  === value */ || 
+                    element.machineData.equ.match(value) /* === value */ || 
+                    element.sapId.match(value)/*  === value */) {
+                        if (site === 'nada') {
+                            lista.push(element)
+                        } else {
+                            if (admin && (element.idobra === site)) {
+                                lista.push(element)
+                            }
+                        }
                 }
                 if (index === (listaCache.length - 1)) {
-                    console.log(lista)
-                    initReadList(lista)
+                    setListSelected(lista)
                     setTotalItems(lista.length)
                 }
             })
         } else {
-            initReadList(listSelected)
+            setListSelected(listSelectedCache)
             setTotalItems(listSelected.length)
         }
     }
 
     const seleccionFiltrada = (value) => {
-        const listaCache = [...listSelected]
+        setSite(value)
+        /* const listaCache = [...listSelectedCache]
         if (value === 'nada') {
-            initReadList(listSelected)
-            setTotalItems(listSelected.length)
+            setListSelected(listSelectedCache)
+            setTotalItems(listSelectedCache.length)
         } else {
             const lista = []
             listaCache.forEach((element, index) => {
-                console.log(element.number, value)
                 if (element.site === value.toString()) {
                     lista.push(element)
                 }
                 if (index === (listaCache.length - 1)) {
-                    console.log(lista)
-                    initReadList(lista)
+                    setListSelected(lista)
+                    setTotalItems(lista.length)
+                }
+            })
+        } */
+    }
+
+    useEffect(() => {
+        const listaCache = [...listSelectedCache]
+        if (site === 'nada') {
+            setListSelected(listSelectedCache)
+            setTotalItems(listSelectedCache.length)
+        } else {
+            const lista = []
+            listaCache.forEach((element, index) => {
+                if (element.site === site) {
+                    lista.push(element)
+                }
+                if (index === (listaCache.length - 1)) {
+                    setListSelected(lista)
                     setTotalItems(lista.length)
                 }
             })
         }
-    }
+    }, [site])
 
     return(
         <div className='container-width' >
@@ -499,23 +519,28 @@ const ReportsPage = () => {
                                         <p style={{ width: 80 }}>Filtros: </p>
                                     </Grid>
                                     <Grid item xl={3}>
-                                        <input style={{ marginRight: 10, marginTop: 14, marginBottom: 14, width: 300 }} placeholder={'Ingrese N° OT, Máquina, Flota o Cód. SAP'} onChange={(e) => { textoFiltrado(e.target.value) }}  />
+                                        <input
+                                            style={{ marginRight: 10, marginTop: 14, marginBottom: 14, width: 300 }}
+                                            placeholder={'Ingrese N° OT, Máquina, Flota o Cód. SAP'}
+                                            onChange={(e) => { textoFiltrado(e.target.value) }}  />
                                     </Grid>
-                                    <Grid item xl={'auto'}>
-                                        <p style={{ width: 80 }}>Obra: </p>
-                                    </Grid>
-                                    <Grid item xl={2}>
-                                        <select style={{ marginRight: 10, marginTop: 14, marginBottom: 14, width: 300 }} name="select"  onChange={(e) => { seleccionFiltrada(e.target.value) }}>
-                                            <option value={'nada'}>SELECCIONE OBRA...</option>
-                                            {
-                                                sites.map((site, i) => {
-                                                    return (
-                                                        <option key={i} value={site.idobra}>{site.descripcion}</option>
-                                                    )
-                                                })
-                                            }
-                                        </select>
-                                    </Grid>
+                                    {admin && <>
+                                        <Grid item xl={'auto'}>
+                                            <p style={{ width: 80 }}>Obra: </p>
+                                        </Grid>
+                                        <Grid item xl={2}>
+                                            <select style={{ marginRight: 10, marginTop: 14, marginBottom: 14, width: 300 }} name="select"  onChange={(e) => { seleccionFiltrada(e.target.value) }}>
+                                                <option value={'nada'}>SELECCIONE OBRA...</option>
+                                                {
+                                                    sites.map((site, i) => {
+                                                        return (
+                                                            <option key={i} value={site.idobra}>{site.descripcion}</option>
+                                                        )
+                                                    })
+                                                }
+                                            </select>
+                                        </Grid>                                    
+                                    </>}
                                 </Grid>
                             </div>
                             {!vista ? 
@@ -552,218 +577,3 @@ const ReportsPage = () => {
 }
 
 export default ReportsPage
-
-    /* useEffect(() => {
-        console.log(totalItems)
-    },[totalItems]) */
-    /* const initPage = async () => {
-        let isAdmin = false
-        const role = (localStorage.getItem('role') === 'undefined') ? null : localStorage.getItem('role')
-        const roles = JSON.parse(localStorage.getItem('roles'))
-        const site = JSON.parse(localStorage.getItem('sitio'))
-        if (role) {
-            if (role === 'superAdmin' || role === 'admin') {
-                isAdmin = true
-            }
-        } else {
-            roles.forEach(role => {
-                if (role === 'superAdmin' || role === 'admin') {
-                    isAdmin = true
-                }
-            })
-        }
-        setLoading(true)
-        let daysOfThisWeek = getWeekReports();
-        console.log(role, site)
-        let completesInspections = isAdmin 
-        ? 
-        await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Inspección')
-        :
-        await reportsRoutes.getReportsByDateRangeAndSite(daysOfThisWeek[0], daysOfThisWeek[1], 'Inspección', site.idobra)
-        let completesManteinances = isAdmin
-        ?
-        await reportsRoutes.getReportsByDateRange(daysOfThisWeek[0], daysOfThisWeek[1], 'Mantención')
-        :
-        await reportsRoutes.getReportsByDateRangeAndSite(daysOfThisWeek[0], daysOfThisWeek[1], 'Mantención', site.idobra)
-        console.log(completesInspections.data.length, completesManteinances.data.length)
-        setInspeccionesCompletadas(completesInspections.data.length);
-        setMantencionesCompletadas(completesManteinances.data.length);
-        let stateInspecciones = false
-        let stateMantenciones = false
-        Inspecciones.map(async (e, i) => {
-            console.log(e)
-            let response = isAdmin ? await reportsRoutes.getReportByState(e.name, 'Inspección') : await reportsRoutes.getReportByStateAndSite(e.name, 'Inspección', site.idobra)
-            let porAsignar = []
-            if(response.data.length > 0) {
-                e.number = response.data.length;
-                response.data.map(async (item, i) => {
-                    if(item.state === 'Asignar') {
-                        porAsignar.push(item)
-                    }
-                    item.siteName = await getSiteName(item.site)
-                    machinesRoutes.getMachineByEquid(item.machine).then(data => {
-                        item.hourMeter = (Number(data.data[0].hourMeter)/3600000);
-                    })
-                    if(i == (response.data.length - 1)) {
-                        e.lista = response.data.reverse();
-                        setInspeccionesPorAsignar(porAsignar.length)
-                        stateInspecciones = true
-                    }
-                })
-            }else{
-                e.lista = [];
-                e.number = 0;
-                stateInspecciones = true
-            }
-            if(i == (Inspecciones.length - 1)) {
-                setInspecciones(Inspecciones)
-            }
-        });
-        Mantenciones.map(async (e, i) => {
-            let response =  isAdmin ? await reportsRoutes.getReportByState(e.name, 'Mantención') : await reportsRoutes.getReportByStateAndSite(e.name, 'Mantención', site.idobra)
-            let porAsignar = []
-            console.log(response.data)
-            if(response.data.length > 0) {
-                e.number = response.data.length;
-                response.data.map(async (item, i) => {
-                    if(item.state === 'Asignar') {
-                        porAsignar.push(item)
-                    }
-                    item.siteName = await getSiteName(item.site)
-                    machinesRoutes.getMachineByEquid(item.machine).then(data => {
-                        item.hourMeter = (Number(data.data[0].hourMeter)/3600000);
-                    })
-                    if(i == (response.data.length - 1)) {
-                        e.lista = response.data.reverse();
-                        setMantencionesPorAsignar(porAsignar.length)
-                        stateMantenciones = true
-                    }
-                })
-            }else{
-                e.lista = [];
-                e.number = 0;
-                stateMantenciones = true
-            }
-            if(i == (Mantenciones.length - 1)) {
-                setMantenciones(Mantenciones)
-                waiting(stateInspecciones, stateMantenciones)
-            }
-        })
-        if(localStorage.getItem('role') === 'superAdmin' || localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'sapExecutive' || isSapExecutive) {
-            setHableCreateReport(true);
-        }
-    } */
-
-    /* const waiting = (state1, state2) => {
-        if (state1 && state2) {
-            if (localStorage.getItem('buttonReportSelected')) {
-                var elementExists = document.getElementById(localStorage.getItem('buttonReportSelected'))
-                if (elementExists) {
-                    setLoading(false)
-                    elementExists.click()
-                } else {
-                    setTimeout(() => {
-                        waiting(state1, state2)
-                    }, 1000);
-                }
-            } else {
-                setLoading(false)
-            }
-        } else {
-            setTimeout(() => {
-                waiting(state1, state2)
-            }, 1000);
-        }
-    } */
-
-    /* const getSiteName = (itemSite) => {
-        return new Promise(resolve => {
-            sitesDatabase.initDbObras().then(db => {
-                sitesDatabase.consultar(db.database).then(sites => {
-                    sites.forEach((site) => {
-                        if(site.idobra === itemSite) {
-                            resolve(site.descripcion)
-                        }
-                    })
-                })
-            })
-        })
-    } */
-
-    /* const getSites = () => {
-        sitesDatabase.initDbObras().then(db => {
-            sitesDatabase.consultar(db.database).then(sites => {
-                setSites(sites)
-            })
-        })
-    } */
-
-    /* const getMachineTypeByEquid = (item) => {
-        return new Promise(async  resolve => {
-            let db = await machinesDatabase.initDbMachines();
-            const machines = await machinesDatabase.consultar(db.database);
-            let machineFiltered = machines.filter(m => { if(item === m.equid) {return m}});
-            if (machineFiltered.length > 0) {
-                resolve({
-                    number: machineFiltered[0].equ,
-                    model: machineFiltered[0].model
-                })
-            } else {
-                console.log(machine)
-                resolve(null)
-            }
-        })
-    } */
-
-            /* Inspecciones.map((e, i) => {
-            document.getElementById(`button_${i}_inspecciones`).style.backgroundColor = '#F9F9F9'
-            e.buttonColor = '#F9F9F9'
-            if (i === (Inspecciones.length - 1)) {
-                Mantenciones.map((e, n) => {
-                    e.buttonColor = '#F9F9F9'
-                    if (document.getElementById(`button_${n}_mantenciones`))
-                    document.getElementById(`button_${n}_mantenciones`).style.backgroundColor = '#F9F9F9'
-                    if (n === (Mantenciones.length - 1)) {
-                        document.getElementById(idButton).style.backgroundColor = '#ccc'
-                        localStorage.setItem('buttonReportSelected', idButton)
-                        setPage(0)
-                        setRowsPerPage(10)
-                        setVista(false)
-                        let l = []
-                        if (lista)
-                        if (lista.length > 0) {
-                            lista.forEach(async (item, i) => {
-                                item.date = dateSimple(item.datePrev)
-                                item.end = dateSimple(item.endReport)
-                                item.init = dateSimple(item.dateInit)
-                                machinesRoutes.getMachineByEquid(item.machine).then(data => {
-                                    item.hourMeter = (Number(data.data[0].hourMeter)/3600000)
-                                })
-                                let data = await getMachineTypeByEquid(item.machine)
-                                if (data) {
-                                    item.number = data.number
-                                    item.model = data.model
-                                    l.push(item)
-                                }
-                                if(i == (lista.length - 1)) {
-                                    setList(l)
-                                    let li = l.sort((a, b) => {
-                                        if (Number(a.idIndex) > Number(b.idIndex)) {
-                                            return -1
-                                        }
-                                        if (Number(a.idIndex) < Number(b.idIndex)) {
-                                            return 1
-                                        }
-                                        return 0
-                                        })
-                                } 
-                            })
-                        } else {
-                            setListToShow([])
-                            setRowsPerPage(10)
-                            setTotalItems(0)
-                        }
-                    }
-                })
-            }
-        }) */
