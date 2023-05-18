@@ -31,12 +31,10 @@ const getSites = () => {
 const sincronizar = async (req, res) => {
     const findSites = await getSites()
     findSites.forEach(async (site, index) => {
-        console.log(site.idobra)
         try {
             const response = await createMachinesToSend(site.idobra, true)
             res.send(response)
         } catch (error) {
-            console.log(error)
         }
     })
 }
@@ -349,14 +347,11 @@ const createSiteToSend = () => {
                     let compareResult = false
                     readSitesFromDb.forEach(async (sitioLocal, index) => {
                         if (sitioLocal.idobra === sitioSap.idobra) {
-                            console.log(sitioLocal.idobra, sitioSap.idobra)
                             compareResult = true
                         }
                         if (index === (readSitesFromDb.length - 1)) {
                             if(!compareResult) {
-                                console.log(sitioSap)
                                 const response = await SiteController.detectSiteIfExist(sitioSap)
-                                console.log(response)
                                 if (!response) {
                                     await SiteController.createSite(sitioSap)
                                 }
@@ -439,7 +434,6 @@ const createMachinesToSend = async (pIDOBRA, isSync = false) => {
     let machinesData = []
     machinesData = b.data
     machinesData.forEach(async (machine, index) => {
-        console.log(machine)
         machine.idpminspeccion = await getIdPmInspection(machine.equid);
         machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
         if (machine.modelo.includes('D10-T2')) {
