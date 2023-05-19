@@ -50,7 +50,7 @@ export const AuthProvider = (props) => {
                 }
             })
             setIsOperator(Boolean(localStorage.getItem('isOperator')))
-            setSite(JSON.parse(window.localStorage.getItem('sitio')))
+            /* setSite(JSON.parse(window.localStorage.getItem('sitio'))) */
             if (!userData) {
                 getUserDataFromIndexedDb()
             }

@@ -141,7 +141,7 @@ const CreateReports = () => {
                 setMaquinas(allMachines)
             }) */
             console.log(response)
-            const machinesFiltered = await response.filter((machine) => {if (machine.model === machineModel) return machine})
+            const machinesFiltered = await response.filter((machine) => {if ((machine.model === machineModel)&&(machine.idobra === idObra )) return machine})
             setMaquinas(machinesFiltered)
         }
     }

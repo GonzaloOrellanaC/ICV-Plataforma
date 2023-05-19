@@ -7,7 +7,7 @@ import { useConnectionContext } from "./Connection.context";
 export const MachineContext = createContext()
 
 export const MachineProvider = props => {
-    const {isAuthenticated, site} = useAuth()
+    const {isAuthenticated, site, admin} = useAuth()
     const [machines, setMachines] = useState([])
     const [machinesBySite, setMachinesBySite] = useState([])
     const [machineSelected, setMachineSelected] = useState()
@@ -25,10 +25,10 @@ export const MachineProvider = props => {
     },[isAuthenticated, isOnline])
 
     useEffect(() => {
-        if (site)
         if (machines.length > 0) {
             console.log(machines)
             if (isOnline) {
+                if (site)
                 getMachinesBySite()
             } else {
                 getMachinesBySiteOffLine()
@@ -38,12 +38,14 @@ export const MachineProvider = props => {
 
     const getMachinesBySite = async () => {
         let response
-        if (site) {
+        if (site && !admin) {
             response = await apiIvcRoutes.getMachineBySiteId(site.idobra)
-        } else {
+        }
+        if (admin) {
             response = await apiIvcRoutes.getAllMachines()
         }
         /* .then(machines => { */
+        console.log(response)
         const {database} = await machinesDatabase.initDbMachines()
         response.data.forEach(async (machine, index) => {
             machine.id = index
@@ -86,10 +88,8 @@ export const MachineProvider = props => {
             xhr.open('GET', `/assets/${fileName.model}.png`)
             xhr.responseType = 'blob'
             xhr.send()
-            if (index === (machinesCache.length - 1)) {
-                setMachines(machinesCache)
-            }
         })
+        setMachines(machinesCache)
     }
 
     const provider = {

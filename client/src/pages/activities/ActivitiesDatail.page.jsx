@@ -217,6 +217,7 @@ const ActivitiesDetailPage = () => {
                 reportCache.level = level
                 sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
                 saveReportToDatabases(reportCache)
+                getReports()
             } else {
                 if (itemProgress === 100) {
                     let level = 0
@@ -236,12 +237,13 @@ const ActivitiesDetailPage = () => {
                     } else if (level === 4) {
                         reportCache.sapExecutiveApprovedBy = userData._id
                         reportCache.dateClose = new Date()
-                        reportCache.state = 'Completadas'     
+                        reportCache.state = 'Completadas' 
+                        saveReportToDatabases(reportCache)
+                        const response = await pdfMakeRoutes.createPdfDoc(reportCache)    
                     }
                     reportCache.level = level
                     sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
-                    saveReportToDatabases(reportCache)
-                    const response = await pdfMakeRoutes.createPdfDoc(reportCache)
+                    getReports()
                 } else {
                     alert('Reporte está incompleto.')
                 }

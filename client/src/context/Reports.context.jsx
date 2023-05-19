@@ -255,6 +255,7 @@ export const ReportsProvider = (props) => {
     }
 
     const getReports = async () => {
+        setLoading(true)
         setMessage('Leyendo reportes')
         if (isOnline) {
             console.log(isOperator, userData)
@@ -276,6 +277,7 @@ export const ReportsProvider = (props) => {
             getReportsFromIndexedDb()
         }
         setMessage('')
+        setLoading(false)
     }
 
     const provider = {
@@ -287,6 +289,7 @@ export const ReportsProvider = (props) => {
         listSelectedCache,
         setListSelected,
         setListSelectedCache,
+        loading,
         pautas,
         priorityAssignments,
         normalAssignments,
@@ -298,7 +301,7 @@ export const ReportsProvider = (props) => {
     return (
         <>
             <ReportsContext.Provider value={provider} {...props} />
-            <LoadingLogoModal open={loading} />
+            {/* <LoadingLogoModal open={loading} /> */}
         </>
     )
 }

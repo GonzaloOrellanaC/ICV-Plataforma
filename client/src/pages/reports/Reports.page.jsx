@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react'
-import {Grid, Toolbar, IconButton, Chip, TablePagination} from '@material-ui/core';
+import {Grid, Toolbar, IconButton, Chip, TablePagination, Button} from '@material-ui/core';
 import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 /* import { machinesRoutes, reportsRoutes } from '../../routes'; */
@@ -16,7 +16,7 @@ import { useAuth, useExecutionReportContext, useReportsContext, useSitesContext 
 const ReportsPage = () => {
     const {sites} = useSitesContext()
     const {admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
-    const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache} = useReportsContext()
+    const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache, getReports, loading} = useReportsContext()
     const [inspeccionesTotales, setInspeccionesTotales] = useState([])
     const [mantencionesTotales, setMantencionesTotales] = useState([])
     const [ inspecciones, setInspecciones ] = useState([]);
@@ -28,7 +28,7 @@ const ReportsPage = () => {
     const [ mantencionesCompletadas, setMantencionesCompletadas ] = useState(0);
     const [ list, setList ] = useState([]);
     const [ vista, setVista ] = useState(true);
-    const {loading, setLoading} = useExecutionReportContext()
+    /* const {loading, setLoading} = useExecutionReportContext() */
     const [ rowsPerPage, setRowsPerPage ] = useState(10)
     const [ page, setPage]  = useState(0);
     const [ listToShow, setListToShow ] = useState([])
@@ -543,6 +543,25 @@ const ReportsPage = () => {
                                             </select>
                                         </Grid>                                    
                                     </>}
+                                    <Grid item sm={'auto'}>
+                                        <button disabled={loading} style={
+                                            {
+                                                position: 'absolute', 
+                                                right: 10, 
+                                                color: '#fff',
+                                                backgroundColor: !loading ? '#be2e26' : '#ccc',
+                                                paddingTop: 10,
+                                                paddingBottom: 10,
+                                                paddingLeft: 20,
+                                                paddingRight: 20,
+                                                borderRadius: 20,
+                                                borderColor: 'transparent',
+                                                marginRight: 10
+                                            }
+                                        } onClick={getReports}>
+                                            Actualizar Listado
+                                        </button>
+                                    </Grid>
                                 </Grid>
                             </div>
                             {!vista ? 
@@ -568,10 +587,6 @@ const ReportsPage = () => {
                             <></>
                         }
                         </div>
-                    }
-                    
-                    {
-                        loading && <LoadingLogoModal open={loading} />
                     }
                 </Grid>
             </Grid>

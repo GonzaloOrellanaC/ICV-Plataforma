@@ -255,12 +255,12 @@ const readSitesInServer = () => {
 
 /* Leer máquinas GET - POST */
 const readAllMachinesFromDb = ( req, res ) => {
-    Machine.find({}, (err, sites) => {
+    Machine.find({}, (err, machine) => {
         if(err) {
             res.status(502).json({message: 'Error de lectura en Base de Datos'})
             throw err
         }
-        res.status(200).json(sites)
+        res.status(200).json(machine)
     })
 }
 
