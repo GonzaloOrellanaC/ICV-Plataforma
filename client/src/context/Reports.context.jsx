@@ -3,7 +3,6 @@ import { useAuth } from './Auth.context'
 import { executionReportsRoutes, patternsRoutes, reportsRoutes } from '../routes'
 import { executionReportsDatabase, pautasDatabase, reportsDatabase } from '../indexedDB'
 import { useConnectionContext } from './Connection.context'
-import { LoadingLogoModal } from '../modals'
 import { SocketConnection } from '../connections'
 
 export const ReportsContext = createContext()
@@ -47,6 +46,13 @@ export const ReportsProvider = (props) => {
         if (pautas.length > 0) {
             setMessage('Guardando pautas')
             savePautas()
+            if (isOperator) {
+                if (isOnline) {
+                    saveExecutionReportToDatabase()
+                } else {
+                    alert('Requiere estar conectado a internet.')
+                }
+            }
         }
     }, [pautas])
 
@@ -92,13 +98,6 @@ export const ReportsProvider = (props) => {
     useEffect(() => {
         if (reports.length > 0) {
             /* setMessage('Descargando recursos') */
-            if (isOperator) {
-                if (isOnline) {
-                    saveExecutionReportToDatabase()
-                } else {
-                    alert('Requiere estar conectado a internet.')
-                }
-            }
             getAllPautas()
             setAssignments(reports)
             saveReportsToIndexedDb()

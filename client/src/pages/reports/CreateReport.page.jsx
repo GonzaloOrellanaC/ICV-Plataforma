@@ -78,7 +78,15 @@ const CreateReports = () => {
             console.log(pautasLista)
             const pautasInspeccionFiltered = []
             const pautasMantencionFiltered = []
-            pautasLista.forEach((item) => {
+            pautasLista.sort((a, b) => {
+                if (a.typepm > b.typepm) {
+                    return 1
+                }
+                if (a.typepm < b.typepm) {
+                    return -1
+                }
+                return 0
+            }).forEach((item) => {
                 console.log(item.typepm, reportType)
                 if (item.typepm.includes(reportType)) {
                     pautasInspeccionFiltered.push(item)

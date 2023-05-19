@@ -73,8 +73,20 @@ const ReportsList = ({list, typeReportsSelected}) => {
     
 
     const levelToState = (level, usersAssigned, init, state) => {
-        if((level===0 || !level)/*  && (usersAssigned.length > 0) */) {
-            if (init) {
+        if (level === 0 || !level) {
+            if (usersAssigned.length > 0) {
+                if (/* init &&  */state==='En proceso') {
+                    return 'Ejecutando por operador'
+                } else if (init && state==='Asignar') {
+                    return 'Reasignar'
+                }
+            } else {
+                return 'Asignar'
+            }
+        }
+        /* if((level===0 || !level)) {
+            console.log(level, usersAssigned, init, state)
+            if (init && usersAssigned.length > 0) {
                 if (state === 'Asignar') {
                     return 'Reasignar'
                 } else {
@@ -83,7 +95,7 @@ const ReportsList = ({list, typeReportsSelected}) => {
             } else {
                 return 'Sin asignar'
             }
-        }/*  else if(((level===0 || !level)&&!init) && (usersAssigned.length == 0)) {
+        } *//*  else if(((level===0 || !level)&&!init) && (usersAssigned.length == 0)) {
             return 'Sin Asignar'
         } else if(((level===0 || !level)&&init) && (usersAssigned.length == 0)) {
             return 'Reasignar'

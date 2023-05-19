@@ -70,17 +70,10 @@ const client = new ApolloClient({
 });
 
 const OnApp = () => {
-    localStorage.clear()
     const [ openDownload3D, setOpenDownload3D ] = useState(false)
     const [ progressDownload3D, setProgressDownload3D ] = useState(0)
     const [ loadingData3D, setLoadingData3D ] = useState('')
     const { userData, loading, admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, isAuthenticated } = useAuth()
-    /* const isAuthenticated = localStorage.getItem('isauthenticated') */ //==='true'
-    /* const isNotAuthenticated = (localStorage.getItem('isauthenticated')==='false')||!localStorage.getItem('isauthenticated') */
-    /* const isOperator = Boolean(localStorage.getItem('isOperator')) */
-    /* const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
-    const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
-    const isChiefMachinery = Boolean(localStorage.getItem('isChiefMachinery')) */
     const readyToLoad = () => {
         initLoad3D()
     }

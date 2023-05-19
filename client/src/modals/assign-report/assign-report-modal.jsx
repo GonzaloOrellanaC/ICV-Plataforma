@@ -64,12 +64,16 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         const reportCache = report
         if (reportCache.usersAssigned) {
             const usersAssigned = reportCache.usersAssigned
-            usersAssigned.unshift(userId)
+            if (userAssigned && userAssigned.length > 0) {
+                usersAssigned.unshift(userId)
+            } else {
+                usersAssigned.push(userId)
+            }
             reportCache.usersAssigned = usersAssigned
-            if (reportCache.state === 'Asignar') {
+            /* if (reportCache.state === 'Asignar') { */
                 reportCache.state = 'En proceso'
                 reportCache.level = 0
-            }
+            /* } */
             saveReport(reportCache)
             SocketConnection.sendnotificationToUser(
                 'nueva-asignacion',
@@ -203,9 +207,13 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                     <option value={""}>{/* reading ? 'Leyendo operarios. Espere...' : */ 'Seleccionar operario'}</option>
                     {
                         operarios && operarios.map((user, i) => {
-                            return(
-                                <option key={i} value={user._id}>{`${user.name} ${user.lastName}`}</option>
-                            )
+                            if (user.obras[0].idobra === site) {
+                                return(
+                                    <option key={i} value={user._id}>{`${user.name} ${user.lastName}`}</option>
+                                )
+                            } else {
+                                null
+                            }
                         })
                         /* operarios.filter(user => {
                             if(reportType ==='Inspección') {
