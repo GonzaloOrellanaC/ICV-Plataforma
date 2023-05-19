@@ -10,8 +10,7 @@
         "install-server": "cd server && npm install",
         "install-client": "cd client && npm install",
         "start": "npm run start --prefix server",
-        "build-client": "npm run build-app --prefix client",
-        "postinstall": "npm run install-server"
+        "build-client": "npm run build-app --prefix client"
     },
     "author": "Javier Romero <javier.romero@kauel.com>",
     "license": "ISC",

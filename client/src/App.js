@@ -70,12 +70,13 @@ const client = new ApolloClient({
 });
 
 const OnApp = () => {
+    localStorage.clear()
     const [ openDownload3D, setOpenDownload3D ] = useState(false)
     const [ progressDownload3D, setProgressDownload3D ] = useState(0)
     const [ loadingData3D, setLoadingData3D ] = useState('')
     const { userData, loading, admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, isAuthenticated } = useAuth()
     /* const isAuthenticated = localStorage.getItem('isauthenticated') */ //==='true'
-    const isNotAuthenticated = (localStorage.getItem('isauthenticated')==='false')||!localStorage.getItem('isauthenticated')
+    /* const isNotAuthenticated = (localStorage.getItem('isauthenticated')==='false')||!localStorage.getItem('isauthenticated') */
     /* const isOperator = Boolean(localStorage.getItem('isOperator')) */
     /* const isSapExecutive = Boolean(localStorage.getItem('isSapExecutive'))
     const isShiftManager = Boolean(localStorage.getItem('isShiftManager'))
@@ -110,9 +111,9 @@ const OnApp = () => {
             {isAuthenticated && !loading && <Navbar/>} {isAuthenticated && !loading && <Header/>}
                 </Route>}
             <Switch>
-                {isNotAuthenticated && <Route exact path={['/reset-password']} render={() => (<ResetPasswordPage />)}/>}
-                {isNotAuthenticated && <Route exact path={['/restore-password/:id']} render={() => (<RestorePasswordPage />)}/>}
-                {isNotAuthenticated && <Route path={['/']} render={() => (<LoginPage />)}/>}
+                {!isAuthenticated && <Route exact path={['/reset-password']} render={() => (<ResetPasswordPage />)}/>}
+                {!isAuthenticated && <Route exact path={['/restore-password/:id']} render={() => (<RestorePasswordPage />)}/>}
+                {!isAuthenticated && <Route path={['/']} render={() => (<LoginPage />)}/>}
                 {loading && <Route path={['/']} render={() => (<LoadingPage />)}/>}
                 <Route exact path={['/', '/welcome']} render={() => (
                     <WelcomePage readyToLoad={readyToLoad} />
