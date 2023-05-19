@@ -100,7 +100,6 @@ const PautaDetail = (
     useEffect(() => {
         console.log(contentData)
         if (isOnline && contentData && (executionReport._id)) {
-            console.log(contentData)
             const checked = []
             contentData.forEach((item) => {
                 if (item.isChecked) {
@@ -125,7 +124,7 @@ const PautaDetail = (
             })
             setOpened(false)
         }
-    }, [contentData, executionReport])
+    }, [contentData, executionReport, gruposKeys, isOnline])
 
     useEffect(() => {
         console.log(indexGroup)

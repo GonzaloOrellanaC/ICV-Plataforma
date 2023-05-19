@@ -9,7 +9,6 @@ import { useAuth, useMachineContext } from '../../context'
 const MachinesPage = ({ route }) => {
     const classes = useStylesTheme()
     const {machines} = useMachineContext()
-    const {userData} = useAuth()
     const history = useHistory();
     const [routeData, setRouteData] = useState()
 
@@ -38,7 +37,7 @@ const MachinesPage = ({ route }) => {
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 
                                         <p style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
-                                            {`${routeData}/${userData.obras[0].descripcion}`}
+                                            {`${routeData}`}
                                         </p>
                                     </Toolbar>
                                 </div>

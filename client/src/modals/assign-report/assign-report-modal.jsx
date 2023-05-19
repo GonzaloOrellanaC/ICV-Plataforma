@@ -64,7 +64,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         const reportCache = report
         if (reportCache.usersAssigned) {
             const usersAssigned = reportCache.usersAssigned
-            usersAssigned.push(userId)
+            usersAssigned.unshift(userId)
             reportCache.usersAssigned = usersAssigned
             if (reportCache.state === 'Asignar') {
                 reportCache.state = 'En proceso'
@@ -82,59 +82,6 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                 )
         }
         close()
-        /* if(userId === '') {
-            let usersAssigned = new Array();
-            usersAssigned[0] = userId;
-            setData('Reporte sin asignación.');
-            const reportState = await reportsRoutes.editReport({idIndex: idIndex, state: 'Asignar', usersAssigned: usersAssigned});
-            if(reportState) {
-                report.usersAssigned = usersAssigned;
-                setStateAssignment(true);
-                alert('Se retira asignación')
-                if(userAssigned) {
-                    SocketConnection.sendnotificationToUser(
-                        'retiro-asignacion',
-                        `${localStorage.getItem('_id')}`,
-                        userAssigned,
-                        'Asignaciones',
-                        'Se ha retirado su asignación de OT',
-                        `OT ${report.idIndex} se reasignará a otro usuario`,
-                        '/assignment'
-                        )
-                }
-                setTimeout(() => {
-                    setStateAssignment(false)
-                    closeModal()
-                }, 1000);
-            }
-        }else{
-            usersRoutes.getUser(userId).then(async data => {
-                if (confirm(`Confirma asignación a ${data.data.name} ${data.data.lastName}`)) {
-                    setData('Pauta asignada.')
-                    let usersAssigned = new Array();
-                    usersAssigned.push(userId);
-                    const reportState = await reportsRoutes.editReport({idIndex: idIndex, state: 'En proceso', usersAssigned: usersAssigned});
-                    if(reportState) {
-                        report.usersAssigned = usersAssigned;
-                        setStateAssignment(true);
-                        alert('Pauta asignada');
-                        SocketConnection.sendnotificationToUser(
-                            'nueva-asignacion',
-                            `${localStorage.getItem('_id')}`,
-                            userId,
-                            'Asignaciones',
-                            'Se ha asignado nueva OT',
-                            `OT ${report.idIndex} asignada a usted`,
-                            '/assignment'
-                            )
-                        setTimeout(() => {
-                            setStateAssignment(false);
-                            closeModal();
-                        }, 1000);
-                    }
-                }
-            })
-        } */
     }
 
     const close = () => {

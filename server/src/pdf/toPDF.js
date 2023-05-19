@@ -3,7 +3,7 @@ import { ExecutionReport, Users } from "../models"
 import { AzureServices, ReportsService } from "../services"
 import pdfMake from 'pdfmake'
 import fs from 'fs'
-/* import axios from 'axios' */
+import axios from 'axios'
 import path from 'path'
 const {logo, check, noCheck} = environment.images
 const time = (time) => {
@@ -306,20 +306,10 @@ const getImage = (imageUrl) => {
 
 const getImageBase64 = async (imageUrl) => {
     try {
-        console.log(imageUrl)
-        /* fs.readFile(imageUrl, function (err, data) {
-            if (err) throw err;
-            console.log(data);
-          }); */
-        const image = await axios.get(imageUrl, {
-            responseType: 'arraybuffer'
-        });
-        console.log(image)
+        console.log('URL imágen ',imageUrl)
+        const image = await axios.get(imageUrl, {responseType: 'arraybuffer'})
         const returnedB64 = Buffer.from(image.data).toString('base64')
-        console.log(returnedB64)
-        /*return  returnedB64
-        console.log(returnedB64)
-        return `data:image/jpeg;base64,${returnedB64}`*/
+        return `data:image/jpeg;base64,${returnedB64}`
     } catch (error) {
         
     }
@@ -334,16 +324,15 @@ const createImagesTables2 = (executionReportData) => {
         return new Promise(resolve => {
             console.log('Listado de imagenes ', imagesList)
             imagesList.forEach(async (e, i) => {
-                let namePicture = e.namePicture.replace('Pregunta', 'Tarea')
+                let namePicture = e.namePicture ? e.namePicture.replace('Pregunta', 'Tarea') : ''
                 const imageData = await getImageBase64(e.urlImageMessage)
-                console.log(imageData)
                 if (imageData)
                 verification = verification + 1
                 arrayTable[i] = [
                     {
                         image: imageData,
                         width: 500,
-                        height: 400
+                        height: 500
                     },
                     {
                         width: 100,
@@ -363,17 +352,15 @@ const createImagesTables2 = (executionReportData) => {
 
 const wait = (index, imageArrayColumns, result) => {
     return new Promise(resolve => {
-        /* console.log(imagesCache.length, verification) */
-        /* setTimeout(() => {
+        setTimeout(() => {
             if (imageArrayColumns.length == verification) {
                 console.log('Tabla de imágenes lista')
-                console.log(imageArrayColumns)
                 result(imageArrayColumns)
                 resolve(true)
             } else {
                 wait(index, imageArrayColumns, result)
             }
-        }, 1000);*/
+        }, 1000);
     })
 } 
 
@@ -455,9 +442,9 @@ const createSubTables = async (list, index, indexNumber) => {
                 }
             }
             if(e.isWarning) {
-                e.image = noCheck/* await imageToBase64( noImageCheck/* ) */
+                e.image = noCheck /* await getImageBase64(path.resolve(__dirname, '../assets/no_check.png')) */
             }else{
-                e.image = check/* await imageToBase64( imageCheck/* ) */
+                e.image = check /* await getImageBase64(path.resolve(__dirname, '../assets/check.png')) */
             }
             
             table[i+1] = [ 
@@ -777,7 +764,7 @@ const toPDF = (reportData) => {
                 },
                 await createTable(groupKeys, group),
                 (reportData.history.length > 0) ? await crateHistoryTable(reportData.history) : {},
-                /* createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser), */
+                createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser),
                 /* (executionReportData.astList && (executionReportData.astList.length > 0)) ? 
                 {
                     style: 'title',
@@ -796,7 +783,14 @@ const toPDF = (reportData) => {
                             await createImagesTables2(executionReportData),
                     }
                 } : {}, */
-                await createImagesTables2()
+                (imagesList.length > 0) ? {
+                    style: 'title',
+                    table: {
+                        widths: ['*', 100],
+                        body: 
+                            await createImagesTables2(executionReportData)
+                    }
+                } : {}
             ],
             styles: {
                 imageTables: {

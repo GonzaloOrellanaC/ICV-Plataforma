@@ -33,7 +33,7 @@ const ResetPassword = () => {
     }
 
     const handleSubmit = async (event) => {
-        setLoading(true)
+        /* setLoading(true) */
         try{
             event.preventDefault()
             let forgotPasswordState = await requestNewPassword();

@@ -14,6 +14,13 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{textAlign: 'left', width: '100%'}}>
                     <h2>Versión {environment.version}</h2>
                     <li>
+                        Se mejora el rendimiento y repara errores de bugs producto de  
+                    </li>
+                </div>
+                <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <br />
+                    <strong>v2.6.4</strong>
+                    <li>
                         Cambios en Pautas. Ahora se pueden eliminar comentarios, fotos y el estado de ticket verde o amarillo a vacío en caso de error. 
                     </li>
                     <li>
@@ -22,8 +29,6 @@ const VersionControlModal = ({open, closeModal}) => {
                     <li>
                         Otras modificaciones menores. 
                     </li>
-                </div>
-                <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
                     <br />
                     <strong>v2.6.3</strong>
                     <li>

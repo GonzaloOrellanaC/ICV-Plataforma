@@ -5,7 +5,7 @@ import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, getMachi
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { pautasDatabase, reportsDatabase, readyToSendReportsDatabase, executionReportsDatabase } from '../../indexedDB'
 import { MVAvatar, PautaDetail } from '../../containers'
-import { executionReportsRoutes, reportsRoutes } from '../../routes'
+import { executionReportsRoutes, pdfMakeRoutes, reportsRoutes } from '../../routes'
 import { LoadingLogoModal, LoadingModal, ReportCommitModal, ReportMessagesModal } from '../../modals'
 import { SocketConnection } from '../../connections'
 import sendnotificationToManyUsers from './sendnotificationToManyUsers'
@@ -25,7 +25,6 @@ const ActivitiesDetailPage = () => {
     const {setReports, getReports} = useReportsContext()
     const [ progress, resutProgress ] = useState(0)
     const [ itemProgress, resultThisItemProgress ] = useState(0)
-    const [ reportAssignment, setReportAssignment ] = useState()
     const [ reportLevel, setReportLevel ] = useState()
     const [ canEdit, setCanEdit ] = useState(false)
     const [ reportAssigned, setReportAssigned ] = useState()
@@ -108,42 +107,40 @@ const ActivitiesDetailPage = () => {
         }
     }
 
-    const terminarjornada = () => {
+    const terminarjornada = async () => {
         if(isOnline) {
-            syncData(true).then(async () => {
-                const report = reportAssigned
-                const emails = await getExecutivesSapEmail(reportLevel)
-                let usersAssigned = new Array()
-                usersAssigned = reportAssigned.usersAssigned
-                let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === localStorage.getItem('_id')){}else{return user}})
-                report.idIndex = id
-                report.usersAssigned = usersAssignedFiltered
-                report.state = "Asignar"
-                report.emailing = "termino-jornada"
-                report.fullNameWorker = `${localStorage.getItem('name')} ${localStorage.getItem('lastName')}`
-                report.emailsToSend = emails
-                let ids = new Array()
-                ids = await getExecutivesSapId()
-                ids.forEach(async (id, index) => {
-                    SocketConnection.sendnotificationToUser(
-                        'termino-jornada',
-                        `${localStorage.getItem('_id')}`,
-                        id,
-                        'Aviso general',
-                        'Término de jornada',
-                        `${localStorage.getItem('name')} ${localStorage.getItem('lastName')} ha terminado su jornada. Recuerde reasignar OT`,
-                        '/reports'
-                    )
-                    if(index == (ids.length - 1)) {
-                        let actualiza = await reportsRoutes.editReport(report)
-                        if(actualiza) {
-                            setTimeout(() => {
-                                alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
-                                history.goBack()
-                            }, 500)
-                        }
+            const reportCache = report
+            const emails = await getExecutivesSapEmail(reportLevel)
+            let usersAssigned = new Array()
+            usersAssigned = reportCache.usersAssigned
+            let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === userData._id){}else{return user}})
+            reportCache.idIndex = id
+            reportCache.usersAssigned = usersAssignedFiltered
+            reportCache.state = "Asignar"
+            reportCache.emailing = "termino-jornada"
+            reportCache.fullNameWorker = `${userData.name} ${userData.lastName}`
+            reportCache.emailsToSend = emails
+            let ids = new Array()
+            ids = await getExecutivesSapId()
+            ids.forEach(async (id, index) => {
+                SocketConnection.sendnotificationToUser(
+                    'termino-jornada',
+                    `${userData._id}`,
+                    id,
+                    'Aviso general',
+                    'Término de jornada',
+                    `${userData.name} ${userData.lastName} ha terminado su jornada. Recuerde reasignar OT`,
+                    '/reports'
+                )
+                if(index == (ids.length - 1)) {
+                    let actualiza = await reportsRoutes.editReport(reportCache)
+                    if(actualiza) {
+                        setTimeout(() => {
+                            alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
+                            history.goBack()
+                        }, 500)
                     }
-                })
+                }
             })
         }else{
             alert('Dispositivo no está conectado a internet. Conecte a una red e intente nuevamente')
@@ -185,11 +182,11 @@ const ActivitiesDetailPage = () => {
         }
     }
 
-    const closeCommitModalToForward = (state) => {
+    const closeCommitModalToForward = async (state) => {
         setOpenReportCommitModal(false)
         if (state) {
             setLoadingMessage('Guardando información')
-            setLoading(true)
+            /* setLoading(true) */
             console.log(report)
             const reportCache = report
             if (reportCache.testMode) {
@@ -212,10 +209,12 @@ const ActivitiesDetailPage = () => {
                     reportCache.sapExecutiveApprovedBy = userData._id
                     reportCache.dateClose = new Date()
                     reportCache.state = 'Completadas'
-                    toPDF(reportCache, reportCache.machineData, 'Enviando archivo')
+                    reportCache.level = level
+                    console.log(reportCache)
+                    await pdfMakeRoutes.createPdfDoc(reportCache)
+                    /* toPDF(reportCache, reportCache.machineData, 'Enviando archivo') */
                 }
                 reportCache.level = level
-                console.log(reportCache)
                 sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
                 saveReportToDatabases(reportCache)
             } else {
@@ -242,7 +241,7 @@ const ActivitiesDetailPage = () => {
                     reportCache.level = level
                     sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
                     saveReportToDatabases(reportCache)
-                    toPDF(reportCache, reportCache.machineData, setLoadingMessage )
+                    const response = await pdfMakeRoutes.createPdfDoc(reportCache)
                 } else {
                     alert('Reporte está incompleto.')
                 }
@@ -433,7 +432,7 @@ const ActivitiesDetailPage = () => {
                                             <Close />
                                             Rechazar OT
                                         </Button>}
-                                        {(isOperator&&(reportLevel===0)) && <Button onClick={terminarjornada} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
+                                        {(isOperator&&(report.level===0 || !report.level)) && <Button onClick={terminarjornada} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
                                             <FontAwesomeIcon icon={faClock} style={{marginRight: 10}} /> Terminar Jornada
                                         </Button>}
                                         <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 0}} onClick={openMessages}>

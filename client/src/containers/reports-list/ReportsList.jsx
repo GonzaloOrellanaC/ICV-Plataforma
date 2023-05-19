@@ -1,16 +1,14 @@
-import { useState, useEffect, useContext } from "react"
-import { Button, Grid, Popover, Typography } from '@material-ui/core'
-import { machinesRoutes } from '../../routes'
+import { useState, useEffect } from "react"
+import { Button, Grid, Popover } from '@material-ui/core'
+import { pdfMakeRoutes } from '../../routes'
 import { AssignReportModal, PdfModal, ReviewReportModal } from '../../modals'
 import './style.css'
 import { dateSimple } from "../../config"
-import { machinesDatabase } from "../../indexedDB"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowUp } from "@fortawesome/free-solid-svg-icons"
-import { ReportsContext, useReportsContext } from "../../context"
+import { machinesDatabase, reportsDatabase } from "../../indexedDB"
+import { useReportsContext } from "../../context"
 
-const ReportsList = ({list}/* {list, reloadData, ordenarPorNumeroOT, flechaListaxOT} */) => {
-    /* const {listSelected} = useContext(ReportsContext) */
+const ReportsList = ({list, typeReportsSelected}) => {
+    const {getReports} = useReportsContext()
     const [ reportData, setReportData ] = useState(null)
     const [ reportDataReview, setReportDataReview ] = useState(null)
     const [ openModalState, setOpenModalState ] = useState(false)
@@ -19,7 +17,6 @@ const ReportsList = ({list}/* {list, reloadData, ordenarPorNumeroOT, flechaLista
     const [ siteName, setSiteName ] = useState([])
     const [ isAdmin, setIsAdmin ] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
-    const [listData, setListData] = useState([])
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
@@ -27,23 +24,6 @@ const ReportsList = ({list}/* {list, reloadData, ordenarPorNumeroOT, flechaLista
         let isAdminCache = false
         setIsAdmin(isAdminCache)
     }, [])
-
-    useEffect(() => {
-        console.log(list)
-        /* if (list.length > 0) {
-            getElementsFromItem()
-        } */
-    }, [list])
-
-    const getElementsFromItem = async () => {
-        const listToShow = [...list]
-        /* listToShow.forEach(async  item => {
-            console.log(item)
-            const response = await getMachineTypeByEquid(item.machine)
-            item.machineData = response
-        }) */
-        setListData(listToShow)
-    }
     
     const handleClick = (event, siteName) => {
         setSiteName(siteName)
@@ -72,51 +52,48 @@ const ReportsList = ({list}/* {list, reloadData, ordenarPorNumeroOT, flechaLista
         setOpenModalState(false)
     }
 
-    const openPdf = (report, i) => {
-        console.log(report)
-        setReportData(report)
-        setOpenPdfModal(true)
-    }
-
     const openReviewModal = (report) => {
         setReportDataReview(report)
         setOpenReviewModalState(true)
     }
 
-    const getMachineTypeByEquid = (item) => {
-        return new Promise(async  resolve => {
-            let db = await machinesDatabase.initDbMachines();
-            const machines = await machinesDatabase.consultar(db.database);
-            let machineFiltered = machines.filter(m => { if(item === m.equid) {return m}});
-            /* console.log(machineFiltered) */
-            resolve(
-                {
-                    /* number: machineFiltered[0].equ,
-                    model: machineFiltered[0].model */
-                }
-            ) 
-        })
-    }
-
     const closePdfModal = () => {
         setOpenPdfModal(false)
     }
+
+    const getPDF = async (doc) => {
+        const response = await pdfMakeRoutes.createPdfDoc(doc)
+        console.log(response)
+        const reportCache = doc
+        reportCache.urlPdf = response.data.url
+        const {database} = await reportsDatabase.initDbReports()
+        await reportsDatabase.actualizar(reportCache, database)
+        getReports()
+    }
     
 
-    const levelToState = (level, usersAssigned, init) => {
-        if((level==0 || !level) && (usersAssigned.length > 0)) {
-            return 'Ejecutando Operario'
-        } else if(((level==0 || !level)&&(init==='No informado')) && (usersAssigned.length == 0)) {
+    const levelToState = (level, usersAssigned, init, state) => {
+        if((level===0 || !level)/*  && (usersAssigned.length > 0) */) {
+            if (init) {
+                if (state === 'Asignar') {
+                    return 'Reasignar'
+                } else {
+                    return 'Ejecutando por operador'
+                }
+            } else {
+                return 'Sin asignar'
+            }
+        }/*  else if(((level===0 || !level)&&!init) && (usersAssigned.length == 0)) {
             return 'Sin Asignar'
-        } else if(((level==0 || !level)&& init!='No informado') && (usersAssigned.length == 0)) {
+        } else if(((level===0 || !level)&&init) && (usersAssigned.length == 0)) {
             return 'Reasignar'
-        } else if (level==1) {
+        } */ else if (level===1) {
             return 'Revisión Supervisor'
-        } else if (level==2) {
+        } else if (level===2) {
             return 'Revisión J. Maquinaria'
-        } else if (level==3) {
+        } else if (level===3) {
             return 'Revisión SAP'
-        } else if (level==4) {
+        } else if (level===4) {
             return 'Terminado'
         }
     }
@@ -149,15 +126,17 @@ const ReportsList = ({list}/* {list, reloadData, ordenarPorNumeroOT, flechaLista
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                     <p style={{textAlign: 'center'}}> <strong>Estado</strong> </p>
                 </Grid>
-                <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
+                {(typeReportsSelected !== 'Completadas') ? <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
                     <p style={{textAlign: 'center'}}> <strong>Responsable</strong> </p>
-                </Grid>
+                </Grid> : <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
+                    <p style={{textAlign: 'center'}}> <strong>OM SAP</strong> </p>
+                </Grid>}
                 {isAdmin && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
                     <p style={{textAlign: 'center', minWidth: 70}}> <strong>Obra</strong> </p>
                 </Grid>}
-                <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
+                {(typeReportsSelected === 'Completadas') && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
                     <p style={{textAlign: 'center', minWidth: 70}}> <strong>Download</strong> </p>
-                </Grid>
+                </Grid>}
                 <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}  >
                     <p style={{textAlign: 'center', minWidth: 70}}> <strong>Flota</strong> </p>
                 </Grid>
@@ -205,15 +184,19 @@ const ReportsList = ({list}/* {list, reloadData, ordenarPorNumeroOT, flechaLista
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                         <div style={{textAlign: 'center'}}>
-                                            <p> <strong>{levelToState(item.level, item.usersAssigned, item.init)}</strong> </p>
+                                            <p> <strong>{levelToState(item.level, item.usersAssigned, item.dateInit, item.state)}</strong> </p>
                                         </div>
                                     </Grid>
-                                    {item.enabled ? 
-                                    <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
-                                        <p style={{textAlign: 'center'}}> <button onClick={()=>openModal(item)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
-                                    </Grid> :
-                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
-                                        <p style={{textAlign: 'center'}}> <button disabled style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Terminado</button> </p>
+                                    {
+                                        (typeReportsSelected !== 'Completadas') ? ((item.enabled) ? 
+                                            <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
+                                                <p style={{textAlign: 'center'}}> <button onClick={()=>openModal(item)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
+                                            </Grid> :
+                                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
+                                                <p style={{textAlign: 'center'}}> <button disabled style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Terminado</button> </p>
+                                            </Grid>
+                                        ) : <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
+                                        <p style={{textAlign: 'center'}}> {item.sapId} </p>
                                     </Grid>
                                     }
                                     {
@@ -239,10 +222,9 @@ const ReportsList = ({list}/* {list, reloadData, ordenarPorNumeroOT, flechaLista
                                             </Popover>
                                         </Grid>
                                     }
-                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                                        {/* <p style={{textAlign: 'center', minWidth: 70}}> {item.urlPdf ? item.urlPdf : 'Sin URL'} </p> */}
+                                    {(typeReportsSelected==='Completadas') && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
                                         {item.urlPdf ? <p style={{textAlign: 'center', minWidth: 70}}><a href={`${item.urlPdf}`}>Link</a></p> : <p style={{textAlign: 'center', minWidth: 70}}> Sin URL </p>}
-                                    </Grid>
+                                    </Grid>}
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}  >
                                         <p style={{textAlign: 'center', minWidth: 70}}> {item.machineData && item.machineData.model} </p>
                                     </Grid>
@@ -252,11 +234,11 @@ const ReportsList = ({list}/* {list, reloadData, ordenarPorNumeroOT, flechaLista
                                             <Grid item>
                                                 <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  
                                             </Grid>
-                                            <Grid item>
-                                                {!item.enabled &&
-                                                    <p style={{textAlign: 'center', marginLeft: 10}}> <button /* disabled={(localStorage.getItem('role') === 'chiefMachinery') ? true : false } */ onClick={()=>{openPdf(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
+                                            {/* <Grid item>
+                                                {item.enabled &&
+                                                    <p style={{textAlign: 'center', marginLeft: 10}}> <button onClick={()=>{getPDF(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>PDF</button> </p>
                                                 }
-                                            </Grid>
+                                            </Grid> */}
                                         </Grid>
                                     </Grid>
                                 </Grid>

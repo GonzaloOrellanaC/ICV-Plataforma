@@ -7,7 +7,7 @@ import { useConnectionContext } from "./Connection.context";
 export const MachineContext = createContext()
 
 export const MachineProvider = props => {
-    const {isAuthenticated, userData} = useAuth()
+    const {isAuthenticated, site} = useAuth()
     const [machines, setMachines] = useState([])
     const [machinesBySite, setMachinesBySite] = useState([])
     const [machineSelected, setMachineSelected] = useState()
@@ -25,6 +25,7 @@ export const MachineProvider = props => {
     },[isAuthenticated, isOnline])
 
     useEffect(() => {
+        if (site)
         if (machines.length > 0) {
             console.log(machines)
             if (isOnline) {
@@ -33,12 +34,12 @@ export const MachineProvider = props => {
                 getMachinesBySiteOffLine()
             }
         }
-    },[machines, isOnline])
+    },[machines, isOnline, site])
 
     const getMachinesBySite = async () => {
         let response
-        if (userData.obras && userData.obras[0]) {
-            response = await apiIvcRoutes.getMachineBySiteId(userData.obras[0].idobra)
+        if (site) {
+            response = await apiIvcRoutes.getMachineBySiteId(site.idobra)
         } else {
             response = await apiIvcRoutes.getAllMachines()
         }

@@ -2,6 +2,7 @@ import pdfMake from 'pdfmake'
 import path from 'path'
 import { AzureServices, ReportsService } from './'
 import { Sentry } from './sentry.services'
+import toPDF from '../pdf/toPDF'
 
 const createPdf = (req, res) => {
     let resp = ''
@@ -38,6 +39,13 @@ const createPdf = (req, res) => {
     })
     
 
+}
+
+const createPdfDoc = async (req, res) => {
+    const {reportData} = req.body
+    const response = await toPDF(reportData)
+    const {state, url} = response
+    res.json({state: state, url: url})
 }
 
 const createPdfBinary = ( pdfContent, resp, callback ) => {
@@ -82,5 +90,6 @@ const createPdfBinary = ( pdfContent, resp, callback ) => {
 }
 
 export default {
-    createPdf
+    createPdf,
+    createPdfDoc
 }

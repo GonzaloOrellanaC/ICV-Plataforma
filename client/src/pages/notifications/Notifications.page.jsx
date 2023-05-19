@@ -5,6 +5,8 @@ import { useHistory } from "react-router-dom"
 import { dateWithTime, useStylesTheme } from "../../config"
 import LoadingLogoModal from "../../modals/loadings/loading-logo.modal"
 import { notificationsRoutes } from "../../routes"
+import { useNotificationsContext } from "../../context/Notifications.context"
+import { useAuth } from "../../context"
 /* const useStyles = makeStyles(theme => ({
     root: {
         display: 'inline-block',
@@ -38,13 +40,12 @@ import { notificationsRoutes } from "../../routes"
 })) */
 
 const NotificationsPage = () => {
-
-    const [ notifications, setNotifications ] = useState([])
+    const {myNotifications, getNotifications} = useNotificationsContext()
     const [ openLoading, setOpenLoading ] = useState(false)
     const classes = useStylesTheme();
     const history = useHistory();
 
-    useEffect(() => {
+    /* useEffect(() => {
         let cancel = true;
         if(cancel) {
             notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
@@ -52,7 +53,7 @@ const NotificationsPage = () => {
             })
         }
         return () => {cancel = false}
-    }, [])
+    }, []) */
 
     const changeState = (notificationId) => {
         notificationsRoutes.actualiceNotificationState(notificationId)
@@ -61,13 +62,12 @@ const NotificationsPage = () => {
     const todoLeido = () => {
         setOpenLoading(true)
         setTimeout(() => {
+            const notifications = [...myNotifications]
             notifications.forEach((not, index) => {
                 notificationsRoutes.actualiceNotificationState(not._id)
                 if(index == (notifications.length - 1)) {
-                    notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
-                        setNotifications(data.data.reverse())
-                        setOpenLoading(false)
-                    })
+                    getNotifications()
+                    setOpenLoading(false)
                 }
             })
         }, 1000);
@@ -98,7 +98,7 @@ const NotificationsPage = () => {
                         <Grid alignItems='center' justifyContent='center' style={{padding: 10, borderRadius: 20}}>
                             <div style={{height: 'calc(100vh - 220px)', overflowY: 'auto'}}>
                             {
-                                notifications.map((item, index) => {
+                                myNotifications.slice(0, 20).map((item, index) => {
                                     return (
                                         <ListItem key={index} style={{backgroundColor: item.state ? '#fff' : '#F9F9F9'}}>
                                             <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>

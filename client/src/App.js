@@ -45,6 +45,7 @@ import { PatternsPage, RolesPage, UserProfilePage } from './pages/administration
 import { Notifications } from 'react-push-notification';
 import { SocketConnection } from './connections'
 import { Close } from '@material-ui/icons'
+import { NotificationsProvider } from './context/Notifications.context'
 
 const errorLink = onError(({ networkError }) => {
     if (networkError?.statusCode === 401) {
@@ -404,10 +405,12 @@ const App = () => {
                                                 <CreateUserProvider>
                                                     <TimeProvider>
                                                         <MachineProvider>
-                                                            <ThemeProvider theme={theme} >
-                                                                <CssBaseline />
-                                                                <OnApp />
-                                                            </ThemeProvider>
+                                                            <NotificationsProvider>
+                                                                <ThemeProvider theme={theme} >
+                                                                    <CssBaseline />
+                                                                    <OnApp />
+                                                                </ThemeProvider>
+                                                            </NotificationsProvider>
                                                         </MachineProvider>
                                                     </TimeProvider>
                                                 </CreateUserProvider>

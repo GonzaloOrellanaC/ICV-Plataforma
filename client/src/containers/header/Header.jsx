@@ -5,7 +5,7 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import logo from '../../assets/logo_icv_gris.png'
 import logoNotification from '../../assets/logo_icv_notification_push.png'
-import { ConnectionContext, useAuth, useNavigation } from '../../context'
+import { ConnectionContext, useAuth, useNavigation, useReportsContext } from '../../context'
 import { changeTypeUser } from '../../config'
 import './style.css'
 import addNotification from 'react-push-notification';
@@ -52,7 +52,8 @@ const Header = () => {
     const classes = useStyles()
     const {isOnline} = useContext(ConnectionContext)
     const { navBarOpen } = useNavigation()
-    const { isAuthenticated, userData } = useAuth()
+    const { isAuthenticated, userData, admin, site } = useAuth()
+    const {message} = useReportsContext()
     const history = useHistory();
     useEffect(() => {
         console.log('La red está o no conectada: ', isOnline)
@@ -130,6 +131,9 @@ const Header = () => {
                                                 )
                                             })
                                         }
+                                        <Grid item>
+                                            {site && site.descripcion}
+                                        </Grid>
                                     </Grid>
                                         
                                 }
@@ -138,9 +142,9 @@ const Header = () => {
                         </Fragment>}
                         <div style={{position: 'absolute', right: 10}}>
                             {
-                                (localStorage.getItem('role')==='admin'||localStorage.getItem('role')==='superAdmin') && <button onClick={() => sendTestNotification()}>Notif. Test</button>
+                                (admin) && <button onClick={() => sendTestNotification()}>Notif. Test</button>
                             }
-                            <p><FontAwesomeIcon icon={faCircle} color={isOnline ? '#2FB83F' : '#B62800'} /> {isOnline ? 'Online' : 'Offline'}</p>
+                            <p> <b>{message.length > 0 && message}</b> <FontAwesomeIcon icon={faCircle} color={isOnline ? '#2FB83F' : '#B62800'} /> {isOnline ? 'Online' : 'Offline'}</p>
                             {!isOnline && <p>Sin red</p>}
                         </div>
                 </Toolbar>

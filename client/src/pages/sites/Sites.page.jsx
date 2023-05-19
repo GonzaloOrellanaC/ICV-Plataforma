@@ -3,8 +3,11 @@ import { Box, Button, Card, Grid } from '@material-ui/core'
 import { useStylesTheme } from '../../config'
 import { SiteButton } from '../../components/buttons'
 import { sitesDatabase } from '../../indexedDB'
+import { useAuth } from '../../context'
 
 const SitesPage = () => {
+
+    const {setSite} = useAuth()
     const classes = useStylesTheme();
 
     const [ sites, setSites ] = useState([])
@@ -24,8 +27,10 @@ const SitesPage = () => {
 
     const seleccionarSitio = (site) => {
         if (window.confirm('Confirme que cambiará la obra de navegación')) {
-            localStorage.setItem('sitio', JSON.stringify(site));
-            alert(site.descripcion+' seleccionado.')
+            console.log(site)
+            setSite(site)
+            /* localStorage.setItem('sitio', JSON.stringify(site));
+            alert(site.descripcion+' seleccionado.') */
         }
     }
 
@@ -42,7 +47,7 @@ const SitesPage = () => {
                             {
                                 sites.filter(a => a.toString()).map((site) => {
                                     return (
-                                        <Grid item xl={4} lg={4} md={4} key={site.id} style={{width: '100%', padding: 20}}>
+                                        <Grid item xl={3} lg={3} md={4} key={site.id} style={{width: '100%', padding: 20}}>
                                             <div
                                                 style={{
                                                     padding: 10,
@@ -53,7 +58,7 @@ const SitesPage = () => {
                                                     textAlign: 'center'
                                                 }}
                                             >
-                                                <img src={site.image ? site.image : '/logo_icv.png'} width={250} />
+                                                <img src={site.image ? site.image : '/logo_icv.png'} width={100} />
                                                 <br />
                                                 <p>{site.descripcion}</p>
                                                 <br />

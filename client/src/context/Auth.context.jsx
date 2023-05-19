@@ -4,6 +4,9 @@ import { userDatabase } from '../indexedDB'
 import { FirmaUsuario } from '../modals'
 import { styleModal } from '../config'
 import {SocketConnection} from '../connections'
+import addNotification from 'react-push-notification'
+import logoNotification from '../assets/logo_icv_notification_push.png'
+
 export const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
@@ -41,6 +44,11 @@ export const AuthProvider = (props) => {
 
     useEffect(() => {
         if (isAuthenticated) {
+            Notification.requestPermission().then((res) => {
+                if(res === 'denied' || res === 'default') {
+                    
+                }
+            })
             setIsOperator(Boolean(localStorage.getItem('isOperator')))
             setSite(JSON.parse(window.localStorage.getItem('sitio')))
             if (!userData) {
@@ -84,6 +92,31 @@ export const AuthProvider = (props) => {
         }
     },[userData])
 
+    useEffect(() => {
+        if (userData && userData.obras.length > 0) {
+            setSite(userData.obras[0])
+            window.localStorage.setItem('sitio', JSON.stringify(userData.obras[0]))
+        }
+    },[userData])
+
+    useEffect(() => {
+        if (userData && isAuthenticated) {
+            SocketConnection.listenNotifocations(userData, getData)
+        }
+    },[userData, isAuthenticated])
+
+    const getData = (data) => {
+        console.log(data)
+        addNotification({
+            icon: logoNotification,
+            title: data.title,
+            subtitle: data.subtitle,
+            message: data.message,
+            theme: 'red',
+            native: true
+        })
+    }
+
     const saveUserToDb = async (userDataLocal) => {
         const {database} = await userDatabase.initDb()
         await userDatabase.actualizar(userDataLocal, database)
@@ -122,6 +155,7 @@ export const AuthProvider = (props) => {
         admin,
         roles,
         site,
+        setSite,
         isOperator,
         isSapExecutive,
         isShiftManager,

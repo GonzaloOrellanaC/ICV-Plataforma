@@ -10,5 +10,8 @@ export default {
             numEquip
         }
         return axios.post('/pdf-maker/createPdf', requestBody)
+    },
+    createPdfDoc: (doc) => {
+        return axios.post('/pdf-maker/createPdfDoc', {reportData: doc})
     }
 }

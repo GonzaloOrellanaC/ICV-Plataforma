@@ -4,14 +4,14 @@ import { ArrowBackIos } from '@material-ui/icons'
 import { date, useStylesTheme } from '../../config'
 import { useHistory } from 'react-router-dom'
 /* import { machinesDatabase, reportsDatabase } from '../../indexedDB' */
-import { AuthContext, ExecutionReportContext, ReportsContext } from '../../context'
+import { AuthContext, ExecutionReportContext, useReportsContext } from '../../context'
 
 const ActivitiesPage = () => {
     const classes = useStylesTheme();
     const history = useHistory();
     const {isOperator, isSapExecutive, isShiftManager, isChiefMachinery, admin} = useContext(AuthContext)
     const {setReport} = useContext(ExecutionReportContext)
-    const {priorityAssignments, normalAssignments} = useContext(ReportsContext)
+    const {priorityAssignments, normalAssignments} = useReportsContext()
     const [showList, setShowList] = useState(true)
     const theme = useTheme();
     const isSmall = useMediaQuery(theme.breakpoints.down('sm'))

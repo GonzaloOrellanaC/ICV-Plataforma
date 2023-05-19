@@ -4,7 +4,7 @@ import { executionReportsDatabase } from "../indexedDB";
 import { useAuth, useConnectionContext } from ".";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { executionReportsRoutes } from "../routes";
-import { LoadingModal } from "../modals";
+import { LoadingLogoModal } from "../modals";
 
 export const ExecutionReportContext = createContext()
 
@@ -69,9 +69,12 @@ export const ExecutionReportProvider = (props) => {
     }
 
     const getExecutionReport = async () => {
+        setExecutionReport(undefined)
         if (!isOperator && isOnline) {
+            /* setLoading(true) */
             const response = await executionReportsRoutes.getExecutionReportById(report)
             setExecutionReport(response.data)
+            setLoading(false)
         } else {
             const {database} = await executionReportsDatabase.initDb()
             const response = await executionReportsDatabase.consultar(database)
@@ -80,7 +83,6 @@ export const ExecutionReportProvider = (props) => {
                 setExecutionReport(excetutionReportCache)
             }
         }
-        setLoading(false)
     }
 
     const provider = {
@@ -106,7 +108,7 @@ export const ExecutionReportProvider = (props) => {
     return (
         <>
         <ExecutionReportContext.Provider value={provider} {...props} />
-        <LoadingModal open={loading} withProgress={false} loadingData={loadingMessage} />
+        <LoadingLogoModal open={loading} />
         </>
     )
 }

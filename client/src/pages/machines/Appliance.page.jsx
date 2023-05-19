@@ -10,13 +10,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faEye } from '@fortawesome/free-solid-svg-icons';
 import { ImageDialog, ReportDetailDialog } from '../../dialogs';
 import { LoadingLogoModal } from '../../modals';
-import { useAuth, useConnectionContext, useMachineContext } from '../../context';
+import { useAuth, useConnectionContext, useExecutionReportContext, useMachineContext } from '../../context';
 
 const AppliancePage = ({ route }) => {
     const classes = useStylesTheme();
     const {isOnline} = useConnectionContext()
-    const {userData} = useAuth()
     const {machineSelected} = useMachineContext()
+    const {loading, setLoading} = useExecutionReportContext()
     const [open, setOpen] = useState(false);
     const [ mantenciones, setMantenciones ] = useState([])
     const [ mantencionesCache, setMantencionesCache ] = useState([])
@@ -42,6 +42,7 @@ const AppliancePage = ({ route }) => {
     },[route])
 
     useEffect(() => {
+        /* setLoading(true) */
         console.log(machineSelected)
         if (machineSelected) {
             setMachine(machineSelected)
@@ -59,6 +60,7 @@ const AppliancePage = ({ route }) => {
                 alert('Dispoitivo sin conexión a internet. No se podrá mostrar el histórico.')
             }
         }
+        setLoading(false)
     }, [machineSelected])
 
     const openCloseModal = () => {
@@ -155,7 +157,7 @@ const AppliancePage = ({ route }) => {
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 
                                         <p style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
-                                            {routeData}/{userData.obras[0].descripcion}/{machine.type} {machine.brand} {machine.model}/Número interno: <b>{machine.equ}</b>
+                                            {routeData}/{machine.type} {machine.brand} {machine.model}/Número interno: <b>{machine.equ}</b>
                                         </p>
                                     </Toolbar>
                                 </div>

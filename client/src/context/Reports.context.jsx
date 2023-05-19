@@ -4,7 +4,6 @@ import { executionReportsRoutes, patternsRoutes, reportsRoutes } from '../routes
 import { executionReportsDatabase, pautasDatabase, reportsDatabase } from '../indexedDB'
 import { useConnectionContext } from './Connection.context'
 import { LoadingLogoModal } from '../modals'
-import { io } from 'socket.io-client'
 import { SocketConnection } from '../connections'
 
 export const ReportsContext = createContext()
@@ -21,6 +20,7 @@ export const ReportsProvider = (props) => {
     const [priorityAssignments, setPriorityAssignments] = useState([])
     const [normalAssignments, setnormalAssignments] = useState([])
     const [executeReportInternal, setExecuteReportInternal] = useState()
+    const [message, setMessage] = useState('')
 
     useEffect(() => {
         if (isOnline && userData) {
@@ -45,11 +45,14 @@ export const ReportsProvider = (props) => {
 
     useEffect(() => {
         if (pautas.length > 0) {
+            setMessage('Guardando pautas')
             savePautas()
         }
     }, [pautas])
 
     const saveReport = async (reportData) => {
+        /* setLoading(true) */
+        setMessage('Guardando reportes')
         const reportsCache = [...reports]
         const response = await reportsRoutes.editReportById(reportData)
         console.log(response)
@@ -59,28 +62,36 @@ export const ReportsProvider = (props) => {
         })
         reportsCache[reportIndex] = reportUpdated
         setReports(reportsCache)
+        setMessage('')
         console.log('reporte asignado')
         alert('reporte asignado')
+        setLoading(false)
     }
 
     const savePautas = async () => {
         const {database} = await pautasDatabase.initDbPMs()
-        pautas.forEach(async pauta => {
+        pautas.forEach(async (pauta, i) => {
             await pautasDatabase.actualizar(pauta, database)
+            if (i === (pautas.length - 1)) {
+                setMessage('')
+            }
         })
     }
 
     const getReportsFromDatabase = async () => {
+        setMessage('Descargando recursos')
         const {database} = await reportsDatabase.initDbReports()
         const response = await reportsDatabase.consultar(database)
         if (response.length > 0) {
             setReports(response)
+        } else {
+            setMessage('')
         }
     }
 
     useEffect(() => {
         if (reports.length > 0) {
-            setLoading(false)
+            /* setMessage('Descargando recursos') */
             if (isOperator) {
                 if (isOnline) {
                     saveExecutionReportToDatabase()
@@ -92,22 +103,19 @@ export const ReportsProvider = (props) => {
             setAssignments(reports)
             saveReportsToIndexedDb()
         } else {
+            setMessage('Descargando recursos')
             getReportsFromDatabase()
-            setLoading(false)
             setAssignments([])
         }
     }, [reports])
 
     const saveExecutionReportToDatabase = async () => {
+        setMessage('Guardando datos en navegador')
         console.log('init!!!!')
         const executionReportsCache = []
         const {database} = await executionReportsDatabase.initDb()
+        /* const reportsCache = reports */
         reports.forEach(async (report, i) => {
-            if(report.guide === 'Pauta de Inspección') {
-                report._guide = 'PI' 
-            }else{
-                report._guide = report.guide
-            }
             const response = await executionReportsRoutes.getExecutionReportById(report)
             if (response.data._id) {
                 executionReportsCache.push(response.data)
@@ -124,7 +132,7 @@ export const ReportsProvider = (props) => {
                 }
                 /* if (!executionReportsDatabase.obtener(response.data._id, database)) */
             } else {
-                alert('Guardando pauta de OT '+report.idIndex)
+                setMessage('Guardando pauta de OT '+report.idIndex)
                 const db = await pautasDatabase.initDbPMs()
                 const pautas = await pautasDatabase.consultar(db.database)
                 const pautaFiltered = pautas.filter((info) => { 
@@ -155,8 +163,10 @@ export const ReportsProvider = (props) => {
                     console.log(response)
                 }
             }
+            if (i === (reports.length - 1)) {
+                setMessage('')
+            }
         })
-        /* setExecuteReports(executionReportsCache) */
     }
 
     useEffect(() => {
@@ -165,6 +175,12 @@ export const ReportsProvider = (props) => {
                 const priorityAssignmentsCache = []
                 const assignmentsCache = []
                 assignments.forEach((assignment, i) => {
+                    if(assignment.guide === 'Pauta de Inspección') {
+                        assignment._guide = 'PI' 
+                    }else{
+                        assignment._guide = assignment.guide
+                    }
+        
                     if (assignment.level === 1) {
                         assignment.isPrioritary = true
                         priorityAssignmentsCache.push(assignment)
@@ -179,6 +195,11 @@ export const ReportsProvider = (props) => {
                 const priorityAssignmentsCache = []
                 const assignmentsCache = []
                 assignments.forEach((assignment, i) => {
+                    if(assignment.guide === 'Pauta de Inspección') {
+                        assignment._guide = 'PI' 
+                    }else{
+                        assignment._guide = assignment.guide
+                    }
                     if (assignment.level === 2) {
                         assignment.isPrioritary = true
                         priorityAssignmentsCache.push(assignment)
@@ -190,21 +211,31 @@ export const ReportsProvider = (props) => {
                 setPriorityAssignments(priorityAssignmentsCache)
                 setnormalAssignments(assignmentsCache)
             } else if (isOperator || admin || isSapExecutive) {
+                assignments.forEach((assignment, i) => {
+                    if(assignment.guide === 'Pauta de Inspección') {
+                        assignment._guide = 'PI' 
+                    }else{
+                        assignment._guide = assignment.guide
+                    }
+                })
                 setnormalAssignments(assignments)
             }
         }
     }, [assignments])
 
     useEffect(() => {
-        if (isAuthenticated)
-        if (admin || isOperator || isSapExecutive || isShiftManager || isChiefMachinery) {
-            if(isOnline) {
-                getReports()
+        if (isAuthenticated && site) {
+            if (admin || isOperator || isSapExecutive || isShiftManager || isChiefMachinery) {
+                if(isOnline) {
+                    setMessage('Descargando reportes')
+                    getReports()
+                }
             }
         }
-    }, [admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, isOnline, isAuthenticated])
+    }, [admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, isOnline, isAuthenticated, site])
 
     const getAllPautas = async () => {
+        setMessage('Descargando pautas')
         const response = await patternsRoutes.getPatternDetails()
         setPautas(response.data)
     }
@@ -214,6 +245,7 @@ export const ReportsProvider = (props) => {
         assignments.forEach(async (report, i) => {
             await reportsDatabase.actualizar(report, database)
         })
+        setLoading(false)
     }
 
     const getReportsFromIndexedDb = async () => {
@@ -223,7 +255,7 @@ export const ReportsProvider = (props) => {
     }
 
     const getReports = async () => {
-        setLoading(true)
+        setMessage('Leyendo reportes')
         if (isOnline) {
             console.log(isOperator, userData)
             if (admin) {
@@ -232,18 +264,18 @@ export const ReportsProvider = (props) => {
                 setReports(response.data.reverse())
             } else {
                 if (isOperator) {
-                    const response = await reportsRoutes.findMyAssignations(userData._id, userData.obras[0].idobra)
+                    const response = await reportsRoutes.findMyAssignations(userData._id, site.idobra)
                     console.log(response.data)
                     setReports(response.data.reverse())
                 } else if (isSapExecutive || isShiftManager || isChiefMachinery) {
-                    const response = await reportsRoutes.getAllReportsbySite(userData.obras[0].idobra)
+                    const response = await reportsRoutes.getAllReportsbySite(site.idobra)
                     setReports(response.data.reverse())
                 }
             }
         } else {
             getReportsFromIndexedDb()
-            setLoading(false)
         }
+        setMessage('')
     }
 
     const provider = {
@@ -259,7 +291,8 @@ export const ReportsProvider = (props) => {
         priorityAssignments,
         normalAssignments,
         saveReport,
-        getReports
+        getReports,
+        message
     }
 
     return (

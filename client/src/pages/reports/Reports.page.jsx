@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 /* import { machinesDatabase, sitesDatabase } from '../../indexedDB';
 import { dateSimple, getWeekReports } from '../../config'; */
 import { LoadingLogoModal } from '../../modals';
-import { useAuth, useReportsContext, useSitesContext } from '../../context';
+import { useAuth, useExecutionReportContext, useReportsContext, useSitesContext } from '../../context';
 
 const ReportsPage = () => {
     const {sites} = useSitesContext()
@@ -28,12 +28,13 @@ const ReportsPage = () => {
     const [ mantencionesCompletadas, setMantencionesCompletadas ] = useState(0);
     const [ list, setList ] = useState([]);
     const [ vista, setVista ] = useState(true);
-    const [ loading, setLoading ] = useState(false)
+    const {loading, setLoading} = useExecutionReportContext()
     const [ rowsPerPage, setRowsPerPage ] = useState(10)
     const [ page, setPage]  = useState(0);
     const [ listToShow, setListToShow ] = useState([])
     const [ totalItems, setTotalItems ] = useState(0)
     const [site, setSite] = useState('nada')
+    const [typeReportsSelected, setTypeReportsSelected] = useState('')
     const history = useHistory()
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
     useEffect(() => {
@@ -71,7 +72,7 @@ const ReportsPage = () => {
         console.log(inspeccionesTotales)
         if (inspeccionesTotales.length > 0) {
             const inspeccionesSinAsignar = inspeccionesTotales.filter(inspeccion => {
-                if(inspeccion.usersAssigned.length === 0) {
+                if(inspeccion.state==='Asignar'/* usersAssigned.length === 0 */) {
                     return inspeccion
                 }
             })
@@ -116,12 +117,12 @@ const ReportsPage = () => {
     useEffect(() => {
         if (mantencionesTotales.length > 0) {
             const mantencionesSinAsignar = mantencionesTotales.filter(mantencion => {
-                if(mantencion.usersAssigned.length === 0) {
+                if(mantencion.state==='Asignar'/* usersAssigned.length === 0 */) {
                     return mantencion
                 }
             })
             const mantencionesEnProceso = mantencionesTotales.filter(mantencion => {
-                if(mantencion.usersAssigned.length > 0 && (mantencion.level < 3 && (mantencion.level > 0 || !mantencion.level))) {
+                if(mantencion.usersAssigned.length > 0 && mantencion.state==='En proceso' && (mantencion.level < 3 && (mantencion.level > 0 || !mantencion.level))) {
                     return mantencion
                 }
             })
@@ -167,7 +168,8 @@ const ReportsPage = () => {
         }
     }, [inspecciones, mantenciones])
 
-    const selectList = (lista, idButton, index) => {
+    const selectList = (lista, idButton, index, name) => {
+        setTypeReportsSelected(name)
         localStorage.setItem('buttonSelected', idButton)
         const inspecionesCache = [...inspecciones]
         inspecionesCache.forEach((el, i) => {
@@ -425,7 +427,7 @@ const ReportsPage = () => {
                                         <Grid item style={{width: '40%', textAlign: 'right'}}>
                                             <button
                                                 id={`button_${i}_inspecciones`}
-                                                onClick={()=>selectList(e.lista, `button_${i}_inspecciones`, i)}
+                                                onClick={()=>selectList(e.lista, `button_${i}_inspecciones`, i, e.name)}
                                                 style={
                                                     {
                                                         position: 'relative',
@@ -481,7 +483,7 @@ const ReportsPage = () => {
                                         <Grid item style={{width: '40%', textAlign: 'right'}}>
                                             <button
                                                 id={`button_${i}_mantenciones`} 
-                                                onClick={()=>selectList(e.lista, `button_${i}_mantenciones`, i)}
+                                                onClick={()=>selectList(e.lista, `button_${i}_mantenciones`, i, e.name)}
                                                 style={
                                                     {
                                                         position: 'relative',
@@ -546,6 +548,7 @@ const ReportsPage = () => {
                             {!vista ? 
                             <ReportsList 
                                 list={listToShow}
+                                typeReportsSelected={typeReportsSelected}
                                 /* reloadData={reloadData}  */
                                 /* ordenarPorNumeroOT={ordenarPorNumeroOT} */
                                 /* flechaListaxOT={flechaListaxOT} */

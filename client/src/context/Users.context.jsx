@@ -5,7 +5,7 @@ import { useAuth } from "./Auth.context";
 export const UsersContext = createContext()
 
 export const UsersProvider = props => {
-    const {isAuthenticated, admin, userData} = useAuth()
+    const {isAuthenticated, admin, userData, site} = useAuth()
     const [users, setUsers] = useState([])
     const [usersFilteredBySite, setUsersFilteredBySite] = useState([])
     const [inspectors, setInspectors] = useState([])
@@ -18,11 +18,11 @@ export const UsersProvider = props => {
     },[isAuthenticated])
 
     useEffect(() => {
-        if (!admin && (users.length > 0) && userData.obras) {
-            const usersCache = users.filter(user => {if(user.obras[0] && user.obras[0].idobra === userData.obras[0].idobra) {return user}})
+        if (!admin && (users.length > 0) && site) {
+            const usersCache = users.filter(user => {if(user.obras[0] && user.obras[0].idobra === site.idobra) {return user}})
             setUsersFilteredBySite(usersCache)
         }
-    }, [users])
+    }, [users, site])
 
     useEffect(() => {
         const inspectorsCache = []

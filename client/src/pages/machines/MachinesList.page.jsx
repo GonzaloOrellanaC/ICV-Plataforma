@@ -9,7 +9,6 @@ import { LoadingPage } from '../loading';
 import { useAuth, useMachineContext } from '../../context';
 
 const MachinesListPage = ({route}) => {  
-    const {userData} = useAuth()
     const {machinesBySite, setMachineSelected} = useMachineContext()
     const [ routeData, setRouteData ] = useState('');
     const [ machinesList, setMachinesList ] = useState([]);
@@ -69,7 +68,7 @@ const MachinesListPage = ({route}) => {
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 
                                         <p style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
-                                            {machine && `${routeData}/${userData.obras[0].descripcion}/${machine.type} ${machine.brand} ${machine.model}`}
+                                            {machine && `${routeData}/${machine.type} ${machine.brand} ${machine.model}`}
                                         </p>
                                     </Toolbar>
                                 </div>
