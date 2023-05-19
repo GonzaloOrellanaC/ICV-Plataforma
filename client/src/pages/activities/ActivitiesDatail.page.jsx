@@ -161,7 +161,7 @@ const ActivitiesDetailPage = () => {
                     reportCache.state = 'En proceso'
                 }
                 console.log(reportCache)
-                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData)
+                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
                 saveReportToDatabases(reportCache)
             } else {
                 if (itemProgress === 100) {
@@ -173,7 +173,7 @@ const ActivitiesDetailPage = () => {
                         reportCache.state = 'En proceso'
                     }
                     console.log(reportCache)
-                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData)
+                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
                     saveReportToDatabases(reportCache)
                 } else {
                     alert('Reporte está incompleto.')
