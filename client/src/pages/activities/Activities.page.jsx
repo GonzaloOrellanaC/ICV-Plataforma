@@ -154,7 +154,7 @@ const ActivitiesPage = () => {
                                                                 <p style={{fontSize: 11, minWidth: 200}}> {date(element.endReport)} </p>
                                                             </Grid>}
                                                             <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                                <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> {element.machineData.type} {element.machineData.model} </p>
+                                                                <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> {element.machineData && element.machineData.type} {element.machineData && element.machineData.model} </p>
                                                             </Grid>
                                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                 <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> N°: {element.machineData.equ} </p>
