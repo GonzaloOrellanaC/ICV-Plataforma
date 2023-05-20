@@ -217,7 +217,6 @@ const ActivitiesDetailPage = () => {
                 reportCache.level = level
                 sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
                 saveReportToDatabases(reportCache)
-                getReports()
             } else {
                 if (itemProgress === 100) {
                     let level = 0
@@ -238,12 +237,11 @@ const ActivitiesDetailPage = () => {
                         reportCache.sapExecutiveApprovedBy = userData._id
                         reportCache.dateClose = new Date()
                         reportCache.state = 'Completadas' 
-                        saveReportToDatabases(reportCache)
-                        const response = await pdfMakeRoutes.createPdfDoc(reportCache)    
+                        await pdfMakeRoutes.createPdfDoc(reportCache)    
                     }
                     reportCache.level = level
-                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
-                    getReports()
+                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
+                    saveReportToDatabases(reportCache)
                 } else {
                     alert('Reporte está incompleto.')
                 }
@@ -265,7 +263,7 @@ const ActivitiesDetailPage = () => {
         }
         SocketConnection.toPDF(report, userData)
         getReports()
-        alert('Orden de trabajo enviado a revisión')
+        alert(report.level === 4 ? 'Orden de trabajo cerrada correctamente' : 'Orden de trabajo enviado a revisión')
         history.replace('/assignment')
     }
 
