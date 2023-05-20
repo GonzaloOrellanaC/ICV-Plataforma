@@ -302,6 +302,11 @@ export const ReportsProvider = (props) => {
                     setReports(response.data.reverse())
                     setStatusReports(false)
                     setMessage('')
+                } else if (isSapExecutive || isShiftManager || isChiefMachinery) {
+                    const response = await reportsRoutes.getAllReportsbySite(site.idobra)
+                    setReports(response.data.reverse())
+                    setStatusReports(false)
+                    setMessage('')
                 }
             }
         } else {
