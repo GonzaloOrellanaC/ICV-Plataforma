@@ -192,6 +192,7 @@ const getReports = async (req, res) => {
 
 const addMachineData = async (reports, reportsToSend, n, res) => {
     if ((reports.length) === n) {
+        console.log('Total reportes: ', reports.length)
         res.json(reportsToSend)
     } else {
         const machineData = await Machine.findOne({equid: reports[n].machine})
@@ -455,19 +456,34 @@ const getReportByEquid = async (req, res) => {
     }
 }
 
-const countTotalReports = () => {
-    return new Promise(resolve => {
-        Reports.find({}, (err, reports) => {
+const countTotalReports = async () => {
+    /* return new Promise(resolve => { */
+        const response = await Reports.find({})
+        const order = response.sort((a, b) => {
+            return b.idIndex - a.idIndex
+        })
+        console.log(order[0].idIndex)
+        return order[0].idIndex + 1
+        /* Reports.find({}, (err, reports) => {
+            reports.sort((a, b) => {
+                return new Date(b.updatedAt) - new Date(a.updatedAt)
+            })
             resolve(reports.length)
         })
-    })
+    }) */
 }
 
-const getTotalReportsToIndex = (req, res) => {
+const getTotalReportsToIndex = async (req, res) => {
     try {
-        Reports.find({}, (err, reports) => {
-            res.json(reports.length)
+        const response = await Reports.find({})
+        const order = response.sort((a, b) => {
+            return b.idIndex - a.idIndex
         })
+        console.log(order[0].idIndex)
+        res.json(order[0].idIndex + 1)
+        /* Reports.find({}, (err, reports) => {
+            res.json(reports.length)
+        }) */
     } catch (err) {
         console.log(err)
     }
@@ -515,6 +531,7 @@ export default {
     getReportsByDateRangeAndSite,
     getAllReports,
     getTotalReportsToIndex,
+    countTotalReports,
     countTotalReportsLength,
     countTotalActivesReportsLength,
     readIfReportIsOneDayToStart,

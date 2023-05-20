@@ -11,11 +11,11 @@ export const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
     const defaultAuthenticated  = Boolean(window.localStorage.getItem('isauthenticated'))
-    const defaultAdmin = Boolean(window.localStorage.getItem('isAdmin'));
+    /* const defaultAdmin = Boolean(window.localStorage.getItem('isAdmin')); */
     const [ isAuthenticated, setIsAuthenticated ] = useState(defaultAuthenticated || false)
     /* const [ getSelf, { loading, error , data } ] = useLazyQuery(UsersGraphQL.query.GET_SELF) */
     const [ userData, setUserData ] = useState(JSON.parse(localStorage.getItem('user'))||undefined);
-    const [ admin, setAdmin ] = useState(defaultAdmin || false);
+    const [ admin, setAdmin ] = useState(false);
     const [ roles, setRoles ] = useState([])
     const [ site, setSite ] = useState()
     const [ isOperator, setIsOperator ] = useState(false)
@@ -49,7 +49,7 @@ export const AuthProvider = (props) => {
                     
                 }
             })
-            setIsOperator(Boolean(localStorage.getItem('isOperator')))
+            /* setIsOperator(Boolean(localStorage.getItem('isOperator'))) */
             /* setSite(JSON.parse(window.localStorage.getItem('sitio'))) */
             if (!userData) {
                 getUserDataFromIndexedDb()
@@ -241,8 +241,15 @@ export const AuthProvider = (props) => {
                     setIsAuthenticated(false)
                 })
             })
+        },
+        logout: () => {
+            if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
+                window.localStorage.clear();
+                window.location.reload();
+                removeDatabases();
+                setIsAuthenticated(false)
+            }
         }
-        
     }
 
     return (

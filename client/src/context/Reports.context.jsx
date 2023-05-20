@@ -4,6 +4,7 @@ import { executionReportsRoutes, patternsRoutes, reportsRoutes } from '../routes
 import { executionReportsDatabase, pautasDatabase, reportsDatabase } from '../indexedDB'
 import { useConnectionContext } from './Connection.context'
 import { SocketConnection } from '../connections'
+import { LoadingLogoModal } from '../modals'
 
 export const ReportsContext = createContext()
 
@@ -20,6 +21,8 @@ export const ReportsProvider = (props) => {
     const [normalAssignments, setnormalAssignments] = useState([])
     const [executeReportInternal, setExecuteReportInternal] = useState()
     const [message, setMessage] = useState('')
+    const [statusReports, setStatusReports] = useState(false)
+    const [revision, setRevision] = useState(true)
 
     useEffect(() => {
         if (isOnline && userData) {
@@ -43,15 +46,29 @@ export const ReportsProvider = (props) => {
     }
 
     useEffect(() => {
+        if (reports.length > 0) {
+            /* setMessage('Descargando recursos') */
+            setAssignments(reports)
+            if(revision) {
+                getAllPautas()
+                saveReportsToIndexedDb()
+            }
+            setRevision(false)
+        } else {
+            setMessage('Descargando recursos')
+            getReportsFromDatabase()
+            setAssignments([])
+        }
+    }, [reports])
+
+    useEffect(() => {
         if (pautas.length > 0) {
             setMessage('Guardando pautas')
             savePautas()
-            if (isOperator) {
-                if (isOnline) {
+            if (isOperator && isOnline) {
+                /* if (revision) { */
                     saveExecutionReportToDatabase()
-                } else {
-                    alert('Requiere estar conectado a internet.')
-                }
+                /* } */
             }
         }
     }, [pautas])
@@ -72,6 +89,21 @@ export const ReportsProvider = (props) => {
         console.log('reporte asignado')
         alert('reporte asignado')
         setLoading(false)
+    }
+
+    const saveReportToData = async (reportData) => {
+        /* setLoading(true) */
+        setMessage('Guardando reportes')
+        const reportsCache = [...reports]
+        const response = await reportsRoutes.editReportById(reportData)
+        console.log(response)
+        const reportUpdated = response.data
+        const reportIndex = reportsCache.find((report, index) => {
+            if (report._id === reportUpdated._id) return index
+        })
+        reportsCache[reportIndex] = reportUpdated
+        setReports(reportsCache)
+        setMessage('')
     }
 
     const savePautas = async () => {
@@ -95,19 +127,6 @@ export const ReportsProvider = (props) => {
         }
     }
 
-    useEffect(() => {
-        if (reports.length > 0) {
-            /* setMessage('Descargando recursos') */
-            getAllPautas()
-            setAssignments(reports)
-            saveReportsToIndexedDb()
-        } else {
-            setMessage('Descargando recursos')
-            getReportsFromDatabase()
-            setAssignments([])
-        }
-    }, [reports])
-
     const saveExecutionReportToDatabase = async () => {
         setMessage('Guardando datos en navegador')
         console.log('init!!!!')
@@ -124,9 +143,11 @@ export const ReportsProvider = (props) => {
                         await executionReportsDatabase.actualizar(response.data, database)
                     } else {
                         console.log('Existe database')
+                        setMessage('Revisando base de datos')
                     }
                 } else {
                     console.log('No existe database')
+                    setMessage('Guardando datos en navegador')
                     await executionReportsDatabase.actualizar(response.data, database)
                 }
                 /* if (!executionReportsDatabase.obtener(response.data._id, database)) */
@@ -223,9 +244,12 @@ export const ReportsProvider = (props) => {
     }, [assignments])
 
     useEffect(() => {
+        /* console.log(isAuthenticated, site) */
         if (isAuthenticated && site) {
+            /* console.log(admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery) */
             if (admin || isOperator || isSapExecutive || isShiftManager || isChiefMachinery) {
                 if(isOnline) {
+                    console.log(isOnline)
                     setMessage('Descargando reportes')
                     getReports()
                 }
@@ -254,29 +278,36 @@ export const ReportsProvider = (props) => {
     }
 
     const getReports = async () => {
-        setLoading(true)
-        setMessage('Leyendo reportes')
+        setMessage('Sincronizando reportes')
+        setStatusReports(true)
         if (isOnline) {
             console.log(isOperator, userData)
             if (admin) {
                 const response = await reportsRoutes.getAllReports()
                 console.log(response)
                 setReports(response.data.reverse())
+                setStatusReports(false)
+                setMessage('')
             } else {
-                if (isOperator) {
+                console.log(isOperator, isSapExecutive , isShiftManager , isChiefMachinery)
+                if (isOperator && (!isSapExecutive && !isShiftManager && !isChiefMachinery)) {
+                    console.log(userData._id, site.idobra)
                     const response = await reportsRoutes.findMyAssignations(userData._id, site.idobra)
                     console.log(response.data)
                     setReports(response.data.reverse())
-                } else if (isSapExecutive || isShiftManager || isChiefMachinery) {
+                    setMessage('')
+                    setStatusReports(false)
+                } else if (isOperator && (isSapExecutive || isShiftManager || isChiefMachinery)) {
                     const response = await reportsRoutes.getAllReportsbySite(site.idobra)
                     setReports(response.data.reverse())
+                    setStatusReports(false)
+                    setMessage('')
                 }
             }
         } else {
             getReportsFromIndexedDb()
+            setStatusReports(false)
         }
-        setMessage('')
-        setLoading(false)
     }
 
     const provider = {
@@ -293,14 +324,18 @@ export const ReportsProvider = (props) => {
         priorityAssignments,
         normalAssignments,
         saveReport,
+        saveReportToData,
         getReports,
-        message
+        message,
+        setMessage,
+        statusReports,
+        setStatusReports
     }
 
     return (
         <>
             <ReportsContext.Provider value={provider} {...props} />
-            {/* <LoadingLogoModal open={loading} /> */}
+            {/* <LoadingLogoModal open={statusReports} /> */}
         </>
     )
 }

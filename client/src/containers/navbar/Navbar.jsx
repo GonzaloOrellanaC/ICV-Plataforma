@@ -115,7 +115,7 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 const Navbar = () => {
-    const {isSapExecutive, isShiftManager, isChiefMachinery, admin, userData} = useAuth()
+    const {isSapExecutive, isShiftManager, isChiefMachinery, admin, logout} = useAuth()
     const classes = useStyles()
     const { navBarOpen, handleNavBar } = useNavigation()
     const [ path, setPath ] = useState('')
@@ -126,13 +126,13 @@ const Navbar = () => {
     const [ openIAModal, setOpenIAModal ] = useState(false)
     const [ openInternalMessagesModal, setOpenInternalMessagesModal ] = useState(false)
 
-    const logout = async () => {
+    /* const logout = async () => {
         if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
             window.localStorage.clear();
             window.location.reload();
             removeDatabases();
         }
-    }
+    } */
 
     const removeDatabases = async () => {
         let databases = await window.indexedDB.databases();

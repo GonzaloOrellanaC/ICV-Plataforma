@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useReportsContext } from "./Reports.context";
 import { executionReportsDatabase } from "../indexedDB";
-import { useAuth, useConnectionContext } from ".";
+import { ReportsContext, useAuth, useConnectionContext } from ".";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { executionReportsRoutes } from "../routes";
 import { LoadingLogoModal } from "../modals";
@@ -11,7 +11,7 @@ export const ExecutionReportContext = createContext()
 export const ExecutionReportProvider = (props) => {
     const {isOperator} = useAuth()
     const {isOnline} = useConnectionContext()
-    const {reports, executionReportInternal} = useReportsContext()
+    const {reports, executionReportInternal, setMessage} = useContext(ReportsContext)
     const [report, setReport] = useState()
     const [executionReport, setExecutionReport] = useState()
     const [reportId, setReportId] = useState()
@@ -56,6 +56,7 @@ export const ExecutionReportProvider = (props) => {
             setSapId(report.sapId)
             setSerieEquipo(report.machine)
             setModoTest(report.testMode)
+            setMessage('Buscando Pauta')
             getExecutionReport()
         }
         if (!report && otIndex && (reports.length > 0)) {
@@ -75,13 +76,21 @@ export const ExecutionReportProvider = (props) => {
             const response = await executionReportsRoutes.getExecutionReportById(report)
             setExecutionReport(response.data)
             setLoading(false)
+            setMessage('Ejecusión encontrada.')
+            setTimeout(() => {
+                setMessage('')
+            }, (500));
         } else {
             const {database} = await executionReportsDatabase.initDb()
             const response = await executionReportsDatabase.consultar(database)
             const excetutionReportCache = response.filter(doc => {if(doc.reportId === report._id) return doc})[0]
             if (excetutionReportCache) {
                 setExecutionReport(excetutionReportCache)
+                setMessage('Ejecusión encontrada.')
             }
+            setTimeout(() => {
+                setMessage('')
+            }, (500));
         }
     }
 

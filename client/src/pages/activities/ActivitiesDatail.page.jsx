@@ -22,7 +22,7 @@ const ActivitiesDetailPage = () => {
     const history = useHistory()
     const {id} = useParams()
     const {report, executionReport, setOtIndex, sapId, serieEquipo, setLoading, setLoadingMessage} = useExecutionReportContext()
-    const {setReports, getReports} = useReportsContext()
+    const {saveReportToData, getReports, setStatusReports} = useReportsContext()
     const [ progress, resutProgress ] = useState(0)
     const [ itemProgress, resultThisItemProgress ] = useState(0)
     const [ reportLevel, setReportLevel ] = useState()
@@ -150,6 +150,7 @@ const ActivitiesDetailPage = () => {
     const closeCommitModalToBack = (state) => {
         setOpenReportCommitModal(false)
         if (state) {
+            setLoadingLogo(true)
             console.log(report)
             const reportCache = report
             if (reportCache.testMode) {
@@ -176,6 +177,7 @@ const ActivitiesDetailPage = () => {
                     sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
                     saveReportToDatabases(reportCache)
                 } else {
+                    setLoadingLogo(false)
                     alert('Reporte está incompleto.')
                 }
             }
@@ -185,9 +187,8 @@ const ActivitiesDetailPage = () => {
     const closeCommitModalToForward = async (state) => {
         setOpenReportCommitModal(false)
         if (state) {
+            setLoadingLogo(true)
             setLoadingMessage('Guardando información')
-            /* setLoading(true) */
-            console.log(report)
             const reportCache = report
             if (reportCache.testMode) {
                 let level = 0
@@ -212,7 +213,6 @@ const ActivitiesDetailPage = () => {
                     reportCache.level = level
                     console.log(reportCache)
                     await pdfMakeRoutes.createPdfDoc(reportCache)
-                    /* toPDF(reportCache, reportCache.machineData, 'Enviando archivo') */
                 }
                 reportCache.level = level
                 sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
@@ -243,6 +243,7 @@ const ActivitiesDetailPage = () => {
                     sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
                     saveReportToDatabases(reportCache)
                 } else {
+                    setLoadingLogo(false)
                     alert('Reporte está incompleto.')
                 }
             }
@@ -250,21 +251,23 @@ const ActivitiesDetailPage = () => {
     }
 
     const saveReportToDatabases = async (report) => {
+        saveReportToData(report)
         setLoadingMessage('Guardando en bases de datos')
-        const {database} = await reportsDatabase.initDbReports()
-        await reportsDatabase.actualizar(report, database)
+        /* const {database} = await reportsDatabase.initDbReports()
+        await reportsDatabase.actualizar(report, database) */
         const responseDatabase = await executionReportsDatabase.initDb()
         const executionReportCache = executionReport
         executionReportCache.offLineGuard = Date.now()
         await executionReportsDatabase.actualizar(executionReportCache, responseDatabase.database)
         if (isOnline) {
-            await reportsRoutes.editReportById(report)
+            /* await reportsRoutes.editReportById(report) */
             await executionReportsRoutes.saveExecutionReport(executionReportCache)
         }
-        SocketConnection.toPDF(report, userData)
-        getReports()
+        /* SocketConnection.toPDF(report, userData) */
+        /* getReports() */
         alert(report.level === 4 ? 'Orden de trabajo cerrada correctamente' : 'Orden de trabajo enviado a revisión')
         history.replace('/assignment')
+        setLoadingLogo(false)
     }
 
     const closeLoading = () => {
@@ -463,9 +466,9 @@ const ActivitiesDetailPage = () => {
             {
                 openPreviewModal && <PreviewModal open={openPreviewModal} data={materialesPreview} closePreviewModal={closePreviewModal} />
             }
-            {/* 
+            {
                 loadingLogo && <LoadingLogoModal open={loadingLogo} />
-             */}
+            }
             {/* {
                 open3D && <MVAvatar subSistem={subSistem} />
             } */}

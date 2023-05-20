@@ -80,7 +80,67 @@ const initAccessControl = async () => {
         } else {
             console.log('No se crea admin')
         }
-        /* const reports = await Reports.find({}) */
+
+        /* const reports = await Reports.find({})
+        const elements = reports.slice(0, 100)
+        console.log('listado tiene ', elements.length, ' elementos')
+        elements.forEach(async (report, i) => {
+            await ExecutionReport.findByIdAndDelete({reportId: report._id})
+            if (i === (elements.length - 1)) {
+                console.log('Ejecuciones eliminadas')
+            }
+        })
+
+        elements.forEach(async (report, i) => {
+            await Reports.findByIdAndDelete(report._id)
+            if (i === (elements.length - 1)) {
+                console.log('Reportes eliminadas')
+            }
+        }) */
+        /* reports.forEach(async (report, i) => {
+            const response = await ExecutionReport.find({reportId: report._id})
+            if (response.length > 1) {
+                const ordered = await response.sort((a, b) => {
+                    return new Date(b.updatedAt) - new Date(a.updatedAt)
+                })
+                console.log(ordered[0]._id, ordered[0].reportId, ordered[0].updatedAt)
+                ordered.forEach(async (el, n) => {
+                    if (n === 0) {
+
+                    } else {
+                        await ExecutionReport.findByIdAndDelete(el._id)
+                    }
+                })
+            }
+        }) */
+        /* const executionReports = await ExecutionReport.find()
+        executionReports.forEach(async (el, i) => {
+            const response = await Reports.findById(el.reportId)
+            if (!response) {
+                console.log(el._id)
+                try {
+                    await ExecutionReport.findByIdAndDelete(el._id)
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        }) */
+        /* 
+
+        elements.forEach(async (report, i) => {
+            await ExecutionReport.findByIdAndDelete({reportId: report._id})
+            if (i === (elements.length - 1)) {
+                console.log('Ejecuciones eliminadas')
+            }
+        })
+
+        elements.forEach(async (report, i) => {
+            await Reports.findByIdAndDelete(report._id)
+            if (i === (elements.length - 1)) {
+                console.log('Reportes eliminadas')
+            }
+        }) */
+
        /*  const executionReports = await ExecutionReport.find()
         executionReports.forEach(async (ex, i) => {
             const execution = ex

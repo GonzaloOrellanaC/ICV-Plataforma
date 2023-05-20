@@ -4,11 +4,9 @@ import { pdfMakeRoutes } from '../../routes'
 import { AssignReportModal, PdfModal, ReviewReportModal } from '../../modals'
 import './style.css'
 import { dateSimple } from "../../config"
-import { machinesDatabase, reportsDatabase } from "../../indexedDB"
-import { useReportsContext } from "../../context"
+import { reportsDatabase } from "../../indexedDB"
 
-const ReportsList = ({list, typeReportsSelected}) => {
-    const {getReports} = useReportsContext()
+const ReportsList = ({list, typeReportsSelected, statusReports, getReports}) => {
     const [ reportData, setReportData ] = useState(null)
     const [ reportDataReview, setReportDataReview ] = useState(null)
     const [ openModalState, setOpenModalState ] = useState(false)
@@ -160,9 +158,15 @@ const ReportsList = ({list, typeReportsSelected}) => {
                 {
                     (list.length == 0) && <Grid container>
                             <div style={{width: '100%', textAlign: 'center', height: '50vh'}}>
-                            <img style={{margin: 0, top: '50%', left: 'calc(100%/1.53)'}} src="../../assets/icons/Arrow.svg" alt="" />
+                            <img style={{margin: 0, top: '50%', left: 'calc(100%/1.53)'}} src={statusReports ? "../../assets/icons/Arrow.svg" : "../../assets/icons/Arrow.svg"} alt="" />
                             <div style={{width: '100%', textAlign: 'center', top: '55%'}}>
-                                <p>Selecciona otra opción <br /> El detalle no cuenta con lista de reportes.</p>
+                                {
+                                    statusReports
+                                    ?
+                                    <p>Descargando la información <br /> Espere un momento.</p>
+                                    :
+                                    <p>Selecciona otra opción <br /> El detalle no cuenta con lista de reportes.</p>
+                                }
                             </div>
                         </div>
                     </Grid>

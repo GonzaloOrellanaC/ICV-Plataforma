@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import logo from '../../assets/logo_icv_gris.png'
 import logoNotification from '../../assets/logo_icv_notification_push.png'
 import { ConnectionContext, useAuth, useNavigation, useReportsContext } from '../../context'
-import { changeTypeUser } from '../../config'
 import './style.css'
 import addNotification from 'react-push-notification';
 import { SocketConnection } from '../../connections'
@@ -71,30 +70,7 @@ const Header = () => {
             })
         }
     },[isOnline])
-    useEffect(() => {
-        if(isAuthenticated) {
-            /* if(navigator.onLine) {
-                usersRoutes.getUser(localStorage.getItem('_id')).then(data => {
-                    if(data.data) {
-                        if(!data.data.sign || (data.data.sign.length < 1)) {
-                            setOpenSign(true)
-                        }
-                    }
-                })
-            } */
-            /* if (navigator.onLine) {
-                setIfHavNetwork(true)
-            } else {
-                setIfHavNetwork(false)
-            } */
-            Notification.requestPermission().then((res) => {
-                if(res === 'denied' || res === 'default') {
-                    
-                }
-            })
-        }
-    }, [])
-
+    
     const sendTestNotification = () => {
         SocketConnection.sendnotificationToAllUsers(
             'test',
@@ -103,6 +79,26 @@ const Header = () => {
             'Todos los usuarios',
             'Se envía notificación de prueba a todos los usuarios.'
         )
+    }
+
+    const changeTypeUser = (userType) => {
+        if(userType === 'superAdmin') {
+            return 'Super Administrador'
+        }else if(userType === 'admin') {
+            return 'Administrador'
+        }else if(userType === 'sapExecutive') {
+            return 'Ejecutivo SAP'
+        }else if(userType === 'inspectionWorker') {
+            return 'Operario de Inspección'
+        }else if(userType === 'maintenceOperator') {
+            return 'Operario de Mantención'
+        }else if(userType === 'shiftManager') {
+            return 'Jefe de turno - Inspección y Mantención'
+        }else if(userType === 'chiefMachinery') {
+            return 'Jefe de maquinaria'
+        }else if(userType === 'observer') {
+            return 'Observador'
+        }
     }
     
     return (
@@ -114,29 +110,20 @@ const Header = () => {
                             <div className='user-name' onClick={()=>{history.push('/user-profile')}}>
                             <dl>
                                 <dt style={{margin: 0}}><div> <p className='nombre'> { userData.name } { userData.lastName } </p> </div></dt>
-                                {
-                                    (userData.role && userData.role.length > 0)
-                                    ?
-                                    <dt>
-                                        {userData.role}
-                                    </dt>
-                                    :
-                                    <Grid container>
-                                        {
-                                            userData.roles && userData.roles.map((role, i) => {
-                                                return (
-                                                    <Grid item key={i} style={{marginRight: 10}}>
-                                                        {changeTypeUser(role)} |
-                                                    </Grid>
-                                                )
-                                            })
-                                        }
-                                        <Grid item>
-                                            {site && site.descripcion}
-                                        </Grid>
+                                <Grid container>
+                                    {
+                                        userData.roles && userData.roles.map((role, i) => {
+                                            return (
+                                                <Grid item key={i} style={{marginRight: 10}}>
+                                                    {changeTypeUser(role)} |
+                                                </Grid>
+                                            )
+                                        })
+                                    }
+                                    <Grid item>
+                                        {site && site.descripcion}
                                     </Grid>
-                                        
-                                }
+                                </Grid>
                             </dl>
                             </div>
                         </Fragment>}

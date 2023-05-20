@@ -16,7 +16,7 @@ import { useAuth, useExecutionReportContext, useReportsContext, useSitesContext 
 const ReportsPage = () => {
     const {sites} = useSitesContext()
     const {admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
-    const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache, getReports, loading} = useReportsContext()
+    const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache, getReports, loading, statusReports} = useReportsContext()
     const [inspeccionesTotales, setInspeccionesTotales] = useState([])
     const [mantencionesTotales, setMantencionesTotales] = useState([])
     const [ inspecciones, setInspecciones ] = useState([]);
@@ -568,6 +568,8 @@ const ReportsPage = () => {
                             <ReportsList 
                                 list={listToShow}
                                 typeReportsSelected={typeReportsSelected}
+                                statusReports={statusReports}
+                                getReports={getReports}
                                 /* reloadData={reloadData}  */
                                 /* ordenarPorNumeroOT={ordenarPorNumeroOT} */
                                 /* flechaListaxOT={flechaListaxOT} */
