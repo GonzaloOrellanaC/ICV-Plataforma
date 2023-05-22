@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import logo from '../../assets/Logologo_icv_1.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
+    faSync,
     faHome, 
     faInfoCircle, 
     faSignOutAlt, 
@@ -19,7 +20,7 @@ import {
     faUser,
     faCube,
     faSlidersH} from '@fortawesome/free-solid-svg-icons';
-import { useAuth, useNavigation } from '../../context';
+import { useAuth, useNavigation, useReportsContext } from '../../context';
 import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 
@@ -116,6 +117,7 @@ const useStyles = makeStyles(theme => ({
 }))
 const Navbar = () => {
     const {isSapExecutive, isShiftManager, isChiefMachinery, admin, logout} = useAuth()
+    const {getReports} = useReportsContext()
     const classes = useStyles()
     const { navBarOpen, handleNavBar } = useNavigation()
     const [ path, setPath ] = useState('')
@@ -302,6 +304,13 @@ const Navbar = () => {
                                     <Link to='/user-profile' className={classes.sideButtons} style={{ color: (path.includes('/user-profile')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faUser}/> {navBarOpen ?  ' Perfil' : ''}
                                     </Link>
+                                </IconButton>
+                            </div>
+                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton onClick={closeSideBar} title='Actualizar' onClickCapture={()=>{getReports()}}>
+                                    <div className={classes.sideButtons} style={{ color: (path.includes('/user-profile')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                        <FontAwesomeIcon icon={faSync}/> {navBarOpen ?  ' Actualizar' : ''}
+                                    </div>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>

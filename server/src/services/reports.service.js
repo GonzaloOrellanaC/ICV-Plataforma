@@ -399,7 +399,8 @@ const findMyAssignations = async (req, res) => {
             deleted: false,
             usersAssigned: {
                 $in: [userId]
-            }
+            },
+            state: 'En proceso'
         }).populate('usersAssigned').populate('createdBy').populate('updatedBy')
         const reportsToSend = []
         const n = 0

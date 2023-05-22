@@ -9,9 +9,9 @@ import { LoadingLogoModal } from "../modals";
 export const ExecutionReportContext = createContext()
 
 export const ExecutionReportProvider = (props) => {
-    const {isOperator} = useAuth()
+    const {isOperator, admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
     const {isOnline} = useConnectionContext()
-    const {reports, executionReportInternal, setMessage} = useContext(ReportsContext)
+    const {reports, setMessage} = useContext(ReportsContext)
     const [report, setReport] = useState()
     const [executionReport, setExecutionReport] = useState()
     const [reportId, setReportId] = useState()
@@ -23,10 +23,13 @@ export const ExecutionReportProvider = (props) => {
     const [avanceTotal, setAvanceTotal] = useState(0)
     const [loading, setLoading] = useState(false)
     const [loadingMessage, setLoadingMessage] = useState('')
+    const [reporteIniciado, setReporteIniciado] = useState(true)
+
     const location = useLocation()
 
     useEffect(() => {
         if (!location.pathname.includes('assignment/')) {
+            setReporteIniciado(true)
             setExecutionReport(undefined)
             setReport(undefined)
         }
@@ -38,19 +41,14 @@ export const ExecutionReportProvider = (props) => {
         }
     }, [executionReport])
 
-    useEffect(() => {
-        if (executionReportInternal) {
-            setExecutionReport(executionReportInternal)
-        }
-    }, [executionReportInternal])
-
     const saveExecutionReportToDb = async () => {
         const {database} = await executionReportsDatabase.initDb()
         await executionReportsDatabase.actualizar(executionReport, database)
     }
 
     useEffect(() => {
-        if (report) {
+        /* console.log(report) */
+        if (report!==undefined) {
             setReportId(report._id)
             setOtIndex(report.idIndex)
             setSapId(report.sapId)
@@ -74,24 +72,31 @@ export const ExecutionReportProvider = (props) => {
         if (!isOperator && isOnline) {
             /* setLoading(true) */
             const response = await executionReportsRoutes.getExecutionReportById(report)
-            setExecutionReport(response.data)
+            console.log(response.data)
+            if (!response.data._id) {
+                setMessage('OT no iniciado')
+                setReporteIniciado(false)
+            } else {
+                setExecutionReport(response.data)
+            }
             setLoading(false)
-            setMessage('Ejecusión encontrada.')
             setTimeout(() => {
                 setMessage('')
             }, (500));
-        } else {
+        } else if (isOperator && isOnline) {
             const {database} = await executionReportsDatabase.initDb()
             const response = await executionReportsDatabase.consultar(database)
-            const excetutionReportCache = response.filter(doc => {if(doc.reportId === report._id) return doc})[0]
-            if (excetutionReportCache) {
-                setExecutionReport(excetutionReportCache)
-                setMessage('Ejecusión encontrada.')
+            const excetutionReportCache = response.filter(doc => {if(doc.reportId === report._id) return doc})
+            if (excetutionReportCache.length > 0) {
+                setExecutionReport(excetutionReportCache[0])
+                /* setMessage('Ejecusión encontrada.') */
+            } else {
+                setTimeout(() => {
+                    setMessage('')
+                }, 1000);
             }
-            setTimeout(() => {
-                setMessage('')
-            }, (500));
         }
+        setMessage('')
     }
 
     const provider = {
@@ -111,7 +116,8 @@ export const ExecutionReportProvider = (props) => {
         loading,
         setLoading,
         setOtIndex,
-        setLoadingMessage
+        setLoadingMessage,
+        reporteIniciado
     }
 
     return (

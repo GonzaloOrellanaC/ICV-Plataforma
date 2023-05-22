@@ -181,12 +181,16 @@ const ReportsPage = () => {
         })
         document.getElementById(idButton).style.backgroundColor = '#ccc'
         if (lista.length > 0) {
-            setListSelected(lista/* .reverse() */)
+            setListSelected(lista.sort(compareNumbers))
             setListSelectedCache(lista)
             setVista(false)
         } else {
             setVista(true)
         }
+    }
+
+    const compareNumbers = (a, b) => {
+        return b.idIndex - a.idIndex;
     }
 
     const reloadData = () => {
@@ -201,7 +205,7 @@ const ReportsPage = () => {
             }
             if (i === ((rowsPerPage+(0*rowsPerPage)) - 1)) {
                 const listaCache = [...lista]
-                const nuevaLista = listaCache/* .sort((a, b) => {
+                const nuevaLista = listaCache.sort(compareNumbers)/* .sort((a, b) => {
                     return b.idIndex - a.idIndex
                 }) */
                 setListToShow(nuevaLista)
@@ -219,7 +223,7 @@ const ReportsPage = () => {
             }
             if (i === ((rowsPerPage+(newPage*rowsPerPage)) - 1)) {
                 const listaCache = [...lista]
-                const nuevaLista = listaCache/* .sort((a, b) => {
+                const nuevaLista = listaCache.sort(compareNumbers)/* .sort((a, b) => {
                     return b.idIndex - a.idIndex
                 }) */
                 setListToShow(nuevaLista)
@@ -304,12 +308,12 @@ const ReportsPage = () => {
                         }
                 }
                 if (index === (listaCache.length - 1)) {
-                    setListSelected(lista)
+                    setListSelected(lista.sort(compareNumbers))
                     setTotalItems(lista.length)
                 }
             })
         } else {
-            setListSelected(listSelectedCache)
+            setListSelected(listSelectedCache.sort(compareNumbers))
             setTotalItems(listSelected.length)
         }
     }

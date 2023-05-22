@@ -19,7 +19,7 @@ const initDbReports = () => {
         conexion.onupgradeneeded = (e) =>{
             db = e.target.result;
             const coleccionObjetos = db.createObjectStore('Reports',{
-                keyPath: 'idDatabase'
+                keyPath: 'idIndex'
             })
 
             coleccionObjetos.transaction.oncomplete = (event) => {
@@ -39,10 +39,17 @@ const initDbReports = () => {
 }
 
 const agregar = (data, database) => {
-    const trasaccion = database.transaction(['Reports'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('Reports')
-    const conexion = coleccionObjetos.add(data)
-    //consultar()
+    return new Promise(resolve => {
+        const trasaccion = database.transaction(['Reports'],'readwrite')
+        const coleccionObjetos = trasaccion.objectStore('Reports')
+        const conexion = coleccionObjetos.add(data)
+        conexion.onsuccess = () =>{
+            resolve(true)
+        }
+        conexion.onerror = (err) => {
+            resolve(false)
+        }
+    })
 }
 
 const obtener = (clave, database) =>{
@@ -57,7 +64,8 @@ const obtener = (clave, database) =>{
     })    
 }
 
-const actualizar = (data, database) =>{  
+const actualizar = (data, database) =>{ 
+    console.log(data) 
     return new Promise(resolve => {
         try {
             const trasaccion = database.transaction(['Reports'],'readwrite')
@@ -69,9 +77,12 @@ const actualizar = (data, database) =>{
             }
 
             conexion.onerror = (err) => {
+                console.log(err) 
+                resolve(true)
             }
         
         } catch (err) {
+            console.log(err) 
             resolve(false)
         } 
     }) 

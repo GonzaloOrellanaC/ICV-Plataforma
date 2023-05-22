@@ -21,8 +21,8 @@ const ActivitiesDetailPage = () => {
     const classes = useStylesTheme()
     const history = useHistory()
     const {id} = useParams()
-    const {report, executionReport, setOtIndex, sapId, serieEquipo, setLoading, setLoadingMessage} = useExecutionReportContext()
-    const {saveReportToData, getReports, setStatusReports} = useReportsContext()
+    const {report, executionReport, setOtIndex, sapId, serieEquipo, setLoading, setLoadingMessage, reporteIniciado} = useExecutionReportContext()
+    const {saveReportToData, getReports, setStatusReports, getReportsOffline} = useReportsContext()
     const [ progress, resutProgress ] = useState(0)
     const [ itemProgress, resultThisItemProgress ] = useState(0)
     const [ reportLevel, setReportLevel ] = useState()
@@ -109,40 +109,50 @@ const ActivitiesDetailPage = () => {
 
     const terminarjornada = async () => {
         if(isOnline) {
-            const reportCache = report
-            const emails = await getExecutivesSapEmail(reportLevel)
-            let usersAssigned = new Array()
-            usersAssigned = reportCache.usersAssigned
-            let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === userData._id){}else{return user}})
-            reportCache.idIndex = id
-            reportCache.usersAssigned = usersAssignedFiltered
-            reportCache.state = "Asignar"
-            reportCache.emailing = "termino-jornada"
-            reportCache.fullNameWorker = `${userData.name} ${userData.lastName}`
-            reportCache.emailsToSend = emails
-            let ids = new Array()
-            ids = await getExecutivesSapId()
-            ids.forEach(async (id, index) => {
-                SocketConnection.sendnotificationToUser(
-                    'termino-jornada',
-                    `${userData._id}`,
-                    id,
-                    'Aviso general',
-                    'Término de jornada',
-                    `${userData.name} ${userData.lastName} ha terminado su jornada. Recuerde reasignar OT`,
-                    '/reports'
-                )
-                if(index == (ids.length - 1)) {
-                    let actualiza = await reportsRoutes.editReport(reportCache)
-                    if(actualiza) {
-                        setTimeout(() => {
-                            alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
-                            history.goBack()
-                        }, 500)
+            if (window.confirm('Confirme que terminará su jornada')) {
+                setLoadingLogo(true)
+                const reportCache = report
+                const emails = await getExecutivesSapEmail(reportLevel)
+                /* let usersAssigned = new Array()
+                usersAssigned = reportCache.usersAssigned
+                let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === userData._id){}else{return user}})
+                reportCache.idIndex = id
+                reportCache.usersAssigned = usersAssignedFiltered */
+                reportCache.state = "Asignar"
+                reportCache.emailing = "termino-jornada"
+                reportCache.fullNameWorker = `${userData.name} ${userData.lastName}`
+                reportCache.emailsToSend = emails
+                let ids = new Array()
+                ids = await getExecutivesSapId()
+                ids.forEach(async (id, index) => {
+                    SocketConnection.sendnotificationToUser(
+                        'termino-jornada',
+                        `${userData._id}`,
+                        id,
+                        'Aviso general',
+                        'Término de jornada',
+                        `${userData.name} ${userData.lastName} ha terminado su jornada. Recuerde reasignar OT`,
+                        '/reports'
+                    )
+                    if(index == (ids.length - 1)) {
+                        let actualiza = await reportsRoutes.editReport(reportCache)
+                        console.log(actualiza)
+                        if(actualiza) {
+                            const {database} = await reportsDatabase.initDbReports()
+                            const state = await reportsDatabase.eliminar(reportCache.idIndex, database)
+                            console.log(state)
+                            getReportsOffline()
+                            setTimeout(() => {
+                                alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
+                                history.goBack()
+                                setLoadingLogo(false)
+                            }, 500)
+                        }
                     }
-                }
-            })
+                })
+            }
         }else{
+            setLoadingLogo(false)
             alert('Dispositivo no está conectado a internet. Conecte a una red e intente nuevamente')
         }
     }
@@ -359,7 +369,7 @@ const ActivitiesDetailPage = () => {
                                 </div>
                             </div>
                             <Grid container>
-                                <Grid item xl={10} md={10} sm={12}>
+                                <Grid item xl={executionReport ? 10 : 12} md={executionReport ? 10 : 12} sm={12}>
                                     <div style={{padding: 20}}>
                                         {
                                             (executionReport && executionReport._id) ? <PautaDetail 
@@ -388,13 +398,13 @@ const ActivitiesDetailPage = () => {
                                                         verticalAlign: 'middle',
                                                         fontSize: 25
                                                     }}
-                                                >Reporte no iniciado</p>
+                                                >{reporteIniciado ? 'Descargando pauta...' : 'Reporte no iniciado'}</p>
                                             </div>
                                         }
                                     </div>
                                 </Grid>
                                 {
-                                    report && <Grid item xl={2} md={2} sm={12}>
+                                    (report && executionReport) && <Grid item xl={2} md={2} sm={12}>
                                     <div style={{marginTop: 20, padding: 20, backgroundColor: '#F9F9F9', borderRadius: 10, height: '71vh', overflowY: 'auto'}}>
                                         <div style={{textAlign: 'center', width: '100%'}}>
                                             <h2 style={{margin: 0}}>OT {id}</h2>

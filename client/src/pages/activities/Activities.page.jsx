@@ -18,8 +18,12 @@ const ActivitiesPage = () => {
 
     const goToDetail = (element) => {
         console.log(element)
-        setReport(element)
+        /* setReport(element) */
         history.push(`/assignment/${element.idIndex}`)
+    }
+
+    const compareNumbers = (a, b) => {
+        return b.idIndex - a.idIndex;
     }
 
     return (
@@ -112,7 +116,7 @@ const ActivitiesPage = () => {
                                             }}
                                         >
                                             <h3 className='item-style'>Mis actividades pendientes</h3>
-                                            {priorityAssignments.map((element, i) => {
+                                            {priorityAssignments.sort(compareNumbers).map((element, i) => {
                                                 return(
                                                     <div key={i}
                                                         className={`${'border-color-primary'} item-style`}
@@ -183,7 +187,7 @@ const ActivitiesPage = () => {
                                                 </div>
                                             }
                                             {
-                                                normalAssignments.map((element, i) => {
+                                                normalAssignments.sort(compareNumbers).map((element, i) => {
                                                     return(
                                                         <div key={i} style={
                                                             {

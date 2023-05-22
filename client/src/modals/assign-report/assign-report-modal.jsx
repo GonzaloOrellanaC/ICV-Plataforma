@@ -26,6 +26,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
     const [ userAssigned, setUserAssigned ] = useState()
     const [reading, setReading] = useState(true)
     const [siteName, setSiteName] = useState('')
+    const [messageOperarios, setMessageOperarios] = useState('')
     useEffect(() => {
         if (open) {
             setSiteNameById()
@@ -53,7 +54,10 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         }
     },[open])
     useEffect(() => {
-        console.log(operarios)
+        if (operarios)
+        if (operarios.length > 0) {
+            setReading(false)
+        }
     },[operarios])
     const setSiteNameById = () => {
         console.log(sites)
@@ -64,7 +68,13 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         const reportCache = report
         if (reportCache.usersAssigned) {
             const usersAssigned = reportCache.usersAssigned
-            if (userAssigned && userAssigned.length > 0) {
+            console.log(usersAssigned)
+            if (usersAssigned && usersAssigned.length > 0) {
+                usersAssigned.find((uid, n) => {
+                    if (uid===userId) {
+                        usersAssigned.splice(n, 1)
+                    }
+                })
                 usersAssigned.unshift(userId)
             } else {
                 usersAssigned.push(userId)
@@ -203,8 +213,8 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                 <div style={{width: '100%', height: 59}}>
                 <label>Asignar Pauta a:</label>
                 <br />
-                <select /* disabled={reading} */ value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value)/* ; setCloseType(true) */}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
-                    <option value={""}>{/* reading ? 'Leyendo operarios. Espere...' : */ 'Seleccionar operario'}</option>
+                <select disabled={reading} value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value)/* ; setCloseType(true) */}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
+                    <option value={""}>{reading ? 'Leyendo operarios. Espere...' : 'Seleccionar operario'}</option>
                     {
                         operarios && operarios.map((user, i) => {
                             if (user.obras[0].idobra === site) {

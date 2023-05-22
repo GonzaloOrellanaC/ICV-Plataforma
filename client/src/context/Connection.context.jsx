@@ -12,7 +12,7 @@ export const ConnectionProvider = props => {
         window.addEventListener('offline', () => {
             setIsOnline(false)
         })
-    },[window.navigator.onLine])
+    },[])
 
     useEffect(() => {
         console.log('Network: ', isOnline)
