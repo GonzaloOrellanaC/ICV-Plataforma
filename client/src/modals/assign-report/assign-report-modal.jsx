@@ -65,37 +65,42 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
         setSiteName(filtered[0].descripcion)
     }
     const setUserToReport = async (userId) => {
-        const reportCache = report
-        if (reportCache.usersAssigned) {
-            const usersAssigned = reportCache.usersAssigned
-            console.log(usersAssigned)
-            if (usersAssigned && usersAssigned.length > 0) {
-                usersAssigned.find((uid, n) => {
-                    if (uid===userId) {
-                        usersAssigned.splice(n, 1)
+        if (userId.length > 0) {
+            const userFiltered = operarios.filter(user => {if(userId===user._id) return user})[0]
+            if (window.confirm(`Confirme que asignará a ${userFiltered.name} ${userFiltered.lastName} a la OT ${report.idIndex}`)) {
+                const reportCache = report
+                if (reportCache.usersAssigned) {
+                    const usersAssigned = reportCache.usersAssigned
+                    console.log(usersAssigned)
+                    if (usersAssigned && usersAssigned.length > 0) {
+                        usersAssigned.find((uid, n) => {
+                            if (uid===userId) {
+                                usersAssigned.splice(n, 1)
+                            }
+                        })
+                        usersAssigned.unshift(userId)
+                    } else {
+                        usersAssigned.push(userId)
                     }
-                })
-                usersAssigned.unshift(userId)
-            } else {
-                usersAssigned.push(userId)
+                    reportCache.usersAssigned = usersAssigned
+                    /* if (reportCache.state === 'Asignar') { */
+                        reportCache.state = 'En proceso'
+                        reportCache.level = 0
+                    /* } */
+                    saveReport(reportCache)
+                    SocketConnection.sendnotificationToUser(
+                        'nueva-asignacion',
+                        `${userData._id}`,
+                        userId,
+                        'Asignaciones',
+                        'Se ha asignado nueva OT',
+                        `OT ${reportCache.idIndex} asignada a usted`,
+                        '/assignment'
+                        )
+                }
+                close()
             }
-            reportCache.usersAssigned = usersAssigned
-            /* if (reportCache.state === 'Asignar') { */
-                reportCache.state = 'En proceso'
-                reportCache.level = 0
-            /* } */
-            saveReport(reportCache)
-            SocketConnection.sendnotificationToUser(
-                'nueva-asignacion',
-                `${userData._id}`,
-                userId,
-                'Asignaciones',
-                'Se ha asignado nueva OT',
-                `OT ${reportCache.idIndex} asignada a usted`,
-                '/assignment'
-                )
         }
-        close()
     }
 
     const close = () => {

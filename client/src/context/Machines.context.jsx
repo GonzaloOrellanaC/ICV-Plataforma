@@ -26,7 +26,6 @@ export const MachineProvider = props => {
 
     useEffect(() => {
         if (machines.length > 0) {
-            console.log(machines)
             if (isOnline) {
                 if (site)
                 getMachinesBySite()
@@ -44,8 +43,6 @@ export const MachineProvider = props => {
         if (admin) {
             response = await apiIvcRoutes.getAllMachines()
         }
-        /* .then(machines => { */
-        console.log(response)
         const {database} = await machinesDatabase.initDbMachines()
         response.data.forEach(async (machine, index) => {
             machine.id = index

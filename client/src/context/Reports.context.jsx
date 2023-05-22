@@ -4,6 +4,7 @@ import { executionReportsRoutes, patternsRoutes, reportsRoutes } from '../routes
 import { executionReportsDatabase, pautasDatabase, reportsDatabase } from '../indexedDB'
 import { useConnectionContext } from './Connection.context'
 import { SocketConnection } from '../connections'
+import { useNotificationsContext } from './Notifications.context'
 
 export const ReportsContext = createContext()
 
@@ -15,6 +16,7 @@ export const ReportsProvider = (props) => {
     const [listSelected, setListSelected] = useState([])
     const [listSelectedCache, setListSelectedCache] = useState([])
     const [pautas, setPautas] = useState([])
+    const [pautasCache, setPautasCache] = useState([])
     const [loading, setLoading] = useState(false)
     const [priorityAssignments, setPriorityAssignments] = useState([])
     const [normalAssignments, setnormalAssignments] = useState([])
@@ -54,15 +56,25 @@ export const ReportsProvider = (props) => {
             setAssignments(reports)
             if(revision) {
                 getAllPautas()
+            } else {
+                setPautas(pautasCache)
             }
             setRevision(false)
         } else {
-            console.log('Guardando reporte') 
-            setMessage('Descargando recursos')
-            getReportsFromDatabase()
-            setAssignments([])
+            if (isAuthenticated) {
+                console.log('Guardando reporte') 
+                setMessage('Descargando recursos')
+                getReportsFromDatabase()
+                setAssignments([])
+            }
         }
-    }, [reports])
+    }, [reports, isAuthenticated])
+
+    useEffect(() => {
+        if (!isOnline) {
+            setRevision(true)
+        }
+    }, [isOnline])
 
     useEffect(() => {
         if (pautas.length > 0) {
@@ -250,6 +262,7 @@ export const ReportsProvider = (props) => {
         setMessage('Descargando pautas')
         const response = await patternsRoutes.getPatternDetails()
         setPautas(response.data)
+        setPautasCache(response.data)
     }
 
     const saveReportsToIndexedDb = async () => {

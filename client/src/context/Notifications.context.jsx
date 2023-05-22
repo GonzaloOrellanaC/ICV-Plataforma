@@ -13,14 +13,20 @@ export const NotificationsProvider = props => {
 
     useEffect(() => {
         if (userData && isAuthenticated) {
+            console.log(userData._id, isAuthenticated)
             getNotifications()
         }
     },[userData, isAuthenticated])
 
+    const orderByDate = (a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt)
+    }
+
     const getNotifications = async () => {
         const response = await notificationsRoutes.getNotificationsById(userData._id)
-        setMyNotifications(response.data.reverse())
-        setLastNotification(response.data.reverse()[0])
+        console.log(response.data)
+        setMyNotifications(response.data.sort(orderByDate))
+        setLastNotification(response.data.sort(orderByDate)[0])
     }
 
     const provider = {

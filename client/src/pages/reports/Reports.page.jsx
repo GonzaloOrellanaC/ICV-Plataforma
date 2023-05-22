@@ -38,7 +38,6 @@ const ReportsPage = () => {
     const history = useHistory()
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
     useEffect(() => {
-        console.log(listSelected)
         if (listSelected.length > 0) {
             initReadList()
         } else {
@@ -69,7 +68,6 @@ const ReportsPage = () => {
         }
     }, [reports])
     useEffect(() => {
-        console.log(inspeccionesTotales)
         if (inspeccionesTotales.length > 0) {
             const inspeccionesSinAsignar = inspeccionesTotales.filter(inspeccion => {
                 if(inspeccion.state==='Asignar'/* usersAssigned.length === 0 */) {

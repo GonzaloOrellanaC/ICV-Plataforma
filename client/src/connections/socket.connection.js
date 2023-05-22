@@ -15,12 +15,14 @@ const listenNotifocations = (userData, notificationData) => {
     socket.on(`notification_${userData._id}`, data => {
         console.log(data)
         notificationData(data)
+        /* getNotifications() */
     })
 }
 
 const listenReports = (userData, reportsData) => {
     socket.on(`nuevo_reporte_${userData._id}`, data => {
         reportsData(data)
+        /* getNotifications() */
     })
 }
 

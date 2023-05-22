@@ -390,30 +390,30 @@ const App = () => {
             <ApolloProvider client={client}>
                 <ConnectionProvider>
                     <AuthProvider>
-                        <SitesProvider>
-                            <LanguageProvider>
-                                <NavigationProvider>
-                                    <UsersProvider>
-                                        <ReportsProvider>
-                                            <ExecutionReportProvider>
-                                                <CreateUserProvider>
-                                                    <TimeProvider>
-                                                        <MachineProvider>
-                                                            <NotificationsProvider>
+                        <NotificationsProvider>
+                            <SitesProvider>
+                                <LanguageProvider>
+                                    <NavigationProvider>
+                                        <UsersProvider>
+                                            <ReportsProvider>
+                                                <ExecutionReportProvider>
+                                                    <CreateUserProvider>
+                                                        <TimeProvider>
+                                                            <MachineProvider>
                                                                 <ThemeProvider theme={theme} >
                                                                     <CssBaseline />
                                                                     <OnApp />
                                                                 </ThemeProvider>
-                                                            </NotificationsProvider>
-                                                        </MachineProvider>
-                                                    </TimeProvider>
-                                                </CreateUserProvider>
-                                            </ExecutionReportProvider>
-                                        </ReportsProvider>
-                                    </UsersProvider>
-                                </NavigationProvider>
-                            </LanguageProvider>
-                        </SitesProvider>
+                                                            </MachineProvider>
+                                                        </TimeProvider>
+                                                    </CreateUserProvider>
+                                                </ExecutionReportProvider>
+                                            </ReportsProvider>
+                                        </UsersProvider>
+                                    </NavigationProvider>
+                                </LanguageProvider>
+                            </SitesProvider>
+                        </NotificationsProvider>
                     </AuthProvider>
                 </ConnectionProvider>
             </ApolloProvider>

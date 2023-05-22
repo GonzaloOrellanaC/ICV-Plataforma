@@ -10,9 +10,8 @@ import logoNotification from '../assets/logo_icv_notification_push.png'
 export const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
-    const defaultAuthenticated  = Boolean(window.localStorage.getItem('isauthenticated'))
     /* const defaultAdmin = Boolean(window.localStorage.getItem('isAdmin')); */
-    const [ isAuthenticated, setIsAuthenticated ] = useState(defaultAuthenticated || false)
+    const [ isAuthenticated, setIsAuthenticated ] = useState(false)
     /* const [ getSelf, { loading, error , data } ] = useLazyQuery(UsersGraphQL.query.GET_SELF) */
     const [ userData, setUserData ] = useState(JSON.parse(localStorage.getItem('user'))||undefined);
     const [ admin, setAdmin ] = useState(false);
@@ -41,6 +40,13 @@ export const AuthProvider = (props) => {
             window.localStorage.setItem('isauthenticated', false)
         }
     }, [error]) */
+
+    useEffect(() => {
+        console.log(Boolean(window.localStorage.getItem('isauthenticated')))
+        if (Boolean(window.localStorage.getItem('isauthenticated'))) {
+            setIsAuthenticated(Boolean(window.localStorage.getItem('isauthenticated')))
+        }
+    }, [])
 
     useEffect(() => {
         if (isAuthenticated) {
