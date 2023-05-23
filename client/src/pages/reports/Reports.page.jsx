@@ -16,7 +16,7 @@ import { useAuth, useExecutionReportContext, useReportsContext, useSitesContext 
 const ReportsPage = () => {
     const {sites} = useSitesContext()
     const {admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
-    const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache, getReports, loading, statusReports} = useReportsContext()
+    const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache, getReports, loading, statusReports, pautas} = useReportsContext()
     const [inspeccionesTotales, setInspeccionesTotales] = useState([])
     const [mantencionesTotales, setMantencionesTotales] = useState([])
     const [ inspecciones, setInspecciones ] = useState([]);
@@ -37,6 +37,14 @@ const ReportsPage = () => {
     const [typeReportsSelected, setTypeReportsSelected] = useState('')
     const history = useHistory()
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
+    const [canOpenNewReport, setCanOpenNewReport] = useState(false)
+    useEffect(() => {
+        if (pautas.length === 0) {
+            setCanOpenNewReport(false)
+        } else {
+            setCanOpenNewReport(true)
+        }
+    }, [pautas])
     useEffect(() => {
         if (listSelected.length > 0) {
             initReadList()
@@ -370,7 +378,7 @@ const ReportsPage = () => {
                         </h1>
                         <button 
                             hidden={!hableCreateReport}
-                            onClick={()=>{history.push('/reports/create-report')}} 
+                            onClick={()=>{canOpenNewReport ? history.push('/reports/create-report') : alert('Espere a que las pautas estén descargadas')}} 
                             title='Nuevo reporte' 
                             style={
                                 {

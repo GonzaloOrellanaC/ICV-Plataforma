@@ -59,8 +59,14 @@ const CreateReports = () => {
         }
     }, [userData])
 
+    const orderType = (a, b) => {
+        if (a.idpm > b.idpm) return 1
+        if (a.idpm < b.idpm) return -1
+        if (a.typepm > b.typepm) return 1
+        if (a.typepm < b.typepm) return -1
+    }
+
     useEffect(() => {
-        console.log(reportType, pautaIndex, truckSelected, machineModel)
         if (machineModel) {
             getMachine(machineModel)
         }
@@ -70,27 +76,17 @@ const CreateReports = () => {
                 if (item.header != 'error')
                 item.header.forEach((header) => {
                     if (header.typeDataDesc === machineModel) {
-                        /* console.log(header.typeDataDesc, machineModel) */
                         pautasLista.push(item)
                     }
                 })
             })
-            console.log(pautasLista)
             const pautasInspeccionFiltered = []
             const pautasMantencionFiltered = []
-            pautasLista.sort((a, b) => {
-                if (a.typepm > b.typepm) {
-                    return 1
-                }
-                if (a.typepm < b.typepm) {
-                    return -1
-                }
-                return 0
-            }).forEach((item) => {
+            pautasLista.sort(orderType).forEach((item) => {
                 console.log(item.typepm, reportType)
-                if (item.typepm.includes(reportType)) {
+                if (reportType === 'Inspección') {
                     pautasInspeccionFiltered.push(item)
-                } else {
+                } else if (reportType === 'Mantención') {
                     pautasMantencionFiltered.push(item)
                 }
             })

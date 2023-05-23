@@ -11,7 +11,7 @@ export const ExecutionReportContext = createContext()
 export const ExecutionReportProvider = (props) => {
     const {isOperator, admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
     const {isOnline} = useConnectionContext()
-    const {reports, setMessage} = useContext(ReportsContext)
+    const {reports, setMessage, pautas} = useContext(ReportsContext)
     const [report, setReport] = useState()
     const [executionReport, setExecutionReport] = useState()
     const [reportId, setReportId] = useState()
@@ -57,10 +57,10 @@ export const ExecutionReportProvider = (props) => {
             setMessage('Buscando Pauta')
             getExecutionReport()
         }
-        if (!report && otIndex && (reports.length > 0)) {
+        if (!report && otIndex /* && (reports.length > 0) && (pautas.length > 0) */) {
             getReportFromOtIndex()
         }
-    },[report, otIndex, reports])
+    },[report, otIndex/* , reports, pautas */])
 
     const getReportFromOtIndex = () => {
         const reportFiltered = reports.filter(report => {if(report.idIndex === Number(otIndex)) {return report}})

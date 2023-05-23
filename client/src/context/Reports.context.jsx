@@ -52,14 +52,15 @@ export const ReportsProvider = (props) => {
 
     useEffect(() => {
         if (reports.length > 0) {
-            console.log('Guardando reporte') 
-            setAssignments(reports)
+            console.log('Guardando reporte')
+            console.log(revision)
             if(revision) {
                 getAllPautas()
+                setRevision(false)
             } else {
                 setPautas(pautasCache)
-            }
-            setRevision(false)
+            } 
+            /* setAssignments(reports) */
         } else {
             if (isAuthenticated) {
                 console.log('Guardando reporte') 
@@ -121,7 +122,7 @@ export const ReportsProvider = (props) => {
         pautas.forEach(async (pauta, i) => {
             await pautasDatabase.actualizar(pauta, database)
             if (i === (pautas.length - 1)) {
-                /* setMessage('') */
+                setMessage('')
                 saveExecutionReportToDatabase()
             }
         })
@@ -134,7 +135,7 @@ export const ReportsProvider = (props) => {
         if (response.length > 0) {
             setReports(response)
         } else {
-            /* setMessage('') */
+            setMessage('')
         }
     }
 
@@ -142,9 +143,10 @@ export const ReportsProvider = (props) => {
         setMessage('Guardando datos en navegador')
         console.log('init!!!!')
         const {database} = await executionReportsDatabase.initDb()
+        const db = await pautasDatabase.initDbPMs()
         reports.forEach(async (report, i) => {
-            const response = await executionReportsRoutes.getExecutionReportById(report)
-            if (response.data._id) {
+            /* const response = await executionReportsRoutes.getExecutionReportById(report) */
+            /* if (response.data._id) {
                 const dataExist = await executionReportsDatabase.obtener(response.data._id, database)
                 if(dataExist) {
                     if (response.data.offLineGuard > dataExist.offLineGuard) {
@@ -156,10 +158,9 @@ export const ReportsProvider = (props) => {
                     setMessage('Guardando datos en navegador')
                     await executionReportsDatabase.actualizar(response.data, database)
                 }
-            } else {
+            } else { */
                 if (isOperator && isOnline) {
                     setMessage('Guardando pauta de OT '+report.idIndex)
-                    const db = await pautasDatabase.initDbPMs()
                     const pautas = await pautasDatabase.consultar(db.database)
                     const pautaFiltered = pautas.filter((info) => { 
                         if(
@@ -184,12 +185,13 @@ export const ReportsProvider = (props) => {
                         await reportsRoutes.editReportById(report)
                     }
                 }
-            }
+            /* } */
         })
     }
 
     useEffect(() => {
         setMessage('Guardando asignaciones')
+        if(pautas.length > 0)
         if (assignments.length > 0) {
             if (isShiftManager) {
                 const priorityAssignmentsCache = []
@@ -242,27 +244,31 @@ export const ReportsProvider = (props) => {
             }
         }
         saveReportsToIndexedDb()
-    }, [assignments])
+    }, [assignments, pautas])
 
     useEffect(() => {
-        /* console.log(isAuthenticated, site) */
         if (isAuthenticated && site) {
             setMessage('Descargando reportes')
-            /* console.log(admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery) */
-            if (admin || isOperator || isSapExecutive || isShiftManager || isChiefMachinery) {
-                if(isOnline) {
-                    console.log(isOnline)
-                    getReports()
-                }
+            if ((admin || isOperator || isSapExecutive || isShiftManager || isChiefMachinery)&&userData) {
+                getReports()
             }
         }
-    }, [admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, isOnline, isAuthenticated, site])
+    }, [admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, isOnline, isAuthenticated, site, userData])
 
     const getAllPautas = async () => {
         setMessage('Descargando pautas')
-        const response = await patternsRoutes.getPatternDetails()
-        setPautas(response.data)
-        setPautasCache(response.data)
+        const {database} = await pautasDatabase.initDbPMs()
+        const response = await pautasDatabase.consultar(database)
+        console.log(response)
+        if (response.length > 0) {
+            setPautas(response)
+            setPautasCache(response)
+        } else {
+            const responseCache = await patternsRoutes.getPatternDetails()
+            console.log('Pautas: ', responseCache.data)
+            setPautas(responseCache.data)
+            setPautasCache(responseCache.data)
+        }
     }
 
     const saveReportsToIndexedDb = async () => {
@@ -278,7 +284,7 @@ export const ReportsProvider = (props) => {
                     return report
                 }
             })
-            /* console.log(filtered, el.idIndex) */
+            console.log(filtered, el.idIndex)
             if (filtered.length === 0) {
                 await reportsDatabase.eliminar(el.idIndex, database)
             }
@@ -296,7 +302,7 @@ export const ReportsProvider = (props) => {
     const getReports = async () => {
         setMessage('Sincronizando reportes')
         setStatusReports(true)
-        if (isOnline) {
+        if (isOnline && revision) {
             console.log(isOperator, userData)
             if (admin) {
                 const response = await reportsRoutes.getAllReports()
@@ -320,6 +326,7 @@ export const ReportsProvider = (props) => {
                     /* setMessage('') */
                 } else if (isSapExecutive || isShiftManager || isChiefMachinery) {
                     const response = await reportsRoutes.getAllReportsbySite(site.idobra)
+                    console.log('Reportes: ', response.data)
                     setReports(response.data)
                     setStatusReports(false)
                     /* setMessage('') */

@@ -24,23 +24,6 @@ export const AuthProvider = (props) => {
     const [ refCanvas, setRefCanvas ] = useState()
     const [ openSign, setOpenSign ] = useState(false)
 
-    /*useEffect(() => {
-        if (data?.self) {
-            console.log(data?.self)
-            setUserData(data.self)
-        }
-        if(!data) {
-
-        }
-    }, [data]) */
-
-    /* useEffect(() => {
-        if (error) {
-            setIsAuthenticated(false)
-            window.localStorage.setItem('isauthenticated', false)
-        }
-    }, [error]) */
-
     useEffect(() => {
         console.log(Boolean(window.localStorage.getItem('isauthenticated')))
         if (Boolean(window.localStorage.getItem('isauthenticated'))) {
@@ -55,8 +38,6 @@ export const AuthProvider = (props) => {
                     
                 }
             })
-            /* setIsOperator(Boolean(localStorage.getItem('isOperator'))) */
-            /* setSite(JSON.parse(window.localStorage.getItem('sitio'))) */
             if (!userData) {
                 getUserDataFromIndexedDb()
             }
@@ -252,7 +233,6 @@ export const AuthProvider = (props) => {
             if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
                 window.localStorage.clear();
                 window.location.reload();
-                removeDatabases();
                 setIsAuthenticated(false)
             }
         }

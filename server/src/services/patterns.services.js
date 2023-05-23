@@ -2,6 +2,7 @@ import { PatternDetail, Patterns } from '../models'
 
 
 const getPatterns = async (req, res) => {
+    console.log('Leyendo Pautas...')
     try {
         Patterns.find({}, (err, patterns) => {
             res.json(patterns)
@@ -26,6 +27,7 @@ const savePattern = async (req, res) => {
 }
 
 const getPatternDetails = async (req, res) => {
+    console.log('Leyendo Pautas...')
     try {
         PatternDetail.find({}, (err, patterns) => {
             res.json(patterns)

@@ -28,7 +28,7 @@ const LoginPage = () => {
         let databases = await window.indexedDB.databases();
         if(databases.length > 0) {
             databases.forEach((database, index) => {
-                if(database.name === '3Ds' || database.name === 'MachinesParts' || database.name === 'Executions' || database.name === 'Trucks') {
+                if(database.name === '3Ds' || database.name === 'MachinesParts' || database.name === 'Executions' || database.name === 'Trucks' || database.name === 'Pautas') {
 
                 }else{
                     window.indexedDB.deleteDatabase(database.name)
