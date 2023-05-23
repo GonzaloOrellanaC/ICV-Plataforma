@@ -26,7 +26,43 @@ const createReport = async (req, res) => {
         const createReportState = new Reports(body.report)
         try{
             await createReportState.save()
-            res.json(createReportState)
+            const machineData = await Machine.findOne({equid: createReportState.machine})
+            if (machineData) {
+                let newReport = {
+                    _id: createReportState._id,
+                    level: createReportState.level,
+                    createdAt: createReportState.createdAt,
+                    createdBy: createReportState.createdBy,
+                    datePrev: createReportState.datePrev,
+                    deleted: createReportState.deleted,
+                    enabled: createReportState.enabled,
+                    endPrev: createReportState.endPrev,
+                    guide: createReportState.guide,
+                    history: createReportState.history,
+                    idIndex: createReportState.idIndex,
+                    idPm: createReportState.idPm,
+                    machine: createReportState.machine,
+                    reportType: createReportState.reportType,
+                    sapId: createReportState.sapId,
+                    site: createReportState.site,
+                    state: createReportState.state,
+                    testMode: createReportState.testMode,
+                    updatedAt: createReportState.updatedAt,
+                    updatedBy: createReportState.updatedBy,
+                    usersAssigned: createReportState.usersAssigned,
+                    machineData: machineData,
+                    urlPdf:createReportState.urlPdf,
+                    sapExecutiveApprovedBy:createReportState.sapExecutiveApprovedBy,
+                    dateClose:createReportState.dateClose,
+                    chiefMachineryApprovedDate:createReportState.chiefMachineryApprovedDate,
+                    chiefMachineryApprovedBy:createReportState.chiefMachineryApprovedBy,
+                    shiftManagerApprovedDate:createReportState.shiftManagerApprovedDate,
+                    shiftManagerApprovedBy:createReportState.shiftManagerApprovedBy,
+                    endReport: createReportState.endReport,
+                    dateInit: createReportState.dateInit
+                }
+                res.json(newReport)
+            }
         }catch(err) {
             res.json(err)
         } 

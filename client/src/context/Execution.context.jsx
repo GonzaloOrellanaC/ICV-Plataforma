@@ -1,17 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useReportsContext } from "./Reports.context";
-import { executionReportsDatabase } from "../indexedDB";
+import { executionReportsDatabase, pautasDatabase } from "../indexedDB";
 import { ReportsContext, useAuth, useConnectionContext } from ".";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import { executionReportsRoutes } from "../routes";
-import { LoadingLogoModal } from "../modals";
+import { executionReportsRoutes, reportsRoutes } from "../routes";
 
 export const ExecutionReportContext = createContext()
 
 export const ExecutionReportProvider = (props) => {
-    const {isOperator, admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
+    const {isOperator, userData} = useAuth()
     const {isOnline} = useConnectionContext()
-    const {reports, setMessage, pautas} = useContext(ReportsContext)
+    const {reports, setMessage} = useContext(ReportsContext)
     const [report, setReport] = useState()
     const [executionReport, setExecutionReport] = useState()
     const [reportId, setReportId] = useState()
@@ -29,9 +27,15 @@ export const ExecutionReportProvider = (props) => {
 
     useEffect(() => {
         if (!location.pathname.includes('assignment/')) {
+            console.log('Borrado')
             setReporteIniciado(true)
             setExecutionReport(undefined)
             setReport(undefined)
+            setReportId(undefined)
+            setOtIndex(undefined)
+            setSapId(undefined)
+            setSerieEquipo(undefined)
+            setModoTest(true)
         }
     }, [location])
 
@@ -47,8 +51,8 @@ export const ExecutionReportProvider = (props) => {
     }
 
     useEffect(() => {
-        /* console.log(report) */
-        if (report!==undefined) {
+        if (report) {
+            console.log(report)
             setReportId(report._id)
             setOtIndex(report.idIndex)
             setSapId(report.sapId)
@@ -57,20 +61,26 @@ export const ExecutionReportProvider = (props) => {
             setMessage('Buscando Pauta')
             getExecutionReport()
         }
-        if (!report && otIndex /* && (reports.length > 0) && (pautas.length > 0) */) {
+        if (otIndex) {
             getReportFromOtIndex()
         }
-    },[report, otIndex/* , reports, pautas */])
+    },[report, otIndex])
+
+    useEffect(() => {
+        console.log(otIndex)
+    },[otIndex])
 
     const getReportFromOtIndex = () => {
+        console.log('Obteniendo reporte')
         const reportFiltered = reports.filter(report => {if(report.idIndex === Number(otIndex)) {return report}})
+        console.log(reportFiltered)
         setReport(reportFiltered[0])
     }
 
     const getExecutionReport = async () => {
+        console.log('Buscando Pauta')
         setExecutionReport(undefined)
         if (!isOperator && isOnline) {
-            /* setLoading(true) */
             const response = await executionReportsRoutes.getExecutionReportById(report)
             console.log(response.data)
             if (!response.data._id) {
@@ -88,13 +98,64 @@ export const ExecutionReportProvider = (props) => {
             const response = await executionReportsDatabase.consultar(database)
             const excetutionReportCache = response.filter(doc => {if(doc.reportId === report._id) return doc})
             if (excetutionReportCache.length > 0) {
-                setExecutionReport(excetutionReportCache[0])
-                /* setMessage('Ejecusión encontrada.') */
+                const responseData = await executionReportsRoutes.getExecutionReportById(report)
+                if (excetutionReportCache[0].offLineGuard > responseData.data.offLineGuard) {
+                    setExecutionReport(excetutionReportCache[0])
+                } else {
+                    setExecutionReport(responseData.data)
+                }
             } else {
+                const responseData = await executionReportsRoutes.getExecutionReportById(report)
+                if (responseData.data && responseData.data._id) {
+                    setExecutionReport(responseData.data)
+                } else {
+                    if (isOperator) {
+                        const db = await pautasDatabase.initDbPMs()
+                        setMessage('Guardando pauta de OT '+report.idIndex)
+                        const pautas = await pautasDatabase.consultar(db.database)
+                        const pautaFiltered = pautas.filter((info) => { 
+                            if((info.typepm === report.guide)&&(report.idPm===info.idpm)) {
+                                    return info
+                                }})
+                        const group = await pautaFiltered[0].struct.reduce((r, a) => {
+                            r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
+                            return r
+                        }, {})
+                        const executionReportData = {
+                            reportId: report._id,
+                            createdBy: userData._id,
+                            group: group,
+                            offLineGuard: null
+                        }
+                        const responseNewExecution = await executionReportsRoutes.saveExecutionReport(executionReportData)
+                        console.log('Se guarda reporte ', responseNewExecution)
+                        await executionReportsDatabase.actualizar(responseNewExecution.data, database)
+                        setExecutionReport(responseNewExecution.data)
+                        console.log('Se guarda reporte ', responseNewExecution)
+                        if (!report.dateInit) {
+                            report.dateInit = new Date()
+                            await reportsRoutes.editReportById(report)
+                        }
+                    }
+                    setMessage('No se logra descargar ejecución de datos.')
+                    setTimeout(() => {
+                        setMessage('')
+                    }, 1000);
+                }
                 setTimeout(() => {
                     setMessage('')
                 }, 1000);
             }
+        } else if (isOperator && !isOnline) {
+            const {database} = await executionReportsDatabase.initDb()
+            const response = await executionReportsDatabase.consultar(database)
+            const excetutionReportCache = response.filter(doc => {if(doc.reportId === report._id) return doc})
+            if (excetutionReportCache.length > 0) {
+                setExecutionReport(excetutionReportCache[0])
+            }
+            setTimeout(() => {
+                setMessage('')
+            }, 1000);
         }
         setMessage('')
     }

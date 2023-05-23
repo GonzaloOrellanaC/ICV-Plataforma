@@ -23,6 +23,7 @@ export const AuthProvider = (props) => {
     const [ isChiefMachinery, setIsChiefMachinery ] = useState(false)
     const [ refCanvas, setRefCanvas ] = useState()
     const [ openSign, setOpenSign ] = useState(false)
+    const [ newReport, setNewReport ] = useState()
 
     useEffect(() => {
         console.log(Boolean(window.localStorage.getItem('isauthenticated')))
@@ -102,6 +103,9 @@ export const AuthProvider = (props) => {
             theme: 'red',
             native: true
         })
+        if (data.report) {
+            setNewReport(data.report)
+        }
     }
 
     const saveUserToDb = async (userDataLocal) => {
@@ -147,6 +151,7 @@ export const AuthProvider = (props) => {
         isSapExecutive,
         isShiftManager,
         isChiefMachinery,
+        newReport,
         loginRut: (rut, password) => {
             return new Promise(resolve => {
                 console.log(rut)

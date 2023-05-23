@@ -21,7 +21,7 @@ const ActivitiesDetailPage = () => {
     const classes = useStylesTheme()
     const history = useHistory()
     const {id} = useParams()
-    const {report, executionReport, setOtIndex, sapId, serieEquipo, setLoading, setLoadingMessage, reporteIniciado} = useExecutionReportContext()
+    const {report, executionReport, setOtIndex, otIndex, sapId, serieEquipo, setLoading, setLoadingMessage, reporteIniciado} = useExecutionReportContext()
     const {saveReportToData, getReports, setStatusReports, getReportsOffline} = useReportsContext()
     const [ progress, resutProgress ] = useState(0)
     const [ itemProgress, resultThisItemProgress ] = useState(0)
@@ -59,7 +59,6 @@ const ActivitiesDetailPage = () => {
                 setCanEdit(false)
             }
         } else {
-            console.log('No report')
             if (id) {
                 setOtIndex(id)
             }

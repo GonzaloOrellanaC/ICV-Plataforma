@@ -17,10 +17,11 @@ import { apiIvcRoutes, machinesRoutes, reportsRoutes } from '../../routes';
 import './reports.css'
 import {useAuth, useReportsContext} from '../../context'
 import { SocketConnection } from '../../connections';
+import { LoadingLogoModal } from '../../modals';
 
 const CreateReports = () => {
     const {userData, admin} = useAuth()
-    const {pautas} = useReportsContext()
+    const {pautas, createReport} = useReportsContext()
     const [ trucks, setTrucks ] = useState([])
     const [ pautasParaMostrar, setPautas ] = useState([])
     const [ maquinas, setMaquinas ] = useState([])
@@ -46,6 +47,7 @@ const CreateReports = () => {
     const [ idObra, setIdObra ] = useState('')
     /* const [ isAdmin, setIsAdmin ] = useState(false) */
     const [ sites, setSites ] = useState([])
+    const [openLoadingLogo, setOpenLoadingLogo] = useState(false)
 
     const classes = useStylesTheme();
 
@@ -151,6 +153,7 @@ const CreateReports = () => {
     }
 
     const saveReport = async () => {
+        setOpenLoadingLogo(true)
         let report = {
             createdBy: userData._id,
             updatedBy: userData._id,
@@ -168,13 +171,11 @@ const CreateReports = () => {
         }
         if(!report.machine || !report.sapId || (!report.guide || report.guide === "Selección no cuenta con pautas.") || (!report.reportType || report.reportType === 'Seleccione...')) {
             alert('Falta información')
+            setOpenLoadingLogo(false)
         }else{
-            const reportState = await reportsRoutes.createReport(report);
-            /* const reportData = {
-                reportId: reportState.data._id,
-                createdBy: userData._id
-            }
-            getExecutionReportData(reportData); */
+            createReport(report, setOpenLoadingLogo)
+            /* const reportState = await reportsRoutes.createReport(report);
+            console.log(reportState.data)
             if(reportState) {
                 SocketConnection.sendnotificationToUser(
                     'nuevo-reporte',
@@ -186,8 +187,9 @@ const CreateReports = () => {
                     ''
                     )
                 alert(`Reporte ${reportState.data.idIndex}, para máquina modelo ${reportState.data.machine} creado satisfactoriamente.`)
-                history.goBack();
-            }
+                setOpenLoadingLogo(false)
+                history.replace('/reports')
+            } */
         }
     }
 
@@ -593,6 +595,7 @@ const CreateReports = () => {
                     </Card>
                 </Grid>
             </Grid>
+            <LoadingLogoModal open={openLoadingLogo} />
         </Box>
     )
 

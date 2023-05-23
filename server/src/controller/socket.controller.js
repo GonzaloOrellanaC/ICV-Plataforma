@@ -1,5 +1,5 @@
 import socketIo from 'socket.io'
-import { Users } from '../models';
+import { Machine, Reports, Users } from '../models';
 import { NotificationService, UserServices } from '../services';
 import { Sentry } from '../services/sentry.services';
 import toPDF from '../pdf/toPDF';
@@ -35,11 +35,48 @@ export default async (server) => {
                 NotificationService.createNotification(data)
             })
         })
-        socket.on('nueva-asignacion', (data) => {
-            io.emit(`notification_${data.id}`, {title: data.title, subtitle: data.title, message: data.message})
-            NotificationService.createNotification(data)
+        socket.on('nueva-asignacion', async (data) => {
+            const response = await Reports.findOne(data.reportId)
+            const machineData = await Machine.findOne({equid: response.machine})
+            if (machineData) {
+                const newReport = {
+                    _id: response._id,
+                    level: response.level,
+                    createdAt: response.createdAt,
+                    createdBy: response.createdBy,
+                    datePrev: response.datePrev,
+                    deleted: response.deleted,
+                    enabled: response.enabled,
+                    endPrev: response.endPrev,
+                    guide: response.guide,
+                    history: response.history,
+                    idIndex: response.idIndex,
+                    idPm: response.idPm,
+                    machine: response.machine,
+                    reportType: response.reportType,
+                    sapId: response.sapId,
+                    site: response.site,
+                    state: response.state,
+                    testMode: response.testMode,
+                    updatedAt: response.updatedAt,
+                    updatedBy: response.updatedBy,
+                    usersAssigned: response.usersAssigned,
+                    machineData: machineData,
+                    urlPdf:response.urlPdf,
+                    sapExecutiveApprovedBy:response.sapExecutiveApprovedBy,
+                    dateClose:response.dateClose,
+                    chiefMachineryApprovedDate:response.chiefMachineryApprovedDate,
+                    chiefMachineryApprovedBy:response.chiefMachineryApprovedBy,
+                    shiftManagerApprovedDate:response.shiftManagerApprovedDate,
+                    shiftManagerApprovedBy:response.shiftManagerApprovedBy,
+                    endReport: response.endReport,
+                    dateInit: response.dateInit
+                }
+                io.emit(`notification_${data.id}`, {title: data.title, subtitle: data.title, message: data.message, report: newReport})
+                NotificationService.createNotification(data)
+            }
         })
-        socket.on('nuevo-reporte', (data) => {
+        socket.on('nuevo-reporte', async (data) => {
             io.emit(`nuevo_reporte_${data.id}`, {title: data.title, subtitle: data.title, message: data.message})
             /* NotificationService.createNotification(data) */
         })

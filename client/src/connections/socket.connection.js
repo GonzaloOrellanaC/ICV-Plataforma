@@ -15,7 +15,6 @@ const listenNotifocations = (userData, notificationData) => {
     socket.on(`notification_${userData._id}`, data => {
         console.log(data)
         notificationData(data)
-        /* getNotifications() */
     })
 }
 
@@ -31,8 +30,8 @@ const sendIsActive = (userData) => {
     socket.emit('isConnected', {id: userData._id, frontVersion: environment.version})
 }
 
-const sendnotificationToUser = (notificationType, from, userId, title, subtitle, message, url) => {
-    socket.emit(notificationType, {title: title, from: from, subtitle: subtitle, message: message, id: userId, url: url})
+const sendnotificationToUser = (notificationType, from, userId, title, subtitle, message, url, reportId) => {
+    socket.emit(notificationType, {title: title, from: from, subtitle: subtitle, message: message, id: userId, url: url, reportId: reportId ? reportId : null})
 }
 
 const sendnotificationToManyUsers = (notificationType, from, title, subtitle, message, url, uid) => {

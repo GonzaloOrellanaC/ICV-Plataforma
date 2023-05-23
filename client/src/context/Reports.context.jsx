@@ -5,12 +5,13 @@ import { executionReportsDatabase, pautasDatabase, reportsDatabase } from '../in
 import { useConnectionContext } from './Connection.context'
 import { SocketConnection } from '../connections'
 import { useNotificationsContext } from './Notifications.context'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 export const ReportsContext = createContext()
 
 export const ReportsProvider = (props) => {
     const {isOnline} = useConnectionContext()
-    const {admin, isSapExecutive, isShiftManager, isChiefMachinery, roles, site, isOperator, isAuthenticated, userData} = useAuth()
+    const {admin, isSapExecutive, isShiftManager, isChiefMachinery, roles, site, isOperator, isAuthenticated, userData, newReport, setNewReport} = useAuth()
     const [reports, setReports] = useState([])
     const [assignments, setAssignments] = useState([])
     const [listSelected, setListSelected] = useState([])
@@ -23,11 +24,21 @@ export const ReportsProvider = (props) => {
     const [message, setMessage] = useState('Descargando reportes')
     const [statusReports, setStatusReports] = useState(false)
     const [revision, setRevision] = useState(true)
+    const history = useHistory()
 
     useEffect(() => {
         if (priorityAssignments || normalAssignments)
         setMessage('')
     }, [priorityAssignments, normalAssignments])
+
+    useEffect(() => {
+        if (newReport) {
+            const reportsCache = [...reports]
+            reportsCache.push(newReport)
+            setReports(reportsCache)
+            /* saveExecutionReportToDatabase() */
+        }
+    }, [newReport])
 
     useEffect(() => {
         if (isOnline && userData) {
@@ -102,6 +113,33 @@ export const ReportsProvider = (props) => {
         setLoading(false)
     }
 
+    const createReport = async (reportData, setLoading) => {
+        console.log(reportData)
+        setLoading(true)
+        const reportsCache = [...reports]
+        const response = await reportsRoutes.createReport(reportData)
+        const reportUpdated = response.data
+        reportsCache.push(reportUpdated)
+        setReports(reportsCache)
+        alert(`Reporte ${reportUpdated.idIndex}, para máquina modelo ${reportUpdated.machine} creado satisfactoriamente.`)
+        setLoading(false)
+        history.replace('/reports')
+    }
+
+    const saveReportAsignation = async (reportData) => {
+        /* setLoading(true) */
+        setMessage('Guardando reportes')
+        const reportsCache = [...reports]
+        const response = await reportsRoutes.editReportById(reportData)
+        console.log(response)
+        const reportUpdated = response.data
+        const reportIndex = reportsCache.find((report, index) => {
+            if (report._id === reportUpdated._id) return index
+        })
+        reportsCache[reportIndex] = reportUpdated
+        setReports(reportsCache)
+    }
+
     const saveReportToData = async (reportData) => {
         /* setLoading(true) */
         setMessage('Guardando reportes')
@@ -123,7 +161,7 @@ export const ReportsProvider = (props) => {
             await pautasDatabase.actualizar(pauta, database)
             if (i === (pautas.length - 1)) {
                 setMessage('')
-                saveExecutionReportToDatabase()
+                /* saveExecutionReportToDatabase() */
             }
         })
     }
@@ -145,27 +183,38 @@ export const ReportsProvider = (props) => {
         const {database} = await executionReportsDatabase.initDb()
         const db = await pautasDatabase.initDbPMs()
         reports.forEach(async (report, i) => {
-            /* const response = await executionReportsRoutes.getExecutionReportById(report) */
-            /* if (response.data._id) {
-                const dataExist = await executionReportsDatabase.obtener(response.data._id, database)
-                if(dataExist) {
-                    if (response.data.offLineGuard > dataExist.offLineGuard) {
-                        await executionReportsDatabase.actualizar(response.data, database)
-                    } else {
-                        setMessage('Revisando base de datos')
-                    }
-                } else {
-                    setMessage('Guardando datos en navegador')
+            /* const dataExist = await executionReportsDatabase.obtener(response.data._id, database)
+            if(dataExist) {
+                if (response.data.offLineGuard > dataExist.offLineGuard) {
                     await executionReportsDatabase.actualizar(response.data, database)
+                } else {
+                    setMessage('Revisando base de datos')
+                }
+            } else {
+                setMessage('Guardando datos en navegador')
+                await executionReportsDatabase.actualizar(response.data, database)
+            } */
+            /* const response = await executionReportsRoutes.getExecutionReportById(report)
+            if (response.data._id) {
+                if (isOperator) {
+                    const dataExist = await executionReportsDatabase.obtener(response.data._id, database)
+                    if(dataExist) {
+                        if (response.data.offLineGuard > dataExist.offLineGuard) {
+                            await executionReportsDatabase.actualizar(response.data, database)
+                        } else {
+                            setMessage('Revisando base de datos')
+                        }
+                    } else {
+                        setMessage('Guardando datos en navegador')
+                        await executionReportsDatabase.actualizar(response.data, database)
+                    }
                 }
             } else { */
-                if (isOperator && isOnline) {
+                if (isOperator) {
                     setMessage('Guardando pauta de OT '+report.idIndex)
                     const pautas = await pautasDatabase.consultar(db.database)
                     const pautaFiltered = pautas.filter((info) => { 
-                        if(
-                            (info.typepm === report.guide)&&(report.idPm===info.idpm)
-                            ) {
+                        if((info.typepm === report.guide)&&(report.idPm===info.idpm)) {
                                 return info
                             }})
                     const group = await pautaFiltered[0].struct.reduce((r, a) => {
@@ -178,8 +227,10 @@ export const ReportsProvider = (props) => {
                         group: group,
                         offLineGuard: null
                     }
-                    await executionReportsRoutes.saveExecutionReport(executionReportData)
-                    await executionReportsDatabase.actualizar(executionReportData, database)
+                    const responseNewExecution = await executionReportsRoutes.saveExecutionReport(executionReportData)
+                    console.log('Se guarda reporte ', responseNewExecution)
+                    await executionReportsDatabase.actualizar(responseNewExecution.data, database)
+                    console.log('Se guarda reporte ', responseNewExecution)
                     if (!report.dateInit) {
                         report.dateInit = new Date()
                         await reportsRoutes.editReportById(report)
@@ -187,6 +238,7 @@ export const ReportsProvider = (props) => {
                 }
             /* } */
         })
+        setMessage('')
     }
 
     useEffect(() => {
@@ -289,7 +341,7 @@ export const ReportsProvider = (props) => {
                 await reportsDatabase.eliminar(el.idIndex, database)
             }
         })
-        setMessage('Actualizando OTs')
+        setMessage('')
         setLoading(false)
     }
 
@@ -361,7 +413,8 @@ export const ReportsProvider = (props) => {
         message,
         setMessage,
         statusReports,
-        setStatusReports
+        setStatusReports,
+        createReport
     }
 
     return (
