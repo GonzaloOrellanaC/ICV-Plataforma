@@ -60,7 +60,7 @@ export const ReportsProvider = (props) => {
             } else {
                 setPautas(pautasCache)
             } 
-            /* setAssignments(reports) */
+            setAssignments(reports)
         } else {
             if (isAuthenticated) {
                 console.log('Guardando reporte') 
