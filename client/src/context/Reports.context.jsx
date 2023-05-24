@@ -325,6 +325,9 @@ export const ReportsProvider = (props) => {
                 })
                 setnormalAssignments(assignments)
             }
+        } else {
+            setPriorityAssignments([])
+            setnormalAssignments([])
         }
         saveReportsToIndexedDb()
     }, [assignments, pautas])
@@ -379,7 +382,7 @@ export const ReportsProvider = (props) => {
     const getReportsFromIndexedDb = async () => {
         const {database} = await reportsDatabase.initDbReports()
         const reportsResponse = await reportsDatabase.consultar(database)
-        setAssignments(reportsResponse)
+        setReports(reportsResponse)
     }
 
     const getReports = async () => {

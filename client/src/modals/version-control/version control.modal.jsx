@@ -14,10 +14,15 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{textAlign: 'left', width: '100%'}}>
                     <h2>Versión {environment.version}</h2>
                     <li>
-                        Se deshabilita actualización de app por medio de vertical scrolling.  
+                        Se corrige error al enviar término de jornada.  
                     </li>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <br />
+                    <strong>v2.9.3</strong>
+                    <li>
+                        Se deshabilita actualización de app por medio de vertical scrolling.  
+                    </li>
                     <br />
                     <strong>v2.9.2</strong>
                     <li>
