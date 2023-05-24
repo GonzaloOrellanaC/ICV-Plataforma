@@ -6,12 +6,14 @@ import { useConnectionContext } from './Connection.context'
 import { SocketConnection } from '../connections'
 import { useNotificationsContext } from './Notifications.context'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import addNotification from 'react-push-notification'
+import logoNotification from '../assets/logo_icv_notification_push.png'
 
 export const ReportsContext = createContext()
 
 export const ReportsProvider = (props) => {
     const {isOnline} = useConnectionContext()
-    const {admin, isSapExecutive, isShiftManager, isChiefMachinery, roles, site, isOperator, isAuthenticated, userData, newReport, setNewReport} = useAuth()
+    const {admin, isSapExecutive, isShiftManager, isChiefMachinery, roles, site, isOperator, isAuthenticated, userData} = useAuth()
     const [reports, setReports] = useState([])
     const [assignments, setAssignments] = useState([])
     const [listSelected, setListSelected] = useState([])
@@ -24,6 +26,7 @@ export const ReportsProvider = (props) => {
     const [message, setMessage] = useState('Descargando reportes')
     const [statusReports, setStatusReports] = useState(false)
     const [revision, setRevision] = useState(true)
+    const [newReport, setNewReport] = useState()
     const history = useHistory()
 
     useEffect(() => {
@@ -34,17 +37,31 @@ export const ReportsProvider = (props) => {
     useEffect(() => {
         if (newReport) {
             const reportsCache = [...reports]
-            reportsCache.push(newReport)
-            setReports(reportsCache)
-            /* saveExecutionReportToDatabase() */
+            let reportsFiltered = null
+            reportsCache.forEach((report, i) => {
+                if (report._id === newReport._id) {
+                    reportsFiltered = i
+                }
+                if (i === (reportsCache.length - 1)) {
+                    if (reportsFiltered === null) {
+                        console.log('Agregando Reporte')
+                        reportsCache.push(newReport)
+                    } else {
+                        console.log('Cambiando Reporte')
+                        reportsCache[reportsFiltered] = newReport
+                    }
+                    console.log(reportsCache)
+                    setReports(reportsCache)
+                }
+            })
         }
     }, [newReport])
 
     useEffect(() => {
-        if (isOnline && userData) {
+        if (userData && isAuthenticated) {
             stateReports()
         }
-    },[userData, isOnline])
+    },[userData, isOnline, isAuthenticated])
 
     const notificationData = (data) => {
         console.log(data)
@@ -58,7 +75,23 @@ export const ReportsProvider = (props) => {
 
     const stateReports = async () => {
         SocketConnection.listenReports(userData, reportsData)
-        SocketConnection.listenNotifocations(userData, notificationData)
+        SocketConnection.listenNotifocations(userData, getData)
+    }
+
+    const getData = (data) => {
+        console.log(data)
+        addNotification({
+            icon: logoNotification,
+            title: data.title,
+            subtitle: data.subtitle,
+            message: data.message,
+            theme: 'red',
+            native: true
+        })
+        if (data.report) {
+            /* setNewReport(data.report) */
+            getReports()
+        }
     }
 
     useEffect(() => {
@@ -70,7 +103,7 @@ export const ReportsProvider = (props) => {
                 setRevision(false)
             } else {
                 setPautas(pautasCache)
-            } 
+            }
             setAssignments(reports)
         } else {
             if (isAuthenticated) {
@@ -96,7 +129,6 @@ export const ReportsProvider = (props) => {
     }, [pautas])
 
     const saveReport = async (reportData) => {
-        /* setLoading(true) */
         setMessage('Guardando reportes')
         const reportsCache = [...reports]
         const response = await reportsRoutes.editReportById(reportData)
@@ -107,7 +139,6 @@ export const ReportsProvider = (props) => {
         })
         reportsCache[reportIndex] = reportUpdated
         setReports(reportsCache)
-        /* setMessage('') */
         console.log('reporte asignado')
         alert('reporte asignado')
         setLoading(false)
@@ -354,7 +385,7 @@ export const ReportsProvider = (props) => {
     const getReports = async () => {
         setMessage('Sincronizando reportes')
         setStatusReports(true)
-        if (isOnline && revision) {
+        if (isOnline) {
             console.log(isOperator, userData)
             if (admin) {
                 const response = await reportsRoutes.getAllReports()

@@ -83,7 +83,7 @@ const OnApp = () => {
     }
     useEffect(() => {
         console.log(isAuthenticated)
-        if(isAuthenticated) {
+        if(isAuthenticated && userData) {
             SocketConnection.sendIsActive(userData)
             /* detectExecutionState() */
         }

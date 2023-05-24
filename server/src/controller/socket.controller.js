@@ -36,7 +36,7 @@ export default async (server) => {
             })
         })
         socket.on('nueva-asignacion', async (data) => {
-            const response = await Reports.findOne(data.reportId)
+            const response = await Reports.findById(data.reportId)
             const machineData = await Machine.findOne({equid: response.machine})
             if (machineData) {
                 const newReport = {

@@ -14,10 +14,15 @@ const VersionControlModal = ({open, closeModal}) => {
                 <div style={{textAlign: 'left', width: '100%'}}>
                     <h2>Versión {environment.version}</h2>
                     <li>
-                        Mejoras por errores  
+                        Se corrige error de asignación de usuarios y botón de sincronización.  
                     </li>
                 </div>
                 <div style={{width: '100%', height: '25vh', overflowY: 'auto'}}>
+                    <br />
+                    <strong>v2.9.1</strong>
+                    <li>
+                        Corrección de errores  
+                    </li>
                     <br />
                     <strong>v2.9</strong>
                     <li>

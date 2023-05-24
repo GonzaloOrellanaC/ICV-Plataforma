@@ -70,34 +70,18 @@ const ReportsList = ({list, typeReportsSelected, statusReports, getReports}) => 
     }
     
 
-    const levelToState = (level, usersAssigned, init, state) => {
+    const levelToState = (level, usersAssigned, state) => {
         if (level === 0 || !level) {
             if (usersAssigned.length > 0) {
-                if (/* init &&  */state==='En proceso') {
+                if (state==='En proceso') {
                     return 'Ejecutando por operador'
-                } else if (init && state==='Asignar') {
+                } else if (state==='Asignar') {
                     return 'Reasignar'
                 }
             } else {
                 return 'Asignar'
             }
-        }
-        /* if((level===0 || !level)) {
-            console.log(level, usersAssigned, init, state)
-            if (init && usersAssigned.length > 0) {
-                if (state === 'Asignar') {
-                    return 'Reasignar'
-                } else {
-                    return 'Ejecutando por operador'
-                }
-            } else {
-                return 'Sin asignar'
-            }
-        } *//*  else if(((level===0 || !level)&&!init) && (usersAssigned.length == 0)) {
-            return 'Sin Asignar'
-        } else if(((level===0 || !level)&&init) && (usersAssigned.length == 0)) {
-            return 'Reasignar'
-        } */ else if (level===1) {
+        } else if (level===1) {
             return 'Revisión Supervisor'
         } else if (level===2) {
             return 'Revisión J. Maquinaria'
@@ -200,7 +184,7 @@ const ReportsList = ({list, typeReportsSelected, statusReports, getReports}) => 
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                         <div style={{textAlign: 'center'}}>
-                                            <p> <strong>{levelToState(item.level, item.usersAssigned, item.dateInit, item.state)}</strong> </p>
+                                            <p> <strong>{levelToState(item.level, item.usersAssigned, item.state)}</strong> </p>
                                         </div>
                                     </Grid>
                                     {

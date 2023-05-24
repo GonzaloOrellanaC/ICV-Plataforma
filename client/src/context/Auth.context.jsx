@@ -23,7 +23,6 @@ export const AuthProvider = (props) => {
     const [ isChiefMachinery, setIsChiefMachinery ] = useState(false)
     const [ refCanvas, setRefCanvas ] = useState()
     const [ openSign, setOpenSign ] = useState(false)
-    const [ newReport, setNewReport ] = useState()
 
     useEffect(() => {
         console.log(Boolean(window.localStorage.getItem('isauthenticated')))
@@ -87,10 +86,10 @@ export const AuthProvider = (props) => {
         }
     },[userData])
 
-    useEffect(() => {
-        if (userData && isAuthenticated) {
-            SocketConnection.listenNotifocations(userData, getData)
-        }
+    /* useEffect(() => {
+        if (userData && isAuthenticated) { */
+            /* SocketConnection.listenNotifocations(userData, getData) */
+        /* }
     },[userData, isAuthenticated])
 
     const getData = (data) => {
@@ -106,7 +105,7 @@ export const AuthProvider = (props) => {
         if (data.report) {
             setNewReport(data.report)
         }
-    }
+    } */
 
     const saveUserToDb = async (userDataLocal) => {
         const {database} = await userDatabase.initDb()
@@ -151,7 +150,7 @@ export const AuthProvider = (props) => {
         isSapExecutive,
         isShiftManager,
         isChiefMachinery,
-        newReport,
+        /* newReport, */
         loginRut: (rut, password) => {
             return new Promise(resolve => {
                 console.log(rut)

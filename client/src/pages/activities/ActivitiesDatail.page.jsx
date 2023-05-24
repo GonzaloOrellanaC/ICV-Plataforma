@@ -50,7 +50,7 @@ const ActivitiesDetailPage = () => {
     useEffect(() => {
         if (report) {
             console.log(isSapExecutive, report.level)
-            if ((isOperator && (report.level === 0 || !report.level)) || 
+            if ((isOperator && (report.level === 0 || !report.level) && (report.usersAssigned[0]._id === userData._id)) || 
             (isShiftManager && (report.level === 1)) || 
             (isChiefMachinery && (report.level === 2)) || 
             (isSapExecutive && (report.level === 3))) {
@@ -112,11 +112,6 @@ const ActivitiesDetailPage = () => {
                 setLoadingLogo(true)
                 const reportCache = report
                 const emails = await getExecutivesSapEmail(reportLevel)
-                /* let usersAssigned = new Array()
-                usersAssigned = reportCache.usersAssigned
-                let usersAssignedFiltered = usersAssigned.filter((user) => {if(user === userData._id){}else{return user}})
-                reportCache.idIndex = id
-                reportCache.usersAssigned = usersAssignedFiltered */
                 reportCache.state = "Asignar"
                 reportCache.emailing = "termino-jornada"
                 reportCache.fullNameWorker = `${userData.name} ${userData.lastName}`
@@ -135,7 +130,8 @@ const ActivitiesDetailPage = () => {
                     )
                     if(index == (ids.length - 1)) {
                         let actualiza = await reportsRoutes.editReport(reportCache)
-                        console.log(actualiza)
+                        const executionReportCache = executionReport
+                        await executionReportsRoutes.saveExecutionReport(executionReportCache)
                         if(actualiza) {
                             const {database} = await reportsDatabase.initDbReports()
                             const state = await reportsDatabase.eliminar(reportCache.idIndex, database)
@@ -421,7 +417,7 @@ const ActivitiesDetailPage = () => {
                                         <LinearProgress variant="determinate" value={itemProgress} style={{width: '100%'}}/>
                                         <br />
                                         {(
-                                            (isOperator && (!report.level || report.level === 0)) || 
+                                            (isOperator && (!report.level || report.level === 0) && (report.usersAssigned[0]._id === userData._id)) || 
                                             (isShiftManager && (report.level === 1)) || 
                                             isChiefMachinery && (report.level === 2)
                                             ) && <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={forwardReport}>
@@ -444,7 +440,7 @@ const ActivitiesDetailPage = () => {
                                             <Close />
                                             Rechazar OT
                                         </Button>}
-                                        {(isOperator&&(report.level===0 || !report.level)) && <Button onClick={terminarjornada} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
+                                        {(isOperator&&(report.level===0 || !report.level) && (report.usersAssigned[0]._id === userData._id)) && <Button onClick={terminarjornada} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
                                             <FontAwesomeIcon icon={faClock} style={{marginRight: 10}} /> Terminar Jornada
                                         </Button>}
                                         <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 0}} onClick={openMessages}>

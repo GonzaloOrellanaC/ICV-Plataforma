@@ -160,6 +160,7 @@ const PautaDetail = (
         contentDataCache[index] = element
         const executionReportCache = executionReport
         executionReportCache.group[indexGroup] = contentDataCache
+        executionReportCache.offLineGuard = Date.now()
         setContentData(contentDataCache)
         const {database} = await executionReportsDatabase.initDb()
         await executionReportsDatabase.actualizar(executionReportCache, database)

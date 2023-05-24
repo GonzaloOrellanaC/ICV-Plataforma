@@ -9,7 +9,7 @@ import { AuthContext, ExecutionReportContext, useReportsContext } from '../../co
 const ActivitiesPage = () => {
     const classes = useStylesTheme();
     const history = useHistory();
-    const {isOperator, isSapExecutive, isShiftManager, isChiefMachinery, admin} = useContext(AuthContext)
+    const {isOperator, isSapExecutive, isShiftManager, isChiefMachinery, admin, userData} = useContext(AuthContext)
     const {setReport} = useContext(ExecutionReportContext)
     const {priorityAssignments, normalAssignments} = useReportsContext()
     const [showList, setShowList] = useState(true)
@@ -245,7 +245,7 @@ const ActivitiesPage = () => {
                                                                             ? 
                                                                             'Ver'
                                                                             : 
-                                                                            (isOperator||(localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') ? (element.readyToSend ? 'Listo a enviar' : 'Ejecutar') : 'Ver')
+                                                                            ((isOperator && ((element.usersAssigned && element.usersAssigned[0]._id) === userData._id)) ? (element.readyToSend ? 'Listo a enviar' : 'Ejecutar') : 'Ver')
                                                                         }
                                                                     </Button>
                                                                 </Grid>

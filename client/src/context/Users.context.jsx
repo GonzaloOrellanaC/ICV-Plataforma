@@ -44,7 +44,7 @@ export const UsersProvider = props => {
     }, [usersFilteredBySite, admin, users])
 
     const getUsers = async () => {
-        const response = await usersRoutes.getAllUsers(admin, userData.isTest)
+        const response = await usersRoutes.getAllUsers(admin, userData ? userData.isTest : false)
         setUsers(response.data)
     }
 

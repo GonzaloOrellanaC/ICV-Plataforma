@@ -59,6 +59,9 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
             setReading(false)
         }
     },[operarios])
+    useEffect(() => {
+        console.log(report)
+    },[report])
     const setSiteNameById = () => {
         console.log(sites)
         const filtered = sites.filter(siteToFilter => {if (site === siteToFilter.idobra) return siteToFilter})
@@ -83,11 +86,9 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                         usersAssigned.push(userId)
                     }
                     reportCache.usersAssigned = usersAssigned
-                    /* if (reportCache.state === 'Asignar') { */
-                        reportCache.state = 'En proceso'
-                        reportCache.level = 0
-                    /* } */
-                    saveReport(reportCache)
+                    reportCache.state = 'En proceso'
+                    reportCache.level = 0
+                    await saveReport(reportCache)
                     SocketConnection.sendnotificationToUser(
                         'nueva-asignacion',
                         `${userData._id}`,
@@ -95,7 +96,8 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                         'Asignaciones',
                         'Se ha asignado nueva OT',
                         `OT ${reportCache.idIndex} asignada a usted`,
-                        '/assignment'
+                        '/assignment',
+                        report._id
                         )
                 }
                 close()
@@ -218,7 +220,7 @@ const AssignReportModal = ({open, report, closeModal, reportType, onlyClose}) =>
                 <div style={{width: '100%', height: 59}}>
                 <label>Asignar Pauta a:</label>
                 <br />
-                <select disabled={reading} value={usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value)/* ; setCloseType(true) */}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
+                <select disabled={reading} value={(report.state === 'Asignar') ? null : usersAssigned[0]} onChange={(e)=>{setUserToReport(e.target.value)/* ; setCloseType(true) */}} placeholder="Seleccionar operario" style={{height: 44, width: 274, borderStyle: 'solid', borderColor: '#C4C4C4', borderWidth: 1, borderRadius: 10}}>
                     <option value={""}>{reading ? 'Leyendo operarios. Espere...' : 'Seleccionar operario'}</option>
                     {
                         operarios && operarios.map((user, i) => {
