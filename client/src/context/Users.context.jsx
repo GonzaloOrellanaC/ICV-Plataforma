@@ -38,6 +38,7 @@ export const UsersProvider = props => {
                     }
                 })
             })
+            console.log(inspectorsCache)
             setInspectors(inspectorsCache)
             setMaintenances(maintenancesCache)
         }
