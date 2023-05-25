@@ -76,16 +76,16 @@ const ActivitiesPage = () => {
                                                 </div>
                                             </Grid>
                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 200}}>Inicio programado</p>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 170}}>Inicio programado</p>
                                             </Grid>
                                             <Grid item l={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 200}}>Inicio ejecución</p>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 170}}>Inicio ejecución</p>
                                             </Grid>
                                             {!isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 200}}>Término programado</p>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 170}}>Término programado</p>
                                             </Grid>}
                                             {!isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 200}}>Término ejecución</p>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 170}}>Término ejecución</p>
                                             </Grid>}
                                             <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'center', minWidth: 70}}>Flota</p>
@@ -93,7 +93,7 @@ const ActivitiesPage = () => {
                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'center', minWidth: 70}}>Nro Máquina</p>
                                             </Grid>
-                                            <Grid item xl={2} lg={2} md={2} sm={2} xs={2} style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
+                                            <Grid item xl={1} lg={1} md={1} sm={1} xs={1} style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
                                                 {/* <div style={{width: '100%', textAlign: 'center', paddingRight: 20}}> */}
                                                     <p style={{fontSize: 12, fontWeight: 'bold'}}>Acción</p>
                                                 {/* </div> */}
@@ -145,17 +145,17 @@ const ActivitiesPage = () => {
                                                             </Grid>
                                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                 <div style={{width: '100%', textAlign: 'left'}}>
-                                                                    <p style={{fontSize: 11, minWidth: 200}}>{date(element.datePrev)}</p>
+                                                                    <p style={{fontSize: 11, minWidth: 170}}>{date(element.datePrev)}</p>
                                                                 </div>
                                                             </Grid>
                                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                                <p style={{fontSize: 11, minWidth: 200}}>{date(element.dateInit)}</p>
+                                                                <p style={{fontSize: 11, minWidth: 170}}>{date(element.dateInit)}</p>
                                                             </Grid>
                                                             { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                                <p style={{fontSize: 11, minWidth: 200}}> {date(element.endPrev)} </p>
+                                                                <p style={{fontSize: 11, minWidth: 170}}> {date(element.endPrev)} </p>
                                                             </Grid>}
                                                             { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                                <p style={{fontSize: 11, minWidth: 200}}> {date(element.endReport)} </p>
+                                                                <p style={{fontSize: 11, minWidth: 170}}> {date(element.endReport)} </p>
                                                             </Grid>}
                                                             <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
                                                                 <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> {element.machineData && element.machineData.type} {element.machineData && element.machineData.model} </p>
@@ -163,7 +163,7 @@ const ActivitiesPage = () => {
                                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                 <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> N°: {element.machineData && element.machineData.equ} </p>
                                                             </Grid>
-                                                            <Grid item xl={2} lg={2} md={2} sm={2} xs={2} style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
+                                                            <Grid item xl={1} lg={1} md={1} sm={1} xs={1} style={{width: '100%', textAlign: 'right', paddingRight: 0}}>
                                                                 <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>Ver</Button>
                                                             </Grid>
                                                         </Grid>
@@ -178,7 +178,7 @@ const ActivitiesPage = () => {
                                                 width: '100%'
                                             }}
                                         >
-                                            <h3>Otras asignaciones</h3>
+                                            {/* <h3>Otras asignaciones</h3> */}
                                             {
                                                 (normalAssignments.length === 0 && showList)
                                                 &&
@@ -218,18 +218,18 @@ const ActivitiesPage = () => {
                                                                 </Grid>
                                                                 <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                     <div style={{width: '100%', textAlign: 'left'}}>
-                                                                        <p style={{fontSize: 11, minWidth: 200}}>{date(element.datePrev)}</p>
+                                                                        <p style={{fontSize: 11, minWidth: 170}}>{date(element.datePrev)}</p>
                                                                     </div>
                                                                 </Grid>
                                                                 <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                                    <p style={{fontSize: 11, minWidth: 200}}>{date(element.dateInit)}</p>
+                                                                    <p style={{fontSize: 11, minWidth: 170}}>{date(element.dateInit)}</p>
                                                                 </Grid>
                                                                 { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                                    <p style={{fontSize: 11, minWidth: 200}}> {date(element.endPrev)} </p>
+                                                                    <p style={{fontSize: 11, minWidth: 170}}> {date(element.endPrev)} </p>
                                                                 </Grid>}
                                                                 {!isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                     <div style={{width: '100%', textAlign: 'left'}}>
-                                                                        <p style={{fontSize: 11, minWidth: 200}}>{date(element.endReport)}</p>
+                                                                        <p style={{fontSize: 11, minWidth: 170}}>{date(element.endReport)}</p>
                                                                     </div>
                                                                 </Grid>}
                                                                 <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
@@ -238,15 +238,15 @@ const ActivitiesPage = () => {
                                                                 <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                     <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> N°: {element.machineData && element.machineData.equ} </p>
                                                                 </Grid>
-                                                                <Grid item xl={2} lg={2} md={2} sm={2} xs={2} style={{width: '100%', textAlign: 'right', paddingRight: 20}}>
-                                                                    <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30}}>
-                                                                        {
-                                                                            (element.level && (element.level > 0))
+                                                                <Grid item xl={1} lg={1} md={1} sm={1} xs={1} style={{width: '100%', textAlign: 'right', paddingRight: 0}}>
+                                                                    <Button onClick={()=>{goToDetail(element)}} color='primary' style={{borderRadius: 30, paddingRight: 0}}>
+                                                                        <p style={{margin:0}}>{
+                                                                            (!isOperator && element.level && (element.level > 0))
                                                                             ? 
                                                                             'Ver'
                                                                             : 
                                                                             ((isOperator && ((element.usersAssigned && element.usersAssigned[0]._id) === userData._id)) ? (element.readyToSend ? 'Listo a enviar' : 'Ejecutar') : 'Ver')
-                                                                        }
+                                                                        }</p>
                                                                     </Button>
                                                                 </Grid>
                                                             </Grid>

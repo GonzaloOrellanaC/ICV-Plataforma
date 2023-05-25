@@ -22,7 +22,7 @@ const ActivitiesDetailPage = () => {
     const history = useHistory()
     const {id} = useParams()
     const {report, executionReport, setOtIndex, otIndex, sapId, serieEquipo, setLoading, setLoadingMessage, reporteIniciado} = useExecutionReportContext()
-    const {saveReportToData, getReports, setStatusReports, getReportsOffline} = useReportsContext()
+    const {saveReportToData, getReports, setStatusReports, getReportsOffline, setMessage} = useReportsContext()
     const [ progress, resutProgress ] = useState(0)
     const [ itemProgress, resultThisItemProgress ] = useState(0)
     const [ reportLevel, setReportLevel ] = useState()
@@ -118,6 +118,7 @@ const ActivitiesDetailPage = () => {
                 reportCache.emailsToSend = emails
                 let ids = new Array()
                 ids = await getExecutivesSapId()
+                setMessage('Enviando avisos a usuarios.')
                 ids.forEach(async (id, index) => {
                     SocketConnection.sendnotificationToUser(
                         'termino-jornada',
@@ -129,18 +130,20 @@ const ActivitiesDetailPage = () => {
                         '/reports'
                     )
                     if(index == (ids.length - 1)) {
+                        setMessage('Guardando OT en base de datos.')
                         let actualiza = await reportsRoutes.editReport(reportCache)
                         const executionReportCache = executionReport
                         await executionReportsRoutes.saveExecutionReport(executionReportCache)
                         if(actualiza) {
                             const {database} = await reportsDatabase.initDbReports()
                             const state = await reportsDatabase.eliminar(reportCache.idIndex, database)
-                            console.log(state)
-                            getReportsOffline()
+                            console.log('Revisando si se borra de bases de datos', state)
                             setTimeout(() => {
                                 alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
                                 history.goBack()
                                 setLoadingLogo(false)
+                                setMessage('')
+                                getReportsOffline()
                             }, 500)
                         }
                     }
