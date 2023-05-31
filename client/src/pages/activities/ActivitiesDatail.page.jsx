@@ -49,6 +49,7 @@ const ActivitiesDetailPage = () => {
 
     useEffect(() => {
         if (report) {
+            setReportLevel(report.level)
             console.log(isSapExecutive, report.level)
             if ((isOperator && (report.level === 0 || !report.level) && (report.usersAssigned[0]._id === userData._id)) || 
             (isShiftManager && (report.level === 1)) || 
@@ -274,7 +275,8 @@ const ActivitiesDetailPage = () => {
         /* SocketConnection.toPDF(report, userData) */
         /* getReports() */
         alert(report.level === 4 ? 'Orden de trabajo cerrada correctamente' : 'Orden de trabajo enviado a revisión')
-        history.replace('/assignment')
+        /* history.replace('/assignment') */
+        history.goBack()
         setLoadingLogo(false)
     }
 
@@ -299,8 +301,9 @@ const ActivitiesDetailPage = () => {
             const listaMateriales = []
             const db = await executionReportsDatabase.initDb()
             const data = await executionReportsDatabase.consultar(db.database)
+            console.log(data)
             const executionReportFiltered = data.filter((execution) => {
-                                                if(execution.reportId === reportAssigned._id) {
+                                                if(execution.reportId === report._id) {
                                                     return execution
                                                 }
                                             })
@@ -309,7 +312,6 @@ const ActivitiesDetailPage = () => {
                     nombre: element,
                     data: []
                 }
-                /* console.log(executionReportFiltered[0].group[element]) */
                 executionReportFiltered[0].group[element].forEach((item, i) => {
                     if (item.unidad === '*') {
 

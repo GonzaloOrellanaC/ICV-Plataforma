@@ -170,8 +170,6 @@ const dateSimple = (time) => {
     }
 }
 
-let imagesList = []
-
 const createTable = ( groupKeys, group ) => {
     console.log('Creando Tabla')
     let arrayTable = []
@@ -315,6 +313,7 @@ const getImageBase64 = async (imageUrl) => {
     }
 }
 
+let imagesList = []
 let verification = 0
 
 const createImagesTables2 = (executionReportData) => {
@@ -341,7 +340,11 @@ const createImagesTables2 = (executionReportData) => {
                     }
                 ]
                 if(i == (imagesList.length - 1)) {
-                    wait(i, arrayTable, resolve)
+                    const response = await wait(i, arrayTable, resolve)
+                    if (response) {
+                        imagesList = []
+                        verification = 0
+                    }
                 }
             })
         })
@@ -584,7 +587,7 @@ const createPdfBinary = ( pdfContent, resp, callback ) => {
     console.log(doc)
     resp+='Doc OK!'
     const pdf = doc.createPdfKitDocument(pdfContent)
-    console.log(pdf)
+    /* console.log(pdf) */
     if (pdf) {
         console.log('Ok')
         resp+='PDF OK!'
@@ -861,6 +864,7 @@ const toPDF = (reportData) => {
             const data = await ReportsService.editReportByIndexIntern(reportData.idIndex, {urlPdf: state.data.url})
             resolve({state: state, url: state.data.url})
         }, (error) => {
+            resolve({state: state, url: state.data.url})
             Sentry.captureException(error)
         })
     })

@@ -180,7 +180,7 @@ const ReportsList = ({list, typeReportsSelected, statusReports, getReports}) => 
                                         <p style={{textAlign: 'center'}}> {dateSimple(item.endPrev)} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                                        <p style={{textAlign: 'center'}}> {parseInt(item.machineData.hourMeter / 1000 / 60 / 60)} hrs </p>
+                                        <p style={{textAlign: 'center'}}> {parseInt(item.machineData.hourMeter / 1000/*  / 1000 / 60 / 60 */).toLocaleString()} hrs </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                         <div style={{textAlign: 'center'}}>
