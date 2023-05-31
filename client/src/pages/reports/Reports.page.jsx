@@ -83,7 +83,7 @@ const ReportsPage = () => {
                 }
             })
             const inspeccionesEnProceso = inspeccionesTotales.filter(inspeccion => {
-                if(inspeccion.usersAssigned.length > 0 && (inspeccion.level < 3 && inspeccion.level > 0)) {
+                if(inspeccion.usersAssigned.length > 0 && inspeccion.state==='En proceso' && (inspeccion.level < 3 && (inspeccion.level > 0 || !inspeccion.level))) {
                     return inspeccion
                 }
             })
