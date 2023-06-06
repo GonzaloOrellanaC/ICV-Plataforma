@@ -422,7 +422,7 @@ const createSubTables = async (list, index, indexNumber) => {
                 commit = `Observación: -- ${e.readCommits[0].userName}: ${e.readCommits[0].commit}`
                 date = dateSimple(e.readCommits[0].id)
                 timeData = time(e.readCommits[0].id)
-            }else if(e.messages) {
+            }else if(e.messages && e.messages.length > 0) {
                 /* console.log(e.messages[0]) */
                 if(e.messages.length > 0) {
                     e.messages.forEach((commitItem, index) => {
@@ -435,9 +435,9 @@ const createSubTables = async (list, index, indexNumber) => {
                     })
                 }
                 if(e.isWarning) {
-                    commit = `Observación: -- ${e.messages[0].name}: ${e.messages[0].content}`
-                    date = dateSimple(e.messages[0].id)
-                    timeData = time(e.messages[0].id)
+                    commit = `Observación: -- ${e.messages[0].name ? e.messages[0].name : 'N/A'}: ${e.messages[0].content ? e.messages[0].content : 'N/A'}`
+                    date = e.messages[0].id ? dateSimple(e.messages[0].id) : 'N/A'
+                    timeData = e.messages[0].id ? time(e.messages[0].id) : 'N/A'
                 }else{
                     commit = `${e.messages[0] ? e.messages[0].name : 'N/A'}: ${e.messages[0] ? e.messages[0].content : 'N/A'}`
                     date = dateSimple(e.messages[0] ? e.messages[0].id : 'N/A')
@@ -573,6 +573,7 @@ const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSig
 
 
 const createPdfBinary = ( pdfContent, resp, callback ) => {
+    console.log(pdfContent)
     var fonts = {
         Roboto: {
             normal: path.resolve(__dirname, "../fonts/Roboto-Regular.ttf"),
@@ -607,7 +608,7 @@ const createPdfBinary = ( pdfContent, resp, callback ) => {
             resp+='Listo a guardar en Nube!'
         }
         console.log('PDF Listo')
-        callback(result, resp/* 'data:application/pdf;base64,' + result.toString('base64') */)
+        callback(result, resp)
     }, err => {
         Sentry.captureException(err)
     })
