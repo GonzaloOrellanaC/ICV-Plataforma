@@ -5,13 +5,13 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect, } from "react";
 import { pautasDatabase, trucksDatabase } from '../../indexedDB';
 import { useStylesTheme } from '../../config'
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { apiIvcRoutes } from '../../routes';
 import { faArrowRight, faChevronRight, faEye } from "@fortawesome/free-solid-svg-icons";
 
 const PmsPage = () => {
     const classes = useStylesTheme();
-    const history = useHistory();
+    const navigate = useNavigate();
     const [ pmList, setPmList ] = useState([]);
     const [ machinesList, setMachineList ] = useState([]);
     const [ pType, setAge] = useState('');
@@ -22,7 +22,7 @@ const PmsPage = () => {
     };
 
     /* const getIdProgram = (id) => {
-        history.push(`pauta-detail/${id}`)
+        navigate(`pauta-detail/${id}`)
     } */
 
     useEffect(() => {
@@ -78,7 +78,7 @@ const PmsPage = () => {
                                     <div style={{paddingLeft: 0, }}>
                                         <Toolbar style={{paddingLeft: 0, width: '100%', backgroundColor: '#F9F9F9', borderRadius: 10,}}>
                                             <IconButton onClick={() => setTimeout(() => {
-                                                history.goBack()
+                                                navigate(-1)
                                             }, 500)}> 
                                                 <ArrowBackIos style={{color: '#333', fontSize: 16}} /> 
                                             </IconButton> 

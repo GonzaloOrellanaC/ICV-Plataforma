@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from "react-router-dom";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { Box, Grid, IconButton, Card, Toolbar } from "@material-ui/core";
 import { ArrowBackIos } from '@material-ui/icons'
 import { pautasDatabase } from "../../indexedDB"
@@ -10,7 +10,7 @@ import { useStylesTheme } from '../../config'
 const PautaDetailPage = () => {
     const classes = useStylesTheme();
     const [ pauta, setPauta ] = useState()
-    const history = useHistory();
+    const navigate = useNavigate();
     let { id } = useParams();
 
     useEffect( () => {
@@ -35,7 +35,7 @@ const PautaDetailPage = () => {
                                         <div style={{float: 'left', width: '100%'}}>
                                             <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10,}}>
                                                 <IconButton onClick={() => setTimeout(() => {
-                                                    history.goBack()
+                                                    navigate(-1)
                                                 }, 500)}> 
                                                     <ArrowBackIos style={{color: '#333', fontSize: 16}} /> 
                                                 </IconButton> 

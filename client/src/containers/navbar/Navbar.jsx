@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Drawer, Grid, IconButton, makeStyles } from '@material-ui/core';
 import { Menu, Close } from '@material-ui/icons';
 import clsx from 'clsx';
-import logo from '../../assets/Logologo_icv_1.svg';
+/* import logo from '../../assets/Logologo_icv_1.svg'; */
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faSync,
@@ -22,7 +22,7 @@ import {
     faSlidersH} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation, useReportsContext } from '../../context';
 import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
-import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+/* import { useLocation } from 'react-router-dom/cjs/react-router-dom.min'; */
 
 const useStyles = makeStyles(theme => ({
     drawer: {
@@ -250,7 +250,7 @@ const Navbar = () => {
                             </div>
                             {navBarOpen && 
                                 <div style={{padding: 10}}>
-                                    <img height={60} src={logo} alt="" />
+                                    <img height={60} src={'./assets/Logologo_icv_1.svg'} alt="" />
                                     <p style={{color: '#fff', margin: 0}}>Ingeniería Civil Vicente</p>
                                 </div>
                             }
@@ -259,7 +259,7 @@ const Navbar = () => {
                             </div>
                             <div style={{width: '100%', marginTop: 40, textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Inicio'>
-                                    <Link to='/' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path === '/') ? '#BE2E26' : '#FFFFFF' }}>
+                                    <Link to='/welcome' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path === '/welcome') ? '#BE2E26' : '#FFFFFF' }}>
                                         <FontAwesomeIcon icon={faHome}/> {navBarOpen ?  ' Inicio' : ''}
                                     </Link>
                                 </IconButton>
@@ -308,7 +308,7 @@ const Navbar = () => {
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton onClick={closeSideBar} title='Actualizar' onClickCapture={()=>{getReports()}}>
-                                    <div className={classes.sideButtons} style={{ color: (path.includes('/user-profile')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
+                                    <div className={classes.sideButtons} style={{ color: '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faSync}/> {navBarOpen ?  ' Actualizar' : ''}
                                     </div>
                                 </IconButton>

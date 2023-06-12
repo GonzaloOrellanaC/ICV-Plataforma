@@ -12,7 +12,7 @@ import {
     Checkbox,
     Chip} from '@material-ui/core';
 import { ArrowBackIos } from '@material-ui/icons';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useStylesTheme } from '../../config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
@@ -29,7 +29,7 @@ const ReportsPage = () => {
     const [ reportType, setReportType ] = useState('')
     const [ hableCreateReport, setHableCreateReport ] = useState(false)
     const classes = useStylesTheme()
-    const history = useHistory();
+    const navigate = useNavigate();
     const [ reports, setReports ] = useState([])
 
     const getReportesPorEstado = async (state, reportType) => {
@@ -72,7 +72,7 @@ const ReportsPage = () => {
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack()
+                                            navigate(-1)
                                         }, 500)}>
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton>
@@ -246,7 +246,7 @@ const ReportsPage = () => {
                                                                 <p style={{margin: 0}}>  </p>
                                                             </div>
                                                             <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                                                <p style={{margin: 0}}> <button onClick={()=>{history.push(`/reports/edit-report/${JSON.stringify(e)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
+                                                                <p style={{margin: 0}}> <button onClick={()=>{navigate(`/reports/edit-report/${JSON.stringify(e)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
                                                             </div>
                                                         </ListItem>
                                                     )

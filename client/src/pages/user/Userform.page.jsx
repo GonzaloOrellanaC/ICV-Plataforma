@@ -5,7 +5,7 @@ import { useStylesTheme } from '../../config'
 
 const UserformPage = () => {
     const classes = useStylesTheme();
-    const history = useHistory()
+    const navigate = useNavigate()
 
     return (
         <Box height='100%'>
@@ -17,7 +17,7 @@ const UserformPage = () => {
                             <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                 <Toolbar style={{paddingLeft: 0}}>
                                     <IconButton onClick={() => setTimeout(() => {
-                                        history.goBack()
+                                        navigate(-1)
                                     }, 500)}> 
                                         <ArrowBackIos style={{color: '#333', fontSize: 35}}/> 
                                     </IconButton> 

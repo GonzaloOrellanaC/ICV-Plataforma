@@ -15,7 +15,7 @@ import { dateWithTime } from '../../config';
 import { LoadingLogoModal } from '../loadings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowCircleLeft, faArrowUp, faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext, useExecutionReportContext } from '../../context';
 
 const ReviewReportModal = ({open, report, onlyClose}) => {
@@ -30,7 +30,7 @@ const ReviewReportModal = ({open, report, onlyClose}) => {
     const [ loadingDelete, setLoadingDelete ] = useState(false)
     const [ toEditSapId, setToEditSapId ] = useState(false)
     const [ sapIdToEdit, setSapIdToEdit ] = useState(sapId)
-    const history = useHistory()
+    const navigate = useNavigate()
 
     const getUsers = () => {
         console.log(usersAssigned[0])
@@ -69,7 +69,7 @@ const ReviewReportModal = ({open, report, onlyClose}) => {
 
     const toReport = () => {
         setReport(report)
-        history.push(`/assignment/${idIndex}`)
+        navigate(`/assignment/${idIndex}`)
     }
 
     const removeOt = () => {

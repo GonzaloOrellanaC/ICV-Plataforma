@@ -1,15 +1,16 @@
 import { Button, Dialog, DialogContent, IconButton, Slide } from "@material-ui/core"
-import { Close, ChangeHistoryTwoTone } from "@material-ui/icons"
-import { forwardRef, useEffect, useState } from "react"
-import Slider from "react-slick"
+import { Close/* , ChangenavigateTwoTone  */ } from "@material-ui/icons"
+import { forwardRef, /* useEffect,  */useState } from "react"
+/* import Slider from "react-slick" */
 import "slick-carousel/slick/slick.css" 
 import "slick-carousel/slick/slick-theme.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faArrowAltCircleLeft, faArrowAltCircleRight, faImage } from "@fortawesome/free-solid-svg-icons"
+import { /* faArrowAltCircleLeft, faArrowAltCircleRight,  */faImage } from "@fortawesome/free-solid-svg-icons"
 import { Navigation, Pagination, Scrollbar, A11y, EffectCreative, Keyboard, Zoom } from 'swiper'
-import { Swiper, SwiperSlide } from 'swiper/react/swiper-react';
-import "swiper/swiper-bundle.min.css"
-import "swiper/swiper.min.css"
+import { Swiper, SwiperSlide } from 'swiper/react';
+/* import "swiper/swiper-bundle.min.css"
+import "swiper/swiper.min.css" */
+import 'swiper/css'
 import { LoadingLogoModal } from "../modals"
 import { imageToBase64 } from "../config"
 const Transition = forwardRef(function Transition(props, ref) {
@@ -18,7 +19,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 /* SwiperCore.use([EffectCoverflow, Pagination]) */
 
-const ImageAstDialog = ({handleClickOpen, open, handleClose, images, setIsEdited}) => {
+const ImageAstDialog = ({/* handleClickOpen,  */open, handleClose, images, setIsEdited}) => {
     console.log(images)
     
     const [sliderIndex, setSliderIndex] = useState()

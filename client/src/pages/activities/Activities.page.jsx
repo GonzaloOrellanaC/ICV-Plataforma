@@ -2,13 +2,13 @@ import React, { useState, useContext } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme, CircularProgress } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { date, useStylesTheme } from '../../config'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 /* import { machinesDatabase, reportsDatabase } from '../../indexedDB' */
 import { AuthContext, ExecutionReportContext, useReportsContext } from '../../context'
 
 const ActivitiesPage = () => {
     const classes = useStylesTheme();
-    const history = useHistory();
+    const navigate = useNavigate();
     const {isOperator, isSapExecutive, isShiftManager, isChiefMachinery, admin, userData} = useContext(AuthContext)
     const {setReport} = useContext(ExecutionReportContext)
     const {priorityAssignments, normalAssignments} = useReportsContext()
@@ -19,7 +19,7 @@ const ActivitiesPage = () => {
     const goToDetail = (element) => {
         console.log(element)
         /* setReport(element) */
-        history.push(`/assignment/${element.idIndex}`)
+        navigate(`/assignment/${element.idIndex}`)
     }
 
     const compareNumbers = (a, b) => {
@@ -36,7 +36,7 @@ const ActivitiesPage = () => {
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack()
+                                            navigate(-1)
                                         }, 500)}> 
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 

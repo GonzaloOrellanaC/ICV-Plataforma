@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Button, Grid, Link, makeStyles, TextField } from '@material-ui/core'
 import { useAuth, useLanguage } from '../../context'
 import { authRoutes } from '../../routes'
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { LoadingModal } from '../../modals';
 
 
@@ -23,7 +23,7 @@ const ResetPassword = () => {
     const [loading, setLoading] = useState(false)
 
     const classes = useStyles();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleChange = (event) => {
         switch (event?.target?.name) {
@@ -46,7 +46,7 @@ const ResetPassword = () => {
             }else{
                 alert(forgotPasswordState.data.message);
                 setLoading(false)
-                history.replace('/')
+                navigate.replace('/')
             }
         }catch (err) {
             console.log('No se pudo obtener el reset')
@@ -87,7 +87,7 @@ const ResetPassword = () => {
                         </Button>
                     </Grid>
                     <Grid item xs={12} container justifyContent='center' style={{paddingTop: 40}}>
-                        <Button className={classes.button} variant='contained' color='primary' onClick={()=>{history.goBack()}}>
+                        <Button className={classes.button} variant='contained' color='primary' onClick={()=>{navigate(-1)}}>
                             VOLVER
                         </Button>
                     </Grid>

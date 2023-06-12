@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Grid, IconButton, Link, makeStyles, TextField } from '@material-ui/core'
 import { useLanguage } from '../../context'
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { authRoutes } from '../../routes';
 import './resetUser.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -26,7 +26,7 @@ const RestorePassword = ({id}) => {
     const [ passwLength, setPasswLength ] = useState(false);
 
     const classes = useStyles();
-    const history = useHistory();
+    const navigate = useNavigate();
     const [ verPassword, setVerPassword ] = useState('password')
     const [ verPassword2, setVerPassword2 ] = useState('password')
 
@@ -65,7 +65,7 @@ const RestorePassword = ({id}) => {
             if(password.length > 5) {
                 authRoutes.restorePassword(password, token).then(data => {
                     alert('Contraseña cambiada con éxito');
-                    history.push('/');
+                    navigate('/');
                 }).catch(err => {
                     alert('Error al crear contraseña. El correo utilizado está vencido. Revise si le ha llegado un correo nuevo con la solicitud de restauración de contraseña actualizado o espere un máximo de 10 minutos más. Si el error persiste, contacte al administrador.')
                 })
@@ -162,7 +162,7 @@ const RestorePassword = ({id}) => {
                         </Button>
                     </Grid>
                     <Grid item xs={12} container justifyContent='center' style={{paddingTop: 10}}>
-                        <Button className={classes.button} variant='contained' color='primary' onClick={()=>{history.replace('/')}}>
+                        <Button className={classes.button} variant='contained' color='primary' onClick={()=>{navigate.replace('/')}}>
                             {dictionary.restorePassword.cancel}
                         </Button>
                     </Grid>

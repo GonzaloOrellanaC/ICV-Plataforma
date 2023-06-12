@@ -4,7 +4,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { Toolbar, ListItem, Checkbox, Modal, Box } from "@material-ui/core";
 import { changeTypeUser } from '../../config'
 import { AssignReportModal } from '../../modals'
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { machinesRoutes, reportsRoutes } from "../../routes";
 
 const styleModal = {
@@ -27,7 +27,7 @@ const ReportsList = ({height, reportType, repsList}) => {
     const [ reportData, setReportData ] = useState(null);
     const [ openModalState, setOpenModalState ] = useState(false);
     const [ reports, setReports ] = useState([])
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const openModal = (report) => {
         setReportData(report);
@@ -143,7 +143,7 @@ const ReportsList = ({height, reportType, repsList}) => {
                                         <p style={{margin: 0}}>  </p>
                                     </div>
                                     <div style={{textAlign: 'center', width: '10%', marginLeft: 5}}>
-                                        <p style={{margin: 0}}> <button onClick={()=>{history.push(`/reports/edit-report/${JSON.stringify(e)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
+                                        <p style={{margin: 0}}> <button onClick={()=>{navigate(`/reports/edit-report/${JSON.stringify(e)}`)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>
                                     </div>
                                 </ListItem>
                             )

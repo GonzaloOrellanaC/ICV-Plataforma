@@ -53,14 +53,14 @@ const createAstImages = (astList) => {
     })
 }
 
-const crateHistoryTable = ( history ) => {
+const cratenavigateTable = ( navigate ) => {
     console.log('Creando tabla de historial')
     let arrayTable = []
     return new Promise(resolve => {
-        history.sort((a, b) => {
+        navigate.sort((a, b) => {
             return a.id - b.id
         })
-        history.forEach(async (data, index) => {
+        navigate.forEach(async (data, index) => {
             if (index == 0) {
                 arrayTable.push(
                     {
@@ -109,7 +109,7 @@ const crateHistoryTable = ( history ) => {
                     text: '.................................\n'
                 }
             )
-            if(index == (history.length - 1)) {
+            if(index == (navigate.length - 1)) {
                 console.log('Tabla historial lista')
                 resolve(arrayTable)
             }
@@ -586,7 +586,7 @@ export default (reportData, machineData, setLoadingMessage/* , stopPrintingLoad 
                     }
                 },
                 await createTable(groupKeys, group),
-                (reportData.history.length > 0) ? await crateHistoryTable(reportData.history) : {},
+                (reportData.navigate.length > 0) ? await cratenavigateTable(reportData.navigate) : {},
                 createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser),
                 (executionReportData[0].astList && (executionReportData[0].astList.length > 0)) ? 
                 {

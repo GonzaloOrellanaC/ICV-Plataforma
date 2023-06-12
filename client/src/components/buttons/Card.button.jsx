@@ -4,7 +4,7 @@ import { Button, makeStyles } from '@material-ui/core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faClipboardList, faTools, faUserCog, faUsers, faListAlt, faTruck, faListOl, faBook } from '@fortawesome/free-solid-svg-icons'
 import { useLanguage } from '../../context'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
 const CardButton = ({ variant, disableButton }) => {
     const { dictionary } = useLanguage()
     const classes = useStyles();
-    const history = useHistory();
+    const navigate = useNavigate();
   
     const handleTypeIcon = () => {
         switch (variant) {
@@ -89,7 +89,7 @@ const CardButton = ({ variant, disableButton }) => {
     }
 
     return (
-        <Button onClick={() => {history.push(`/${variant}`)}} variant="contained" className={classes.buttonSelection} disabled={disableButton}>
+        <Button onClick={() => {navigate(`/${variant}`)}} variant="contained" className={classes.buttonSelection} disabled={disableButton}>
             <div className={classes.icon}>
                 {handleTypeIcon()}
                 <br />

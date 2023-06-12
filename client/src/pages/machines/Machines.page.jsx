@@ -4,12 +4,12 @@ import { Box, Grid, Toolbar, IconButton } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { useStylesTheme } from '../../config'
 import { MachineButton } from '../../components/buttons'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth, useMachineContext } from '../../context'
 const MachinesPage = ({ route }) => {
     const classes = useStylesTheme()
     const {machines} = useMachineContext()
-    const history = useHistory();
+    const navigate = useNavigate();
     const [routeData, setRouteData] = useState()
 
     useEffect(() => {
@@ -32,7 +32,7 @@ const MachinesPage = ({ route }) => {
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10,}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack()
+                                            navigate(-1)
                                         }, 500)}> 
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 

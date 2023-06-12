@@ -5,7 +5,7 @@ import { executionReportsDatabase, pautasDatabase, reportsDatabase } from '../in
 import { useConnectionContext } from './Connection.context'
 import { SocketConnection } from '../connections'
 import { useNotificationsContext } from './Notifications.context'
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import { useNavigate } from 'react-router-dom'
 import addNotification from 'react-push-notification'
 import logoNotification from '../assets/logo_icv_notification_push.png'
 
@@ -27,7 +27,7 @@ export const ReportsProvider = (props) => {
     const [statusReports, setStatusReports] = useState(false)
     const [revision, setRevision] = useState(true)
     const [newReport, setNewReport] = useState()
-    const history = useHistory()
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (priorityAssignments || normalAssignments)
@@ -154,7 +154,7 @@ export const ReportsProvider = (props) => {
         setReports(reportsCache)
         alert(`Reporte ${reportUpdated.idIndex}, para máquina modelo ${reportUpdated.machine} creado satisfactoriamente.`)
         setLoading(false)
-        history.replace('/reports')
+        navigate.replace('/reports')
     }
 
     const saveReportAsignation = async (reportData) => {

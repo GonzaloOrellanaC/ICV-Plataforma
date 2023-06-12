@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown, faCircle, faClipboardList } from '@fortawesome/free-solid-svg-icons';
 import './reports.css'
 import { ReportsList } from '../../containers';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 /* import { machinesDatabase, sitesDatabase } from '../../indexedDB';
 import { dateSimple, getWeekReports } from '../../config'; */
 import { LoadingLogoModal } from '../../modals';
@@ -35,7 +35,7 @@ const ReportsPage = () => {
     const [ totalItems, setTotalItems ] = useState(0)
     const [site, setSite] = useState('nada')
     const [typeReportsSelected, setTypeReportsSelected] = useState('')
-    const history = useHistory()
+    const navigate = useNavigate()
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
     const [canOpenNewReport, setCanOpenNewReport] = useState(false)
     useEffect(() => {
@@ -369,7 +369,7 @@ const ReportsPage = () => {
                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
                         <IconButton onClick={() => setTimeout(() => {
-                            history.goBack()
+                            navigate(-1)
                         }, 500)}>
                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                         </IconButton>
@@ -378,7 +378,7 @@ const ReportsPage = () => {
                         </h1>
                         <button 
                             hidden={!hableCreateReport}
-                            onClick={()=>{canOpenNewReport ? history.push('/reports/create-report') : alert('Espere a que las pautas estén descargadas')}} 
+                            onClick={()=>{canOpenNewReport ? navigate('/reports/create-report') : alert('Espere a que las pautas estén descargadas')}} 
                             title='Nuevo reporte' 
                             style={
                                 {

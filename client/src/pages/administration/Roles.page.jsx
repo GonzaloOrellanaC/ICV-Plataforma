@@ -2,14 +2,14 @@ import React, {useState, useEffect} from 'react';
 import { Box, Card, Grid, Toolbar, IconButton } from '@material-ui/core';
 import { ArrowBackIos } from '@material-ui/icons';
 import { useStylesTheme } from '../../config';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { UsersList } from '../../containers';
 import './style.css'
 
 const RolesPage = ({route}) => {
     const [ isConnected, setIsConnected ] = useState(false)
     const classes = useStylesTheme();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if(navigator.onLine) {
@@ -31,7 +31,7 @@ const RolesPage = ({route}) => {
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack()
+                                            navigate(-1)
                                         }, 500)}>
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton>

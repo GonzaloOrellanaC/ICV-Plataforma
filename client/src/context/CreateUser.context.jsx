@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom/cjs/react-router-dom.min'
 import { useUsersContext } from '.'
+import { useLocation } from 'react-router-dom';
 
 export const CreateUserContext = createContext()
 

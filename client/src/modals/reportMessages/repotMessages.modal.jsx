@@ -10,14 +10,14 @@ const ReportMessagesModal = ({open, close, report}) => {
     const [ messages, setMessages ] = useState([])
 
     useEffect(() => {
-        report.history.forEach(async (message, i) => {
+        report.navigate.forEach(async (message, i) => {
             if(navigator.onLine) {
                 message.name = await getUserNameById(message.userSendingData)
             }else{
                 message.name = 'Sin información (fuera de red)'
             }
-            if(i == (report.history.length - 1)) {
-                setMessages(report.history.sort((a, b) => {
+            if(i == (report.navigate.length - 1)) {
+                setMessages(report.navigate.sort((a, b) => {
                     return b.id - a.id
                 }))
             }

@@ -3,12 +3,12 @@ import { Box, Card, Grid, Toolbar, IconButton, Button } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { checkDisableButtonNotSuperAdmin, useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../../context'
 
 const AdminPage = () => {
     const classes = useStylesTheme()
-    const history = useHistory()
+    const navigate = useNavigate()
     const disable = checkDisableButtonNotSuperAdmin()
     return (
         <Box height='100%'>
@@ -20,7 +20,7 @@ const AdminPage = () => {
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack()
+                                            navigate(-1)
                                         }, 500)}> 
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 

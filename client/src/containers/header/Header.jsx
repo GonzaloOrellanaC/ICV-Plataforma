@@ -1,5 +1,5 @@
 import React, { Fragment, useContext, useEffect } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AppBar, makeStyles, Toolbar, Grid } from '@material-ui/core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -53,7 +53,7 @@ const Header = () => {
     const { navBarOpen } = useNavigation()
     const { isAuthenticated, userData, admin, site } = useAuth()
     const {message} = useReportsContext()
-    const history = useHistory();
+    const navigate = useNavigate();
     useEffect(() => {
         console.log('La red está o no conectada: ', isOnline)
         if (isOnline) {
@@ -107,7 +107,7 @@ const Header = () => {
                 <Toolbar>
                     {!navBarOpen && <Link to='/'><img src={logo} height={75} /></Link>}
                     {(isAuthenticated && userData) && <Fragment>
-                            <div className='user-name' onClick={()=>{history.push('/user-profile')}}>
+                            <div className='user-name' onClick={()=>{navigate('/user-profile')}}>
                             <dl>
                                 <dt style={{margin: 0}}><div> <p className='nombre'> { userData.name } { userData.lastName } </p> </div></dt>
                                 <Grid container>

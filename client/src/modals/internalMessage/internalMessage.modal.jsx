@@ -13,14 +13,14 @@ import {
 import { Close } from '@material-ui/icons';
 import { dateWithTime, styleInternalMessageModal } from '../../config';
 import { internalMessagesRoutes } from '../../routes';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const InternalMessageModal = ({open, report, closeModal}) => {
     const [ messages, setMessages ] = useState([]);
     const [ message, setMessage ] = useState('');
     const [ subject, setSubject ] = useState('');
     const _id = localStorage.getItem('_id')
-    const history = useHistory()
+    const navigate = useNavigate()
 
     useEffect(() => {
         internalMessagesRoutes.getMessagesByUser(_id).then(data => {
@@ -100,7 +100,7 @@ const InternalMessageModal = ({open, report, closeModal}) => {
                         Enviar Mensaje
                     </Button>
                     {(localStorage.getItem('role') === ('admin') || (localStorage.getItem('role') === 'sapExecutive') || (localStorage.getItem('role') === 'superAdmin')) && 
-                    <Button variant="contained" color={'primary'} style={{ borderRadius: 50, marginLeft: 10 }} onClick={()=>{closeModal();history.push('/internal-messages')}}>
+                    <Button variant="contained" color={'primary'} style={{ borderRadius: 50, marginLeft: 10 }} onClick={()=>{closeModal();navigate('/internal-messages')}}>
                         Listado de mensajes
                     </Button>}
                     </Grid>

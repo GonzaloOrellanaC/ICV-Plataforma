@@ -9,14 +9,14 @@ import './style.css'
 import readDataSite from './readDataSite'
 import readData from './readData' */
 import Files from './3dFiles'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { dateWithTime, /* download3DFiles, imageToBase64 */ } from '../../config'
 import addNotification from 'react-push-notification'
 import { io } from "socket.io-client"
 import { useAuth, useTimeContext } from '../../context'
 import { useNotificationsContext } from '../../context/Notifications.context'
 
-const WelcomePage = ({ readyToLoad }) => {
+const WelcomePage = (/* { readyToLoad } */) => {
     const {admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, userData} = useAuth()
     const {date, hour} = useTimeContext()
     const {lastNotification} = useNotificationsContext()
@@ -55,7 +55,7 @@ const WelcomePage = ({ readyToLoad }) => {
     }, [admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery])
 
  
-    const history = useHistory()
+    const navigate = useNavigate()
 
     window.addEventListener('online', () => {
         setIfHavNetwork(true)
@@ -93,41 +93,9 @@ const WelcomePage = ({ readyToLoad }) => {
         localStorage.setItem('ultimaActualizacion', Date.now())
     }
 
-    useEffect(async() => {
-        /* setOpenDownload3D(true) */
-        let db = await readyToSendReportsDatabase.initDb()
-        let data2 = await readyToSendReportsDatabase.consultar(db.database)
-        /* setElementsReadyToSend(data) */
-        readNotifications(data2)
-        if(cancel) {
-            const socket = io()
-            if (navigator.onLine) {
-                socket.on(`notification_${userData._id}`, data => {
-                    readNotifications()
-                })
-            }
-            init()
-            var xhr = new XMLHttpRequest()
-            xhr.onload = async () => {
-                let reader = new FileReader()
-                reader.onload = async () => {
-                    let dbImages = await imageDatabase.initDb()
-                    if(dbImages) {
-                        let image = {
-                            name: 'no-image-profile',
-                            data: reader.result.replace("data:", "")
-                        }
-                        await imageDatabase.actualizar(image, dbImages.database)
-                    }
-                }
-                reader.readAsDataURL(xhr.response)
-            }
-            xhr.open('GET', '../assets/no-profile-image.png')
-            xhr.responseType = 'blob'
-            xhr.send()
-        }
-        return () => setCancel(false)
-    }, [cancel])
+    useEffect(() => {
+        init()
+    }, [])
 
     const readNotifications = (data2 = []) => {
         notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
@@ -151,6 +119,37 @@ const WelcomePage = ({ readyToLoad }) => {
     }
 
     const init = async () => {
+        /* let db = await readyToSendReportsDatabase.initDb()
+        let data2 = await readyToSendReportsDatabase.consultar(db.database)
+        readNotifications(data2)
+        if(cancel) {
+            const socket = io()
+            if (navigator.onLine) {
+                socket.on(`notification_${userData._id}`, data => {
+                    readNotifications()
+                })
+            }
+            
+            var xhr = new XMLHttpRequest()
+            xhr.onload = async () => {
+                let reader = new FileReader()
+                reader.onload = async () => {
+                    let dbImages = await imageDatabase.initDb()
+                    if(dbImages) {
+                        let image = {
+                            name: 'no-image-profile',
+                            data: reader.result.replace("data:", "")
+                        }
+                        await imageDatabase.actualizar(image, dbImages.database)
+                    }
+                }
+                reader.readAsDataURL(xhr.response)
+            }
+            xhr.open('GET', '../assets/no-profile-image.png')
+            xhr.responseType = 'blob'
+            xhr.send()
+        } */
+        /* return () => setCancel(false) */
         /* readData(
             setOpenLoader,
             setLoadingData,
@@ -305,13 +304,13 @@ const WelcomePage = ({ readyToLoad }) => {
                         </div>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={4}>
-                        <button className='notificaciones alertas' onClick={() => history.push('/notifications')}>
+                        <button className='notificaciones alertas' onClick={() => navigate('/notifications')}>
                             <p className='notificaciones-texto'> <b>Última Notificación:</b> </p>
                             <p className='notificaciones-texto'> {lastNotification && lastNotification.message} </p>
                         </button>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={4}>
-                        <button className='notificaciones alertas' onClick={() => history.push('/assignment')}>
+                        <button className='notificaciones alertas' onClick={() => navigate('/assignment')}>
                             {
                                 (isOperator || localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') &&
                                 <p className='notificaciones-texto'> <b>OT Listas a enviar:</b> </p>

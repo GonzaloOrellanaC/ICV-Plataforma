@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Card, Grid, IconButton, List, Toolbar } from '@material-ui/core'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ArrowBackIos } from '@material-ui/icons';
 import { internalMessagesRoutes } from '../../routes';
 import { getUserNameById, useStylesTheme } from '../../config';
 
 const InternalMessagesPage = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const classes = useStylesTheme();
     const [ messages, setMessages ] = useState([])
 
@@ -32,7 +32,7 @@ const InternalMessagesPage = () => {
                                 <div style={{width: '100%', textAlign: 'center', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10,}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack()
+                                            navigate(-1)
                                         }, 500)}> 
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 

@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Button } from '@material-ui/core'
-import { Link, useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import './Machine.button.css'
 
 
 const MachineButton = ({ machine, route }) => {
-    const history = useHistory()
+    const navigate = useNavigate()
     let newMachine = {
         brand: machine.brand,
         id: machine.id,
@@ -16,7 +16,7 @@ const MachineButton = ({ machine, route }) => {
     }
 
     return (
-        <Button className='buttonContent' style={{borderRadius: 20}} onClick={()=>{history.push(`/${route}/${JSON.stringify(newMachine)}`)}} /* component={Link} to={`/${route}/${JSON.stringify(newMachine)}`} */>
+        <Button className='buttonContent' style={{borderRadius: 20}} onClick={()=>{navigate(`/${route}/${JSON.stringify(newMachine)}`)}} /* component={Link} to={`/${route}/${JSON.stringify(newMachine)}`} */>
             <img className='imageMachine' src={`data:${machine.image.data}`} alt={machine.model}/>
             <div  style={{position: 'absolute', bottom: 5, width: '100%', textAlign: 'center'}}>
                 {`${machine.type} ${machine.brand} ${machine.model}`}

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button, Modal, Fab } from '@material-ui/core'
 import { ArrowBackIos, Close } from '@material-ui/icons'
 import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, getMachineData, useStylesTheme, detectIf3DModelExist, translateSubSystem, styleModal3D, dateSimple, dateWithTime, saveExecutionReport, base64ToImage } from '../../config'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import { pautasDatabase, reportsDatabase, readyToSendReportsDatabase, executionReportsDatabase } from '../../indexedDB'
 import { MVAvatar, PautaDetail } from '../../containers'
 import { executionReportsRoutes, pdfMakeRoutes, reportsRoutes } from '../../routes'
@@ -19,7 +19,7 @@ const ActivitiesDetailPage = () => {
     const {admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, userData} = useAuth()
     const {isOnline} = useConnectionContext()
     const classes = useStylesTheme()
-    const history = useHistory()
+    const navigate = useNavigate()
     const {id} = useParams()
     const {report, executionReport, setOtIndex, otIndex, sapId, serieEquipo, setLoading, setLoadingMessage, reporteIniciado} = useExecutionReportContext()
     const {saveReportToData, getReports, setStatusReports, getReportsOffline, setMessage} = useReportsContext()
@@ -141,7 +141,7 @@ const ActivitiesDetailPage = () => {
                             console.log('Revisando si se borra de bases de datos', state)
                             setTimeout(() => {
                                 alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
-                                history.goBack()
+                                navigate(-1)
                                 setLoadingLogo(false)
                                 setMessage('')
                                 getReportsOffline()
@@ -171,7 +171,7 @@ const ActivitiesDetailPage = () => {
                     reportCache.state = 'En proceso'
                 }
                 console.log(reportCache)
-                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
+                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.navigate[reportCache.navigate.length - 1].userSendingData, userData._id)
                 saveReportToDatabases(reportCache)
             } else {
                 if (itemProgress === 100) {
@@ -183,7 +183,7 @@ const ActivitiesDetailPage = () => {
                         reportCache.state = 'En proceso'
                     }
                     console.log(reportCache)
-                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
+                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.navigate[reportCache.navigate.length - 1].userSendingData, userData._id)
                     saveReportToDatabases(reportCache)
                 } else {
                     setLoadingLogo(false)
@@ -224,7 +224,7 @@ const ActivitiesDetailPage = () => {
                     await pdfMakeRoutes.createPdfDoc(reportCache)
                 }
                 reportCache.level = level
-                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
+                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.navigate[reportCache.navigate.length - 1].userSendingData, userData)
                 saveReportToDatabases(reportCache)
             } else {
                 if (itemProgress === 100) {
@@ -249,7 +249,7 @@ const ActivitiesDetailPage = () => {
                         await pdfMakeRoutes.createPdfDoc(reportCache)    
                     }
                     reportCache.level = level
-                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
+                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.navigate[reportCache.navigate.length - 1].userSendingData, userData)
                     saveReportToDatabases(reportCache)
                 } else {
                     setLoadingLogo(false)
@@ -275,8 +275,8 @@ const ActivitiesDetailPage = () => {
         /* SocketConnection.toPDF(report, userData) */
         /* getReports() */
         alert(report.level === 4 ? 'Orden de trabajo cerrada correctamente' : 'Orden de trabajo enviado a revisión')
-        /* history.replace('/assignment') */
-        history.goBack()
+        /* navigate.replace('/assignment') */
+        navigate(-1)
         setLoadingLogo(false)
     }
 
@@ -358,7 +358,7 @@ const ActivitiesDetailPage = () => {
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10, width: '100%'}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack()
+                                            navigate(-1)
                                         }, 500)}> 
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 

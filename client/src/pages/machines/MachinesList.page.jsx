@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Card, Grid, Toolbar, IconButton, List, Modal, Fab } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { styleModal3D, useStylesTheme } from '../../config';
 import { ArrowBackIos } from '@material-ui/icons';
 import { MVAvatar } from '../../containers';
@@ -16,7 +16,7 @@ const MachinesListPage = ({route}) => {
     const [showMachinesList, setShowMachinesList] = useState(false)
     const [machine, setMachine] = useState()
 
-    const history = useHistory();
+    const navigate = useNavigate();
     const classes = useStylesTheme();
 
     let { id } = useParams();
@@ -46,7 +46,7 @@ const MachinesListPage = ({route}) => {
 
     const goToMachineDetail = (machineData) => {
         setMachineSelected(machineData)
-        history.push(`machine-detail/${machineData.equid}`)
+        navigate(`machine-detail/${machineData.equid}`)
     }
 
     const closeModal = () => {
@@ -63,7 +63,7 @@ const MachinesListPage = ({route}) => {
                                 <div style={{width: '100%', textAlign: 'center', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10,}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack()
+                                            navigate(-1)
                                         }, 500)}> 
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 

@@ -3,7 +3,7 @@ import { Box, Card, Grid, Toolbar, IconButton, Button, Modal,  Fab } from '@mate
 import { ArrowBackIos, Close } from '@material-ui/icons'
 import { useStylesTheme } from '../../config'
 import { CreateUser, PermissionUser } from '../../containers'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { usersRoutes } from '../../routes'
 import { validate } from 'rut.js';
 import { LoadingLogoModal, LoadingModal } from '../../modals';
@@ -26,7 +26,7 @@ const styleModal = {
 const AdminNewUserPage = () => {
     const {getUsers} = useUsersContext()
     const classes = useStylesTheme();
-    const history = useHistory();
+    const navigate = useNavigate();
     const [ open, setOpen ] = useState(false);
     const [ openLoader, setOpenLoader ] = useState(false);
     const [ loadingData, setLoadingData ] = useState('');
@@ -40,7 +40,7 @@ const AdminNewUserPage = () => {
         let answer
         if(open) {
             answer = false;
-            history.goBack();
+            navigate(-1);
             deleteData();
         }else{
             answer = true
@@ -81,12 +81,12 @@ const AdminNewUserPage = () => {
                 }else{
                     alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
                     setOpenLoader(false)
-                    history.goBack()
+                    navigate(-1)
                 }
             } catch (err) {
                 alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
                 setOpenLoader(false)
-                history.goBack()
+                navigate(-1)
             }
         }else if(routingData === 'Editar usuario') {
             try{
@@ -99,12 +99,12 @@ const AdminNewUserPage = () => {
                 }else{
                     alert('Error al editar usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
                     setOpenLoader(false)
-                    history.goBack()
+                    navigate(-1)
                 }
             } catch (err) {
                 alert('Error al crear usuario. Verifique los datos ingresados. Posiblemente haya repetido datos de algún usuario inscrito')
                 setOpenLoader(false)
-                history.goBack()
+                navigate(-1)
             }
         }
     }
@@ -285,7 +285,7 @@ const AdminNewUserPage = () => {
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack();
+                                            navigate(-1);
                                             deleteData();
                                         }, 500)}> 
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
@@ -315,7 +315,7 @@ const AdminNewUserPage = () => {
                                                     Modificar Datos
                                                 </button>
                                         }
-                                        <button onClick={()=>{history.goBack(); deleteData();}} style={{width: 189, height: 48, borderRadius: 23, marginRight: 17, fontSize: 20, color: '#BB2D2D', borderColor: '#BB2D2D', borderWidth: 2}}>
+                                        <button onClick={()=>{navigate(-1); deleteData();}} style={{width: 189, height: 48, borderRadius: 23, marginRight: 17, fontSize: 20, color: '#BB2D2D', borderColor: '#BB2D2D', borderWidth: 2}}>
                                             Cancelar
                                         </button>
                                         {

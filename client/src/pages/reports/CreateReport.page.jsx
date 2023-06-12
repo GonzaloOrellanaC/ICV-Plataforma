@@ -11,7 +11,7 @@ import {
     Switch
 } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { trucksDatabase, pautasDatabase, machinesDatabase, sitesDatabase } from '../../indexedDB'
 import { apiIvcRoutes, machinesRoutes, reportsRoutes } from '../../routes';
 import './reports.css'
@@ -51,7 +51,7 @@ const CreateReports = () => {
 
     const classes = useStylesTheme();
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const {id} = useParams();
 
@@ -188,7 +188,7 @@ const CreateReports = () => {
                     )
                 alert(`Reporte ${reportState.data.idIndex}, para máquina modelo ${reportState.data.machine} creado satisfactoriamente.`)
                 setOpenLoadingLogo(false)
-                history.replace('/reports')
+                navigate.replace('/reports')
             } */
         }
     }
@@ -211,7 +211,7 @@ const CreateReports = () => {
             let reportState = await reportsRoutes.editReport(report);
             if(reportState) {
                 alert(`Reporte ${reportState.data.idIndex}, para máquina modelo ${reportState.data.machine} editado satisfactoriamente.`)
-                history.goBack();
+                navigate(-1);
             }
         }
     }
@@ -343,7 +343,7 @@ const CreateReports = () => {
             if(confirm('Se borrará el reporte permanentemente. ¿Desea continuar?')) {
                 reportsRoutes.deleteReport(JSON.parse(id)._id).then(res=>{
                     alert('Reporte eliminado.')
-                    history.goBack();
+                    navigate(-1);
                 })
             }
         }
@@ -359,7 +359,7 @@ const CreateReports = () => {
                                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20}}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack()
+                                            navigate(-1)
                                         }, 500)}>
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton>

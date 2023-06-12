@@ -4,12 +4,12 @@ import { Box, Card, Grid, Toolbar, IconButton, Button } from '@material-ui/core'
 import { ArrowBackIos } from '@material-ui/icons'
 import { useStylesTheme } from '../../config'
 import { CardButton } from '../../components/buttons'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../../context'
 
 const NoPermissionPage = () => {
     const classes = useStylesTheme();
-    const history = useHistory()
+    const navigate = useNavigate()
     return (
         <Box height='100%'>
             <Grid className={'pageRoot'} container spacing={0}>

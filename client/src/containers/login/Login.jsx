@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Grid, IconButton, Link, makeStyles, TextField } from '@material-ui/core'
 import { useAuth, useLanguage } from '../../context'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -24,7 +24,8 @@ const Login = () => {
     const [ typeAccess, setTypeAccess ] = useState('rut')
     const [ typeText, setTipeText ] = useState('email')
     const classes = useStyles()
-    const history = useHistory();
+    const navigate = useNavigate();
+    const location = useLocation()
     const [ verPassword, setVerPassword ] = useState('password')
 
     const cambiarVistaPassword = () => {
@@ -47,8 +48,8 @@ const Login = () => {
     }
 
     useEffect(() => {
-        if(history.location.pathname.length > 1) {
-            history.replace('/')
+        if(location.pathname.length > 1) {
+            /* navigate('/', {replace:true}) */
         }
     }, [])
 
@@ -57,12 +58,12 @@ const Login = () => {
         if (typeAccess === 'email') {
             let loginState = await login(email, password);
             if(loginState) {
-
+                navigate('/welcome')
             }
         } else if (typeAccess === 'rut') {
             let loginState = await loginRut(rut, password);
             if(loginState) {
-
+                navigate('/welcome')
             }
         }
     }
@@ -133,7 +134,7 @@ const Login = () => {
                         </Button>
                     </Grid>
                     <Grid item xs={12} container justifyContent='center'>
-                        {(typeText === 'rut') && <Link href="/reset-password" > {dictionary.login.forgotPasswordText} </Link>}
+                        {(typeText === 'rut') && <Link to="/reset-password" > {dictionary.login.forgotPasswordText} </Link>}
                     </Grid>
                 </Grid>
             </form>

@@ -20,11 +20,11 @@ const ReportCommitModal = ({open, report, closeModal,/* closeLoading, */ /* getR
 
     const sendMessage = () => {
         if(message.length > 1) {
-            const historyType = messageType==='rejectReport' ? 'reject-to-previous-level' : 'sending-to-next-level'
-            report.history.push({
+            const navigateType = messageType==='rejectReport' ? 'reject-to-previous-level' : 'sending-to-next-level'
+            report.navigate({
                 id: Date.now(),
                 userSendingData: userData._id,
-                type: historyType,
+                type: navigateType,
                 message: message
             })
             closeModal(true);

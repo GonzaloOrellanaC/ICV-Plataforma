@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { executionReportsDatabase, pautasDatabase } from "../indexedDB";
 import { ReportsContext, useAuth, useConnectionContext } from ".";
-import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { executionReportsRoutes, reportsRoutes } from "../routes";
+import { useLocation } from "react-router-dom";
 
 export const ExecutionReportContext = createContext()
 

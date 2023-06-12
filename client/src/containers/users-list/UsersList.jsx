@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Toolbar, ListItem, IconButton, Grid } from "@material-ui/core";
 import { faInfoCircle, faPen, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { sitesRoutes, usersRoutes } from '../../routes';
 import { changeTypeUser } from '../../config';
 import { UserListDataModal } from '../../modals'

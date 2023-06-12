@@ -1,14 +1,14 @@
 import { Button, Dialog, IconButton, Slide } from "@material-ui/core"
 import { Close } from "@material-ui/icons"
 import { forwardRef } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { dateWithTime } from "../config";
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const ReportDetailDialog = ({handleClickOpen, open, handleClose, report}) => {
-    const history = useHistory()
+    const navigate = useNavigate()
     return (
         <div>
             <Button variant="outlined" onClick={handleClickOpen}>
@@ -41,7 +41,7 @@ const ReportDetailDialog = ({handleClickOpen, open, handleClose, report}) => {
                         </p>
                     </div>
                     <div style={{width: '100%', textAlign: 'center'}}>
-                        <button onClick={()=>history.push(`/assignment/${report.idIndex}`)}>
+                        <button onClick={()=>navigate(`/assignment/${report.idIndex}`)}>
                             Abrir reporte
                         </button>
                     </div>

@@ -1,7 +1,7 @@
 import { Box, Button, Card, Grid, IconButton, ListItem, makeStyles, Toolbar } from "@material-ui/core"
 import { ArrowBackIos } from "@material-ui/icons"
 import { useEffect, useState } from "react"
-import { useHistory } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { dateWithTime, useStylesTheme } from "../../config"
 import LoadingLogoModal from "../../modals/loadings/loading-logo.modal"
 import { notificationsRoutes } from "../../routes"
@@ -43,7 +43,7 @@ const NotificationsPage = () => {
     const {myNotifications, getNotifications} = useNotificationsContext()
     const [ openLoading, setOpenLoading ] = useState(false)
     const classes = useStylesTheme();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     /* useEffect(() => {
         let cancel = true;
@@ -83,7 +83,7 @@ const NotificationsPage = () => {
                                 <div style={{width: '100%', position: 'relative', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
                                     <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
                                         <IconButton onClick={() => setTimeout(() => {
-                                            history.goBack()
+                                            navigate(-1)
                                         }, 500)}> 
                                             <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
                                         </IconButton> 
@@ -119,7 +119,7 @@ const NotificationsPage = () => {
                                                         borderRadius: 20, 
                                                         fontSize: 20
                                                     }} 
-                                                    onClick={() => {history.push(item.url); changeState(item._id)}}>Ir</button>
+                                                    onClick={() => {navigate(item.url); changeState(item._id)}}>Ir</button>
                                             </div>
                                         </ListItem> 
                                     )
