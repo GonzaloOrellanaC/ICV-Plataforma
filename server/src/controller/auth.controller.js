@@ -57,6 +57,10 @@ const loginRut = async (req, res, next) => {
                 Sentry.captureMessage('Login por rut ' + user.rut + ' aceptado', 'info')
                 return res.status(200).json(userFind);
             }
+        } else {
+            return res.status(201).json({
+                message: 'usuario no encontrado'
+            });
         }
     } catch (error) {
         Sentry.captureException(error)

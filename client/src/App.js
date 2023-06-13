@@ -1,6 +1,6 @@
 /*  React */
 import React, { useEffect } from 'react'
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom'
 
 /* GraphQL */
 import { ApolloClient, ApolloProvider, ApolloLink, InMemoryCache } from '@apollo/client'
@@ -68,11 +68,15 @@ const client = new ApolloClient({
 });
 
 const OnApp = () => {
+    const navigate = useNavigate()
     /* download3DFiles: Archivo para descargar los modelos 3D */
     
     const { userData, loading, admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, isAuthenticated } = useAuth()
     useEffect(() => {
         console.log(isAuthenticated)
+        /* if(!isAuthenticated) {
+            navigate('/')
+        } */
         if(isAuthenticated && userData) {
             SocketConnection.sendIsActive(userData)
         }
@@ -80,22 +84,14 @@ const OnApp = () => {
 
     return (
         <div style={{fontFamily: 'Roboto'}}>
-            { isAuthenticated && !loading && <Navbar/>} {isAuthenticated && !loading && <Header/>}
+            {isAuthenticated && !loading && <Navbar/>} {isAuthenticated && !loading && <Header/>}
             <Routes>
                 {!isAuthenticated && <Route exact path={'/reset-password'} element={<ResetPasswordPage />}/>}
                 {!isAuthenticated && <Route exact path={'/restore-password/:id'} element={<RestorePasswordPage />}/>}
                 <Route path={'/login'} element={<LoginPage />} />
                 <Route path='/welcome' element={<WelcomePage />} />
-                <Route
-					path='/'
-					element={<Navigate to='/login' />}
-				/>
-                
-                {(
-                    admin ||
-                    isSapExecutive) && 
-                <Route path={'/internal-messages'} element={<InternalMessagesPage route={'internal-messages'}/>} />
-                }
+                <Route path='/' element={<Navigate to={!isAuthenticated ? '/login' : '/welcome'} />} />
+                <Route path={'/internal-messages'} element={(admin || isSapExecutive) && <InternalMessagesPage route={'internal-messages'}/>} />
                 <Route exact path='/reports' element={<ReportsPage route='reports'/>} />
                 <Route exact path='/reports/create-report' element={<CreateReports route='reports'/>} />
                 <Route exact path='/reports/edit-report/:id' element={<CreateReports route='reports'/>} />
@@ -105,7 +101,6 @@ const OnApp = () => {
                 <Route exact path='/machines' element={<MachinesPage route={'machines'}/>} />
                 <Route exact path='/machines/:id' element={<MachinesListPage route='machines'/>} />
                 <Route exact path='/machines/:el/machine-detail/:id' element={<AppliancePage route={'machines/machine-detail'}/>} />
-                            
                 {!isOperator && <Route exact path='/maintenance' element={<NoPermissionPage route={'maintenance'}/>} /> }
                 {(
                     isSapExecutive ||

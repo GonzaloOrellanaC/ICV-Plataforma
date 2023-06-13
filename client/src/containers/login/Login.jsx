@@ -57,13 +57,13 @@ const Login = () => {
         event.preventDefault()
         if (typeAccess === 'email') {
             let loginState = await login(email, password);
-            if(loginState) {
-                navigate('/welcome')
+            if(loginState.state) {
+                navigate('/welcome', {replace: true})
             }
         } else if (typeAccess === 'rut') {
             let loginState = await loginRut(rut, password);
-            if(loginState) {
-                navigate('/welcome')
+            if(loginState.state) {
+                navigate('/welcome', {replace: true})
             }
         }
     }
@@ -76,6 +76,10 @@ const Login = () => {
             setTypeAccess('email')
             setTipeText('rut')
         }
+    }
+
+    const toResetPassword = () => {
+        navigate('/reset-password')
     }
 
     return (
@@ -134,7 +138,8 @@ const Login = () => {
                         </Button>
                     </Grid>
                     <Grid item xs={12} container justifyContent='center'>
-                        {(typeText === 'rut') && <Link to="/reset-password" > {dictionary.login.forgotPasswordText} </Link>}
+                        {/* {(typeText === 'rut') && <Link to="/reset-password" > {dictionary.login.forgotPasswordText} </Link>} */}
+                        {(typeText === 'rut') && <p className='link-text' onClick={toResetPassword}>{dictionary.login.forgotPasswordText}</p>}
                     </Grid>
                 </Grid>
             </form>

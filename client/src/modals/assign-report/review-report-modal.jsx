@@ -42,8 +42,10 @@ const ReviewReportModal = ({open, report, onlyClose}) => {
     }
 
     useEffect(() => {
-        console.log(report)
-        let ok = true
+        init()
+    }, [report])
+
+    const init = async () => {
         getUserNameById(report.chiefMachineryApprovedBy).then(user => {
             setChiefMachineryName(user)
         })
@@ -62,10 +64,8 @@ const ReviewReportModal = ({open, report, onlyClose}) => {
             setColorState('#F2C94C');
         }else if(state === 'Completadas') {
             setColorState('#27AE60');
-        }   
-
-        return ok = false
-    }, [])
+        }
+    }
 
     const toReport = () => {
         setReport(report)

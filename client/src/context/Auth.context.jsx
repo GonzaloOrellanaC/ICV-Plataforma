@@ -6,6 +6,7 @@ import { styleModal } from '../config'
 import {SocketConnection} from '../connections'
 import addNotification from 'react-push-notification'
 import logoNotification from '../assets/logo_icv_notification_push.png'
+import { useNavigate } from 'react-router-dom'
 
 export const AuthContext = createContext()
 
@@ -23,11 +24,12 @@ export const AuthProvider = (props) => {
     const [ isChiefMachinery, setIsChiefMachinery ] = useState(false)
     const [ refCanvas, setRefCanvas ] = useState()
     const [ openSign, setOpenSign ] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
         console.log(Boolean(window.localStorage.getItem('isauthenticated')))
-        if (Boolean(window.localStorage.getItem('isauthenticated'))) {
-            setIsAuthenticated(Boolean(window.localStorage.getItem('isauthenticated')))
+        if (window.localStorage.getItem('isauthenticated')==='true') {
+            setIsAuthenticated(true)
         }
     }, [])
 
@@ -156,11 +158,12 @@ export const AuthProvider = (props) => {
                 console.log(rut)
                 authRoutes.loginRut(rut, password)
                 .then(async response => {
+                    console.log(response)
                     let userDataToSave = response.data
-                    setUserData(userDataToSave)
-                    localStorage.setItem('user', JSON.stringify(userDataToSave))
                     if(response.data.enabled) {
                         setRoles(userDataToSave.roles)
+                        setUserData(userDataToSave)
+                        localStorage.setItem('user', JSON.stringify(userDataToSave))
                         if (userDataToSave.role && userDataToSave.role.length > 0) {
                             if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
                                 localStorage.setItem('isAdmin', true)
@@ -171,18 +174,27 @@ export const AuthProvider = (props) => {
                             }
                         }
                         localStorage.setItem('isauthenticated', true)
-                        setIsAuthenticated(true)
                         resolve({
                             state: true,
                             response: response
                         })
+                        setIsAuthenticated(true)
                     } else {
-                        localStorage.setItem('isauthenticated', false)
-                        setIsAuthenticated(false)
-                        alert('Su cuenta no está habilitada, debe confirmarla.')
-                        resolve({
-                            state: false,
-                        })
+                        if (response.data.message==='usuario no encontrado') {
+                            localStorage.setItem('isauthenticated', false)
+                            setIsAuthenticated(false)
+                            alert('Usuario no encontrado.')
+                            resolve({
+                                state: false,
+                            })
+                        } else {
+                            localStorage.setItem('isauthenticated', false)
+                            setIsAuthenticated(false)
+                            alert('Su cuenta no está habilitada, debe confirmarla.')
+                            resolve({
+                                state: false,
+                            })
+                        }
                     }
                 })
                 .catch(error => {
@@ -197,11 +209,12 @@ export const AuthProvider = (props) => {
             return new Promise(resolve => {
                 authRoutes.login(email, password)
                 .then(async response => {
+                    console.log(response)
                     let userDataToSave = response.data
-                    setUserData(userDataToSave)
-                    localStorage.setItem('user', JSON.stringify(userDataToSave))
                     if(response.data.enabled) {
                         setRoles(userDataToSave.roles)
+                        setUserData(userDataToSave)
+                        localStorage.setItem('user', JSON.stringify(userDataToSave))
                         if (userDataToSave.role && userDataToSave.role.length > 0) {
                             if(userDataToSave.role === 'admin' || userDataToSave.role === 'superAdmin') {
                                 localStorage.setItem('isAdmin', true)
@@ -212,18 +225,27 @@ export const AuthProvider = (props) => {
                             }
                         }
                         localStorage.setItem('isauthenticated', true)
-                        setIsAuthenticated(true)
                         resolve({
                             state: true,
                             response: response
-                        }) 
-                    } else {
-                        localStorage.setItem('isauthenticated', false)
-                        setIsAuthenticated(false);
-                        alert('Su cuenta no está habilitada, debe confirmarla.')
-                        resolve({
-                            state: false,
                         })
+                        setIsAuthenticated(true)
+                    } else {
+                        if (response.data.message==='usuario no encontrado') {
+                            localStorage.setItem('isauthenticated', false)
+                            setIsAuthenticated(false)
+                            alert('Usuario no encontrado.')
+                            resolve({
+                                state: false,
+                            })
+                        } else {
+                            localStorage.setItem('isauthenticated', false)
+                            setIsAuthenticated(false)
+                            alert('Su cuenta no está habilitada, debe confirmarla.')
+                            resolve({
+                                state: false,
+                            })
+                        }
                     }
                 })
                 .catch(error => {
@@ -236,7 +258,7 @@ export const AuthProvider = (props) => {
         logout: () => {
             if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
                 window.localStorage.clear();
-                window.location.reload();
+                navigate('/', {replace:true})
                 setIsAuthenticated(false)
             }
         }
