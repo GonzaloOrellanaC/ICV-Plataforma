@@ -7,7 +7,7 @@
         "start-dev": "nodemon --exec babel-node -r dotenv/config server.js",
         "start-dev-babel": "babel-node -r dotenv/config server.js",
         "test": "mocha --require @babel/polyfill --require @babel/register",
-        "start": "npx babel-node server.js"
+        "start": "nodemon --exec babel-node server.js"
     },
     "author": "Javier Romero <javier.romero@kauel.com>",
     "license": "ISC",
