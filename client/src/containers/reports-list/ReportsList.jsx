@@ -3,25 +3,30 @@ import { Button, Grid, Popover } from '@material-ui/core'
 import './style.css'
 import { dateSimple } from "../../config"
 import { AssignDialog, ReviewReportDialog } from "../../dialogs"
+import { useAuth, useSitesContext } from "../../context"
 
 const ReportsList = ({list, typeReportsSelected, statusReports}) => {
+    const {admin} = useAuth()
+    const {sites} = useSitesContext()
     const [ reportData, setReportData ] = useState(null)
     const [ reportDataReview, setReportDataReview ] = useState(null)
     const [ openModalState, setOpenModalState ] = useState(false)
     const [ openReviewModalState, setOpenReviewModalState ] = useState(false)
     const [ siteName, setSiteName ] = useState([])
-    const [ isAdmin, setIsAdmin ] = useState(false)
+    /* const [ admin, setIsAdmin ] = useState(false) */
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
     useEffect(() => {
-        let isAdminCache = false
-        setIsAdmin(isAdminCache)
+        console.log(admin)
     }, [])
     
     const handleClick = (event, siteName) => {
-        setSiteName(siteName)
+        console.log(siteName)
+        console.log(sites)
+        const siteFiltered = sites.filter((site) => {if (siteName===site.idobra) return site})
+        setSiteName(siteFiltered[0].descripcion)
         setAnchorEl(event.currentTarget);
     };
     
@@ -106,7 +111,7 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                 </Grid> : <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
                     <p style={{textAlign: 'center'}}> <strong>OM SAP</strong> </p>
                 </Grid>}
-                {isAdmin && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
+                {admin && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
                     <p style={{textAlign: 'center', minWidth: 70}}> <strong>Obra</strong> </p>
                 </Grid>}
                 {(typeReportsSelected === 'Completadas') && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
@@ -181,10 +186,10 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                                     </Grid>
                                     }
                                     {
-                                        isAdmin &&
+                                        admin &&
                                         
                                         <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{ textAlign: 'center' }} >
-                                            <Button aria-describedby={id} style={{textAlign: 'center', minWidth: 70, marginTop: 5}} onClick={(e) => {handleClick(e, item.siteName)}}> {item.site} </Button>
+                                            <Button aria-describedby={id} style={{textAlign: 'center', minWidth: 70, marginTop: 5}} onClick={(e) => {handleClick(e, item.site)}}> {item.site} </Button>
                                             <Popover
                                                 id={id}
                                                 open={open}

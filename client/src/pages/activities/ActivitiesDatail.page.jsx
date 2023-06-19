@@ -231,6 +231,7 @@ const ActivitiesDetailPage = () => {
                     let level = 0
                     if (!reportCache.level||reportCache.level === 0) {
                         level = 1
+                        reportCache.endReport = new Date()
                     } else {
                         level = reportCache.level + 1
                     }
