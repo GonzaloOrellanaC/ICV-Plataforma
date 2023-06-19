@@ -14,8 +14,6 @@
         "@azure/identity": "^2.0.1",
         "@azure/storage-blob": "^12.8.0",
         "@babel/cli": "^7.21.5",
-        "@babel/core": "^7.21.8",
-        "@babel/node": "^7.20.7",
         "@babel/polyfill": "^7.12.1",
         "@babel/preset-env": "^7.21.5",
         "@babel/register": "^7.21.0",
@@ -62,6 +60,8 @@
         "fsevents": "2.1.2"
     },
     "devDependencies": {
+        "@babel/core": "^7.22.5",
+        "@babel/node": "^7.22.5",
         "nodemon": "^2.0.22"
     }
 }
