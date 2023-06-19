@@ -6,9 +6,8 @@ import { CreateUser, PermissionUser } from '../../containers'
 import { useNavigate, useParams } from 'react-router-dom'
 import { usersRoutes } from '../../routes'
 import { validate } from 'rut.js';
-import { LoadingLogoModal, LoadingModal } from '../../modals';
-import transformInfo from './transform-info'
 import { CreateUserContext, useUsersContext } from '../../context'
+import { LoadingLogoDialog } from '../../dialogs'
 
 const styleModal = {
     position: 'absolute',
@@ -360,8 +359,7 @@ const AdminNewUserPage = () => {
                                     </Fab>
                                 </Box>
                             </Modal>
-                            {/* <LoadingModal open={openLoader} loadingData={loadingData} withProgress={false}/> */}
-                            <LoadingLogoModal open={openLoader} />
+                            <LoadingLogoDialog open={openLoader} />
                         </div>
                     </Card>
                 </Grid>

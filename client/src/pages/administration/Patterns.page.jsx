@@ -1,37 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Card, Grid, Toolbar, IconButton, Button, Modal,  Fab } from '@material-ui/core'
-import { ArrowBackIos, Close } from '@material-ui/icons'
+import { Box, Card, Grid, Toolbar, IconButton } from '@material-ui/core'
+import { ArrowBackIos } from '@material-ui/icons'
 import { useStylesTheme } from '../../config'
-import { CreateUser, PermissionUser } from '../../containers'
-import { useNavigate, useParams } from 'react-router-dom'
-import { patternsRoutes, usersRoutes } from '../../routes'
-import { validate } from 'rut.js';
-import { LoadingLogoModal, LoadingModal, PatternDetailModal } from '../../modals';
-import transformInfo from './transform-info'
+import { useNavigate } from 'react-router-dom'
+import { patternsRoutes } from '../../routes'
+import {  PatternDetailModal } from '../../modals';
 import { PatternList } from '../../containers/patterns-list'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClipboardList } from '@fortawesome/free-solid-svg-icons'
-
-const styleModal = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    borderRadius: 20,
-    boxShadow: 24,
-    p: 4,
-};
+import { LoadingLogoDialog } from '../../dialogs'
 
 const PatternsPage = ({roles}) => {
     const classes = useStylesTheme();
     const navigate = useNavigate();
-    const [ open, setOpen ] = useState(false);
     const [ openLoader, setOpenLoader ] = useState(false);
-    const [ loadingData, setLoadingData ] = useState('');
-    const [ routingData, setRoutingData ] = useState('');
     const [ patterns, setPatterns ] = useState([])
     const [ openPatternModal, setOpenPatternModal ] = useState(false)
     useEffect(() => {
@@ -94,7 +76,7 @@ const PatternsPage = ({roles}) => {
                             </div>
                         </Grid>
                         <div>
-                            <LoadingLogoModal open={openLoader} />
+                            <LoadingLogoDialog open={openLoader} />
                             <PatternDetailModal open={openPatternModal} savedInfo={init} closeModal={closePatternModal} />
                         </div>
                     </Card>

@@ -1,17 +1,14 @@
 import { useState, useEffect } from "react"
 import { Button, Grid, Popover } from '@material-ui/core'
-import { pdfMakeRoutes } from '../../routes'
-import { AssignReportModal, PdfModal, ReviewReportModal } from '../../modals'
 import './style.css'
 import { dateSimple } from "../../config"
-import { reportsDatabase } from "../../indexedDB"
+import { AssignDialog, ReviewReportDialog } from "../../dialogs"
 
-const ReportsList = ({list, typeReportsSelected, statusReports, getReports}) => {
+const ReportsList = ({list, typeReportsSelected, statusReports}) => {
     const [ reportData, setReportData ] = useState(null)
     const [ reportDataReview, setReportDataReview ] = useState(null)
     const [ openModalState, setOpenModalState ] = useState(false)
     const [ openReviewModalState, setOpenReviewModalState ] = useState(false)
-    const [ openPdfModal , setOpenPdfModal ] = useState(false)
     const [ siteName, setSiteName ] = useState([])
     const [ isAdmin, setIsAdmin ] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
@@ -39,7 +36,6 @@ const ReportsList = ({list, typeReportsSelected, statusReports, getReports}) => 
 
     const closeModal = () => {
         setOpenModalState(false)
-        /* reloadData(); */
     }
 
     const onlyCloseReview = () => {
@@ -53,22 +49,7 @@ const ReportsList = ({list, typeReportsSelected, statusReports, getReports}) => 
     const openReviewModal = (report) => {
         setReportDataReview(report)
         setOpenReviewModalState(true)
-    }
-
-    const closePdfModal = () => {
-        setOpenPdfModal(false)
-    }
-
-    const getPDF = async (doc) => {
-        const response = await pdfMakeRoutes.createPdfDoc(doc)
-        console.log(response)
-        const reportCache = doc
-        reportCache.urlPdf = response.data.url
-        const {database} = await reportsDatabase.initDbReports()
-        await reportsDatabase.actualizar(reportCache, database)
-        getReports()
-    }
-    
+    }    
 
     const levelToState = (level, usersAssigned, state) => {
         if (level === 0 || !level) {
@@ -180,7 +161,7 @@ const ReportsList = ({list, typeReportsSelected, statusReports, getReports}) => 
                                         <p style={{textAlign: 'center'}}> {dateSimple(item.endPrev)} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                                        <p style={{textAlign: 'center'}}> {parseInt(item.machineData.hourMeter / 1000/*  / 1000 / 60 / 60 */).toLocaleString()} hrs </p>
+                                        <p style={{textAlign: 'center'}}> {(item.machineData.hourMeter / 3600000).toFixed(2).toLocaleString()} hrs </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                         <div style={{textAlign: 'center'}}>
@@ -190,7 +171,7 @@ const ReportsList = ({list, typeReportsSelected, statusReports, getReports}) => 
                                     {
                                         (typeReportsSelected !== 'Completadas') ? ((item.enabled) ? 
                                             <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
-                                                <p style={{textAlign: 'center'}}> <button onClick={()=>openModal(item)} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
+                                                <p style={{textAlign: 'center'}}> <button onClick={()=>{openModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
                                             </Grid> :
                                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                                 <p style={{textAlign: 'center'}}> <button disabled style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Terminado</button> </p>
@@ -247,13 +228,10 @@ const ReportsList = ({list, typeReportsSelected, statusReports, getReports}) => 
                     }
             </div>
             {
-                reportData && <AssignReportModal open={openModalState} report={reportData} reportType={reportData.reportType} onlyClose={onlyClose} closeModal={closeModal}/>
+                reportData && <AssignDialog open={openModalState} report={reportData} reportType={reportData.reportType} onlyClose={onlyClose} closeModal={closeModal}/>
             }
             {
-                reportDataReview && <ReviewReportModal open={openReviewModalState} report={reportDataReview} onlyClose={onlyCloseReview}/>
-            }
-            {
-                reportData && <PdfModal open={openPdfModal} reportData={reportData} close={closePdfModal}/>
+                reportDataReview && <ReviewReportDialog open={openReviewModalState} report={reportDataReview} onlyClose={onlyCloseReview}/>
             }
         </div>
     )

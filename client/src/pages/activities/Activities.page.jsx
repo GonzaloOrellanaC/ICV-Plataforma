@@ -245,7 +245,7 @@ const ActivitiesPage = () => {
                                                                             ? 
                                                                             'Ver'
                                                                             : 
-                                                                            ((isOperator && ((element.usersAssigned && element.usersAssigned[0]._id) === userData._id)) ? (element.readyToSend ? 'Listo a enviar' : 'Ejecutar') : 'Ver')
+                                                                            ((isOperator && ((element.usersAssigned && element.usersAssigned[0]) === userData._id)) ? (element.readyToSend ? 'Listo a enviar' : 'Ejecutar') : 'Ver')
                                                                         }</p>
                                                                     </Button>
                                                                 </Grid>

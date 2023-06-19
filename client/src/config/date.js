@@ -4,7 +4,7 @@ export default (time) => {
     if(!time) {
         return ('Sin información').toUpperCase()
     }else{
-        let day = new Date(time).getDay() + 1
+        let day = new Date(time).getDay()
         let dayName;
         if(day == 1) {
             dayName = 'Lunes'

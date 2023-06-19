@@ -1,12 +1,26 @@
+import AlertDialog from './AlertDialog'
 import ReportDataDialog from './ReportDataDialog'
 import ImageDialog from './ImageDialog'
 import ReportDetailDialog from './ReportDetailDialog'
 import InputTextDialog from './InputTextDialog'
-import Download3DFilesDialog from './Download3DFilesDialog'
+import AssignDialog from './AssignDialog'
+import ReviewReportDialog from './ReviewReportDialog'
+import FirmaUsuarioDialog from './FirmaUsuarioDialog'
+import ReportCommitDialog from './ReportCommitDialog'
+import PreviewDialog from './PreviewDialog'
+import ReportMessagesDialog from './RepotMessagesDialog'
+import LoadingLogoDialog from './LoadingLogoDialog'
 export {
+    AlertDialog,
     ReportDataDialog,
     ImageDialog,
     ReportDetailDialog,
     InputTextDialog,
-    Download3DFilesDialog
+    AssignDialog,
+    ReviewReportDialog,
+    FirmaUsuarioDialog,
+    ReportCommitDialog,
+    PreviewDialog,
+    ReportMessagesDialog,
+    LoadingLogoDialog
 }

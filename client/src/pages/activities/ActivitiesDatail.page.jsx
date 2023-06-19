@@ -6,7 +6,6 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import { pautasDatabase, reportsDatabase, readyToSendReportsDatabase, executionReportsDatabase } from '../../indexedDB'
 import { MVAvatar, PautaDetail } from '../../containers'
 import { executionReportsRoutes, pdfMakeRoutes, reportsRoutes } from '../../routes'
-import { LoadingLogoModal, LoadingModal, ReportCommitModal, ReportMessagesModal } from '../../modals'
 import { SocketConnection } from '../../connections'
 import sendnotificationToManyUsers from './sendnotificationToManyUsers'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -14,6 +13,7 @@ import { faClock, faPaperPlane, faComment, faEye } from '@fortawesome/free-solid
 import toPDF from '../../modals/pdf/toPDF'
 import PreviewModal from '../../modals/preview/Preview.modal'
 import { useAuth, useConnectionContext, useExecutionReportContext, useReportsContext } from '../../context'
+import { LoadingLogoDialog, PreviewDialog, ReportCommitDialog, ReportMessagesDialog } from '../../dialogs'
 
 const ActivitiesDetailPage = () => {
     const {admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, userData} = useAuth()
@@ -51,7 +51,7 @@ const ActivitiesDetailPage = () => {
         if (report) {
             setReportLevel(report.level)
             console.log(isSapExecutive, report.level)
-            if ((isOperator && (report.level === 0 || !report.level) && (report.usersAssigned[0]._id === userData._id)) || 
+            if ((isOperator && (report.level === 0 || !report.level) && (report.usersAssigned[0] === userData._id)) || 
             (isShiftManager && (report.level === 1)) || 
             (isChiefMachinery && (report.level === 2)) || 
             (isSapExecutive && (report.level === 3))) {
@@ -171,7 +171,7 @@ const ActivitiesDetailPage = () => {
                     reportCache.state = 'En proceso'
                 }
                 console.log(reportCache)
-                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.navigate[reportCache.navigate.length - 1].userSendingData, userData._id)
+                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
                 saveReportToDatabases(reportCache)
             } else {
                 if (itemProgress === 100) {
@@ -183,7 +183,7 @@ const ActivitiesDetailPage = () => {
                         reportCache.state = 'En proceso'
                     }
                     console.log(reportCache)
-                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.navigate[reportCache.navigate.length - 1].userSendingData, userData._id)
+                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
                     saveReportToDatabases(reportCache)
                 } else {
                     setLoadingLogo(false)
@@ -224,7 +224,7 @@ const ActivitiesDetailPage = () => {
                     await pdfMakeRoutes.createPdfDoc(reportCache)
                 }
                 reportCache.level = level
-                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.navigate[reportCache.navigate.length - 1].userSendingData, userData)
+                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
                 saveReportToDatabases(reportCache)
             } else {
                 if (itemProgress === 100) {
@@ -249,7 +249,7 @@ const ActivitiesDetailPage = () => {
                         await pdfMakeRoutes.createPdfDoc(reportCache)    
                     }
                     reportCache.level = level
-                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.navigate[reportCache.navigate.length - 1].userSendingData, userData)
+                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
                     saveReportToDatabases(reportCache)
                 } else {
                     setLoadingLogo(false)
@@ -262,20 +262,14 @@ const ActivitiesDetailPage = () => {
     const saveReportToDatabases = async (report) => {
         saveReportToData(report)
         setLoadingMessage('Guardando en bases de datos')
-        /* const {database} = await reportsDatabase.initDbReports()
-        await reportsDatabase.actualizar(report, database) */
         const responseDatabase = await executionReportsDatabase.initDb()
         const executionReportCache = executionReport
         executionReportCache.offLineGuard = Date.now()
         await executionReportsDatabase.actualizar(executionReportCache, responseDatabase.database)
         if (isOnline) {
-            /* await reportsRoutes.editReportById(report) */
             await executionReportsRoutes.saveExecutionReport(executionReportCache)
         }
-        /* SocketConnection.toPDF(report, userData) */
-        /* getReports() */
         alert(report.level === 4 ? 'Orden de trabajo cerrada correctamente' : 'Orden de trabajo enviado a revisión')
-        /* navigate.replace('/assignment') */
         navigate(-1)
         setLoadingLogo(false)
     }
@@ -330,6 +324,7 @@ const ActivitiesDetailPage = () => {
                     }
                     if (i === (executionReportFiltered[0].group[element].length - 1)) {
                         if (hoja.data.length > 0) {
+                            console.log(hoja)
                             listaMateriales.push(hoja)
                         }
                     }
@@ -422,7 +417,7 @@ const ActivitiesDetailPage = () => {
                                         <LinearProgress variant="determinate" value={itemProgress} style={{width: '100%'}}/>
                                         <br />
                                         {(
-                                            (isOperator && (!report.level || report.level === 0) && (report.usersAssigned[0]._id === userData._id)) || 
+                                            (isOperator && (!report.level || report.level === 0) && (report.usersAssigned[0] === userData._id)) || 
                                             (isShiftManager && (report.level === 1)) || 
                                             isChiefMachinery && (report.level === 2)
                                             ) && <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={forwardReport}>
@@ -445,7 +440,7 @@ const ActivitiesDetailPage = () => {
                                             <Close />
                                             Rechazar OT
                                         </Button>}
-                                        {(isOperator&&(report.level===0 || !report.level) && (report.usersAssigned[0]._id === userData._id)) && <Button onClick={terminarjornada} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
+                                        {(isOperator&&(report.level===0 || !report.level) && (report.usersAssigned[0] === userData._id)) && <Button onClick={terminarjornada} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
                                             <FontAwesomeIcon icon={faClock} style={{marginRight: 10}} /> Terminar Jornada
                                         </Button>}
                                         <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 0}} onClick={openMessages}>
@@ -456,7 +451,7 @@ const ActivitiesDetailPage = () => {
                                 }
                             </Grid>
                             {
-                                openReportCommitModal && <ReportCommitModal 
+                                openReportCommitModal && <ReportCommitDialog 
                                     canEdit={canEdit}
                                     open={openReportCommitModal} 
                                     closeModal={(toForward) ? closeCommitModalToForward : closeCommitModalToBack}
@@ -464,7 +459,7 @@ const ActivitiesDetailPage = () => {
                                     messageType={messageType}/>
                             }
                             {
-                                openMessagesModal && <ReportMessagesModal 
+                                openMessagesModal && <ReportMessagesDialog 
                                     open={openMessagesModal} 
                                     close={closeMessages} 
                                     report={report} />
@@ -474,10 +469,10 @@ const ActivitiesDetailPage = () => {
                 </Grid>
             </Grid>
             {
-                openPreviewModal && <PreviewModal open={openPreviewModal} data={materialesPreview} closePreviewModal={closePreviewModal} />
+                openPreviewModal && <PreviewDialog open={openPreviewModal} data={materialesPreview} closePreviewModal={closePreviewModal} />
             }
             {
-                loadingLogo && <LoadingLogoModal open={loadingLogo} />
+                loadingLogo && <LoadingLogoDialog open={loadingLogo} />
             }
             {/* {
                 open3D && <MVAvatar subSistem={subSistem} />

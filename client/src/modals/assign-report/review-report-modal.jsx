@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowCircleLeft, faArrowUp, faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom';
 import { AuthContext, useExecutionReportContext } from '../../context';
+import { LoadingLogoDialog } from '../../dialogs';
 
 const ReviewReportModal = ({open, report, onlyClose}) => {
     const {admin} = useContext(AuthContext)
@@ -208,7 +209,7 @@ const ReviewReportModal = ({open, report, onlyClose}) => {
                         
                     </div>
                     {
-                        loadingDelete && <LoadingLogoModal open={loadingDelete} />
+                        loadingDelete && <LoadingLogoDialog open={loadingDelete} />
                     }
 
                 </Grid>

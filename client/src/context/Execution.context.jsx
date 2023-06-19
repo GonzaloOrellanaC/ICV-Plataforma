@@ -184,7 +184,6 @@ export const ExecutionReportProvider = (props) => {
     return (
         <>
         <ExecutionReportContext.Provider value={provider} {...props} />
-        {/* <LoadingLogoModal open={loading} /> */}
         </>
     )
 }

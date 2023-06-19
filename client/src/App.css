@@ -187,3 +187,12 @@
   font-size: 1.5rem;
   /* color: theme.palette.primary.main */
 }
+
+.select-elements {
+  height: 44px;
+  width: 100%;
+  border-style: solid;
+  border-color: #C4C4C4;
+  border-width: 1px;
+  border-radius: 10px;
+}

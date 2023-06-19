@@ -7,9 +7,8 @@ import CircleCheckedFilled from '@material-ui/icons/CheckCircle'
 import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked'
 import { faPen, faPaperclip, faCommentDots, faEye } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { LoadingLogoModal } from '../../modals'
 import { executionReportsDatabase } from "../../indexedDB"
-import { ReportDataDialog } from '../../dialogs'
+import { LoadingLogoDialog, ReportDataDialog } from '../../dialogs'
 import { useAuth, useConnectionContext, useExecutionReportContext } from "../../context"
 import { executionReportsRoutes } from "../../routes"
 
@@ -170,22 +169,29 @@ const PautaDetail = (
     } 
 
     const changeState = async (element, number) => {
+        console.log(element)
         if (!element.isChecked) {
-            if (confirm('¿Desea indicar estado ejecutado, sin dejar un mensaje?')) {
-                const messages = [
-                    {
-                        content: "Se indica estado ejecutado sin dejar mensajes",
-                        id: Date.now(),
-                        name: `${userData.name} ${userData.lastName}`,
-                        namePicture: null,
-                        urlBase64: undefined,
-                        user: userData._id,
-                    }
-                ]
-                element.isChecked = true
-                element.isWarning = false
-                element.messages = messages
-                save(number, true, element)
+            if (element.obs01.includes('__')) {
+                alert('Actividad requiere que deje un comentario.')
+            } else if (element.unidad !== '*') {
+                alert('Actividad requiere que deje una cantidad de insumo utilizado.')
+            } else {
+                if (confirm('¿Desea indicar estado ejecutado, sin dejar un mensaje?')) {
+                    const messages = [
+                        {
+                            content: "Se indica estado ejecutado sin dejar mensajes",
+                            id: Date.now(),
+                            name: `${userData.name} ${userData.lastName}`,
+                            namePicture: null,
+                            urlBase64: undefined,
+                            user: userData._id,
+                        }
+                    ]
+                    element.isChecked = true
+                    element.isWarning = false
+                    element.messages = messages
+                    save(number, true, element)
+                }
             }
         } else {
             if (confirm('Confirme que desea desmarcar la tarea')) {
@@ -381,7 +387,7 @@ const PautaDetail = (
                     canEdit={canEdit}
                 />}
                 {
-                    loadingLogo && <LoadingLogoModal open={loadingLogo} />
+                    loadingLogo && <LoadingLogoDialog open={loadingLogo} />
                 }
             </div>
         </div>

@@ -46,7 +46,7 @@ const ResetPassword = () => {
             }else{
                 alert(forgotPasswordState.data.message);
                 setLoading(false)
-                navigate.replace('/')
+                navigate('/', {replace: true})
             }
         }catch (err) {
             console.log('No se pudo obtener el reset')

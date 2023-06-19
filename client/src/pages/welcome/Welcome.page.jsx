@@ -339,7 +339,6 @@ const WelcomePage = (/* { readyToLoad } */) => {
             <LoadingModal open={openLoader} progress={progress} loadingData={loadingData} withProgress={true}/>
             <VersionControlModal open={openVersion} closeModal={closeModal} />
             
-            {/* <Download3DFilesDialog open={openDownload3D} /> */}
         </div>
     )
 }

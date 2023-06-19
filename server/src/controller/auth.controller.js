@@ -50,12 +50,14 @@ const loginRut = async (req, res, next) => {
     }
     try {
         const userFind = await Users.findOne({rut: user.rut}).populate('obras')
-        console.log(userFind)
         if (userFind) {
             const hash = crypto.pbkdf2Sync(user.password, userFind.salt, 200000, 64, 'sha512').toString('hex')
             if (userFind.hash === hash) {
                 Sentry.captureMessage('Login por rut ' + user.rut + ' aceptado', 'info')
                 return res.status(200).json(userFind);
+            } else {
+                Sentry.captureMessage('Login por rut ' + user.rut + ' error de password', 'info')
+                return res.status(400).json({error: 'error de password'});
             }
         } else {
             return res.status(201).json({

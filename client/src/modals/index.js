@@ -1,6 +1,6 @@
 import { AssignReportModal, ReviewReportModal } from './assign-report';
 import { UserListDataModal } from './user-list-data';
-import { LoadingModal, LoadingLogoModal, ImageTransitionModal } from './loadings';
+import { LoadingModal, ImageTransitionModal } from './loadings';
 import { VersionControlModal } from './version-control';
 import { ReadActivityModal } from './read-activity';
 import { WriteActivityModal } from './write-activity';
@@ -18,7 +18,6 @@ export {
     ReviewReportModal,
     UserListDataModal,
     LoadingModal,
-    LoadingLogoModal,
     ImageTransitionModal,
     VersionControlModal,
     ReadActivityModal,

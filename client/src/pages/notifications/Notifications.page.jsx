@@ -1,12 +1,11 @@
-import { Box, Button, Card, Grid, IconButton, ListItem, makeStyles, Toolbar } from "@material-ui/core"
+import { Box, Button, Card, Grid, IconButton, ListItem, Toolbar } from "@material-ui/core"
 import { ArrowBackIos } from "@material-ui/icons"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { dateWithTime, useStylesTheme } from "../../config"
-import LoadingLogoModal from "../../modals/loadings/loading-logo.modal"
 import { notificationsRoutes } from "../../routes"
 import { useNotificationsContext } from "../../context/Notifications.context"
-import { useAuth } from "../../context"
+import { LoadingLogoDialog } from "../../dialogs"
 /* const useStyles = makeStyles(theme => ({
     root: {
         display: 'inline-block',
@@ -127,7 +126,7 @@ const NotificationsPage = () => {
                             }
                             </div>
                             {
-                                openLoading && <LoadingLogoModal open={openLoading} />
+                                openLoading && <LoadingLogoDialog open={openLoading} />
                             }
                         </Grid>
                     </Card>

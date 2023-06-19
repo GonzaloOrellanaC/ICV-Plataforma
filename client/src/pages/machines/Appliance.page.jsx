@@ -5,12 +5,11 @@ import { Close, ArrowBackIos } from '@material-ui/icons'
 import { useParams } from "react-router-dom";
 import { imageToBase64, useStylesTheme } from '../../config'
 import { useNavigate } from 'react-router-dom'
-import { apiIvcRoutes, machinesRoutes, reportsRoutes } from '../../routes';
+import { apiIvcRoutes, reportsRoutes } from '../../routes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faEye } from '@fortawesome/free-solid-svg-icons';
-import { ImageDialog, ReportDetailDialog } from '../../dialogs';
-import { LoadingLogoModal } from '../../modals';
-import { useAuth, useConnectionContext, useExecutionReportContext, useMachineContext } from '../../context';
+import { ImageDialog, LoadingLogoDialog, ReportDetailDialog } from '../../dialogs';
+import { useConnectionContext, useExecutionReportContext, useMachineContext } from '../../context';
 
 const AppliancePage = ({ route }) => {
     const classes = useStylesTheme();
@@ -272,7 +271,7 @@ const AppliancePage = ({ route }) => {
                                     openDialog && <ReportDetailDialog open={openDialog} report={report} handleClose={handleClose}/>
                                 }
                                 {
-                                    loading && <LoadingLogoModal open={loading} />
+                                    loading && <LoadingLogoDialog open={loading} />
                                 }
                                 {
                                     openMachineImage && <ImageDialog open={openMachineImage} image={machineImage} handleClose={closeImage}/>

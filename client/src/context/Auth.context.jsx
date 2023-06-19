@@ -1,12 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { authRoutes, sitesRoutes, usersRoutes } from '../routes'
+import { authRoutes, usersRoutes } from '../routes'
 import { userDatabase } from '../indexedDB'
-import { FirmaUsuario } from '../modals'
-import { styleModal } from '../config'
-import {SocketConnection} from '../connections'
-import addNotification from 'react-push-notification'
-import logoNotification from '../assets/logo_icv_notification_push.png'
 import { useNavigate } from 'react-router-dom'
+import { FirmaUsuarioDialog } from '../dialogs'
 
 export const AuthContext = createContext()
 
@@ -198,9 +194,8 @@ export const AuthProvider = (props) => {
                     }
                 })
                 .catch(error => {
-                    console.log(error)
                     localStorage.setItem('isauthenticated', false)
-                    alert('Error de autenticación: '+error)
+                    alert((JSON.stringify(error).includes('400')) ? 'Contraseña incorrecta' : 'Error de autenticación: '+ error)
                     setIsAuthenticated(false)
                 })
             })
@@ -250,7 +245,7 @@ export const AuthProvider = (props) => {
                 })
                 .catch(error => {
                     localStorage.setItem('isauthenticated', false)
-                    alert('Error de autenticación: '+error)
+                    alert((JSON.stringify(error).includes('400')) ? 'Contraseña incorrecta' : 'Error de autenticación: '+ error)
                     setIsAuthenticated(false)
                 })
             })
@@ -268,7 +263,7 @@ export const AuthProvider = (props) => {
         
         <>
         <AuthContext.Provider value={provider} {...props}/>
-        <FirmaUsuario openSign={openSign} styleModal={styleModal} setRefCanvasFunction={setRefCanvasFunction} getImage={getImage} clear={clear} />
+        <FirmaUsuarioDialog openSign={openSign} setRefCanvasFunction={setRefCanvasFunction} getImage={getImage} clear={clear} />
         </>
         
     )

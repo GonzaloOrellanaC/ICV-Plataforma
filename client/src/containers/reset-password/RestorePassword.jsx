@@ -162,7 +162,7 @@ const RestorePassword = ({id}) => {
                         </Button>
                     </Grid>
                     <Grid item xs={12} container justifyContent='center' style={{paddingTop: 10}}>
-                        <Button className={classes.button} variant='contained' color='primary' onClick={()=>{navigate.replace('/')}}>
+                        <Button className={classes.button} variant='contained' color='primary' onClick={()=>{navigate('/', {replace: true})}}>
                             {dictionary.restorePassword.cancel}
                         </Button>
                     </Grid>

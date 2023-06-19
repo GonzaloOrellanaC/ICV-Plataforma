@@ -154,7 +154,7 @@ export const ReportsProvider = (props) => {
         setReports(reportsCache)
         alert(`Reporte ${reportUpdated.idIndex}, para máquina modelo ${reportUpdated.machine} creado satisfactoriamente.`)
         setLoading(false)
-        navigate.replace('/reports')
+        navigate('/reports', {replace: true})
     }
 
     const saveReportAsignation = async (reportData) => {
@@ -454,7 +454,6 @@ export const ReportsProvider = (props) => {
     return (
         <>
             <ReportsContext.Provider value={provider} {...props} />
-            {/* <LoadingLogoModal open={statusReports} /> */}
         </>
     )
 }

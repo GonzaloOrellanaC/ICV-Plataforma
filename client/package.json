@@ -74,6 +74,7 @@
         "write-json-file": "^5.0.0"
     },
     "devDependencies": {
+        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "eslint": "^7.31.0",
         "eslint-config-standard": "^16.0.3",
         "eslint-plugin-import": "^2.23.4",

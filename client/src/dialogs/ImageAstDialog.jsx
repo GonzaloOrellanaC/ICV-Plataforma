@@ -11,8 +11,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 /* import "swiper/swiper-bundle.min.css"
 import "swiper/swiper.min.css" */
 import 'swiper/css'
-import { LoadingLogoModal } from "../modals"
 import { imageToBase64 } from "../config"
+import LoadingLogoDialog from "./LoadingLogoDialog"
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />
 })
@@ -153,7 +153,7 @@ const ImageAstDialog = ({/* handleClickOpen,  */open, handleClose, images, setIs
                 >
                 <Close />
             </IconButton>
-            <LoadingLogoModal open={openLoadingLogoModal} />
+            <LoadingLogoDialog open={openLoadingLogoModal} />
         </Dialog>
     )
 }

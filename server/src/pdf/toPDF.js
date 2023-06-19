@@ -614,16 +614,19 @@ const createPdfBinary = ( pdfContent, resp, callback ) => {
     })
     pdf.end()
 }
-
 const toPDF = (reportData) => {
     return new Promise(async resolve => {
+        console.log(reportData.chiefMachineryApprovedBy,
+            reportData.shiftManagerApprovedBy,
+            reportData.usersAssigned[0])
         const admin = await Users.findById(reportData.createdBy)
         const chiefMachineryName = await Users.findById(reportData.chiefMachineryApprovedBy)
-        const chiefMachinerySign = chiefMachineryName.sign
+        const chiefMachinerySign = chiefMachineryName.sign ? chiefMachineryName.sign : ''
         const shiftManagerName = await Users.findById(reportData.shiftManagerApprovedBy)
-        const shiftManagerSign = shiftManagerName.sign
+        console.log(shiftManagerName)
+        const shiftManagerSign = shiftManagerName.sign ? shiftManagerName.sign : ''
         const executionUser = await Users.findById(reportData.usersAssigned[0])
-        const executionUserSign = executionUser.sign
+        const executionUserSign = executionUser.sign ? executionUser.sign : ''
         const executionReportData = await ExecutionReport.findOne({reportId: reportData._id})
         if (chiefMachinerySign) {
             console.log('Firma de jefe maquinaria')

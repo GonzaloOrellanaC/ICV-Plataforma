@@ -1,11 +1,9 @@
 import { Box, Button, Card, Grid, IconButton, ListItem, makeStyles, Toolbar } from "@material-ui/core"
 import { ArrowBackIos } from "@material-ui/icons"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { dateWithTime, useStylesTheme } from "../../config"
+import { useStylesTheme } from "../../config"
 import { PatternsDownloadedModal } from "../../modals"
-import LoadingLogoModal from "../../modals/loadings/loading-logo.modal"
-import { notificationsRoutes } from "../../routes"
 
 const OptionsPage = () => {
     const classes = useStylesTheme();

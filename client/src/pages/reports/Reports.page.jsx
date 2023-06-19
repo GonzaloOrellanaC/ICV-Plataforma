@@ -2,16 +2,12 @@ import {useState, useEffect} from 'react'
 import {Grid, Toolbar, IconButton, Chip, TablePagination, Button} from '@material-ui/core';
 import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
-/* import { machinesRoutes, reportsRoutes } from '../../routes'; */
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown, faCircle, faClipboardList } from '@fortawesome/free-solid-svg-icons';
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useNavigate } from 'react-router-dom';
-/* import { machinesDatabase, sitesDatabase } from '../../indexedDB';
-import { dateSimple, getWeekReports } from '../../config'; */
-import { LoadingLogoModal } from '../../modals';
-import { useAuth, useExecutionReportContext, useReportsContext, useSitesContext } from '../../context';
+import { useAuth, useReportsContext, useSitesContext } from '../../context';
 
 const ReportsPage = () => {
     const {sites} = useSitesContext()

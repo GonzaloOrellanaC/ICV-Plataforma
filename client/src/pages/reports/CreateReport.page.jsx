@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { getExecutionReportData, useStylesTheme } from '../../config';
+import { useStylesTheme } from '../../config';
 import { 
     Box, 
     Grid, 
@@ -13,11 +13,10 @@ import {
 import { ArrowBackIos } from '@material-ui/icons'
 import { useNavigate, useParams } from 'react-router-dom';
 import { trucksDatabase, pautasDatabase, machinesDatabase, sitesDatabase } from '../../indexedDB'
-import { apiIvcRoutes, machinesRoutes, reportsRoutes } from '../../routes';
+import { reportsRoutes } from '../../routes';
 import './reports.css'
 import {useAuth, useReportsContext} from '../../context'
-import { SocketConnection } from '../../connections';
-import { LoadingLogoModal } from '../../modals';
+import { LoadingLogoDialog } from '../../dialogs';
 
 const CreateReports = () => {
     const {userData, admin} = useAuth()
@@ -41,18 +40,13 @@ const CreateReports = () => {
     const [ equID, setEqID ] = useState('')
     const [ toDay, setToDay ] = useState('')
     const [ sapId, setSapId ] = useState('')
-    const [ canEdit, setCanEdit ] = useState(true)
     const [ iDPM, setIDPM ] = useState('')
     const [ isTest, setIsTest ] = useState(false)
     const [ idObra, setIdObra ] = useState('')
-    /* const [ isAdmin, setIsAdmin ] = useState(false) */
     const [ sites, setSites ] = useState([])
     const [openLoadingLogo, setOpenLoadingLogo] = useState(false)
-
     const classes = useStylesTheme();
-
     const navigate = useNavigate();
-
     const {id} = useParams();
 
     useEffect(() => {
@@ -84,14 +78,15 @@ const CreateReports = () => {
             })
             const pautasInspeccionFiltered = []
             const pautasMantencionFiltered = []
-            pautasLista.sort(orderType).forEach((item) => {
+            const response = pautasLista.sort(orderType).forEach((item) => {
                 console.log(item.typepm, reportType)
-                if (reportType === 'Inspección') {
+                if (reportType === 'Inspección' && (item.typepm === 'Pauta de Inspección')) {
                     pautasInspeccionFiltered.push(item)
-                } else if (reportType === 'Mantención') {
+                } else if (reportType === 'Mantención' && (item.typepm !== 'Pauta de Inspección')) {
                     pautasMantencionFiltered.push(item)
                 }
             })
+            console.log(response)
             setPautas((reportType === 'Inspección') ? pautasInspeccionFiltered : pautasMantencionFiltered)
         }
     }, [reportType, pautaIndex, truckSelected, machineModel])
@@ -140,12 +135,7 @@ const CreateReports = () => {
         console.log(machineModel)
         let db = await machinesDatabase.initDbMachines();
         if(db) {
-            const response = await machinesDatabase.consultar(db.database)/* .then((machines) => {
-                let m = new Array()
-                m = machines.filter(machine => {if(machine.model === machineModel && machine.idobra === userData.obras && userData.obras [0] ? [0].idobra : idObra) {return machine}});
-                const allMachines = m.sort((a, b) => {return Number(a.equ) - Number(b.equ)})
-                setMaquinas(allMachines)
-            }) */
+            const response = await machinesDatabase.consultar(db.database)
             console.log(response)
             const machinesFiltered = await response.filter((machine) => {if ((machine.model === machineModel)&&(machine.idobra === idObra )) return machine})
             setMaquinas(machinesFiltered)
@@ -174,22 +164,6 @@ const CreateReports = () => {
             setOpenLoadingLogo(false)
         }else{
             createReport(report, setOpenLoadingLogo)
-            /* const reportState = await reportsRoutes.createReport(report);
-            console.log(reportState.data)
-            if(reportState) {
-                SocketConnection.sendnotificationToUser(
-                    'nuevo-reporte',
-                    `${userData._id}`,
-                    userData._id,
-                    '',
-                    '',
-                    ``,
-                    ''
-                    )
-                alert(`Reporte ${reportState.data.idIndex}, para máquina modelo ${reportState.data.machine} creado satisfactoriamente.`)
-                setOpenLoadingLogo(false)
-                navigate.replace('/reports')
-            } */
         }
     }
 
@@ -595,7 +569,7 @@ const CreateReports = () => {
                     </Card>
                 </Grid>
             </Grid>
-            <LoadingLogoModal open={openLoadingLogo} />
+            <LoadingLogoDialog open={openLoadingLogo} />
         </Box>
     )
 
