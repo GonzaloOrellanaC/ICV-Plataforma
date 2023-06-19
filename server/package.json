@@ -6,17 +6,13 @@
     "scripts": {
         "start-dev": "nodemon --exec babel-node -r dotenv/config server.js",
         "test": "mocha --require @babel/polyfill --require @babel/register",
-        "start": "npx nodemon --exec babel-node server.js"
+        "start": "npx nodemon server.js --exec babel-node server.js"
     },
     "author": "Javier Romero <javier.romero@kauel.com>",
     "license": "ISC",
     "dependencies": {
         "@azure/identity": "^2.0.1",
         "@azure/storage-blob": "^12.8.0",
-        "@babel/cli": "^7.21.5",
-        "@babel/polyfill": "^7.12.1",
-        "@babel/preset-env": "^7.21.5",
-        "@babel/register": "^7.21.0",
         "@sentry/node": "^7.13.0",
         "@sentry/tracing": "^7.13.0",
         "accesscontrol": "^2.2.1",
@@ -60,8 +56,12 @@
         "fsevents": "2.1.2"
     },
     "devDependencies": {
+        "@babel/cli": "^7.22.5",
         "@babel/core": "^7.22.5",
         "@babel/node": "^7.22.5",
+        "@babel/polyfill": "^7.12.1",
+        "@babel/preset-env": "^7.22.5",
+        "@babel/register": "^7.22.5",
         "nodemon": "^2.0.22"
     }
 }
