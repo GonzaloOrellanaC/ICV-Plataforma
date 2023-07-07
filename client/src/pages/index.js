@@ -18,6 +18,8 @@ import { ActivitiesPage, ActivitiesDetailPage } from './activities'
 import { InternalMessagesPage } from './internal-messages'
 import { NotificationsPage } from './notifications'
 import { OptionsPage } from './options'
+import { CalendarPage } from './calendar'
+import { WallJournalPage } from './wall-journal'
 export {
     AppliancePage,
     MachinesPage,
@@ -47,5 +49,7 @@ export {
     ActivitiesDetailPage,
     InternalMessagesPage,
     NotificationsPage,
-    OptionsPage
+    OptionsPage,
+    CalendarPage,
+    WallJournalPage
 }

@@ -341,7 +341,7 @@ const createSiteToSend = () => {
         if( sites ) {
             const body = await sites.json();
             if( body ) {
-                const readSitesFromDb = await SiteController.readSites()
+                const readSitesFromDb = await Site.find()
                 let sitios = body.data
                 sitios.forEach((sitioSap, i) => {
                     let compareResult = false
@@ -351,9 +351,9 @@ const createSiteToSend = () => {
                         }
                         if (index === (readSitesFromDb.length - 1)) {
                             if(!compareResult) {
-                                const response = await SiteController.detectSiteIfExist(sitioSap)
+                                const response = await Site.findOne({idobra: sitioSap.idobra})
                                 if (!response) {
-                                    await SiteController.createSite(sitioSap)
+                                    await Site.create(sitioSap)
                                 }
                             }
                         }
@@ -368,30 +368,6 @@ const createSiteToSend = () => {
         }else{
             resolve(false)
         }
-    })
-}
-
-/* Borrar archivo */
-const borrarArchivo = (path) => {
-    return new Promise(resolve => {
-        fs.rm(path, (err) => {
-            if(err) {
-                resolve(false)
-            }
-            resolve(true)
-        })
-    })
-}
-
-/* Guardar archivo */
-const guardarArchivo = (body) => {
-    return new Promise(resolve => {
-        fs.writeFile(`../files/SitesToSend/sites.json`, JSON.stringify(body.data), (err) => {
-            if (err) {
-                resolve(false)
-            }
-            resolve(true)
-        });
     })
 }
 
@@ -477,7 +453,7 @@ const createMachinesToSend = async (pIDOBRA, isSync = false) => {
                 /* console.log(findMachine)
                 await Machine.findOneAndUpdate({equid: machine.equid}, machine) */
             } else {
-                console.log('Machine not founded')
+                console.log('Machine not found')
                 try {
                     await Machine.create(machine);
                 } catch (error) {

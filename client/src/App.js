@@ -38,7 +38,9 @@ import {
     ActivitiesPage,
     InternalMessagesPage,
     NotificationsPage,
-    OptionsPage
+    OptionsPage,
+    CalendarPage,
+    WallJournalPage
 } from './pages';
 import { PatternsPage, RolesPage, UserProfilePage } from './pages/administration'
 import { Notifications } from 'react-push-notification';
@@ -151,11 +153,17 @@ const OnApp = () => {
                     (localStorage.getItem('role') === 'superAdmin')
                     ) && <Route exact path='/roles' element={<RolesPage route={'roles'}/>} />
                     }
+                {(
+                    admin ||
+                    (localStorage.getItem('role') === 'superAdmin')
+                    ) && <Route exact path='/admin-wall-journal' element={<WallJournalPage route={'wall-journal'}/>} />
+                    }
                 <Route exact path='/patterns' element={<PatternsPage route={'roles'}/>}/>
                 <Route exact path='/edit-user/:id' element={<AdminNewUserPage route={'edit-user'}/>} />
                 <Route path='/assignment/:id' element={<ActivitiesDetailPage route={'assignment'}/>} />
                 <Route exact path='/assignment' element={<ActivitiesPage route={'assignment'}/>} />
                 <Route exact path='/notifications' element={<NotificationsPage route={'notifications'}/>} />
+                <Route exact path='/calendar' element={<CalendarPage route={'calendar'}/>} />
             </Routes>
         </div>
     )

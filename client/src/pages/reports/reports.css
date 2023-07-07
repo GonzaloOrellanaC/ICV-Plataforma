@@ -45,3 +45,19 @@
         padding-left: 60px;
     }
 }
+
+.buttonsReports {
+    position: absolute;
+    right: 10;
+}
+
+.buttonsReports button {
+    color: #fff;
+    background-color: grey;
+    padding-top: 10;
+    padding-bottom: 10;
+    padding-left: 20;
+    padding-right: 20;
+    border-radius: 20;
+    border-color: transparent;
+}

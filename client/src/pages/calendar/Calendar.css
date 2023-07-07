@@ -1,0 +1,110 @@
+.react-calendar {
+    width: 100%;
+    height: calc(100vh - 210px);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.text-container {
+    height: calc(100vh - 210px);
+    border-radius: 8px;
+    padding: 10px;
+    border:1px solid #a0a096;
+    border-radius: 8px;
+}
+
+.text-container-date {
+    color: brown;
+    font-weight: 600;
+    font-size: large;
+}
+
+.react-calendar__month-view__weekNumbers {
+    height: calc(100vh - 340px) !important;
+    width: 100px !important;
+}
+
+.react-calendar__month-view, .react-calendar__month-view div, .react-calendar__month-view div div {
+    height: 100% !important;
+}
+
+.react-calendar__month-view__weekNumbers .react-calendar__tile {
+    height: 100% !important;
+    border-radius: 8px;
+    font-size: 25px;
+    text-decoration: none;
+}
+
+.react-calendar__viewContainer {
+    height: calc((100vh - 300px)/7);
+}
+
+.react-calendar__navigation__arrow, .react-calendar__navigation__label {
+    font-size: 30px;
+    text-transform: uppercase;
+    color: brown;
+    font-weight: 600;
+}
+
+.react-calendar__month-view__days {
+    height: 100% !important;
+}
+
+.react-calendar__month-view__days .react-calendar__tile {
+    height: 100% !important;
+    border-radius: 8px;
+    font-size: 25px;
+    text-decoration: none;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+    border-radius: 8px;
+    font-size: 20px;
+    text-decoration: none;
+    color: brown
+}
+
+.react-calendar__tile--now {
+    background-color: rgb(112, 55, 55) !important;
+    color: #fff;
+}
+
+.react-calendar__tile--now:hover {
+    background-color: rgb(178, 98, 98) !important;
+}
+
+.react-calendar__tile--active {
+    border-color: brown !important;
+    background-color: #fff !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-radius: 8px;
+    color: #000
+}
+
+.react-calendar__tile--active:hover {
+    background-color: brown !important;
+    color: #fff !important;
+}
+
+.highlight {
+    background-color: rgb(198, 159, 159) !important;
+    color: #fff;
+}
+
+.highlight:hover {
+    background-color: rgb(181, 128, 128) !important;
+    color: #fff;
+}
+
+.otLink:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.otLinkActive {
+    cursor: pointer;
+    font-weight: 600;
+}
+

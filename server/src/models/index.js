@@ -18,7 +18,7 @@ import InternalMessage from './internalMessages'
 import Notification from './notifications'
 import Patterns from './patterns'
 import PatternDetail from './patternDetail'
-
+import Cron from './cron'
 export {
     AssignedMaintenance,
     AssignedInspections,
@@ -38,5 +38,6 @@ export {
     InternalMessage,
     Notification,
     Patterns,
-    PatternDetail
+    PatternDetail,
+    Cron
 }

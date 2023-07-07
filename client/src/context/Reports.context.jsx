@@ -105,6 +105,7 @@ export const ReportsProvider = (props) => {
                 setPautas(pautasCache)
             }
             setAssignments(reports)
+            console.log(reports)
         } else {
             if (isAuthenticated) {
                 console.log('Guardando reporte') 
@@ -370,7 +371,6 @@ export const ReportsProvider = (props) => {
                     return report
                 }
             })
-            console.log(filtered, el.idIndex)
             if (filtered.length === 0) {
                 await reportsDatabase.eliminar(el.idIndex, database)
             }

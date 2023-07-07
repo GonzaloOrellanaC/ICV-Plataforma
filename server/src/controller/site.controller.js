@@ -33,8 +33,10 @@ const detectSiteIfExist = async (site) => {
     }
 }
 
-const createSite = (site) => {
-    return new Promise(async resolve => {
+const createSite = async (site) => {
+    const response = await Site.create(site)
+    return response
+    /* return new Promise(async resolve => {
         try{
             const siteCreated = await new Site(site);
             siteCreated.save();
@@ -42,7 +44,7 @@ const createSite = (site) => {
         } catch (err) {
             throw err
         }
-    })
+    }) */
 }
 
 export default {

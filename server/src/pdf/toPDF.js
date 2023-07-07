@@ -194,7 +194,6 @@ const createAstImages = (astList) => {
     console.log('Creando tabla de las AST')
     let arrayTable = []
     return new Promise(resolve => {
-        console.log(astList)
         astList.forEach(async (e, i) => {
             /* let imgBase64
             if (e.imageUrl) {
@@ -304,7 +303,6 @@ const getImage = (imageUrl) => {
 
 const getImageBase64 = async (imageUrl) => {
     try {
-        console.log('URL imágen ',imageUrl)
         const image = await axios.get(imageUrl, {responseType: 'arraybuffer'})
         const returnedB64 = Buffer.from(image.data).toString('base64')
         return `data:image/jpeg;base64,${returnedB64}`
@@ -321,7 +319,6 @@ const createImagesTables2 = (executionReportData) => {
     let arrayTable = []
     try {
         return new Promise(resolve => {
-            console.log('Listado de imagenes ', imagesList)
             imagesList.forEach(async (e, i) => {
                 let namePicture = e.namePicture ? e.namePicture.replace('Pregunta', 'Tarea') : ''
                 const imageData = await getImageBase64(e.urlImageMessage)
@@ -503,12 +500,137 @@ const createSubTables = async (list, index, indexNumber) => {
 
 const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser) => {
     console.log('Creando tabla de firmas')
+    return new Promise(resolve => {
+        const table = [
+            {
+                columns: [
+                    {
+                        pageBreak: 'before',
+                        text: 'Responsables: ',
+                        margin: [0, 50, 0, 0],
+                    },
+                    {
+                        pageBreak: 'before',
+                        alignment: 'right',
+                        margin: [0, 50, 0, 0],
+                        width: '*',
+                        text: `Fecha: ${dateSimple(Date.now())} \n\ Hora: ${time(Date.now())}`
+                    }
+                ]
+            },
+            {
+                columns: [
+                    {
+                        alignment: 'center',
+                        margin: [0, 100, 0, 10],
+                        width: 200,
+                        height: 100,
+                        image: chiefMachinerySign ? chiefMachinerySign : null
+                    },
+                    {
+                        alignment: 'center',
+                        margin: [0, 100, 0, 10],
+                        width: 200,
+                        height: 100,
+                        image: shiftManagerSign ? shiftManagerSign : null
+                    }
+                ]
+            },
+            {
+                columns: [
+                    {
+                        alignment: 'center',
+                        margin: [0, 10, 0, 200],
+                        width: 200,
+                        text: `${chiefMachineryName.name} ${chiefMachineryName.lastName}` + '\n\ Jefe de Maquinaria'
+                    },
+                    {
+                        alignment: 'center',
+                        margin: [0, 10, 0, 200],
+                        width: 200,
+                        text: `${shiftManagerName.name} ${shiftManagerName.lastName}` + '\n\ Jefe de Turno'
+                    }
+                ]
+            },
+        ]
+        resolve (table)
+    })
+}
+
+const createOperatorsSignsTable = (operators) => {
+    let table = []
+    return new Promise(async resolve => {
+        let columns1 = []
+        operators.forEach((user, i) => {
+            columns1[i] = {
+                alignment: 'center',
+                margin: [0, 100, 0, 10],
+                width: 200,
+                height: 100,
+                image: user.sign ? user.sign : null
+            }
+        })
+        let columns2 = []
+        operators.forEach((user, i) => {
+            columns2[i] = {
+                alignment: 'center',
+                margin: [0, 10, 0, 200],
+                width: 200,
+                text: `${user.name} ${user.lastName} \n\ Técnico Inspección o Mantenimiento ${(i===0) ? 'y que termina OT' : ''}`
+            }
+        })
+        table[0] = {
+            columns: [
+                {
+                    pageBreak: 'before',
+                    text: 'Operadores: ',
+                    margin: [0, 50, 0, 0],
+                },
+                {
+                    pageBreak: 'before',
+                    alignment: 'right',
+                    margin: [0, 50, 0, 0],
+                    width: '*',
+                    text: `Fecha: ${dateSimple(Date.now())} \n\ Hora: ${time(Date.now())}`
+                }
+            ]
+        }
+        table[1] = {
+            columns: columns1
+        }
+        table[2] = {
+            columns: columns2
+        }
+        console.log(table[0], table[1], table[2])
+        resolve(table)
+    })
+    /* console.log('Creando tabla de firmas')
+    let columns1 = []
+    operators.forEach((user, i) => {
+        columns1[i] = {
+            alignment: 'center',
+            margin: [0, 100, 0, 10],
+            width: 200,
+            height: 100,
+            image: user.sign ? user.sign : null
+        }
+    })
+    let columns2 = []
+    operators.forEach((user, i) => {
+        columns2[i] = {
+            alignment: 'center',
+            margin: [0, 100, 0, 10],
+            width: 200,
+            height: 100,
+            image: `${user.name} ${user.lastName}` + '\n\ Técnico Inspección o Mantenimiento'
+        }
+    })
     return [
         {
             columns: [
                 {
                     pageBreak: 'before',
-                    text: 'Responsables: ',
+                    text: 'Operadores: ',
                     margin: [0, 50, 0, 0],
                 },
                 {
@@ -521,59 +643,17 @@ const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSig
             ]
         },
         {
-            columns: [
-                {
-                    alignment: 'center',
-                    margin: [0, 100, 0, 10],
-                    width: 200,
-                    height: 100,
-                    image: chiefMachinerySign ? chiefMachinerySign : null
-                },
-                {
-                    alignment: 'center',
-                    margin: [0, 100, 0, 10],
-                    width: 200,
-                    height: 100,
-                    image: shiftManagerSign ? shiftManagerSign : null
-                },
-                {
-                    alignment: 'center',
-                    margin: [0, 100, 0, 10],
-                    width: 200,
-                    height: 100,
-                    image: executionUserSign ? executionUserSign : null
-                },
-            ]
+            columns: columns1
         },
         {
-            columns: [
-                {
-                    alignment: 'center',
-                    margin: [0, 10, 0, 200],
-                    width: 200,
-                    text: `${chiefMachineryName.name} ${chiefMachineryName.lastName}` + '\n\ Jefe de Maquinaria'
-                },
-                {
-                    alignment: 'center',
-                    margin: [0, 10, 0, 200],
-                    width: 200,
-                    text: `${shiftManagerName.name} ${shiftManagerName.lastName}` + '\n\ Jefe de Turno'
-                },
-                {
-                    alignment: 'center',
-                    margin: [0, 10, 0, 200],
-                    width: 200,
-                    text: `${executionUser.name} ${executionUser.lastName}` + '\n\ Técnico Inspección o Mantenimiento'
-                },
-            ]
+            columns: columns2
         },
-    ]
+    ] */
 }
 
 
 
 const createPdfBinary = ( pdfContent, resp, callback ) => {
-    console.log(pdfContent)
     var fonts = {
         Roboto: {
             normal: path.resolve(__dirname, "../fonts/Roboto-Regular.ttf"),
@@ -585,7 +665,6 @@ const createPdfBinary = ( pdfContent, resp, callback ) => {
     resp+='Fonts OK!'
     /* console.log(fonts) */
     const doc = new pdfMake(fonts)
-    console.log(doc)
     resp+='Doc OK!'
     const pdf = doc.createPdfKitDocument(pdfContent)
     /* console.log(pdf) */
@@ -616,18 +695,19 @@ const createPdfBinary = ( pdfContent, resp, callback ) => {
 }
 const toPDF = (reportData) => {
     return new Promise(async resolve => {
-        console.log(reportData.chiefMachineryApprovedBy,
-            reportData.shiftManagerApprovedBy,
-            reportData.usersAssigned[0])
         const admin = await Users.findById(reportData.createdBy)
         const chiefMachineryName = await Users.findById(reportData.chiefMachineryApprovedBy)
         const chiefMachinerySign = chiefMachineryName.sign ? chiefMachineryName.sign : ''
         const shiftManagerName = await Users.findById(reportData.shiftManagerApprovedBy)
-        console.log(shiftManagerName)
         const shiftManagerSign = shiftManagerName.sign ? shiftManagerName.sign : ''
         const executionUser = await Users.findById(reportData.usersAssigned[0])
         const executionUserSign = executionUser.sign ? executionUser.sign : ''
         const executionReportData = await ExecutionReport.findOne({reportId: reportData._id})
+        const operators = []
+        reportData.usersAssigned.forEach(async (user, i) => {
+            const userData = await Users.findById(user)
+            operators.push(userData)
+        })
         if (chiefMachinerySign) {
             console.log('Firma de jefe maquinaria')
         }
@@ -771,7 +851,8 @@ const toPDF = (reportData) => {
                 },
                 await createTable(groupKeys, group),
                 (reportData.history.length > 0) ? await crateHistoryTable(reportData.history) : {},
-                createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser),
+                await createOperatorsSignsTable(operators),
+                /* await createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser), */
                 /* (executionReportData.astList && (executionReportData.astList.length > 0)) ? 
                 {
                     style: 'title',

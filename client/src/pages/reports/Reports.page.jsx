@@ -1,9 +1,9 @@
 import {useState, useEffect} from 'react'
-import {Grid, Toolbar, IconButton, Chip, TablePagination, Button} from '@material-ui/core';
+import {Grid, Toolbar, IconButton, Chip, TablePagination, Button, AppBar, Typography} from '@material-ui/core';
 import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown, faCircle, faClipboardList } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar } from '@fortawesome/free-solid-svg-icons';
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useNavigate } from 'react-router-dom';
@@ -362,38 +362,67 @@ const ReportsPage = () => {
     return(
         <div className='container-width' >
             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
-                <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20 }}>
-                    <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
-                        <IconButton onClick={() => setTimeout(() => {
-                            navigate(-1)
-                        }, 500)}>
-                            <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
-                        </IconButton>
-                        <h1 style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
-                            Ordenes
-                        </h1>
-                        <button 
-                            hidden={!hableCreateReport}
-                            onClick={()=>{canOpenNewReport ? navigate('/reports/create-report') : alert('Espere a que las pautas estén descargadas')}} 
-                            title='Nuevo reporte' 
-                            style={
-                                {
-                                    position: 'absolute', 
-                                    right: 10, 
-                                    color: '#fff',
-                                    backgroundColor: '#be2e26',
-                                    paddingTop: 10,
-                                    paddingBottom: 10,
-                                    paddingLeft: 20,
-                                    paddingRight: 20,
-                                    borderRadius: 20,
-                                    borderColor: 'transparent'
+                <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20, flexGrow: 1}}>
+                    {/* <AppBar position="static"> */}
+                        <Toolbar style={{paddingLeft: 0, backgroundColor: '#F9F9F9', borderRadius: 10}}>
+                            <IconButton onClick={() => setTimeout(() => {
+                                navigate(-1)
+                            }, 500)}>
+                                <ArrowBackIos style={{color: '#333', fontSize: 16}}/> 
+                            </IconButton>
+                            <Typography variant='h1' style={{marginTop: 0, marginBottom: 0, fontSize: 16, width: '100%'}}>
+                                Ordenes de trabajo
+                            </Typography>
+                            <IconButton
+                                color={'primary'} 
+                                style={{ marginRight: 5 }}
+                                edge={'end'}
+                                onClick={()=>{navigate('/calendar')}} 
+                                title='Calendario'
+                            >
+                                <FontAwesomeIcon icon={faCalendar}/>
+                            </IconButton>
+                            <IconButton
+                                color={'primary'} 
+                                edge={'end'}
+                                hidden={!hableCreateReport}
+                                onClick={()=>{canOpenNewReport ? navigate('/reports/create-report') : alert('Espere a que las pautas estén descargadas')}} 
+                                title='Nuevo reporte'
+                            >
+                                <FontAwesomeIcon icon={faClipboardList}/>
+                            </IconButton>
+                            {/* <div className='buttonsReports'>
+                                <button
+                                    hidden={!hableCreateReport}
+                                    onClick={()=>{canOpenNewReport ? navigate('/reports/create-report') : alert('Espere a que las pautas estén descargadas')}} 
+                                    title='Nuevo reporte'
+                                >
+                                    <FontAwesomeIcon icon={faClipboardList}/>
+                                </button>
+                            </div> */}
+                            {/* <button 
+                                hidden={!hableCreateReport}
+                                onClick={()=>{canOpenNewReport ? navigate('/reports/create-report') : alert('Espere a que las pautas estén descargadas')}} 
+                                title='Nuevo reporte' 
+                                style={
+                                    {
+                                        position: 'absolute', 
+                                        right: 10, 
+                                        color: '#fff',
+                                        backgroundColor: 'grey',
+                                        paddingTop: 10,
+                                        paddingBottom: 10,
+                                        paddingLeft: 20,
+                                        paddingRight: 20,
+                                        borderRadius: 20,
+                                        borderColor: 'transparent'
+                                    }
                                 }
-                            }
-                        >
-                            <FontAwesomeIcon icon={faClipboardList} style={{marginRight: 10}}/> Nueva orden
-                        </button>
-                    </Toolbar>
+                            >
+                                <FontAwesomeIcon icon={faClipboardList}/>
+                            </button> */}
+                        </Toolbar>
+                    {/* </AppBar> */}
                 </div>
             </div>
             <Grid container>
@@ -550,7 +579,7 @@ const ReportsPage = () => {
                                         </Grid>                                    
                                     </>}
                                     <Grid item sm={'auto'}>
-                                        <button disabled={loading} style={
+                                        {/* <button disabled={loading} style={
                                             {
                                                 position: 'absolute', 
                                                 right: 10, 
@@ -566,7 +595,7 @@ const ReportsPage = () => {
                                             }
                                         } onClick={getReports}>
                                             Actualizar Listado
-                                        </button>
+                                        </button> */}
                                     </Grid>
                                 </Grid>
                             </div>

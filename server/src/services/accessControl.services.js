@@ -1,9 +1,10 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permission,Roles, Site, Machine, Users, Reports, ExecutionReport } from '../models';
+import { Permission,Roles, Site, Machine, Users, Reports, ExecutionReport, Cron } from '../models';
 import { ApiIcv } from '../api-icv';
 import apiIcvConnection from '../api-icv/api-icv.connection';
+import { CronJob } from 'cron'
 import { isValidObjectId } from 'mongoose';
 import userServices from './user.services';
 //import { apiIcvLoader } from '../loaders'
@@ -49,7 +50,7 @@ const initAccessControl = async () => {
                 console.log(user.name + ' ' + user.lastName, ' added role')
             }
             if(user.sites) {
-                console.log((JSON.parse(user.sites)).idobra)
+                /* console.log((JSON.parse(user.sites)).idobra) */
                 if ((JSON.parse(user.sites)).idobra === '0369') {
                     user.obras = ['641c8e48c58d0f4c9485debb']
                     await Users.findByIdAndUpdate(user._id, user)
@@ -202,7 +203,7 @@ const initAccessControl = async () => {
         /* 
             CADA 12 HRS SE ACTUALIZA DATA DE MÁQUINAS Y SITIOS
         */
-        setInterval(async () => {
+        /* setInterval(async () => {
             const findMachines = await Machine.find();
             if(findMachines) {
                 if(findMachines.length > 0) {
@@ -219,20 +220,66 @@ const initAccessControl = async () => {
                     console.log(error)
                 }
             })
-        }, (86400000 / 2));
+        }, (86400000 / 2)); */
+
+        // const jobPautas = new CronJob('*/15 * * * *', () => {
+        //     console.log('Starting CRON Job')
+        //     apiIcvConnection.leerPautas2()
+        // })
+        // jobPautas.start()
+
         
+        initTimeMachinesCron()
         /* 
             CADA 15 MINUTOS SE ACTUALIZA DATA PAUTAS
         */
        
-        apiIcvConnection.leerPautas2()
+        /* apiIcvConnection.leerPautas2()
         setInterval(() => {
-            apiIcvConnection.leerPautas2()
-        }, (60000*15))
+            
+        }, (60000*15)) */
         
     } catch (error) {
         console.error(error)
     }
+}
+
+let machinesCronState
+
+const machinesCron = (time) => {
+    const jobMachines = new CronJob(time, async () => {
+        const findSites = await getSites();
+        console.log('Starting CRON Job')
+        const findMachines = await Machine.find();
+        if(findMachines) {
+            if(findMachines.length > 0) {
+                findSites.forEach(({idobra}, index) => {
+                    ApiIcv.editMachineToSend(idobra)
+                })
+            }
+        }
+        await ApiIcv.createSiteToSend();
+        findSites.forEach(async (site, index) => {
+            try {
+                await ApiIcv.createMachinesToSend(site.idobra, false)
+            } catch (error) {
+                console.log(error)
+            }
+        })
+    })
+    return jobMachines
+}
+
+
+const initTimeMachinesCron = async () => {
+    const times = await Cron.find()
+    console.log(times)
+    machinesCronState = machinesCron(times[0].timeMachines)
+    machinesCronState.start()
+}
+
+const stopTimeMachinesCron = () => {
+    machinesCronState.stop()
 }
 
 const createAdminDefault = async () => {
@@ -406,5 +453,6 @@ export default {
     createRole,
     deleteRole,
     updateRole,
-    //updateAccessControl
+    initTimeMachinesCron,
+    stopTimeMachinesCron
 }
