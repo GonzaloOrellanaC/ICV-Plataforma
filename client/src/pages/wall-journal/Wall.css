@@ -77,4 +77,6 @@
 
 .mediaContainer {
     padding: 10px;
+    height: calc(100vh - 300px);
+    text-align: center;
 }

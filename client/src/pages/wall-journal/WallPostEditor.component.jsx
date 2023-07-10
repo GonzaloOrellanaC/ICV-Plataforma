@@ -61,7 +61,7 @@ const WallPostEditorComponent = ({typePost}) => {
                             </Button>
                             <input type={'file'} id={'imageSelector'} accept="image/jpeg, image/png" style={{display: 'none'}} onChange={imagenSeleccionada} />
                             <div className="mediaContainer">
-                                {imageSelected ? <img src={imageSelected} alt="image-post" className="imagePost" width={'100%'} /> : <p>Se mostrará la imágen al seleccionar</p>}
+                                {imageSelected ? <img src={imageSelected} alt="image-post" className="imagePost" height={'100%'} /> : <p>Se mostrará la imágen al seleccionar</p>}
                             </div>
                         </Grid>
                         <Grid item xs={6}>
@@ -80,7 +80,7 @@ const WallPostEditorComponent = ({typePost}) => {
                             </Button>
                             <input type={'file'} id={'videoSelector'} accept="video/mp4,video/x-m4v,video/*" style={{display: 'none'}} onChange={videoSeleccionado} />
                             <div className="mediaContainer">
-                                {videoSelected ? <video controls src={videoSelected} alt={'video-post'} className="videoPost" width={'100%'} /> : <p>Se mostrará el video al seleccionar</p>}
+                                {videoSelected ? <video controls src={videoSelected} alt={'video-post'} className="videoPost" height={'100%'} /> : <p>Se mostrará el video al seleccionar</p>}
                             </div>
                         </Grid>
                         <Grid item xs={6}>
