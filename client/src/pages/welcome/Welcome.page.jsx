@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Grid, LinearProgress } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import { CardButton } from '../../components/buttons'
-import { apiIvcRoutes, notificationsRoutes } from '../../routes'
-import { trucksDatabase, machinesDatabase, machinesImagesDatabase, imageDatabase, pautasDatabase, readyToSendReportsDatabase } from '../../indexedDB'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import './style.css'
-/* import getInfo from './getInfo'
-import readDataSite from './readDataSite'
-import readData from './readData' */
 import Files from './3dFiles'
 import { useNavigate } from 'react-router-dom'
 import { dateWithTime, /* download3DFiles, imageToBase64 */ } from '../../config'
-import addNotification from 'react-push-notification'
-import { io } from "socket.io-client"
 import { useAuth, useTimeContext } from '../../context'
 import { useNotificationsContext } from '../../context/Notifications.context'
 
@@ -41,11 +34,6 @@ const WelcomePage = (/* { readyToLoad } */) => {
     const [ cancel, setCancel ] = useState(true)
 
     useEffect(() => {
-        /* console.log('Es admin: ', admin)
-        console.log('Es ejecutivo sap: ', isSapExecutive)
-        console.log('Es operador: ', isOperator)
-        console.log('Es jefe de turno: ', isShiftManager)
-        console.log('Es jefe de maquinaria: ', isChiefMachinery) */
         if (admin || isSapExecutive || isShiftManager || isChiefMachinery) {
             setDisableButtonsNoSAP(false)
         }
@@ -67,16 +55,6 @@ const WelcomePage = (/* { readyToLoad } */) => {
         }
     })
 
-    const buttonClick = () => {
-        addNotification({
-            title: 'Warning',
-            subtitle: 'This is a subtitle',
-            message: 'This is a very long message',
-            theme: 'darkblue',
-            //native: true // when using native, your OS will handle theming.
-        })
-    }
-
     window.addEventListener('offline', () => {
         setIfHavNetwork(false)
         if(!localStorage.getItem('timeOffline')) {
@@ -87,200 +65,6 @@ const WelcomePage = (/* { readyToLoad } */) => {
     const setTimeOffline = (timestamp) => {
         localStorage.setItem('timeOffline', timestamp)
         localStorage.setItem('revisado', false)
-    }
-
-    const setLastActualization = () => {
-        localStorage.setItem('ultimaActualizacion', Date.now())
-    }
-
-    useEffect(() => {
-        init()
-    }, [])
-
-    const readNotifications = (data2 = []) => {
-        notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
-            let lista = []
-            lista = data.data.reverse()
-            if(lista.length > 0) {
-                if(lista[0].state) {
-                    setNotificaciones1('Sin notificaciones pendientes')
-                } else {
-                    setNotificaciones1(lista[0].message + '. \n ' + dateWithTime(lista[0].createdAt))
-                }
-                if(isOperator /* || localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator' */) {
-                    if(data2.length > 0) {
-                        setNotificaciones2('Existen ' + data2.length + ' Ordenes de trabajo listos a enviar.')
-                    }else{
-                        setNotificaciones2('Sin OT listas a enviar')
-                    }
-                }
-            }
-        })
-    }
-
-    const init = async () => {
-        /* let db = await readyToSendReportsDatabase.initDb()
-        let data2 = await readyToSendReportsDatabase.consultar(db.database)
-        readNotifications(data2)
-        if(cancel) {
-            const socket = io()
-            if (navigator.onLine) {
-                socket.on(`notification_${userData._id}`, data => {
-                    readNotifications()
-                })
-            }
-            
-            var xhr = new XMLHttpRequest()
-            xhr.onload = async () => {
-                let reader = new FileReader()
-                reader.onload = async () => {
-                    let dbImages = await imageDatabase.initDb()
-                    if(dbImages) {
-                        let image = {
-                            name: 'no-image-profile',
-                            data: reader.result.replace("data:", "")
-                        }
-                        await imageDatabase.actualizar(image, dbImages.database)
-                    }
-                }
-                reader.readAsDataURL(xhr.response)
-            }
-            xhr.open('GET', '../assets/no-profile-image.png')
-            xhr.responseType = 'blob'
-            xhr.send()
-        } */
-        /* return () => setCancel(false) */
-        /* readData(
-            setOpenLoader,
-            setLoadingData,
-            getTrucksList,
-            setProgress,
-            getMachinesList,
-            setLastActualization, 
-            setDisableButtons, 
-            setOpenVersion,
-            network,
-            readyToLoad
-        ) */
-        /* readDataSite(
-            setDisableButtons,
-            setNotificaciones2,
-            setDisableButtonsNoSAP,
-            setDisableIfNoMaintenance,
-            setDisableIfNoInspection,
-            setDisableButtonNoAdmin,
-            setHora,
-            setDate
-        ) */
-    }
-
-    const getMachinesList = () => {
-        return new Promise(async resolve => {
-            let machines = []
-            machines = await getAllMachines()
-            console.log(machines)
-            let db = await machinesDatabase.initDbMachines()
-            if(db) {
-                machines.forEach(async (machine, index) => {
-                    machine.id = index
-                    await machinesDatabase.actualizar(machine, db.database)
-                    if(index === (machines.length - 1)) {
-                        /* const response = await machinesDatabase.consultar(db.database) */
-                        resolve(true)
-                        /* const response = await machinesDatabase.consultar(db.database)
-                        if(response) {
-                            getInfo.getPautasInstepctList(setProgress, response)
-                            
-                        } */
-                    } 
-                })
-            }
-        })
-    }
-
-    const getMachinesList_ = () => {
-            let machines = Files
-    }
-
-    const getTrucksList = () => {
-        return new Promise(async resolve => {
-            let machines = []
-            machines = await getMachines()
-            let db = await trucksDatabase.initDbMachines()
-            if(db) {
-                machines.forEach(async (fileName, index) => {
-                    fileName.id = index
-                    var xhr = new XMLHttpRequest()
-                    xhr.onload = async () => {
-                        let reader = new FileReader()
-                        reader.onload = async () => {
-                            let dbToImages = await machinesImagesDatabase.initDbMachinesImages()
-                            if(dbToImages) {
-                                let image = {
-                                    id: index,
-                                    data: reader.result.replace("data:", "")
-                                }
-                                await machinesImagesDatabase.actualizar(image, dbToImages.database)
-                                
-                            }
-                            let i = await trucksDatabase.actualizar(fileName, db.database)
-                            /*if(fileName.image) {
-                                
-                                
-                            } */
-                        }
-                        reader.readAsDataURL(xhr.response)
-                        
-                        if(index == (machines.length - 1)) {
-                            let respuestaConsulta = await consultTrucks(machines)
-                            resolve(respuestaConsulta)
-                        }
-                    }
-                    xhr.open('GET', `/assets/${fileName.model}.png`)
-                    xhr.responseType = 'blob'
-                    xhr.send()
-                })
-            }
-        })
-    }
-
-    const consultTrucks = (machines) => {
-        return new Promise(async resolve=>{
-            let database = await trucksDatabase.initDbMachines()
-            let respuestaConsulta
-            do {
-                respuestaConsulta = await trucksDatabase.consultar(database.database)
-            }
-            while (respuestaConsulta.length < machines.length)
-            if(respuestaConsulta.length === machines.length) {
-                resolve(respuestaConsulta)
-            }
-        })
-    }
-
-    const getMachines = () => {
-        return new Promise(resolve => {
-            apiIvcRoutes.getMachines()
-            .then(data => {
-                resolve(data.data)
-            })
-            .catch(err => {
-            })
-        })
-    }
-
-    const getAllMachines = () => {
-        return new Promise(resolve => {
-            apiIvcRoutes.getAllMachines()
-            .then(data => {
-                console.log(data.data)
-                resolve(data.data)
-            })
-        })
-    }
-
-    const removeAccents = (str) => {
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     }
 
     const closeModal = () => {

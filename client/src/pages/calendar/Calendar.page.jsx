@@ -144,29 +144,24 @@ const CalendarPage = () => {
                                     </Toolbar>
                                 </div>
                             </div>
-                            {/* <div style={{width: '100%'}} >
-                                <h1>Calendario</h1>
-                            </div> */}
                         </Grid>
                         <Grid container spacing={1} style={{padding: '5px 10px 0px 10px'}}>
                             <Grid item sm={10}>
-                                {/* <div style={{padding: 10, width: '100%'}}> */}
-                                    <Calendar
-                                        style={{width: '100%'}}
-                                        onChange={onChange}
-                                        value={value}
-                                        tileClassName={({date}) => {
-                                            const newDate = new Date(date)
-                                            if(
-                                                datesCalendar.find( x => 
-                                                    newDate.toISOString().split('T')[0] === x
-                                                )
-                                            )   {
-                                                    return  'highlight'
-                                                }
-                                        }}
-                                    />
-                                {/* </div> */}
+                                <Calendar
+                                    style={{width: '100%'}}
+                                    onChange={onChange}
+                                    value={value}
+                                    tileClassName={({date}) => {
+                                        const newDate = new Date(date)
+                                        if(
+                                            datesCalendar.find( x => 
+                                                newDate.toISOString().split('T')[0] === x
+                                            )
+                                        )   {
+                                                return  'highlight'
+                                            }
+                                    }}
+                                />
                             </Grid>
                             <Grid item sm={2}>
                                 <div className='text-container'>

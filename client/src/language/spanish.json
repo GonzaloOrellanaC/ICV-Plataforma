@@ -31,6 +31,9 @@
     "patterns": {
         "patternsButton": "Pautas"
     },
+    "news": {
+        "newsButton": "Noticias"
+    },
     "machines": {
         "title": "Selecciona tipo de máquina"
     },

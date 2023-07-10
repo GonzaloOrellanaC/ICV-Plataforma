@@ -409,49 +409,38 @@ const createMachinesToSend = async (pIDOBRA, isSync = false) => {
     let b = await machines.json();
     let machinesData = []
     machinesData = b.data
+    /* let groups = {}
+    machinesData.forEach((machine, i) => {
+      const nameModelo = machine.modelo
+      const idObra = pIDOBRA
+      if (!groups.idObra) {
+        groups.idObra = idObra
+      }
+      if (!groups[nameModelo]) {
+        groups[nameModelo] = [];
+      }
+      groups[nameModelo].push(machine)
+    })
+    console.log(groups) */
     machinesData.forEach(async (machine, index) => {
         machine.idpminspeccion = await getIdPmInspection(machine.equid);
         machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
-        if (machine.modelo.includes('D10-T2')) {
-            /* console.log(machine.modelo, machine.idpminspeccion, machine.idpmmantencion, machine.equid) */
-        }
-        if(machine.modelo.includes('793-F')){
-            machine.modelo='793-F';
+        if(machine.modelo[0]==='7'){
             machine.type = 'Camión'
-        }else if(machine.modelo.includes('pc5500')||machine.modelo.includes('PC5500')) {
-            machine.modelo='PC5500';
+        }else if(machine.modelo[0] === 'P') {
             machine.type = 'Pala'
-        }else if(machine.modelo.includes('793-D')) {
-            machine.modelo='793-D';
-            machine.type = 'Camión'
-        }else if(machine.modelo.includes('789-D')) {
-            machine.modelo='789-D';
-            machine.type = 'Camión'
-        }else if(machine.modelo.includes('994-K')) {
-            machine.modelo='994-K';
+        }else if(machine.modelo[0] === '9') {
             machine.type = 'Cargador Frontal'
-        }else if(machine.modelo === 'D10-T') {
-            machine.modelo='D10-T';
-            machine.type = 'Bulldozer'
-        }else if(machine.modelo === 'D10-T2') {
-            machine.modelo='D10-T2';
+        }else if(machine.modelo[0] === 'D') {
             machine.type = 'Bulldozer'
         }
-
         machine.brand = machine.marca;
         machine.model = machine.modelo;
         machine.hourMeter = machine.horometro;
         try {
             const findMachine = await Machine.findOne({equid: machine.equid})
             if (findMachine) {
-                /* console.log(machine.idobra, findMachine.idobra) */
-                if (machine.idobra === findMachine.idobra) {
-                    /* console.log('Pertenece a obra') */
-                } else {
-                    /* console.log('no pertenece a obra') */
-                }
-                /* console.log(findMachine)
-                await Machine.findOneAndUpdate({equid: machine.equid}, machine) */
+                await Machine.findByIdAndUpdate(findMachine._id, machine)
             } else {
                 console.log('Machine not found')
                 try {
