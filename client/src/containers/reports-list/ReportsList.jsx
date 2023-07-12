@@ -163,10 +163,10 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                                         <p style={{textAlign: 'center'}}> {dateSimple(item.dateInit)} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                                        <p style={{textAlign: 'center'}}> {dateSimple(item.endPrev)} </p>
+                                        <p style={{textAlign: 'center'}}> {dateSimple(item.dateClose)} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                                        <p style={{textAlign: 'center'}}> {(item.machineData.hourMeter / 3600000).toFixed(2).toLocaleString()} hrs </p>
+                                        <p style={{textAlign: 'center'}}> {(item.machineData.hourMeter / 3600).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")} hrs </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                         <div style={{textAlign: 'center'}}>

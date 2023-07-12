@@ -80,11 +80,12 @@ const ReportDataDialog = (
       item.messages.forEach(async (m, i) => {
         const findUser = usersFilteredBySite.filter(user =>{if (user._id === m.user) return user})[0]
         console.log(findUser)
-        if (findUser) {
-          m.name = `${findUser.name} ${findUser.lastName}`
+        m.name = `${findUser.name} ${findUser.lastName}`
+        /* if (findUser) {
+          
         } else {
           m.name = 'User Test'
-        }
+        } */
         if (m.urlBase64) {
           total.push(m)
         }
