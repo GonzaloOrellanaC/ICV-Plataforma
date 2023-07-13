@@ -7,9 +7,7 @@ import { FirmaUsuarioDialog } from '../dialogs'
 export const AuthContext = createContext()
 
 export const AuthProvider = (props) => {
-    /* const defaultAdmin = Boolean(window.localStorage.getItem('isAdmin')); */
     const [ isAuthenticated, setIsAuthenticated ] = useState(false)
-    /* const [ getSelf, { loading, error , data } ] = useLazyQuery(UsersGraphQL.query.GET_SELF) */
     const [ userData, setUserData ] = useState(JSON.parse(localStorage.getItem('user'))||undefined);
     const [ admin, setAdmin ] = useState(false);
     const [ roles, setRoles ] = useState([])
@@ -47,7 +45,7 @@ export const AuthProvider = (props) => {
             if (!userData.sign || userData.sign.length < 1) {
                 setTimeout(() => {
                     setOpenSign(true)
-                }, 500);
+                }, 500)
             }
             if (userData.roles.length > 0) {
                 userData.roles.map(rol => {
@@ -83,27 +81,6 @@ export const AuthProvider = (props) => {
             window.localStorage.setItem('sitio', JSON.stringify(userData.obras[0]))
         }
     },[userData])
-
-    /* useEffect(() => {
-        if (userData && isAuthenticated) { */
-            /* SocketConnection.listenNotifocations(userData, getData) */
-        /* }
-    },[userData, isAuthenticated])
-
-    const getData = (data) => {
-        console.log(data)
-        addNotification({
-            icon: logoNotification,
-            title: data.title,
-            subtitle: data.subtitle,
-            message: data.message,
-            theme: 'red',
-            native: true
-        })
-        if (data.report) {
-            setNewReport(data.report)
-        }
-    } */
 
     const saveUserToDb = async (userDataLocal) => {
         const {database} = await userDatabase.initDb()
