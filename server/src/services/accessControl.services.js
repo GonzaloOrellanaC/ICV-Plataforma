@@ -118,9 +118,11 @@ const machinesCron = (time) => {
 
 const initTimeMachinesCron = async () => {
     const times = await Cron.find()
-    console.log(times)
-    machinesCronState = machinesCron(times[0].timeMachines)
-    machinesCronState.start()
+    if (times.length > 0) {
+        console.log(times)
+        machinesCronState = machinesCron(times[0].timeMachines)
+        machinesCronState.start()
+    }
 }
 
 const stopTimeMachinesCron = () => {

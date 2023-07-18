@@ -21,7 +21,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 const ReviewReportDialog = ({open, report, onlyClose}) => {
-    const {admin} = useContext(AuthContext)
+    const {admin, isSapExecutive} = useContext(AuthContext)
     const {setReport} = useExecutionReportContext()
     const [ colorState, setColorState ] = useState();
     const { idIndex, guide, state, siteName, usersAssigned, sapId } = report;
@@ -138,7 +138,7 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
                         {idIndex}
                     </Grid>
                     <Grid item xs={12} sm={12} md={4} lg={4}>
-                            <strong>ID de SAP:</strong> <br />
+                            <strong>N° SAP:</strong> <br />
                         <Grid container>
                             <Grid item>
                             {
@@ -148,9 +148,9 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
                                 <input onChange={(e) => setSapIdToEdit(e.target.value)} value={sapIdToEdit} />
                             }
                             </Grid>
-                            <Grid item>
+                            {(isSapExecutive || admin) && <Grid item>
                                 {
-                                    !toEditSapId ?
+                                    !(toEditSapId) ?
                                     <button style={{marginLeft: 10}} onClick={changeInputSapId}>
                                         <FontAwesomeIcon icon={faPen} />
                                     </button> :
@@ -158,7 +158,7 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
                                         <FontAwesomeIcon icon={faArrowUp} onClick={saveChangesSapId}/>
                                     </button>
                                 }
-                            </Grid>
+                            </Grid>}
                         </Grid>
                     </Grid>
                 </Grid>

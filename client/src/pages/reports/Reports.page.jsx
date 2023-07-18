@@ -3,11 +3,14 @@ import {Grid, Toolbar, IconButton, Chip, TablePagination, Button, AppBar, Typogr
 import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar, faDownload, faPlus, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useReportsContext, useSitesContext } from '../../context';
+import * as XLSX from 'xlsx'
+import { executionReportsRoutes } from '../../routes';
+import { LoadingLogoDialog } from '../../dialogs';
 
 const ReportsPage = () => {
     const {sites} = useSitesContext()
@@ -34,6 +37,7 @@ const ReportsPage = () => {
     const navigate = useNavigate()
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
     const [canOpenNewReport, setCanOpenNewReport] = useState(false)
+    const [loadingSpinner, setLoading] = useState(false)
     useEffect(() => {
         if (pautas.length === 0) {
             setCanOpenNewReport(false)
@@ -359,8 +363,56 @@ const ReportsPage = () => {
         }
     }, [site])
 
+    const downloadFile = async () => {
+        if (reports.length > 0) {
+            setLoading(true)
+            console.log('download')
+            const reportsCache = [...reports]
+            reportsCache.forEach(async (report, i)=>{
+                let groupList = []
+                let newVariables = {}
+                const response = await executionReportsRoutes.getExecutionReportById(report)
+                if (response) {
+                    if (response.data.group) {
+                        const group = Object.values(response.data.group)
+                        group.forEach((el) => {
+                            el.forEach((item) => {
+                                if (item.unidad !== '*') {
+                                    console.log(item)
+                                    groupList.push(item)
+                                    if (!report[`${item.partnumberUtl}/${item.unidad} proyectada`]) {
+                                        report[`${item.partnumberUtl}/${item.unidad} proyectada`] = 0
+                                    }
+                                    report[`${item.partnumberUtl}/${item.unidad} proyectada`] = report[`${item.partnumberUtl}/${item.unidad} proyectada`] + item.cantidad
+
+                                    if (!report[`${item.partnumberUtl}/${item.unidad} usada`]) {
+                                        report[`${item.partnumberUtl}/${item.unidad} usada`] = 0
+                                    }
+                                    report[`${item.partnumberUtl}/${item.unidad} usada`] = report[`${item.partnumberUtl}/${item.unidad} usada`] + (item.unidadData ? parseFloat(item.unidadData) : 0)
+                                }
+                            })
+                        })
+                    }
+                }
+                if (i === (reportsCache.length - 1)) {
+                    console.log(reportsCache)
+                    const worksheet = XLSX.utils.json_to_sheet(reportsCache);
+                    const workbook = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+                    XLSX.writeFile(workbook, "DataSheet.xlsx")
+                    setLoading(false)
+                }
+            })
+        } else {
+            alert('Debe contar con al menos una OT creada.')
+        }
+    }
+
     return(
         <div className='container-width' >
+            <LoadingLogoDialog
+                open={loadingSpinner}
+            />
             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20, flexGrow: 1}}>
                     {/* <AppBar position="static"> */}
@@ -377,52 +429,33 @@ const ReportsPage = () => {
                                 color={'primary'} 
                                 style={{ marginRight: 5 }}
                                 edge={'end'}
+                                hidden={!hableCreateReport}
+                                onClick={downloadFile}
+                                title='Descargar Reporte'
+                            >
+                                <FontAwesomeIcon icon={faDownload}/>
+                            </IconButton>
+                            <IconButton
+                                color={'primary'} 
+                                style={{ marginRight: 5 }}
+                                edge={'end'}
                                 onClick={()=>{navigate('/calendar')}} 
                                 title='Calendario'
                             >
                                 <FontAwesomeIcon icon={faCalendar}/>
                             </IconButton>
                             <IconButton
+                                style={{position: 'relative'}}
                                 color={'primary'} 
                                 edge={'end'}
                                 hidden={!hableCreateReport}
                                 onClick={()=>{canOpenNewReport ? navigate('/reports/create-report') : alert('Espere a que las pautas estén descargadas')}} 
                                 title='Nuevo reporte'
                             >
-                                <FontAwesomeIcon icon={faClipboardList}/>
+                                <FontAwesomeIcon style={{position: 'absolute', zIndex: 100, fontSize: 12, top: 10, right: 10, color: '#F78E63', fontWeight: 600}} icon={faPlus}/>
+                                <FontAwesomeIcon style={{zIndex: 10}} icon={faClipboardList}/>
                             </IconButton>
-                            {/* <div className='buttonsReports'>
-                                <button
-                                    hidden={!hableCreateReport}
-                                    onClick={()=>{canOpenNewReport ? navigate('/reports/create-report') : alert('Espere a que las pautas estén descargadas')}} 
-                                    title='Nuevo reporte'
-                                >
-                                    <FontAwesomeIcon icon={faClipboardList}/>
-                                </button>
-                            </div> */}
-                            {/* <button 
-                                hidden={!hableCreateReport}
-                                onClick={()=>{canOpenNewReport ? navigate('/reports/create-report') : alert('Espere a que las pautas estén descargadas')}} 
-                                title='Nuevo reporte' 
-                                style={
-                                    {
-                                        position: 'absolute', 
-                                        right: 10, 
-                                        color: '#fff',
-                                        backgroundColor: 'grey',
-                                        paddingTop: 10,
-                                        paddingBottom: 10,
-                                        paddingLeft: 20,
-                                        paddingRight: 20,
-                                        borderRadius: 20,
-                                        borderColor: 'transparent'
-                                    }
-                                }
-                            >
-                                <FontAwesomeIcon icon={faClipboardList}/>
-                            </button> */}
                         </Toolbar>
-                    {/* </AppBar> */}
                 </div>
             </div>
             <Grid container>

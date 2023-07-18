@@ -1,11 +1,6 @@
 /*  React */
 import React, { useEffect } from 'react'
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom'
-
-/* GraphQL */
-import { ApolloClient, ApolloProvider, ApolloLink, InMemoryCache } from '@apollo/client'
-import { onError } from '@apollo/client/link/error'
-import { createUploadLink } from 'apollo-upload-client'
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 
 /* Material UI */
 import { CssBaseline, ThemeProvider } from '@material-ui/core'
@@ -15,7 +10,6 @@ import { AuthProvider, ConnectionProvider, CreateUserProvider, ExecutionReportPr
 import { Header, Navbar } from './containers'
 import { 
     AppliancePage, 
-    LoadingPage, 
     LoginPage, 
     MachinesPage, 
     WelcomePage, 
@@ -47,38 +41,10 @@ import { Notifications } from 'react-push-notification';
 import { SocketConnection } from './connections'
 import { NotificationsProvider } from './context/Notifications.context'
 
-const errorLink = onError(({ networkError }) => {
-    if (networkError?.statusCode === 401) {
-    }else{
-
-    }
-})
-
-const httpLink = createUploadLink({
-    uri: '/graphql',
-    credentials: 'include'
-})
-
-const link = ApolloLink.from([
-    errorLink,
-    httpLink
-])
-
-const client = new ApolloClient({
-    link: link,
-    cache: new InMemoryCache()
-});
-
-const OnApp = () => {
-    const navigate = useNavigate()
-    /* download3DFiles: Archivo para descargar los modelos 3D */
-    
+const OnApp = () => {    
     const { userData, loading, admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, isAuthenticated } = useAuth()
     useEffect(() => {
         console.log(isAuthenticated)
-        /* if(!isAuthenticated) {
-            navigate('/')
-        } */
         if(isAuthenticated && userData) {
             SocketConnection.sendIsActive(userData)
         }
@@ -171,78 +137,36 @@ const App = () => {
     return (
         <Router>
             <Notifications />
-            <ApolloProvider client={client}>
-                <ConnectionProvider>
-                    <AuthProvider>
-                        <NotificationsProvider>
-                            <SitesProvider>
-                                <LanguageProvider>
-                                    <NavigationProvider>
-                                        <UsersProvider>
-                                            <ReportsProvider>
-                                                <ExecutionReportProvider>
-                                                    <CreateUserProvider>
-                                                        <TimeProvider>
-                                                            <MachineProvider>
-                                                                <ThemeProvider theme={theme} >
-                                                                    <CssBaseline />
-                                                                    <OnApp />
-                                                                </ThemeProvider>
-                                                            </MachineProvider>
-                                                        </TimeProvider>
-                                                    </CreateUserProvider>
-                                                </ExecutionReportProvider>
-                                            </ReportsProvider>
-                                        </UsersProvider>
-                                    </NavigationProvider>
-                                </LanguageProvider>
-                            </SitesProvider>
-                        </NotificationsProvider>
-                    </AuthProvider>
-                </ConnectionProvider>
-            </ApolloProvider>
+            <ConnectionProvider>
+                <AuthProvider>
+                    <NotificationsProvider>
+                        <SitesProvider>
+                            <LanguageProvider>
+                                <NavigationProvider>
+                                    <UsersProvider>
+                                        <ReportsProvider>
+                                            <ExecutionReportProvider>
+                                                <CreateUserProvider>
+                                                    <TimeProvider>
+                                                        <MachineProvider>
+                                                            <ThemeProvider theme={theme} >
+                                                                <CssBaseline />
+                                                                <OnApp />
+                                                            </ThemeProvider>
+                                                        </MachineProvider>
+                                                    </TimeProvider>
+                                                </CreateUserProvider>
+                                            </ExecutionReportProvider>
+                                        </ReportsProvider>
+                                    </UsersProvider>
+                                </NavigationProvider>
+                            </LanguageProvider>
+                        </SitesProvider>
+                    </NotificationsProvider>
+                </AuthProvider>
+            </ConnectionProvider>
         </Router>
     )
 }
 
 export default App
-
-
-{/* {
-                (navigator.onLine && openDownload3D) && 
-                <div style={
-                    {
-                        position: 'absolute', 
-                        bottom: 20, 
-                        right: 20, 
-                        width: 300, 
-                        paddingTop: 50, 
-                        paddingBottom: 40, 
-                        paddingLeft: 20, 
-                        paddingRight: 20,
-                        borderRadius: 20,
-                        backgroundColor: '#fff',
-                        borderColor: '#ccc',
-                        borderWidth: 1,
-                        borderStyle: 'solid',
-                        textAlign: 'center',
-                        zIndex: 2
-                    }
-                }>
-                    <IconButton style={{ position: 'absolute', top: 10, right: 10 }} onClick={() => {closeLoader()}}>
-                        <Close />
-                    </IconButton>
-                    {
-                        !loadingData3D && <CircularProgress color='primary' />
-                    }
-                    {
-                        !loadingData3D && <p style={{margin: 0, marginTop: 10}}>Cargando datos...</p>
-                    }
-                    {
-                        loadingData3D && <LinearProgress variant="determinate" value={progressDownload3D} />
-                    }
-                    {
-                        loadingData3D && <p style={{margin: 0, marginTop: 10}}>{loadingData3D}</p>
-                    }
-                </div>
-            } */}

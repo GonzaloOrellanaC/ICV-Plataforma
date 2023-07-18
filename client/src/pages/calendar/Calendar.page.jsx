@@ -7,6 +7,7 @@ import './Calendar.css'
 import { useNavigate } from 'react-router-dom';
 import { ArrowBackIos } from '@material-ui/icons';
 import { useReportsContext } from '../../context';
+import { ReviewReportDialog } from '../../dialogs';
 const CalendarPage = () => {
     const {reports} = useReportsContext()
     const classes = useStylesTheme()
@@ -17,6 +18,9 @@ const CalendarPage = () => {
     const [datesCalendar, setDatesCalendar] = useState([])
     const [loading, setLoading] = useState(false)
     const [dateSelected, setDateSelected] = useState('')
+    const [ reportDataReview, setReportDataReview ] = useState(null)
+    const [ openReviewModalState, setOpenReviewModalState ] = useState(false)
+
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -112,6 +116,7 @@ const CalendarPage = () => {
         })
         reportsSelectedCache[i].isActive = true
         setReportesSeleccionados(reportsSelectedCache)
+        openReviewModal(reportsSelectedCache[i])
     }
 
     const ordenarPorOT = (a, b) => {
@@ -123,9 +128,21 @@ const CalendarPage = () => {
         }
         return 0
     }
+
+    const onlyCloseReview = () => {
+        setReportDataReview(null)
+    }
+
+    const openReviewModal = (report) => {
+        setReportDataReview(report)
+        setOpenReviewModalState(true)
+    }    
  
     return (
         <Box height='100%'>
+            {
+                reportDataReview && <ReviewReportDialog open={openReviewModalState} report={reportDataReview} onlyClose={onlyCloseReview}/>
+            }
             <Grid className={'pageRoot'} container spacing={0}>
                 <Grid className={classes.pageContainer} item xs={12}>
                     <Card elevation={0} className={'pageCard'}>
