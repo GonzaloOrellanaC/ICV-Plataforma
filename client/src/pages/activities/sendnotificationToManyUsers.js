@@ -1,6 +1,6 @@
 import { SocketConnection } from "../../connections"
 
-export default (emailing, idIndex, uid, userData) => {
+export default (emailing, idIndex, uid, userData, idObra) => {
     let message;
     let url;
     let subtitle;
@@ -40,6 +40,7 @@ export default (emailing, idIndex, uid, userData) => {
         subtitle,
         message,
         url,
-        uid
+        uid,
+        idObra
         )
 }

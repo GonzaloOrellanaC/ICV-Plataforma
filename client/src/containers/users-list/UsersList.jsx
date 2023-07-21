@@ -7,10 +7,11 @@ import { sitesRoutes, usersRoutes } from '../../routes';
 import { changeTypeUser } from '../../config';
 import { UserListDataModal } from '../../modals'
 import { LoadingPage } from "../../pages";
-import { useUsersContext } from "../../context";
+import { useSitesContext, useUsersContext } from "../../context";
 
 const UsersList = ({height, hableButton}) => {
     const {users} = useUsersContext()
+    const {sites} = useSitesContext()
     const [ usuarios, setUsuarios ] = useState([])
     const [ usuariosCache, setUsuariosCache ] = useState([])
     const [ open, setOpen ] = useState(false);
@@ -45,30 +46,9 @@ const UsersList = ({height, hableButton}) => {
     }
 
     useEffect(() => {
-        /* init() */
-        /* let cancel = true;
-        if(cancel) {
-            usersRoutes.getAllUsers().then(users=> {
-                console.log(users)
-                if(cancel) {
-                    let userList = users.data
-                    userList.forEach((user) => {
-                        user.obrasList = []
-                        if (user.obras) {
-                            user.obras.forEach(async (obraId) => {
-                                const obra = await sitesRoutes.getSiteById(obraId)
-                                user.obrasList.push(obra.data.data)
-                            })
-                        }
-                    })
-                    setUsuarios(userList)
-                    setUsuariosCache(userList)
-                }
-            }) 
-            localStorage.removeItem('userDataToSave');
-        }
-        return () => {cancel = false} */
-    }, []);
+        setUsuariosCache(users)
+        setUsuarios(users)
+    }, [users]);
 
     /* const init = async () => {
         console.log('Iniciando consulta de usuarios')
@@ -94,10 +74,6 @@ const UsersList = ({height, hableButton}) => {
             }) */
        /*  }
     } */
-
-    useEffect(() => {
-        console.log(usuarios)
-    },[usuarios])
 
 
     const readAllUsers = () => {
@@ -148,7 +124,7 @@ const UsersList = ({height, hableButton}) => {
 
     const buscarPorCorreo = (value = new String()) => {
         if (value.length > 3) {
-            const usuarios = usuariosCache.filter(usuario => {
+            const usuariosFiltrados = usuariosCache.filter(usuario => {
                 const email = usuario.email
                 if (email.toLocaleUpperCase().match(value.toLocaleUpperCase())) {
                     return usuario
@@ -156,7 +132,7 @@ const UsersList = ({height, hableButton}) => {
                     return null
                 }
             })
-            setUsuarios(usuarios)
+            setUsuarios(usuariosFiltrados)
         } else if (value.length === 0) {
             setUsuarios(usuariosCache)
         }
@@ -178,6 +154,26 @@ const UsersList = ({height, hableButton}) => {
             setUsuarios(usuarios)
         } else if (value.length === 0) {
             setUsuarios(usuariosCache)
+        }
+    }
+
+    const buscarPorObra = (value) => {
+        console.log(value)
+        if (value === 'TODAS LAS OBRAS') {
+            setUsuarios(usuariosCache)
+        } else {
+            const usuarios = usuariosCache.filter(usuario => {
+                if (usuario.obras[0] && usuario.obras[0].descripcion) {
+                    if (usuario.obras[0].descripcion.match(value)) {
+                        return usuario
+                    } else {
+                        return null
+                    }
+                } else {
+                    return null
+                }
+            })
+            setUsuarios(usuarios)
         }
     }
 
@@ -239,7 +235,29 @@ const UsersList = ({height, hableButton}) => {
                             <p style={{margin: 0, marginBottom: 22}}> <strong>Rol</strong> </p>
                         </div>
                         <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
-                            <p style={{margin: 0, marginBottom: 22}}> <strong>Faena/Obra</strong> </p>
+                            <p style={{margin: 0}}> <strong>Faena/Obra</strong> </p>
+                            <select
+                                placeholder="Filtro por obra" 
+                                style={
+                                    {
+                                        width: '80%'
+                                    }
+                                }
+                                onChange={(e) => {buscarPorObra(e.target.value)}}
+                                >
+                                    <option>
+                                        {'Todas las obras'.toUpperCase()}
+                                    </option>
+                                {
+                                    sites.map((site, i) => {
+                                        return (
+                                            <option key={i}>
+                                                {site.descripcion}
+                                            </option>
+                                        )
+                                    })
+                                }
+                            </select>
                         </div>
                         <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0, marginBottom: 22}}> <strong>Estado</strong> </p>
@@ -250,12 +268,12 @@ const UsersList = ({height, hableButton}) => {
                 {
                     hableButton && <div style={{overflowY: 'auto', height: 'calc(100vh - 350px)'}}>
                         {
-                            (users.length === 0)
+                            (usuarios.length === 0)
                             &&
                             <LoadingPage />
                         }
                         {
-                            (users.length > 0) && users.map((e, n) => {
+                            (usuarios.length > 0) && usuarios.map((e, n) => {
                                 return(
                                     <ListItem key={n} style={well}>
                                         <div style={{width: '5%', marginLeft: 5, fontSize: 12 }}>

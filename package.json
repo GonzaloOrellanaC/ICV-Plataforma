@@ -9,10 +9,10 @@
         "client-build": "npm run build --prefix client",
         "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
         "install-server": "cd server && npm install --legacy-peer-deps",
-        "install-client": "cd client && npm install",
+        "install-client": "cd client && npm install --legacy-peer-deps",
         "start": "npm run start --prefix server",
         "build-client": "npm run build --prefix client",
-        "postinstall": "npm run install-server"
+        "postinstall": "npm run install-server && npm run install-client"
     },
     "author": "Javier Romero <javier.romero@kauel.com>",
     "license": "ISC",

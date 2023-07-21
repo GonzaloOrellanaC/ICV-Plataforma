@@ -34,12 +34,12 @@ const sendnotificationToUser = (notificationType, from, userId, title, subtitle,
     socket.emit(notificationType, {title: title, from: from, subtitle: subtitle, message: message, id: userId, url: url, reportId: reportId ? reportId : null})
 }
 
-const sendnotificationToManyUsers = (notificationType, from, title, subtitle, message, url, uid) => {
-    socket.emit(notificationType, {title: title, from: from, subtitle: subtitle, message: message, url: url, uid: uid})
+const sendnotificationToManyUsers = (notificationType, from, title, subtitle, message, url, uid, idObra) => {
+    socket.emit(notificationType, {title: title, from: from, subtitle: subtitle, message: message, url: url, uid: uid, idObra: idObra})
 }
 
-const sendnotificationToAllUsers = (notificationType, from, title, subtitle, message, url) => {
-    socket.emit(notificationType, {title: title, from: from, subtitle: subtitle, message: message, url: url})
+const sendnotificationToAllUsers = (notificationType, from, title, subtitle, message, url, idObra) => {
+    socket.emit(notificationType, {title: title, from: from, subtitle: subtitle, message: message, url: url, idObra: idObra})
 }
 
 export default {

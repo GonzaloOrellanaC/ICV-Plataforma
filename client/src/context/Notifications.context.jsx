@@ -1,6 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import fecha from '../config/date'
-import getHour from '../config/hour'
 import { useAuth } from ".";
 import { notificationsRoutes } from "../routes";
 

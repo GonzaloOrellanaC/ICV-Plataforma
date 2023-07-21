@@ -108,6 +108,21 @@ const getUserByRole = (role) => {
     }
 }
 
+const getUserByRoleAndSite = (role, obra) => {
+    try{
+        return new Promise(resolve => {
+            Users.find({obras: [obra], roles: {$in: [role]}}, (err, user) => {
+                Sentry.captureException(err)
+                resolve(user)
+            });
+        })
+        
+    }catch (err) {
+        console.log(err)
+        Sentry.captureException(err)
+    }
+}
+
 /**
  * Authentication middleware, uses req, res, next from the express request that applies it
  * to authenticate via local strategy of passport.
@@ -258,5 +273,6 @@ export default {
     forgotPassword,
     resetPassword,
     getUser,
-    getUserByRole
+    getUserByRole,
+    getUserByRoleAndSite
 }

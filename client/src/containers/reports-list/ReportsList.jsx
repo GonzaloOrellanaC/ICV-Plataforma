@@ -79,14 +79,14 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
     }
 
     return(
-        <div style={{width: '100%', paddingLeft: 10, paddingRight: 10}} /* className='root' */>
+        <div style={{width: '100%', paddingLeft: 10, paddingRight: 10, fontSize: 12}} /* className='root' */>
             <Grid container style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
                 <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} >
-                    <p style={{textAlign: 'center', width: 50}}>
+                    <p style={{textAlign: 'center', width: 40}}>
                         <strong>N° OT</strong></p>
                 </Grid>
                 <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}  >
-                    <p style={{textAlign: 'center', minWidth: 70}}> <strong>Máquina</strong> </p>
+                    <p style={{textAlign: 'center', minWidth: 60}}> <strong>Máquina</strong> </p>
                 </Grid>
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                     <p style={{textAlign: 'center'}}> <strong>Pauta</strong> </p>
@@ -142,16 +142,16 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                     </Grid>
                 }
             </div>
-            <div style={{ height: 'calc(100vh - 370px)', overflowY: 'auto' }}>
+            <div style={{ height: 'calc(100vh - 370px)', overflowY: 'auto', fontSize: 12 }}>
                 {
                     list.map((item, i) => {
                             return(
                                 <Grid container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} >
-                                        <p style={{textAlign: 'center', width: 50}}> {item.idIndex} </p>
+                                        <p style={{textAlign: 'center', width: 40}}> {item.idIndex} </p>
                                     </Grid>
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}  >
-                                        <p style={{textAlign: 'center', minWidth: 70}}> {item.machineData && item.machineData.equ} </p>
+                                        <p style={{textAlign: 'center', minWidth: 60}}> {item.machineData && item.machineData.equ} </p>
                                     </Grid>
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                         <p style={{textAlign: 'center'}}> {item.guide} </p>

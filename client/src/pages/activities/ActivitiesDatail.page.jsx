@@ -16,7 +16,7 @@ import { useAuth, useConnectionContext, useExecutionReportContext, useReportsCon
 import { LoadingLogoDialog, PreviewDialog, ReportCommitDialog, ReportMessagesDialog } from '../../dialogs'
 
 const ActivitiesDetailPage = () => {
-    const {admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, userData} = useAuth()
+    const {admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, userData, obra} = useAuth()
     const {isOnline} = useConnectionContext()
     const classes = useStylesTheme()
     const navigate = useNavigate()
@@ -128,7 +128,8 @@ const ActivitiesDetailPage = () => {
                         'Aviso general',
                         'Término de jornada',
                         `${userData.name} ${userData.lastName} ha terminado su jornada. Recuerde reasignar OT`,
-                        '/reports'
+                        '/reports',
+                        obra._id
                     )
                     if(index == (ids.length - 1)) {
                         setMessage('Guardando OT en base de datos.')
@@ -171,7 +172,7 @@ const ActivitiesDetailPage = () => {
                     reportCache.state = 'En proceso'
                 }
                 console.log(reportCache)
-                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
+                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id, obra._id)
                 saveReportToDatabases(reportCache)
             } else {
                 if (itemProgress === 100) {
@@ -183,7 +184,7 @@ const ActivitiesDetailPage = () => {
                         reportCache.state = 'En proceso'
                     }
                     console.log(reportCache)
-                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id)
+                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData._id, obra._id)
                     saveReportToDatabases(reportCache)
                 } else {
                     setLoadingLogo(false)
@@ -224,7 +225,7 @@ const ActivitiesDetailPage = () => {
                     await pdfMakeRoutes.createPdfDoc(reportCache)
                 }
                 reportCache.level = level
-                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
+                sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData, obra._id)
                 saveReportToDatabases(reportCache)
             } else {
                 if (itemProgress === 100) {
@@ -250,7 +251,7 @@ const ActivitiesDetailPage = () => {
                         await pdfMakeRoutes.createPdfDoc(reportCache)    
                     }
                     reportCache.level = level
-                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData)
+                    sendnotificationToManyUsers(reportCache.emailing, reportCache.idIndex, reportCache.history[reportCache.history.length - 1].userSendingData, userData, obra._id)
                     saveReportToDatabases(reportCache)
                 } else {
                     setLoadingLogo(false)

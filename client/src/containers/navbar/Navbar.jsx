@@ -19,7 +19,8 @@ import {
     faTruck,
     faUser,
     faCube,
-    faSlidersH} from '@fortawesome/free-solid-svg-icons';
+    faSlidersH,
+    faCalendar} from '@fortawesome/free-solid-svg-icons';
 import { useAuth, useNavigation, useReportsContext } from '../../context';
 import { IAModal, InternalMessageModal, VersionControlModal } from '../../modals'
 /* import { useLocation } from 'react-router-dom/cjs/react-router-dom.min'; */
@@ -82,14 +83,14 @@ const useStyles = makeStyles(theme => ({
         height: 26,
         color: '#FFFFFF',
         paddingBottom: 100,
-        paddingTop: 40,
+        paddingTop: 20,
     },
     sideButtonsOpenMenu: {
         width: 26,
         height: 26,
         color: '#FFFFFF',
-        paddingBottom: 20,
-        paddingTop: 40,
+        paddingBottom: 10,
+        paddingTop: 20,
     },
     divider: {
         width: '100%',
@@ -257,85 +258,92 @@ const Navbar = () => {
                             <div style={{height: 1, backgroundColor: '#fff', width: '100%', marginRight: 10, marginLeft: 10}}>
 
                             </div>
-                            <div style={{width: '100%', marginTop: 40, textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Inicio'>
+                            <div style={{width: '100%', marginTop: 20, textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Inicio'>
                                     <Link to='/welcome' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path === '/welcome') ? '#BE2E26' : '#FFFFFF' }}>
                                         <FontAwesomeIcon icon={faHome}/> {navBarOpen ?  ' Inicio' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Listado Asignaciones'>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Calendario'>
+                                    <Link to='/calendar' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path === '/calendar') ? '#BE2E26' : '#FFFFFF' }}>
+                                        <FontAwesomeIcon icon={faCalendar}/> {navBarOpen ?  ' Calendario' : ''}
+                                    </Link>
+                                </IconButton>
+                            </div>
+                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Listado Asignaciones'>
                                     <Link to='/assignment' className={classes.sideButtons} style={{ color: (path.includes('/assignment')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faListAlt}/> {navBarOpen ?  ' Listado Asignaciones' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Máquinas'>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Máquinas'>
                                     <Link to='/machines' className={classes.sideButtons} style={{ textDecoration: 'none', color: (path.match('/machines')) ? '#BE2E26' : '#FFFFFF' }}>
                                         <FontAwesomeIcon icon={faTruck}/> {navBarOpen ?  ' Máquinas' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             {!disableButtonNoAdmin && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Obras'>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Obras'>
                                     <Link to='/sites' className={classes.sideButtons} style={{ color: (path === '/sites') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faMapMarkerAlt}/> {navBarOpen ?  ' Obras' : ''}
                                     </Link>
                                 </IconButton>
                             </div>}
                             {!disabled && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Ordenes de Trabajo'>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Ordenes de Trabajo'>
                                     <Link to='/reports' className={classes.sideButtons} style={{ color: (path.includes('/reports')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faClipboardList}/> {navBarOpen ?  ' Ordenes de Trabajo' : ''}
                                     </Link>
                                 </IconButton>
                             </div>}
                             {!disableButtonNoAdmin && <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Administración'>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Administración'>
                                     <Link to='/administration' className={classes.sideButtons} style={{ color: (path.includes('/administration')||path.includes('/users')||path.includes('/edit-user')||path.includes('/new-users')||path.includes('/patterns')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faUserCog}/> {navBarOpen ?  ' Administración' : ''}
                                     </Link>
                                 </IconButton>
                             </div>}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Perfil'>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Perfil'>
                                     <Link to='/user-profile' className={classes.sideButtons} style={{ color: (path.includes('/user-profile')) ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faUser}/> {navBarOpen ?  ' Perfil' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Actualizar' onClickCapture={()=>{getReports()}}>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Actualizar' onClickCapture={()=>{getReports()}}>
                                     <div className={classes.sideButtons} style={{ color: '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faSync}/> {navBarOpen ?  ' Actualizar' : ''}
                                     </div>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Int. Artificial' onClickCapture={()=>{toOpenIAModal()}}>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Int. Artificial' onClickCapture={()=>{toOpenIAModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faRobot}/> {navBarOpen ?  ' Int. Artificial' : ''}
                                     </div>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar} title='Mensajes App' onClickCapture={()=>{toOpenInternalMessagesModal()}}>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar} title='Mensajes App' onClickCapture={()=>{toOpenInternalMessagesModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/pms') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faComment}/> {navBarOpen ?  ' Mensajes App' : ''}
                                     </div>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}  title='Información' onClickCapture={()=>{toOpenVersionModal()}}>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar}  title='Información' onClickCapture={()=>{toOpenVersionModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faInfoCircle}/> {navBarOpen ?  ' Información' : ''}
                                     </div>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
-                                <IconButton onClick={closeSideBar}  title='Información' onClickCapture={()=>{openCadAssistant()}}>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar}  title='Información' onClickCapture={()=>{openCadAssistant()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faCube}/> {navBarOpen ?  ' Cad Assistant' : ''}
                                     </div>
@@ -347,14 +355,14 @@ const Navbar = () => {
                                         <FontAwesomeIcon icon={faTrash}/> {navBarOpen ?  ' Limpiar Datos' : ''}
                                     </div>
                                 </IconButton> */}
-                                <IconButton onClick={closeSideBar}  title='Opciones'>
+                                <IconButton style={{padding: 9}} onClick={closeSideBar}  title='Opciones'>
                                     <Link to={'/options'} className={classes.sideButtons} style={{ color: (path === '/options') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faSlidersH}/> {navBarOpen ?  ' Opciones' : ''}
                                     </Link>
                                 </IconButton>
                             </div>
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center',}}>
-                                <IconButton onClick={logout} title='Cerrar Sesión'>
+                                <IconButton style={{padding: 9}} onClick={logout} title='Cerrar Sesión'>
                                     <div className={classes.sideButtons}>
                                         <FontAwesomeIcon icon={faSignOutAlt}/> {navBarOpen ?  ' Cerrar Sesión' : ''}
                                     </div>

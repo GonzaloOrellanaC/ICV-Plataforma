@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
         color: '#505050',
         width: '100%',
         //minWidth: 285,
-        minHeight: 340,
+        minHeight: 300,
         borderRadius: 20,
         fontFamily:'Raleway',
         textTransform: 'none',

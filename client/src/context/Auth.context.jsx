@@ -11,7 +11,7 @@ export const AuthProvider = (props) => {
     const [ userData, setUserData ] = useState(JSON.parse(localStorage.getItem('user'))||undefined);
     const [ admin, setAdmin ] = useState(false);
     const [ roles, setRoles ] = useState([])
-    const [ site, setSite ] = useState()
+    const [ obra, setSite ] = useState()
     const [ isOperator, setIsOperator ] = useState(false)
     const [ isSapExecutive, setIsSapExecutive ] = useState(false)
     const [ isShiftManager, setIsShiftManager ] = useState(false)
@@ -119,7 +119,7 @@ export const AuthProvider = (props) => {
         isAuthenticated,
         admin,
         roles,
-        site,
+        obra,
         setSite,
         isOperator,
         isSapExecutive,

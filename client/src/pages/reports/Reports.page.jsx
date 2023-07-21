@@ -459,7 +459,7 @@ const ReportsPage = () => {
                 </div>
             </div>
             <Grid container>
-                <Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
+                <Grid item xs={12} sm={12} md={4} lg={'auto'} xl={'auto'}>
                     <div className='menu-card'>
                         <h3>Inspecciones</h3>
                         <div style={{float: 'left', width: 'calc(45%)', marginRight: 5, padding: 10, backgroundColor: '#fff', borderRadius: 10}}>

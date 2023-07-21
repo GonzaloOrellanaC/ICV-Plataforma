@@ -26,8 +26,8 @@ export default async (server) => {
         })
         socket.on('termino-jornada', async (data) => {
             console.log('termino-jornada-log......', data)
-            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
-            const shiftManagers = await UserServices.getUserByRole('shiftManager')
+            const sapExecutives = await UserServices.getUserByRoleAndSite('sapExecutive', data.idObra)
+            const shiftManagers = await UserServices.getUserByRoleAndSite('shiftManager', data.idObra)
             const all = sapExecutives.concat(shiftManagers)
             all.forEach((user) => {
                 console.log(user._id)
@@ -87,9 +87,9 @@ export default async (server) => {
         })
         socket.on('termino-orden-1', async (data) => {
             const admins = await UserServices.getUserByRole('admin')
-            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
-            const shiftManagers = await UserServices.getUserByRole('shiftManager')
-            const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
+            const sapExecutives = await UserServices.getUserByRoleAndSite('sapExecutive', data.idObra)
+            const shiftManagers = await UserServices.getUserByRoleAndSite('shiftManager', data.idObra)
+            const chiefMachineries = await UserServices.getUserByRoleAndSite('chiefMachinery', data.idObra)
             const all = admins.concat(sapExecutives.concat(shiftManagers.concat(chiefMachineries)))
             all.forEach((user) => {
                 console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
@@ -107,8 +107,8 @@ export default async (server) => {
         })
         socket.on('termino-orden-2', async (data) => {
             const admins = await UserServices.getUserByRole('admin')
-            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
-            const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
+            const sapExecutives = await UserServices.getUserByRoleAndSite('sapExecutive', data.idObra)
+            const chiefMachineries = await UserServices.getUserByRoleAndSite('chiefMachinery', data.idObra)
             const all = admins.concat(sapExecutives.concat(chiefMachineries))
             all.forEach((user) => {
                 console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
@@ -126,7 +126,7 @@ export default async (server) => {
         })
         socket.on('termino-orden-3', async (data) => {
             const admins = await UserServices.getUserByRole('admin')
-            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
+            const sapExecutives = await UserServices.getUserByRoleAndSite('sapExecutive', data.idObra)
             const all = admins.concat(sapExecutives)
             all.forEach((user) => {
                 console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
@@ -144,7 +144,7 @@ export default async (server) => {
         })
         socket.on('termino-orden-4', async (data) => {
             const admins = await UserServices.getUserByRole('admin')
-            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
+            const sapExecutives = await UserServices.getUserByRoleAndSite('sapExecutive', data.idObra)
             const all = admins.concat(sapExecutives)
             all.forEach((user) => {
                 console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
@@ -163,9 +163,9 @@ export default async (server) => {
         socket.on('rechazo-orden-0', async (data) => {
             console.log(data)
             const admins = await UserServices.getUserByRole('admin')
-            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
-            const shiftManagers = await UserServices.getUserByRole('shiftManager')
-            const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
+            const sapExecutives = await UserServices.getUserByRoleAndSite('sapExecutive', data.idObra)
+            const shiftManagers = await UserServices.getUserByRoleAndSite('shiftManager', data.idObra)
+            const chiefMachineries = await UserServices.getUserByRoleAndSite('chiefMachinery', data.idObra)
             const userOperator = await UserServices.getUser(data.uid)
             const all = admins.concat(sapExecutives.concat(shiftManagers.concat(chiefMachineries.concat(userOperator))))
             all.forEach((user) => {
@@ -190,9 +190,9 @@ export default async (server) => {
         socket.on('rechazo-orden-1', async (data) => {
             console.log(data)
             const admins = await UserServices.getUserByRole('admin')
-            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
-            const shiftManagers = await UserServices.getUserByRole('shiftManager')
-            const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
+            const sapExecutives = await UserServices.getUserByRoleAndSite('sapExecutive', data.idObra)
+            const shiftManagers = await UserServices.getUserByRoleAndSite('shiftManager', data.idObra)
+            const chiefMachineries = await UserServices.getUserByRoleAndSite('chiefMachinery', data.idObra)
             const all = admins.concat(sapExecutives.concat(shiftManagers.concat(chiefMachineries/* .concat(userOperator) */)))
             all.forEach((user) => {
                 console.log('Se crea notificación a '+user._id)
@@ -216,9 +216,9 @@ export default async (server) => {
         socket.on('rechazo-orden-2', async (data) => {
             console.log(data)
             const admins = await UserServices.getUserByRole('admin')
-            const sapExecutives = await UserServices.getUserByRole('sapExecutive')
-            const shiftManagers = await UserServices.getUserByRole('shiftManager')
-            const chiefMachineries = await UserServices.getUserByRole('chiefMachinery')
+            const sapExecutives = await UserServices.getUserByRoleAndSite('sapExecutive', data.idObra)
+            const shiftManagers = await UserServices.getUserByRoleAndSite('shiftManager', data.idObra)
+            const chiefMachineries = await UserServices.getUserByRoleAndSite('chiefMachinery', data.idObra)
             const all = admins.concat(sapExecutives.concat(shiftManagers.concat(chiefMachineries.concat(userOperator))))
             all.forEach((user) => {
                 console.log('Se crea notificación a '+user._id)

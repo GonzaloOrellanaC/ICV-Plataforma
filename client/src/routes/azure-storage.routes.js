@@ -30,5 +30,15 @@ export default {
             headers: { "Content-Type": "multipart/form-data" },
         }
         return axios.post('/azure-storage/uploadImage', formData, config)
+    },
+    uploadVideo: (video, path, containerName) => {
+        const formData = new FormData();
+        formData.append('video', video, video.name);
+        formData.append('path', path);
+        formData.append('containerName', containerName);
+        const config = {
+            headers: { "Content-Type": "multipart/form-data" },
+        }
+        return axios.post('/azure-storage/uploadVideo', formData, config)
     }
 }
