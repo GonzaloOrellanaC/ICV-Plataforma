@@ -372,13 +372,24 @@ const ReportsPage = () => {
                 let groupList = []
                 let newVariables = {}
                 const response = await executionReportsRoutes.getExecutionReportById(report)
+                report.commitWarning = ''
+                report.isWarning = false
                 if (response) {
                     if (response.data.group) {
                         const group = Object.values(response.data.group)
-                        group.forEach((el) => {
-                            el.forEach((item) => {
+                        const key = Object.keys(response.data.group)
+                        console.log(group, key)
+                        group.forEach((el, n) => {
+                            el.forEach((item, i) => {
+                                if (item.isWarning) {
+                                    report.isWarning = true
+                                    if (!report.commitWarning) {
+                                        report.commitWarning = 'Se detecta tareas pendientes:\n'
+                                    }
+                                    report.commitWarning += `- Apartado ${item.strpmdesc}, pregunta ${i + 1};\n`
+                                }
                                 if (item.unidad !== '*') {
-                                    console.log(item)
+                                    /* console.log(item) */
                                     groupList.push(item)
                                     if (!report[`${item.partnumberUtl}/${item.unidad} proyectada`]) {
                                         report[`${item.partnumberUtl}/${item.unidad} proyectada`] = 0
@@ -391,6 +402,11 @@ const ReportsPage = () => {
                                     report[`${item.partnumberUtl}/${item.unidad} usada`] = report[`${item.partnumberUtl}/${item.unidad} usada`] + (item.unidadData ? parseFloat(item.unidadData) : 0)
                                 }
                             })
+                            if (n === (group.length - 1)) {
+                                if (!report.isWarning && (report.commitWarning.length === 0)) {
+                                    report.commitWarning = 'Reporte ha sido completado.'
+                                }
+                            }
                         })
                     }
                 }

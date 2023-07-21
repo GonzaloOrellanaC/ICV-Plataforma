@@ -11,7 +11,7 @@ export const AuthProvider = (props) => {
     const [ userData, setUserData ] = useState(JSON.parse(localStorage.getItem('user'))||undefined);
     const [ admin, setAdmin ] = useState(false);
     const [ roles, setRoles ] = useState([])
-    const [ obra, setSite ] = useState()
+    const [ site, setSite ] = useState()
     const [ isOperator, setIsOperator ] = useState(false)
     const [ isSapExecutive, setIsSapExecutive ] = useState(false)
     const [ isShiftManager, setIsShiftManager ] = useState(false)
@@ -73,9 +73,6 @@ export const AuthProvider = (props) => {
         } else {
             getUserDataFromIndexedDb()
         }
-    },[userData])
-
-    useEffect(() => {
         if (userData && userData.obras.length > 0) {
             setSite(userData.obras[0])
             window.localStorage.setItem('sitio', JSON.stringify(userData.obras[0]))
@@ -116,10 +113,11 @@ export const AuthProvider = (props) => {
 
     const provider = {
         userData,
+        setUserData,
         isAuthenticated,
         admin,
         roles,
-        obra,
+        site,
         setSite,
         isOperator,
         isSapExecutive,

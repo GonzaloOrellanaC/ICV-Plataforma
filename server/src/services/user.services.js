@@ -50,13 +50,15 @@ const createUser =  (user, password) => {
 const editUser = async (user, id) => {
     console.log('Usuario es: ', user)
     try {
-        Users.findByIdAndUpdate(id, user, (err, user) => {
+        /* Users.findByIdAndUpdate(id, user, (err, user) => {
             Sentry.captureException(err)
             console.log('Usuario editado: ', user);
             if(user) {
                 return user
             }
-        });
+        }); */
+        const response = await Users.findByIdAndUpdate(id, user, {new: true})
+        return response
     } catch (err) {
         Sentry.captureException(err)
     }

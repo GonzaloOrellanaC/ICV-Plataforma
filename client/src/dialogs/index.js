@@ -10,6 +10,7 @@ import ReportCommitDialog from './ReportCommitDialog'
 import PreviewDialog from './PreviewDialog'
 import ReportMessagesDialog from './RepotMessagesDialog'
 import LoadingLogoDialog from './LoadingLogoDialog'
+import UserDataEditDialog from './UserDataEditDialog'
 export {
     AlertDialog,
     ReportDataDialog,
@@ -22,5 +23,6 @@ export {
     ReportCommitDialog,
     PreviewDialog,
     ReportMessagesDialog,
-    LoadingLogoDialog
+    LoadingLogoDialog,
+    UserDataEditDialog
 }

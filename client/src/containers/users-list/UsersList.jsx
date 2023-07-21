@@ -157,6 +157,22 @@ const UsersList = ({height, hableButton}) => {
         }
     }
 
+    const buscarPorRol = (value) => {
+        console.log(value)
+        if (value === 'TODOS LOS ROLES') {
+            setUsuarios(usuariosCache)
+        } else {
+            const usuarios = usuariosCache.filter(usuario => {
+                if (usuario.roles && usuario.roles.includes(value)) {
+                    return usuario
+                } else {
+                    return null
+                }
+            })
+            setUsuarios(usuarios)
+        }
+    }
+
     const buscarPorObra = (value) => {
         console.log(value)
         if (value === 'TODAS LAS OBRAS') {
@@ -232,7 +248,42 @@ const UsersList = ({height, hableButton}) => {
                             />
                         </div>
                         <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
-                            <p style={{margin: 0, marginBottom: 22}}> <strong>Rol</strong> </p>
+                            <p style={{margin: 0}}> <strong>Rol</strong> </p>
+                            <select
+                                placeholder="Filtro por ROL" 
+                                style={
+                                    {
+                                        width: '80%'
+                                    }
+                                }
+                                onChange={(e) => {buscarPorRol(e.target.value)}}
+                                >
+                                    <option>
+                                        {'Todos los roles'.toUpperCase()}
+                                    </option>
+                                    <option value={'admin'}>
+                                        Administrador
+                                    </option>
+                                    <option value={'chiefMachinery'}>
+                                        Jefe de maquinaria
+                                    </option>
+                                    <option value={'shiftManager'}>
+                                        Jefe de turno - Inspección y Mantención
+                                    </option>
+                                    <option value={'sapExecutive'}>
+                                        Ejecutivo SAP
+                                    </option>
+                                    <option value={'inspectionWorker'}>
+                                        Operario de Inspección
+                                    </option>
+                                    <option value={'maintenceOperator'}>
+                                        Operario de Mantención
+                                    </option>
+                                    <option value={'observer'}>
+                                        Perfil Observación
+                                    </option>
+
+                            </select>
                         </div>
                         <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
                             <p style={{margin: 0}}> <strong>Faena/Obra</strong> </p>
