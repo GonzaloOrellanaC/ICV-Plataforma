@@ -8,7 +8,7 @@
         "client": "npm run start --prefix client",
         "client-build": "npm run build --prefix client",
         "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
-        "install-server": "cd server && npm install",
+        "install-server": "cd server && npm install --legacy-peer-deps",
         "install-client": "cd client && npm install --legacy-peer-deps",
         "start": "npm run start --prefix server",
         "build-client": "npm run build --prefix client",
