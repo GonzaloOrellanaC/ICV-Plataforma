@@ -15,6 +15,7 @@ export default async (server) => {
             credentials: false
         },
     })
+    
     io.on('connection', (socket) => {
         socket.on('isConnected', async (data) => {
             const userData = await user.findById(data.id)
@@ -286,4 +287,6 @@ export default async (server) => {
             })
         })
     })
+
+    
 }

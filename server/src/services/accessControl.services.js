@@ -28,6 +28,7 @@ const ac = new AccessControl()
  */
 const initAccessControl = async () => {
     try {
+        apiIcvConnection.leerPautas2()
         const users = await Users.find({})
         users.forEach(async (user, index) => {
             if (user.roles && user.roles.length > 0) {
@@ -91,6 +92,7 @@ const initAccessControl = async () => {
 }
 
 let machinesCronState
+let pautasCroneState
 
 const machinesCron = (time) => {
     const jobMachines = new CronJob(time, async () => {
@@ -112,16 +114,26 @@ const machinesCron = (time) => {
                 console.log(error)
             }
         })
+
     })
     return jobMachines
+}
+
+const pautasCron = (time) => {
+    const jobPautas = new CronJob(time, () => {
+        apiIcvConnection.leerPautas2()
+        console.log('Starting CRON Job')
+    })
+    return jobPautas
 }
 
 const initTimeMachinesCron = async () => {
     const times = await Cron.find()
     if (times.length > 0) {
-        console.log(times)
         machinesCronState = machinesCron(times[0].timeMachines)
+        pautasCroneState = pautasCron(times[0].timePautas)
         machinesCronState.start()
+        pautasCroneState.start()
     }
 }
 

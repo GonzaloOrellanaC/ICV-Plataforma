@@ -2,9 +2,9 @@ import fs from 'fs'
 import fetch from 'node-fetch'
 import https from 'https'
 import { environment } from '../config'
-import { SiteController } from '../controller'
 import { Site, Machine, Patterns, PatternDetail } from '../models'
 import { machinesOfProject } from '../files'
+import { NotificationService, UserServices } from '../services'
 
 const myHeaders = {
     'Authorization': 'Token ' + environment.icvApi.token,
@@ -85,15 +85,37 @@ const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {
                     agent: agent
                 })
                 pauta.struct = await response3.json();
-                const patternFind = await PatternDetail.findOne({idpm: pauta.idpm, typepm: pauta.typepm})
+                /* if (pautaName==='SPM000236' && (pauta.typepm==='PS750')) {
+                    console.log(pauta.header, pauta.struct)
+                } */
+                const patternFind = await PatternDetail.findOne({idpm: pautaName, typepm: pauta.typepm})
                 if (!patternFind) {
                     await PatternDetail.create(pauta)
                 } else {
-                    if (JSON.stringify(patternFind.struct) === JSON.stringify(pauta.struct)||
-                        JSON.stringify(patternFind.header) === JSON.stringify(pauta.header)) {
-
+                    const compareStruct = JSON.stringify(patternFind.struct).localeCompare(JSON.stringify(pauta.struct))
+                    const compareHeader = JSON.stringify(patternFind.header).localeCompare(JSON.stringify(pauta.header))
+                    const isOkToKeep = compareStruct + compareHeader
+                    /* if (pautaName==='SPM000236'&&pauta.typepm==='PS750') {
+                        console.log(patternFind.header, pauta.header)
+                    } */
+                    if (isOkToKeep === 0 || (pauta.header === 'error') || (patternFind.header === ["error"])) {
+                        null
                     } else {
-                        await PatternDetail.findByIdAndUpdate(patternFind._id, pauta)
+                        const pautaEditada = await PatternDetail.findByIdAndUpdate(patternFind._id, pauta, {new: true})
+                        if (pautaEditada) {
+                            const admins = await UserServices.getUserByRole('admin')
+                            admins.map((user) => {
+                                let notificationToSave = {
+                                    id: user._id.toString(),
+                                    from: 'Sistema de Mantención ICV',
+                                    url: '/notifications',
+                                    title: 'Pauta ' + pautaEditada.idpm + ', ' + pautaEditada.typepm + ', ha sido editada', 
+                                    subtitle: pautaEditada.idpm + '/' + pautaEditada.typepm, 
+                                    message: 'Pauta editada correctamente'
+                                }
+                                NotificationService.createNotification(notificationToSave)
+                            })
+                        }
                     }
                 }
             } catch (error) {
