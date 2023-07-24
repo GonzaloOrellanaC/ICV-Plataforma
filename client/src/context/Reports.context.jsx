@@ -95,6 +95,7 @@ export const ReportsProvider = (props) => {
     }
 
     useEffect(() => {
+        console.log(reports)
         if (reports.length > 0) {
             console.log('Guardando reporte')
             console.log(revision)

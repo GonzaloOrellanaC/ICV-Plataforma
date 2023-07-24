@@ -2,7 +2,7 @@ import fs from 'fs'
 import fetch from 'node-fetch'
 import https from 'https'
 import { environment } from '../config'
-import { Site, Machine, Patterns, PatternDetail } from '../models'
+import { Site, Machine, Patterns, PatternDetail, Reports, Users } from '../models'
 import { machinesOfProject } from '../files'
 import { NotificationService, UserServices } from '../services'
 
@@ -571,6 +571,104 @@ const getAllGuidesHeaderAndStruct = (pIDPM) => {
     })
 }
 
+const getOMSap = async (year, month) => {
+    const OMSapList = await fetch(`${environment.icvApi.url}OMSap?pYEAR=${year}&pMONTH=${month}`, {
+        headers: myHeaders,
+        method: 'GET',
+        agent: agent
+    })
+    const body = await OMSapList.json();
+    const index = 0
+    crearPautasDesdeSAP(body.data, index)
+}
+
+const crearPautasDesdeSAP = async (pautas, index) => {
+    const admins = await UserServices.getUserByRole('admin')
+    if (index === (pautas.length)) {
+        console.log(`se han gestionado ${pautas.length} pautas.`)
+    } else {
+        const om = pautas[index]
+        console.log(om)
+        const findReport = await Reports.findOne({sapId: om.om })
+        if (!findReport) {
+            const findEquip = await Machine.findOne({equid: `00000000${om.equipo}`})
+            if (findEquip) {
+                const findSite = await Site.findOne({idobra: om.faena})
+                if (findSite) {
+                    const totalOT = await Reports.find()
+                    const newOt = {
+                        sapId: om.om,
+                        site: om.faena,
+                        reportType: 'Mantención',
+                        machine: `00000000${om.equipo}`,
+                        guide: om.pauta.replace('-', ''),
+                        datePrev: new Date(om.fechA_INICIO.replace(/(\d+)(\d{2})(\d{2})/g, '$1-$2-$3')),
+                        endPrev: new Date(om.fechA_TERMINO.replace(/(\d+)(\d{2})(\d{2})/g, '$1-$2-$3')),
+                        idIndex: totalOT.length - 1,
+                        idPm: findEquip.idpmmantencion,
+                        description: om.texto,
+                        state: 'Asignar'
+                    }
+                    const reportCreated = await Reports.create(newOt)
+                    if (reportCreated) {
+                        console.log(reportCreated)
+                        index = index + 1
+                        crearPautasDesdeSAP(pautas, index)
+                    }
+                } else {
+                    console.log(`Pauta OM ${om.om} no creada por no encontrar la obra.`)
+                    admins.forEach((user) => {
+                        console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
+                        let notificationToSave = {
+                            id: user._id.toString(),
+                            from: 'Sistema Mantención ICV',
+                            url: null,
+                            title: `OT de OM ${om.om} no creado`, 
+                            subtitle: 'No se se encuentra obra', 
+                            message: `La base de datos no encuentra la obra asociada al id ${om.faena}.`
+                        }
+                        NotificationService.createNotification(notificationToSave)
+                    })
+                    index = index + 1
+                    crearPautasDesdeSAP(pautas, index)
+                }
+            } else {
+                console.log(`Pauta OM ${om.om} no creada por no encontrar el equipo.`)
+                admins.forEach((user) => {
+                    console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
+                    let notificationToSave = {
+                        id: user._id.toString(),
+                        from: 'Sistema Mantención ICV',
+                        url: null,
+                        title: `OT de OM ${om.om} no creado`, 
+                        subtitle: 'No se se encuentra equipo', 
+                        message: `La base de datos no encuentra el equipo asociado al id 00000000${om.equipo}.`
+                    }
+                    NotificationService.createNotification(notificationToSave)
+                })
+                index = index + 1
+                crearPautasDesdeSAP(pautas, index)
+            }
+        } else {
+            console.log(`Pauta OM ${om.om} no creada porque ya se encuentra en BBDD.`)
+            /* admins.forEach((user) => {
+                console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
+                let notificationToSave = {
+                    id: user._id.toString(),
+                    from: 'Sistema Mantención ICV',
+                    url: null,
+                    title: `OT de OM ${om.om} ya está creada`, 
+                    subtitle: 'no se requiere creación de OM', 
+                    message: `La base de datos no encuentra el equipo asociado al id 00000000${om.equipo}.`
+                }
+                NotificationService.createNotification(notificationToSave)
+            }) */
+            index = index + 1
+            crearPautasDesdeSAP(pautas, index)
+        }
+    }
+}
+
 export default {
     /* Leer sitios */
     readSites,
@@ -596,5 +694,6 @@ export default {
     getStructsPauta,
     saveMachineDataById,
     findSitesToActualiceMachines,
-    sincronizar
+    sincronizar,
+    getOMSap
 }

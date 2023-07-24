@@ -5,9 +5,6 @@ import { Permission,Roles, Site, Machine, Users, Reports, ExecutionReport, Cron 
 import { ApiIcv } from '../api-icv';
 import apiIcvConnection from '../api-icv/api-icv.connection';
 import { CronJob } from 'cron'
-import { isValidObjectId } from 'mongoose';
-import userServices from './user.services';
-//import { apiIcvLoader } from '../loaders'
 
 const { error: errorMsg } = environment.messages.services.accessControl
 
@@ -123,6 +120,9 @@ const pautasCron = (time) => {
     const jobPautas = new CronJob(time, () => {
         apiIcvConnection.leerPautas2()
         console.log('Starting CRON Job')
+        const date = new Date()
+        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth())
+        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1)
     })
     return jobPautas
 }

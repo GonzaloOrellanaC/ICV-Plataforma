@@ -115,6 +115,9 @@ const ReportShema = new Schema({
     },
     urlPdf: {
         type: Schema.Types.String
+    },
+    description: {
+        type: Schema.Types.String
     }
 },
 {
