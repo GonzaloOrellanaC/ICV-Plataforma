@@ -264,7 +264,8 @@ const addMachineData = async (reports, reportsToSend, n, res) => {
                 shiftManagerApprovedDate:reports[n].shiftManagerApprovedDate,
                 shiftManagerApprovedBy:reports[n].shiftManagerApprovedBy,
                 endReport: reports[n].endReport,
-                dateInit: reports[n].dateInit
+                dateInit: reports[n].dateInit,
+                description: reports[n].description
             }
             reportsToSend.push(newReport)
             n = n + 1

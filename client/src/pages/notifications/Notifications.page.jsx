@@ -1,42 +1,11 @@
-import { Box, Button, Card, Grid, IconButton, ListItem, Toolbar, Paper, InputBase } from "@mui/material"
-import { ArrowBackIos } from "@material-ui/icons"
+import { Box, Button, Card, Grid, IconButton, ListItem, Toolbar, Paper, InputBase, CircularProgress } from "@mui/material"
+import { ArrowBackIos } from "@mui/icons-material"
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { dateWithTime, useStylesTheme } from "../../config"
 import { notificationsRoutes } from "../../routes"
 import { useNotificationsContext } from "../../context/Notifications.context"
 import { LoadingLogoDialog } from "../../dialogs"
-/* const useStyles = makeStyles(theme => ({
-    root: {
-        display: 'inline-block',
-        textAlign: 'center',
-        padding: 10,
-        width: '25%',
-        //minWidth: 280,
-        backgroundColor: 'transparent'
-    },
-    icon: {
-        padding: 20,
-        width: '100%',
-    },
-    button: {
-        minWidth: '100%'
-    },
-    buttonSelection: {
-        backgroundColor: '#F9F9F9',
-        color: '#505050',
-        width: '100%',
-        //minWidth: 285,
-        minHeight: 340,
-        borderRadius: 20,
-        fontFamily:'Raleway',
-        textTransform: 'none',
-        margin: 10
-    },
-    iconButton: {
-        color: '#BE2E26',
-    }
-})) */
 
 const NotificationsPage = () => {
     const {myNotifications, getNotifications} = useNotificationsContext()
@@ -45,15 +14,14 @@ const NotificationsPage = () => {
     const [notificationsListCache, setNotificationListCache] = useState([])
     const [notificationsListCacheBusqueda, setNotificationListCacheBusqueda] = useState([])
     const [totalItems, setTotalItems] = useState(20)
+    const [openLogo, setOpenLogo] = useState(false)
     const [height, setHeight] = useState(0)
-    const [scroll, setScroll] = useState(false);
     const classes = useStylesTheme();
     const navigate = useNavigate();
     const divRef = useRef();
 
     const handleScroll = (e) => {
         const scrolledFromTop = divRef.current.scrollTop;
-        console.log(scrolledFromTop, height);
         if (scrolledFromTop > (height - 100)) {
             const newTotal = totalItems + 20
             setTotalItems(newTotal)
@@ -61,13 +29,12 @@ const NotificationsPage = () => {
     };
 
     useEffect(() => {
-        setNotificationList((notificationsListCacheBusqueda.length > 0) ? notificationsListCacheBusqueda.slice(0, totalItems) : notificationsListCache.slice(0, totalItems))
+        setNotificationList((notificationsListCacheBusqueda.length > 0) ? notificationsListCacheBusqueda.slice(0, totalItems) : /* notificationsListCache */myNotifications.slice(0, totalItems))
     }, [totalItems])
 
     useEffect(() => {
         const el = document.getElementById('notification-container')
         if (el) {
-            console.log(el.offsetHeight, el.scrollHeight)
             setHeight(el.scrollHeight - el.offsetHeight)
         }
     }, [notificationsList])
@@ -75,10 +42,9 @@ const NotificationsPage = () => {
     useEffect(() => {
         if (myNotifications.length > 0) {
             setNotificationList(myNotifications.slice(0, totalItems))
-            setNotificationListCache(myNotifications)
+            setNotificationListCache(myNotifications.slice(0, 1000))
             const el = document.getElementById('notification-container')
             if (el) {
-                console.log(el.offsetHeight, el.scrollHeight)
                 setHeight(el.scrollHeight - el.offsetHeight)
             }
         }
@@ -103,7 +69,8 @@ const NotificationsPage = () => {
     }
 
     const buscar = (value) => {
-        if (value.length > 3) {
+        setOpenLogo(true)
+        if (value.length > 2) {
             const newNotificationList = []
             notificationsListCache.forEach((not, i) => {
                 if (
@@ -121,6 +88,7 @@ const NotificationsPage = () => {
             setNotificationListCacheBusqueda([])
             setTotalItems(20)
         }
+        setOpenLogo(false)
     }
 
 
@@ -171,7 +139,7 @@ const NotificationsPage = () => {
                                     <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
                                         <p style={{fontSize: 18}}>Fecha</p>
                                     </div>
-                                    <div style={{/* width: '20%',  */marginLeft: 5, fontSize: 18}}>
+                                    <div style={{marginLeft: 5, fontSize: 18}}>
                                         <p style={{fontSize: 18}}>
                                             Acción
                                         </p>
@@ -180,7 +148,10 @@ const NotificationsPage = () => {
                             </div>
                             <div style={{height: 'calc(100vh - 300px)', overflowY: 'auto'}} onScroll={handleScroll} ref={divRef} id='notification-container'>
                                 {
-                                    notificationsList.map((item, index) => {
+                                    openLogo && <CircularProgress />
+                                }
+                                {
+                                    !openLogo && notificationsList.map((item, index) => {
                                         return (
                                             <ListItem key={index} style={{backgroundColor: item.state ? '#fff' : '#F9F9F9'}}>
                                                 <div style={{marginLeft: 5, marginRight: 5, fontSize: 12}}>
@@ -196,7 +167,7 @@ const NotificationsPage = () => {
                                                 <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
                                                     <p style={{fontSize: 18}}>{dateWithTime(item.createdAt)}</p>
                                                 </div>
-                                                <div style={{/* width: '20%',  */marginLeft: 5, fontSize: 12}}>
+                                                <div style={{marginLeft: 5, fontSize: 12}}>
                                                     <p
                                                         style={{cursor: 'pointer', color: 'brown', textDecoration: 'inline', fontSize: 16, fontWeight: 'bold'}}
                                                         onClick={() => {navigate(item.url); changeState(item._id)}}
@@ -208,9 +179,7 @@ const NotificationsPage = () => {
                                         )
                                     })
                                 }
-                                {/* <div className="area" onScroll={handleScroll} ref={divRef} /> */}
                             </div>
-                            
                             {
                                 openLoading && <LoadingLogoDialog open={openLoading} />
                             }
