@@ -2,7 +2,7 @@ import { Grid, Button, Input, TextareaAutosize, Checkbox, FormGroup, FormControl
 import { useEffect, useState } from "react"
 import { imageToBase64 } from "../../config"
 
-const WallPostEditorComponent = ({typePost, roles, rolesSeleccionados, obras}) => {
+const WallPostEditorComponent = ({typePost, roles, rolesSeleccionados, obras, setVideo, setImagen}) => {
     const [imageSelected, setImageSelected] = useState()
     const [videoSelected, setVideoSelected] = useState()
     const [rolesSelection, setRolesSelection] = useState([])
@@ -96,11 +96,13 @@ const WallPostEditorComponent = ({typePost, roles, rolesSeleccionados, obras}) =
     }
 
     const imagenSeleccionada = async (e) => {
+        setImagen(e.target.files[0])
         const response = await imageToBase64(e.target.files[0])
         setImageSelected(response)
     }
 
     const videoSeleccionado = async (e) => {
+        setVideo(e.target.files[0])
         const reader = new FileReader();
         reader.readAsDataURL(e.target.files[0]);
         reader.onload = function () {
@@ -182,7 +184,7 @@ const WallPostEditorComponent = ({typePost, roles, rolesSeleccionados, obras}) =
                                 </Button>
                                 <input type={'file'} id={'videoSelector'} accept="video/mp4,video/x-m4v,video/*" style={{display: 'none'}} onChange={videoSeleccionado} />
                                 <div className="mediaContainer">
-                                    {videoSelected ? <video controls src={videoSelected} alt={'video-post'} className="videoPost" height={'100%'} /> : <p>Se mostrará el video al seleccionar</p>}
+                                    {videoSelected ? <video controls src={videoSelected} alt={'video-post'} className="videoPost" width={'100%'} style={{ maxWidth: 500, maxHeight: 500 }} /> : <p>Se mostrará el video al seleccionar</p>}
                                 </div>
                             </Grid>
                             <Grid item xs={6}>

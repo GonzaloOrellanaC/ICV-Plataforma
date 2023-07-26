@@ -40,6 +40,7 @@ import { PatternsPage, RolesPage, UserProfilePage } from './pages/administration
 import { Notifications } from 'react-push-notification';
 import { SocketConnection } from './connections'
 import { NotificationsProvider } from './context/Notifications.context'
+import { MyWallPage } from './pages/wall-journal'
 
 const OnApp = () => {    
     const { userData, loading, admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, isAuthenticated } = useAuth()
@@ -127,6 +128,7 @@ const OnApp = () => {
                 <Route exact path='/notifications' element={<NotificationsPage route={'notifications'}/>} />
                 <Route exact path='/calendar' element={<CalendarPage route={'calendar'}/>} />
                 <Route exact path='/news' element={<WallJournalPage/>} />
+                <Route exact path='/mynews' element={<MyWallPage/>} />
             </Routes>
         </div>
     )

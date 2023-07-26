@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from ".";
-import { notificationsRoutes } from "../routes";
+import { newsRoutes, notificationsRoutes } from "../routes";
 
 export const NotificationsContext = createContext()
 
@@ -9,15 +9,26 @@ export const NotificationsProvider = props => {
     const [myNotifications, setMyNotifications] = useState([])
     const [lastNotification, setLastNotification] = useState()
 
+    const [noticias, setNoticias] = useState([])
+    const [ultimaNoticia, setUltimaNoticia] = useState()
+
     useEffect(() => {
         if (userData && isAuthenticated) {
             console.log(userData._id, isAuthenticated)
+            getNoticias()
             getNotifications()
         }
     },[userData, isAuthenticated])
 
     const orderByDate = (a, b) => {
         return new Date(b.createdAt) - new Date(a.createdAt)
+    }
+
+    const getNoticias = async () => {
+        const response = await newsRoutes.getMyNews(userData._id)
+        console.log(response.data)
+        setNoticias(response.data.data.sort(orderByDate))
+        setUltimaNoticia(response.data.data.sort(orderByDate)[0])
     }
 
     const getNotifications = async () => {
@@ -30,7 +41,9 @@ export const NotificationsProvider = props => {
     const provider = {
         myNotifications,
         lastNotification,
-        getNotifications
+        getNotifications,
+        noticias,
+        ultimaNoticia
     }
 
     return (

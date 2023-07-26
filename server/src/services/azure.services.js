@@ -241,10 +241,56 @@ const uploadImageAstFromReport = (imageFile, nroOT, id) => {
     })
 }
 
+const uploadVideo = async (req, res) => {
+    const { path, containerName } = req.body;
+    try {
+        if(!req.files) {
+            res.send({
+                status: false,
+                message: 'No file uploaded'
+            });
+        } else {
+            let video = req.files.video;
+            const createContainer = await createContainerIfNotExist(containerName);
+            if(createContainer) {
+
+            }else{
+
+            };
+            let stream = video.data;
+            let mimetype = video.mimetype.replace('video/', '.');
+            /* if(mimetype === '.jpeg') {
+                mimetype = '.jpg'
+            }  */
+            console.log(video)
+            const blobName = path + mimetype;
+            const containerClient = blobServiceClient.getContainerClient(containerName);
+            const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+            const uploadBlobResponse = await blockBlobClient.upload(stream, stream.byteLength);
+            if(uploadBlobResponse) {
+                const blobClient = containerClient.getBlobClient(blobName);
+                const downloadBlockBlobResponse = blobClient.url
+
+                res.send({
+                    status: true,
+                    message: 'File is uploaded',
+                    data: {
+                        url: downloadBlockBlobResponse
+                    }
+                });
+            }
+        }
+    } catch(err) {
+
+        res.status(500).send(err);
+    }
+}
+
 export default {
     uploadImageProfile,
     uploadImageReport,
     uploadImage,
+    uploadVideo,
     uploadPdfFile,
     uploadImageFromReport,
     uploadImageAstFromReport

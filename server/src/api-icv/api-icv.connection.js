@@ -607,7 +607,8 @@ const crearPautasDesdeSAP = async (pautas, index) => {
                         idIndex: totalOT.length - 1,
                         idPm: findEquip.idpmmantencion,
                         description: om.texto,
-                        state: 'Asignar'
+                        state: 'Asignar',
+                        isAutomatic: true
                     }
                     const reportCreated = await Reports.create(newOt)
                     if (reportCreated) {

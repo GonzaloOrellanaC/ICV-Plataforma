@@ -6,5 +6,6 @@ const router = new Router()
 router.post('/uploadImageProfile', AzureServices.uploadImageProfile)
 router.post('/uploadImageReport', AzureServices.uploadImageReport)
 router.post('/uploadImage', AzureServices.uploadImage)
+router.post('/uploadVideo', AzureServices.uploadVideo)
 
 export default router

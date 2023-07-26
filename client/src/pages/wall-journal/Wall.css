@@ -81,3 +81,20 @@
     text-align: center;
 }
 
+.item-mywall {
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px;
+    position: relative;
+    border-bottom: #eeeeee 1px solid;
+}
+
+.item-mywall:hover {
+    background-color: #eeeeee;
+}
+
+.icon-right {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+}

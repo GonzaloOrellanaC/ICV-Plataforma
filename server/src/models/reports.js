@@ -118,6 +118,10 @@ const ReportShema = new Schema({
     },
     description: {
         type: Schema.Types.String
+    },
+    isAutomatic: {
+        type: Schema.Types.Boolean,
+        default: false
     }
 },
 {

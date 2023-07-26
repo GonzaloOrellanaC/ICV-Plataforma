@@ -19,6 +19,7 @@ import Notification from './notifications'
 import Patterns from './patterns'
 import PatternDetail from './patternDetail'
 import Cron from './cron'
+import News from './news'
 export {
     AssignedMaintenance,
     AssignedInspections,
@@ -39,5 +40,6 @@ export {
     Notification,
     Patterns,
     PatternDetail,
-    Cron
+    Cron,
+    News
 }

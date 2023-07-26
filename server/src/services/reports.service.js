@@ -5,7 +5,6 @@ import fetch from 'node-fetch'
 import https from 'https'
 import { AzureServices, EmailMailgunServices, EmailServices, ExecutionReportsServices } from "."
 import executionReportsServices from "./executionReports.services"
-import { Sentry } from './sentry.services'
 
 const myHeaders = {
     'Authorization': 'Token ' + environment.icvApi.token,
@@ -59,7 +58,8 @@ const createReport = async (req, res) => {
                     shiftManagerApprovedDate:createReportState.shiftManagerApprovedDate,
                     shiftManagerApprovedBy:createReportState.shiftManagerApprovedBy,
                     endReport: createReportState.endReport,
-                    dateInit: createReportState.dateInit
+                    dateInit: createReportState.dateInit,
+                    isAutomatic: false
                 }
                 res.json(newReport)
             }
@@ -265,7 +265,8 @@ const addMachineData = async (reports, reportsToSend, n, res) => {
                 shiftManagerApprovedBy:reports[n].shiftManagerApprovedBy,
                 endReport: reports[n].endReport,
                 dateInit: reports[n].dateInit,
-                description: reports[n].description
+                description: reports[n].description,
+                isAutomatic: reports[n].isAutomatic
             }
             reportsToSend.push(newReport)
             n = n + 1

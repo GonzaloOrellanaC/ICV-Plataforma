@@ -7,7 +7,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css'
 import WallSelectTypePost from './WallSelectTypePost.component'
 import WallPostEditorComponent from './WallPostEditor.component'
-import { newsRoutes, rolesRoutes, sitesRoutes } from '../../routes'
+import { azureStorageRoutes, newsRoutes, rolesRoutes, sitesRoutes } from '../../routes'
+import LoadingLogoDialog from '../../dialogs/LoadingLogoDialog'
 
 const WallJournalPage = () => {
     const navigate = useNavigate()
@@ -19,7 +20,9 @@ const WallJournalPage = () => {
     const [rolesSeleccionadosAenvio, setRolesSeleccionadosAenvio] = useState([])
     const [obrasSeleccionadasAenvio, setObrasSeleccionadasAenvio] = useState([])
     const [obras, setObras] = useState([])
- 
+    const [video, setVideo] = useState()
+    const [imagen, setImagen] = useState()
+    const [loadingData, setLoadingData] = useState(false)
 
     useEffect(() => {
         getRolesInit()
@@ -94,6 +97,7 @@ const WallJournalPage = () => {
             if (titulo.length > 0) {
                 if (comentario.length > 0) {
                     if (typePost === 'only-text') {
+                        setLoadingData(true)
                         const newsData = {
                             titulo: titulo,
                             comentario: comentario,
@@ -101,13 +105,53 @@ const WallJournalPage = () => {
                             obras: obrasSeleccionadasAenvio
                         }
                         const response = await newsRoutes.createNewText(newsData)
+                        setLoadingData(false)
                         if (response) {
                             back()
                         }
                     } else if (typePost === 'text-photo') {
-
+                        if (imagen) {
+                            setLoadingData(true)
+                            const nombreImagen = Date.now()
+                            const responseImagen = await azureStorageRoutes.uploadImage(imagen, nombreImagen.toString(), `news/${nombreImagen}` )
+                            console.log(responseImagen)
+                            const newsData = {
+                                titulo: titulo,
+                                comentario: comentario,
+                                roles: rolesSeleccionadosAenvio,
+                                obras: obrasSeleccionadasAenvio,
+                                nombreFoto: nombreImagen,
+                                urlFoto: responseImagen.data.data.url
+                            }
+                            const response = await newsRoutes.createNewWithImage(newsData)
+                            setLoadingData(false)
+                            if (response) {
+                                back()
+                            }
+                        } else {
+                            alert('Imagen no seleccionada')
+                        }
                     } else if (typePost === 'title-video') {
-
+                        if (video) {
+                            setLoadingData(true)
+                            console.log(video)
+                            const nombreVideo = Date.now()
+                            const respondeVideo = await azureStorageRoutes.uploadVideo(video, nombreVideo.toString(), `news/${nombreVideo}` )
+                            console.log(respondeVideo)
+                            const newsData = {
+                                titulo: titulo,
+                                comentario: comentario,
+                                roles: rolesSeleccionadosAenvio,
+                                obras: obrasSeleccionadasAenvio,
+                                nombreVideo: nombreVideo,
+                                urlVideo: respondeVideo.data.data.url
+                            }
+                            const response = await newsRoutes.createNewWithVideo(newsData)
+                            setLoadingData(false)
+                            if (response) {
+                                back()
+                            }
+                        }
                     }
                 } else {
                     alert('Debe agregar un comentario')
@@ -122,6 +166,9 @@ const WallJournalPage = () => {
 
     return (
         <Box height='100%'>
+            <LoadingLogoDialog
+                open={loadingData}
+            />
             <Grid className={'pageRoot'} container spacing={0}>
                 <Grid item xs={12}>
                     <Card elevation={0} className={'pageCard'}>
@@ -154,7 +201,7 @@ const WallJournalPage = () => {
                                     <WallSelectTypePost selectTypePost={selectTypePost}/>
                                 </SwiperSlide>
                                 <SwiperSlide>
-                                    <WallPostEditorComponent typePost={typePost} roles={roles} rolesSeleccionados={rolesSeleccionados} obras={obras} />
+                                    <WallPostEditorComponent typePost={typePost} roles={roles} rolesSeleccionados={rolesSeleccionados} obras={obras} setVideo={setVideo} setImagen={setImagen} />
                                 </SwiperSlide>
                             </Swiper>
                             <Grid item xs={12} >
