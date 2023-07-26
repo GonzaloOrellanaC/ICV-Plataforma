@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core"
+import { Grid } from "@mui/material"
 
 const WallSelectTypePost = ({selectTypePost}) => {
     
@@ -22,7 +22,7 @@ const WallSelectTypePost = ({selectTypePost}) => {
                     <Grid container>
                         <Grid item sm={6} style={{ paddingRight: 5 }}>
                             {/* <div className="imageExample"/> */}
-                            <img src="../assets/no-image-icon-6.png" alt="no-video" width={'100%'} height={'100%'} />
+                            <img src="../assets/no-image-icon-6.png" alt="no-video" width={'100%'} /* height={'100%'} */ />
                         </Grid>
                         <Grid item sm={6} style={{ paddingLeft: 5 }}>
                             <div className="titleExample"/>

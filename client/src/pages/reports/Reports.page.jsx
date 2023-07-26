@@ -3,14 +3,14 @@ import {Grid, Toolbar, IconButton, Chip, TablePagination, Button, AppBar, Typogr
 import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar, faDownload, faPlus, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar, faDownload, faPlus, faPlusSquare, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useReportsContext, useSitesContext } from '../../context';
 import * as XLSX from 'xlsx'
 import { executionReportsRoutes } from '../../routes';
-import { LoadingLogoDialog } from '../../dialogs';
+import { LoadingLogoDialog, ReportsResumeDialog } from '../../dialogs';
 
 const ReportsPage = () => {
     const {sites} = useSitesContext()
@@ -38,6 +38,7 @@ const ReportsPage = () => {
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
     const [canOpenNewReport, setCanOpenNewReport] = useState(false)
     const [loadingSpinner, setLoading] = useState(false)
+    const [openReportSumary, setOpenReportSumary] = useState(false)
     useEffect(() => {
         if (pautas.length === 0) {
             setCanOpenNewReport(false)
@@ -424,10 +425,23 @@ const ReportsPage = () => {
         }
     }
 
+    const openToReportSumary = () => {
+        setOpenReportSumary(true)
+    }
+
+    const closeToReportSumary = () => {
+        setOpenReportSumary(false)
+    }
+
     return(
         <div className='container-width' >
             <LoadingLogoDialog
                 open={loadingSpinner}
+            />
+            <ReportsResumeDialog
+                open={openReportSumary}
+                handleClose={closeToReportSumary}
+                reports={reports}
             />
             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20, flexGrow: 1}}>
@@ -447,9 +461,19 @@ const ReportsPage = () => {
                                 edge={'end'}
                                 hidden={!hableCreateReport}
                                 onClick={downloadFile}
-                                title='Descargar Reporte'
+                                title='Exportar Información de Reportes'
                             >
                                 <FontAwesomeIcon icon={faDownload}/>
+                            </IconButton>
+                            <IconButton
+                                color={'primary'} 
+                                style={{ marginRight: 5 }}
+                                edge={'end'}
+                                hidden={!hableCreateReport}
+                                onClick={openToReportSumary}
+                                title='Información de Reportes'
+                            >
+                                <FontAwesomeIcon icon={faInfoCircle}/>
                             </IconButton>
                             <IconButton
                                 color={'primary'} 

@@ -12,6 +12,7 @@ import pdfMakeRoutes from './pdf-make.routes'
 import notificationsRoutes from './notifications.routes'
 import patternsRoutes from './patterns.routes'
 import sitesRoutes from './sites.routes'
+import newsRoutes from './news.routes'
 
 export {
     authRoutes,
@@ -27,5 +28,6 @@ export {
     pdfMakeRoutes,
     notificationsRoutes,
     patternsRoutes,
-    sitesRoutes
+    sitesRoutes,
+    newsRoutes
 }

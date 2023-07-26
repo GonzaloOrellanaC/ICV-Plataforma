@@ -19,6 +19,7 @@ import NotificationsRoutes from './notifications.routes'
 import PatternsRoutes from './patterns.routes'
 import SitesRoutes from './sites.routes'
 import CronRoutes from './cron.routes'
+import NewsRoutes from './news.routes'
 
 const router = new Router()
 
@@ -40,5 +41,6 @@ router.use('/notifications', NotificationsRoutes)
 router.use('/patterns', PatternsRoutes)
 router.use('/sites', SitesRoutes)
 router.use('/cron', CronRoutes)
+router.use('/news', NewsRoutes)
 
 export default router

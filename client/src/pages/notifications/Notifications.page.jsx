@@ -1,6 +1,6 @@
-import { Box, Button, Card, Grid, IconButton, ListItem, Toolbar } from "@material-ui/core"
+import { Box, Button, Card, Grid, IconButton, ListItem, Toolbar, Paper, InputBase } from "@mui/material"
 import { ArrowBackIos } from "@material-ui/icons"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { dateWithTime, useStylesTheme } from "../../config"
 import { notificationsRoutes } from "../../routes"
@@ -41,18 +41,48 @@ import { LoadingLogoDialog } from "../../dialogs"
 const NotificationsPage = () => {
     const {myNotifications, getNotifications} = useNotificationsContext()
     const [ openLoading, setOpenLoading ] = useState(false)
+    const [notificationsList, setNotificationList] = useState([])
+    const [notificationsListCache, setNotificationListCache] = useState([])
+    const [notificationsListCacheBusqueda, setNotificationListCacheBusqueda] = useState([])
+    const [totalItems, setTotalItems] = useState(20)
+    const [height, setHeight] = useState(0)
+    const [scroll, setScroll] = useState(false);
     const classes = useStylesTheme();
     const navigate = useNavigate();
+    const divRef = useRef();
 
-    /* useEffect(() => {
-        let cancel = true;
-        if(cancel) {
-            notificationsRoutes.getNotificationsById(localStorage.getItem('_id')).then(data => {
-                if(cancel) setNotifications(data.data.reverse())
-            })
+    const handleScroll = (e) => {
+        const scrolledFromTop = divRef.current.scrollTop;
+        console.log(scrolledFromTop, height);
+        if (scrolledFromTop > (height - 100)) {
+            const newTotal = totalItems + 20
+            setTotalItems(newTotal)
         }
-        return () => {cancel = false}
-    }, []) */
+    };
+
+    useEffect(() => {
+        setNotificationList((notificationsListCacheBusqueda.length > 0) ? notificationsListCacheBusqueda.slice(0, totalItems) : notificationsListCache.slice(0, totalItems))
+    }, [totalItems])
+
+    useEffect(() => {
+        const el = document.getElementById('notification-container')
+        if (el) {
+            console.log(el.offsetHeight, el.scrollHeight)
+            setHeight(el.scrollHeight - el.offsetHeight)
+        }
+    }, [notificationsList])
+
+    useEffect(() => {
+        if (myNotifications.length > 0) {
+            setNotificationList(myNotifications.slice(0, totalItems))
+            setNotificationListCache(myNotifications)
+            const el = document.getElementById('notification-container')
+            if (el) {
+                console.log(el.offsetHeight, el.scrollHeight)
+                setHeight(el.scrollHeight - el.offsetHeight)
+            }
+        }
+    }, [myNotifications])
 
     const changeState = (notificationId) => {
         notificationsRoutes.actualiceNotificationState(notificationId)
@@ -72,6 +102,28 @@ const NotificationsPage = () => {
         }, 1000);
     }
 
+    const buscar = (value) => {
+        if (value.length > 3) {
+            const newNotificationList = []
+            notificationsListCache.forEach((not, i) => {
+                if (
+                    not.title.toLowerCase().includes(value.toLowerCase()) ||
+                    not.subtitle.toLowerCase().includes(value.toLowerCase()) ||
+                    not.message.toLowerCase().includes(value.toLowerCase())
+                    ) {
+                        newNotificationList.push(not)
+                    }
+            })
+            setNotificationList(newNotificationList.slice(0, totalItems))
+            setNotificationListCacheBusqueda(newNotificationList)
+        } else {
+            setNotificationList(notificationsListCache)
+            setNotificationListCacheBusqueda([])
+            setTotalItems(20)
+        }
+    }
+
+
     return (
         <Box height='100%'>
             <Grid className={'pageRoot'} container spacing={0}>
@@ -90,41 +142,75 @@ const NotificationsPage = () => {
                                             Notificaciones
                                         </h1>
                                     </Toolbar>
-                                    <Button onClick={()=>{todoLeido()}} style={{position: 'absolute', right: 10, top: 10}}>Indicar Todo Leído</Button>
+                                    <Paper
+                                        component="form"
+                                        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400, position: 'absolute', right: 10, top: 10 }}
+                                    >
+                                        <InputBase
+                                            onChange={(e) => {buscar(e.target.value)}}
+                                            sx={{ ml: 1, flex: 1 }}
+                                            placeholder="Buscar en notificaciones"
+                                            inputProps={{ 'aria-label': 'search google maps' }}
+                                        />
+                                    </Paper>
                                 </div>
                             </div>
                         </Grid>
                         <Grid alignItems='center' justifyContent='center' style={{padding: 10, borderRadius: 20}}>
-                            <div style={{height: 'calc(100vh - 220px)', overflowY: 'auto'}}>
-                            {
-                                myNotifications.slice(0, 20).map((item, index) => {
-                                    return (
-                                        <ListItem key={index} style={{backgroundColor: item.state ? '#fff' : '#F9F9F9'}}>
-                                            <div style={{width: '15%', marginLeft: 5, fontSize: 12}}>
-                                                <h1>{item.title}</h1>
-                                                <h2>{item.subtitle}</h2>
-                                            </div>
-                                            <div style={{width: '20%', marginLeft: 5, fontSize: 12}}>
-                                                <p style={{fontSize: 18}}>{item.message}</p>
-                                            </div>
-                                            <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
-                                                <p style={{fontSize: 18}}>{dateWithTime(item.createdAt)}</p>
-                                            </div>
-                                            <div style={{width: '20%', marginLeft: 5, fontSize: 12}}>
-                                                <button 
-                                                    style={{
-                                                        width: 50, 
-                                                        height: 40, 
-                                                        borderRadius: 20, 
-                                                        fontSize: 20
-                                                    }} 
-                                                    onClick={() => {navigate(item.url); changeState(item._id)}}>Ir</button>
-                                            </div>
-                                        </ListItem> 
-                                    )
-                                })
-                            }
+                            <div >
+                                <ListItem style={{backgroundColor: '#F9F9F9'}}>
+                                    <div style={{marginLeft: 5, marginRight: 5, fontSize: 12}}>
+                                        <p style={{margin: 0, fontSize: 18}}>N°</p>
+                                    </div>
+                                    <div style={{width: '30%', marginLeft: 5, fontSize: 12}}>
+                                        <p style={{margin: 0, fontSize: 18}}>Titulo</p>
+                                    </div>
+                                    <div style={{width: '40%', marginLeft: 5, fontSize: 12}}>
+                                        <p style={{fontSize: 18}}>Mensaje</p>
+                                    </div>
+                                    <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
+                                        <p style={{fontSize: 18}}>Fecha</p>
+                                    </div>
+                                    <div style={{/* width: '20%',  */marginLeft: 5, fontSize: 18}}>
+                                        <p style={{fontSize: 18}}>
+                                            Acción
+                                        </p>
+                                    </div>
+                                </ListItem>
                             </div>
+                            <div style={{height: 'calc(100vh - 300px)', overflowY: 'auto'}} onScroll={handleScroll} ref={divRef} id='notification-container'>
+                                {
+                                    notificationsList.map((item, index) => {
+                                        return (
+                                            <ListItem key={index} style={{backgroundColor: item.state ? '#fff' : '#F9F9F9'}}>
+                                                <div style={{marginLeft: 5, marginRight: 5, fontSize: 12}}>
+                                                    <h3 style={{margin: 0}}>{index + 1}</h3>
+                                                </div>
+                                                <div style={{width: '30%', marginLeft: 5, fontSize: 12}}>
+                                                    <h3 style={{margin: 0}}>{item.title}</h3>
+                                                    <h4 style={{margin: 0}}>{item.subtitle}</h4>
+                                                </div>
+                                                <div style={{width: '40%', marginLeft: 5, fontSize: 12}}>
+                                                    <p style={{fontSize: 18}}>{item.message}</p>
+                                                </div>
+                                                <div style={{width: '10%', marginLeft: 5, fontSize: 12}}>
+                                                    <p style={{fontSize: 18}}>{dateWithTime(item.createdAt)}</p>
+                                                </div>
+                                                <div style={{/* width: '20%',  */marginLeft: 5, fontSize: 12}}>
+                                                    <p
+                                                        style={{cursor: 'pointer', color: 'brown', textDecoration: 'inline', fontSize: 16, fontWeight: 'bold'}}
+                                                        onClick={() => {navigate(item.url); changeState(item._id)}}
+                                                    >
+                                                        Ir
+                                                    </p>
+                                                </div>
+                                            </ListItem> 
+                                        )
+                                    })
+                                }
+                                {/* <div className="area" onScroll={handleScroll} ref={divRef} /> */}
+                            </div>
+                            
                             {
                                 openLoading && <LoadingLogoDialog open={openLoading} />
                             }
@@ -134,7 +220,6 @@ const NotificationsPage = () => {
             </Grid>
         </Box>
     )
-    
 }
 
 export default NotificationsPage

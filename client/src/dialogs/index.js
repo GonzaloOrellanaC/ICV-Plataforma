@@ -11,6 +11,7 @@ import PreviewDialog from './PreviewDialog'
 import ReportMessagesDialog from './RepotMessagesDialog'
 import LoadingLogoDialog from './LoadingLogoDialog'
 import UserDataEditDialog from './UserDataEditDialog'
+import ReportsResumeDialog from './ReportsResumeDialog'
 export {
     AlertDialog,
     ReportDataDialog,
@@ -24,5 +25,6 @@ export {
     PreviewDialog,
     ReportMessagesDialog,
     LoadingLogoDialog,
-    UserDataEditDialog
+    UserDataEditDialog,
+    ReportsResumeDialog
 }
