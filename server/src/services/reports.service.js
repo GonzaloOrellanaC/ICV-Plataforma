@@ -266,7 +266,8 @@ const addMachineData = async (reports, reportsToSend, n, res) => {
                 endReport: reports[n].endReport,
                 dateInit: reports[n].dateInit,
                 description: reports[n].description,
-                isAutomatic: reports[n].isAutomatic
+                isAutomatic: reports[n].isAutomatic,
+                progress: reports[n].progress
             }
             reportsToSend.push(newReport)
             n = n + 1

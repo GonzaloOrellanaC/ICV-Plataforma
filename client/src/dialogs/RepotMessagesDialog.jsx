@@ -21,7 +21,7 @@ const ReportMessagesDialog = ({open, close, report}) => {
                 }))
             }
         })
-    }, [])
+    }, [report])
     
     
 

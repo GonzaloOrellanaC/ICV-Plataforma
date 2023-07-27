@@ -91,6 +91,11 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                     <p style={{textAlign: 'center'}}> <strong>Pauta</strong> </p>
                 </Grid>
+                {
+                    (typeReportsSelected !== 'Completadas') && <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
+                    <p style={{textAlign: 'center'}}> <strong>Progreso</strong> </p>
+                </Grid>
+                }
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
                     <p style={{textAlign: 'center'}}> <strong>Fecha <br /> Prevista</strong> </p>
                 </Grid>
@@ -156,6 +161,11 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                         <p style={{textAlign: 'center'}}> {item.guide} </p>
                                     </Grid>
+                                    {
+                                        (typeReportsSelected !== 'Completadas') && <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
+                                        <p style={{textAlign: 'center'}}> {item.progress ? `${item.progress}%` : 'S/I'} </p>
+                                    </Grid>
+                                    }
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
                                         <p style={{textAlign: 'center'}}> {dateSimple(item.datePrev)} </p>
                                     </Grid>

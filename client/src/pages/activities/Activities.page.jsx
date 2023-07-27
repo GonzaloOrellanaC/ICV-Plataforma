@@ -70,8 +70,8 @@ const ActivitiesPage = () => {
                                                 <p style={{fontSize: 12, fontWeight: 'bold'}}>Guía</p>
                                                 </div>
                                             </Grid>
-                                            <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                <div style={{width: '100%', textAlign: 'center'}}>
+                                            <Grid item xl={'auto'} lg={'auto'} md={'auto'}>
+                                                <div style={{minWidth: 100, textAlign: 'center'}}>
                                                     <p style={{fontSize: 12, fontWeight: 'bold'}}>SAP ID</p>
                                                 </div>
                                             </Grid>
@@ -87,8 +87,11 @@ const ActivitiesPage = () => {
                                             {!isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 170}}>Término ejecución</p>
                                             </Grid>}
-                                            <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'center', minWidth: 70}}>Flota</p>
+                                            <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'left', minWidth: 150}}>Flota</p>
+                                            </Grid>
+                                            <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'left', minWidth: 70}}> Progreso </p>
                                             </Grid>
                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'center', minWidth: 70}}>Nro Máquina</p>
@@ -138,8 +141,8 @@ const ActivitiesPage = () => {
                                                                 <p style={{fontSize: 11}}>{element._guide}</p>
                                                                 </div>
                                                             </Grid>
-                                                            <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                                <div style={{textAlign: 'center'}}>
+                                                            <Grid item xl={'auto'} lg={'auto'} md={'auto'}>
+                                                                <div style={{textAlign: 'center', minWidth: 100}}>
                                                                     <p style={{fontSize: 11}}>{element.sapId}</p>
                                                                 </div>
                                                             </Grid>
@@ -157,8 +160,11 @@ const ActivitiesPage = () => {
                                                             { !isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                 <p style={{fontSize: 11, minWidth: 170}}> {date(element.endReport)} </p>
                                                             </Grid>}
-                                                            <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                                <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> {element.machineData && element.machineData.type} {element.machineData && element.machineData.model} </p>
+                                                            <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                                <p style={{fontSize: 11, textAlign: 'left', minWidth: 150}}> {element.machineData && element.machineData.type} {element.machineData && element.machineData.model} </p>
+                                                            </Grid>
+                                                            <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                                <p style={{fontSize: 11, textAlign: 'left', minWidth: 70}}> {element.progress ? `${element.progress}%` : 'S/I'} </p>
                                                             </Grid>
                                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                 <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> N°: {element.machineData && element.machineData.equ} </p>
@@ -211,8 +217,8 @@ const ActivitiesPage = () => {
                                                                     <p style={{fontSize: 11}}>{element._guide}</p>
                                                                     </div>
                                                                 </Grid>
-                                                                <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                                    <div style={{textAlign: 'center'}}>
+                                                                <Grid item xl={'auto'} lg={'auto'} md={'auto'}>
+                                                                    <div style={{textAlign: 'center', minWidth: 100}}>
                                                                         <p style={{fontSize: 11}}>{element.sapId}</p>
                                                                     </div>
                                                                 </Grid>
@@ -232,8 +238,11 @@ const ActivitiesPage = () => {
                                                                         <p style={{fontSize: 11, minWidth: 170}}>{date(element.endReport)}</p>
                                                                     </div>
                                                                 </Grid>}
-                                                                <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
-                                                                    <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> {element.machineData && element.machineData.type} {element.machineData && element.machineData.model} </p>
+                                                                <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                                    <p style={{fontSize: 11, textAlign: 'left', minWidth: 150}}> {element.machineData && element.machineData.type} {element.machineData && element.machineData.model} </p>
+                                                                </Grid>
+                                                                <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
+                                                                    <p style={{fontSize: 11, textAlign: 'left', minWidth: 70}}> {element.progress ? `${element.progress}%` : 'S/I'} </p>
                                                                 </Grid>
                                                                 <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
                                                                     <p style={{fontSize: 11, textAlign: 'center', minWidth: 70}}> N°: {element.machineData && element.machineData.equ} </p>

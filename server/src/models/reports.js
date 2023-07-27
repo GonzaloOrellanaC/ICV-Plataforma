@@ -122,6 +122,10 @@ const ReportShema = new Schema({
     isAutomatic: {
         type: Schema.Types.Boolean,
         default: false
+    },
+    progress: {
+        type: Schema.Types.Number,
+        default: 0
     }
 },
 {

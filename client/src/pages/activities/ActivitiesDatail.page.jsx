@@ -46,6 +46,7 @@ const ActivitiesDetailPage = () => {
     const [materialesPreview, setMaterialesPreview] = useState()
     const [toForward, setToForward] = useState(false)
     const [sitio, setSitio] = useState()
+    const [isTermJornada, setIsTermJornada] = useState(false)
     /* NUEVA VERSION */
 
     useEffect(() => {
@@ -71,6 +72,12 @@ const ActivitiesDetailPage = () => {
             }
         }
     }, [report, id, isOperator, isSapExecutive, isShiftManager, isChiefMachinery])
+/* 
+    useEffect(() => {
+        if (report && progress) {
+            report.progress = progress
+        }
+    },[progress, report]) */
 
     const setProgress = ({progressPage, globalProgress}) => {
         resutProgress(Number(progressPage))
@@ -95,6 +102,11 @@ const ActivitiesDetailPage = () => {
         setOpenReportCommitModal(true)
     }
 
+    const mensajeTerminoJornada = () => {
+        setIsTermJornada(true)
+        setOpenReportCommitModal(true)
+    }
+
     const forwardReport = () => {
         if (isOnline) {
             setToForward(true)
@@ -116,9 +128,11 @@ const ActivitiesDetailPage = () => {
     const terminarjornada = async () => {
         if(isOnline) {
             if (window.confirm('Confirme que terminará su jornada')) {
+                setIsTermJornada(true)
                 setLoadingLogo(true)
                 const reportCache = report
                 const emails = await getExecutivesSapEmail(reportLevel)
+                reportCache.progress = itemProgress
                 reportCache.state = "Asignar"
                 reportCache.emailing = "termino-jornada"
                 reportCache.fullNameWorker = `${userData.name} ${userData.lastName}`
@@ -169,6 +183,7 @@ const ActivitiesDetailPage = () => {
             setLoadingLogo(true)
             console.log(report)
             const reportCache = report
+            reportCache.progress = itemProgress
             if (reportCache.testMode) {
                 const level = reportCache.level - 1
                 reportCache.level = level
@@ -206,6 +221,7 @@ const ActivitiesDetailPage = () => {
             setLoadingLogo(true)
             setLoadingMessage('Guardando información')
             const reportCache = report
+            reportCache.progress = itemProgress
             if (reportCache.testMode) {
                 let level = 0
                 if (!reportCache.level||reportCache.level === 0) {
@@ -448,7 +464,7 @@ const ActivitiesDetailPage = () => {
                                             <Close />
                                             Rechazar OT
                                         </Button>}
-                                        {(isOperator&&(report.level===0 || !report.level) && (report.usersAssigned[0] === userData._id)) && <Button onClick={terminarjornada} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
+                                        {(isOperator&&(report.level===0 || !report.level) && (report.usersAssigned[0] === userData._id)) && <Button onClick={mensajeTerminoJornada} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
                                             <FontAwesomeIcon icon={faClock} style={{marginRight: 10}} /> Terminar Jornada
                                         </Button>}
                                         <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 0}} onClick={openMessages}>
@@ -460,6 +476,8 @@ const ActivitiesDetailPage = () => {
                             </Grid>
                             {
                                 openReportCommitModal && <ReportCommitDialog 
+                                    isTermJornada={isTermJornada}
+                                    terminarjornada={terminarjornada}
                                     canEdit={canEdit}
                                     open={openReportCommitModal} 
                                     closeModal={(toForward) ? closeCommitModalToForward : closeCommitModalToBack}

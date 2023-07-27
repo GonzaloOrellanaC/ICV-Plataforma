@@ -10,7 +10,7 @@ import {
 import { Close } from '@material-ui/icons';
 import { useAuth } from '../context';
 
-const ReportCommitDialog = ({open, report, closeModal,/* closeLoading, */ /* getResponseState, */ messageType}) => {
+const ReportCommitDialog = ({open, report, closeModal, isTermJornada, terminarjornada, messageType}) => {
     const {userData} = useAuth()
     const [ message, setMessage ] = useState('')
     useEffect(() => {
@@ -18,14 +18,18 @@ const ReportCommitDialog = ({open, report, closeModal,/* closeLoading, */ /* get
     },[report])
     const sendMessage = () => {
         if(message.length > 1) {
-            const navigateType = messageType==='rejectReport' ? 'reject-to-previous-level' : 'sending-to-next-level'
+            const navigateType = isTermJornada ? 'reject-for-end-day' : (messageType==='rejectReport' ? 'reject-to-previous-level' : 'sending-to-next-level')
             report.history.push({
                 id: Date.now(),
                 userSendingData: userData._id,
                 type: navigateType,
                 message: message
             })
-            closeModal(true);
+            if (isTermJornada) {
+                terminarjornada()
+            } else {
+                closeModal(true)
+            }
         }else{
             alert('Por favor deje un comentario a la actividad.')
         }
