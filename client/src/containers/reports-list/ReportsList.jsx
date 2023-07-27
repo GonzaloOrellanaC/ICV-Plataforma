@@ -4,6 +4,7 @@ import './style.css'
 import { dateSimple } from "../../config"
 import { AssignDialog, ReviewReportDialog } from "../../dialogs"
 import { useAuth, useSitesContext } from "../../context"
+import { pdfMakeRoutes } from "../../routes"
 
 const ReportsList = ({list, typeReportsSelected, statusReports}) => {
     const {admin} = useAuth()
@@ -151,7 +152,7 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                 {
                     list.map((item, i) => {
                             return(
-                                <Grid container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
+                                <Grid onClick={async () => (item.idIndex === 609) && await pdfMakeRoutes.createPdfDoc(item)} container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} >
                                         <p style={{textAlign: 'center', width: 40}}> {item.idIndex} </p>
                                     </Grid>

@@ -2,7 +2,6 @@ import { environment } from "../config"
 import { ExecutionReport, Users } from "../models"
 import { AzureServices, ReportsService } from "../services"
 import pdfMake from 'pdfmake'
-import fs from 'fs'
 import axios from 'axios'
 import path from 'path'
 const {logo, check, noCheck} = environment.images
@@ -179,8 +178,8 @@ const createTable = ( groupKeys, group ) => {
                                     style: 'title',
                                     table: {
                                         widths: [10, 50, 40, 130, 170, 50, 50, 30, '*', 35],
-                                        body: 
-                                            await createSubTables(element, groupKeys[index], index),
+                                        body: []
+                                            /* await createSubTables(element, groupKeys[index], index), */
                                     }
                                 }
             if(index == (group.length - 1)) {
@@ -392,7 +391,7 @@ const createSubTables = async (list, index, indexNumber) => {
             {}
         ]
     ];
-    return new Promise(resolve => {
+    /* return new Promise(resolve => { */
         list.forEach(async (e, i) => {
             let commit;
             let date;
@@ -486,16 +485,16 @@ const createSubTables = async (list, index, indexNumber) => {
                     text: commit
                 },
                 {
-                    alignment: 'center',
+                    /* alignment: 'center', */
                     image: e.image,
-                    width: 15
+                    /* width: 15 */
                 }
             ]
             if(i == (list.length - 1)) {
-                resolve(table);
+                return table;
             }
         })
-    })
+    /* }) */
 }
 
 const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser) => {
@@ -559,51 +558,52 @@ const createSignsTable = (chiefMachinerySign, shiftManagerSign, executionUserSig
 
 const createOperatorsSignsTable = (operators) => {
     let table = []
-    return new Promise(async resolve => {
-        let columns1 = []
-        operators.forEach((user, i) => {
-            columns1[i] = {
-                alignment: 'center',
-                margin: [0, 100, 0, 10],
-                width: 200,
-                height: 100,
-                image: user.sign ? user.sign : null
-            }
-        })
-        let columns2 = []
-        operators.forEach((user, i) => {
-            columns2[i] = {
-                alignment: 'center',
-                margin: [0, 10, 0, 200],
-                width: 200,
-                text: `${user.name} ${user.lastName} \n\ Técnico Inspección o Mantenimiento ${(i===0) ? 'y que termina OT' : ''}`
-            }
-        })
-        table[0] = {
-            columns: [
-                {
-                    pageBreak: 'before',
-                    text: 'Operadores: ',
-                    margin: [0, 50, 0, 0],
-                },
-                {
-                    pageBreak: 'before',
-                    alignment: 'right',
-                    margin: [0, 50, 0, 0],
-                    width: '*',
-                    text: `Fecha: ${dateSimple(Date.now())} \n\ Hora: ${time(Date.now())}`
-                }
-            ]
+    /* return new Promise(async resolve => { */
+    let columns1 = []
+    operators.forEach((user, i) => {
+        columns1[i] = {
+            alignment: 'center',
+            margin: [0, 100, 0, 10],
+            width: 200,
+            height: 100,
+            image: user.sign ? user.sign : null
         }
-        table[1] = {
-            columns: columns1
-        }
-        table[2] = {
-            columns: columns2
-        }
-        console.log(table[0], table[1], table[2])
-        resolve(table)
     })
+    let columns2 = []
+    operators.forEach((user, i) => {
+        columns2[i] = {
+            alignment: 'center',
+            margin: [0, 10, 0, 200],
+            width: 200,
+            text: `${user.name} ${user.lastName} \n\ Técnico Inspección o Mantenimiento ${(i===0) ? 'y que termina OT' : ''}`
+        }
+    })
+    table[0] = {
+        columns: [
+            {
+                pageBreak: 'before',
+                text: 'Operadores: ',
+                margin: [0, 50, 0, 0],
+            },
+            {
+                pageBreak: 'before',
+                alignment: 'right',
+                margin: [0, 50, 0, 0],
+                width: '*',
+                text: `Fecha: ${dateSimple(Date.now())} \n\ Hora: ${time(Date.now())}`
+            }
+        ]
+    }
+    table[1] = {
+        columns: columns1
+    }
+    table[2] = {
+        columns: columns2
+    }
+    console.log(table[0], table[1], table[2])
+    return table
+        /* resolve(table)
+    }) */
     /* console.log('Creando tabla de firmas')
     let columns1 = []
     operators.forEach((user, i) => {
@@ -731,7 +731,7 @@ const toPDF = (reportData) => {
         let pdfContent = {
             pageOrientation: 'landscape',
             content: [
-                {
+                /* {
                     columns: [
                         {
                             alignment: 'left',
@@ -747,7 +747,7 @@ const toPDF = (reportData) => {
                         },
                         {
                             width: 100,
-                            columns: [
+                             columns: [
                                 {
                                     width: '*',
                                     text: ''
@@ -757,10 +757,10 @@ const toPDF = (reportData) => {
                                     image: logo,
                                     width: 60
                                 }
-                            ]
+                            ] 
                         }
                     ]
-                },
+                }, */
                 {
                     columns: [
                         {
@@ -851,8 +851,14 @@ const toPDF = (reportData) => {
                 },
                 await createTable(groupKeys, group),
                 (reportData.history.length > 0) ? await crateHistoryTable(reportData.history) : {},
-                await createOperatorsSignsTable(operators),
-                /* await createSignsTable(chiefMachinerySign, shiftManagerSign, executionUserSign, chiefMachineryName, shiftManagerName, executionUser), */
+                /* await  */createOperatorsSignsTable(operators),
+                await createSignsTable(
+                    chiefMachinerySign, 
+                    shiftManagerSign, 
+                    executionUserSign, 
+                    chiefMachineryName, 
+                    shiftManagerName, 
+                    executionUser),
                 /* (executionReportData.astList && (executionReportData.astList.length > 0)) ? 
                 {
                     style: 'title',
@@ -947,6 +953,7 @@ const toPDF = (reportData) => {
             console.log('Enviando...')
             const state = await AzureServices.uploadPdfFile(binary, reportData.idIndex, reportData.sapId, reportData.machine, (reportData.guide === 'Pauta de Inspección') ? 'PI' : reportData.guide)
             const data = await ReportsService.editReportByIndexIntern(reportData.idIndex, {urlPdf: state.data.url})
+            console.log(state.data)
             resolve({state: state, url: state.data.url})
         }, (error) => {
             resolve({state: state, url: state.data.url})
