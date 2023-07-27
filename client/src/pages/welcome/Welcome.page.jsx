@@ -12,7 +12,7 @@ import { useNotificationsContext } from '../../context/Notifications.context'
 const WelcomePage = (/* { readyToLoad } */) => {
     const {admin, isOperator, isSapExecutive, isShiftManager, isChiefMachinery, userData} = useAuth()
     const {date, hour} = useTimeContext()
-    const {lastNotification, ultimaNoticia} = useNotificationsContext()
+    const {lastNotification, ultimaNoticia, listaLectura} = useNotificationsContext()
     /* const [ date, setDate ] = useState('')
     const [ hora, setHora ] = useState('') */
     const [ openLoader, setOpenLoader ] = useState(false)
@@ -95,13 +95,14 @@ const WelcomePage = (/* { readyToLoad } */) => {
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={4}>
                         <button className='notificaciones alertas' onClick={() => navigate('/mynews')}>
-                            {
-                                ultimaNoticia && 
                                 <div>
                                     <p style={{marginTop: 5}}>Noticias internas</p>
-                                    <p className='notificaciones-texto'> {ultimaNoticia.titulo} </p>
+                                    <p className='notificaciones-texto'> {
+                                    listaLectura ? 
+                                    (ultimaNoticia ? 
+                                    ultimaNoticia.titulo : 'No tiene noticias en su muro') : 'Cargando noticias en su muro'} </p>
                                 </div>
-                            }
+                                
                             {/* {
                                 (isOperator || localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') &&
                                 <p className='notificaciones-texto'> <b>OT Listas a enviar:</b> </p>

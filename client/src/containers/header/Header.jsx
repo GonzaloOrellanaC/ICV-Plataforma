@@ -1,11 +1,11 @@
-import React, { Fragment, useContext, useEffect } from 'react'
+import React, { Fragment, useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AppBar, makeStyles, Toolbar, Grid } from '@material-ui/core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import logo from '../../assets/logo_icv_gris.png'
 import logoNotification from '../../assets/logo_icv_notification_push.png'
-import { ConnectionContext, useAuth, useNavigation, useReportsContext } from '../../context'
+import { ConnectionContext, useAuth, useMachines3DContext, useNavigation, useReportsContext } from '../../context'
 import './style.css'
 import addNotification from 'react-push-notification';
 import { SocketConnection } from '../../connections'
@@ -52,7 +52,35 @@ const Header = () => {
     const {isOnline} = useContext(ConnectionContext)
     const { navBarOpen } = useNavigation()
     const { isAuthenticated, userData, admin, site } = useAuth()
+    const [messageDownloading, setMessageDownloading] = useState('')
     const {message} = useReportsContext()
+    const {
+        downloadingData3D,
+        progressDownload3D,
+        openDownload3D,
+        openVersion
+    } = useMachines3DContext()
+    
+
+    useEffect(() => {
+        if (downloadingData3D === 'Recursos descargados' || downloadingData3D === 'Modelos 3D descargados.') {
+            setMessageDownloading('Recursos 3D descargados')
+            setTimeout(() => {
+                setMessageDownloading('')
+            }, 1000);
+            
+        } else {
+            setMessageDownloading(`${downloadingData3D} - ${Math.trunc(progressDownload3D)}%. No desconecte internet`)
+        }
+        console.log(downloadingData3D,
+            progressDownload3D,
+            openDownload3D,
+            openVersion)
+    }, [downloadingData3D,
+        progressDownload3D,
+        openDownload3D,
+        openVersion])
+
     const navigate = useNavigate();
     useEffect(() => {
         console.log('La red está o no conectada: ', isOnline)
@@ -120,17 +148,20 @@ const Header = () => {
                                             )
                                         })
                                     }
-                                    <Grid item>
+                                    <Grid item style={{marginRight: 10}}>
                                         {site && site.descripcion}
+                                    </Grid>
+                                    <Grid item>
+                                        <strong>{messageDownloading}</strong>
                                     </Grid>
                                 </Grid>
                             </dl>
                             </div>
                         </Fragment>}
                         <div style={{position: 'absolute', right: 10}}>
-                            {
+                            {/* {
                                 (admin) && <button onClick={() => sendTestNotification()}>Notif. Test</button>
-                            }
+                            } */}
                             <p> <b>{message.length > 0 && message}</b> <FontAwesomeIcon icon={faCircle} color={isOnline ? '#2FB83F' : '#B62800'} /> {isOnline ? 'Online' : 'Offline'}</p>
                             {!isOnline && <p>Sin red</p>}
                         </div>

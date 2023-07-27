@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, Grid, Toolbar, IconButton, List, Modal, Fab } from '@material-ui/core';
+import { Box, Card, Grid, Toolbar, IconButton, List, Dialog, Fab } from '@mui/material';
 import { Close } from '@material-ui/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { styleModal3D, useStylesTheme } from '../../config';
@@ -7,6 +7,7 @@ import { ArrowBackIos } from '@material-ui/icons';
 import { MVAvatar } from '../../containers';
 import { LoadingPage } from '../loading';
 import { useAuth, useMachineContext } from '../../context';
+/* import { Dialog } from '@mui/material'; */
 
 const MachinesListPage = ({route}) => {  
     const {machinesBySite, setMachineSelected} = useMachineContext()
@@ -36,6 +37,7 @@ const MachinesListPage = ({route}) => {
     },[route])
 
     useEffect(() => {
+        console.log(machinesBySite, machine)
         if (machinesBySite.length > 0 && machine) {
             const machinesTemps = machinesBySite.filter(machine => {if(machine.model === JSON.parse(id).model) { return machine}})
             .sort((a, b) => {return a.equ - b.equ})
@@ -77,7 +79,7 @@ const MachinesListPage = ({route}) => {
                                 {
                                     (machine.model === '793-F' || machine.model === 'PC5500')
                                     &&
-                                    <button style={{height: 30, borderRadius: 20, position: 'relative', right: 10, paddingLeft: 30, paddingRight: 30}} onClick={() => openCloseModal()}>
+                                    <button style={{height: 30, borderRadius: 20, position: 'relative', right: 10, paddingLeft: 30, paddingRight: 30}} onClick={() => setOpen(true)}>
                                     <strong>{`Ver modelo 3D de ${machine.type} ${machine.brand} ${machine.model}`}</strong>
                                 </button>}
                             </div>
@@ -136,19 +138,15 @@ const MachinesListPage = ({route}) => {
                             }
                             </List>
                             <div>
-                                <Modal
+                                <Dialog
                                     open={open}
-                                    aria-labelledby="modal-modal-title"
-                                    aria-describedby="modal-modal-description"
+                                    fullScreen
                                 >
-                                    <Box sx={styleModal3D}>
                                         <MVAvatar machine={machine}/>
                                         <Fab onClick={() => closeModal()} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}} color="primary">
                                             <Close />
                                         </Fab>
-                                    </Box>
-                                    
-                                </Modal>
+                                </Dialog>
                             </div>
                         </Grid>}
                     </Card>

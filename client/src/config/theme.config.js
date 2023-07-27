@@ -213,10 +213,10 @@ export const styleModalReport = {
 };
 
 export const styleModal3D = {
-    position: 'absolute',
+    /* position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: 'translate(-50%, -50%)',
+    transform: 'translate(-50%, -50%)', */
     width: '70%',
     height: '100%',
     bgcolor: '#414646',

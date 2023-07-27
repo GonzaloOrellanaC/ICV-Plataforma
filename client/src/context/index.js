@@ -34,6 +34,12 @@ import {
     useSitesContext
 } from './Sites.context'
 
+import {
+    Machines3DContext,
+    Machine3DProvider,
+    useMachines3DContext
+} from './Machines3D.context'
+
 export {
     AuthProvider,
     AuthContext,
@@ -65,5 +71,8 @@ export {
     useUsersContext,
     SitesProvider,
     SitesContext,
-    useSitesContext
+    useSitesContext,
+    Machines3DContext,
+    Machine3DProvider,
+    useMachines3DContext
 }

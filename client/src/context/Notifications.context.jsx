@@ -8,6 +8,7 @@ export const NotificationsProvider = props => {
     const {userData, isAuthenticated} = useAuth()
     const [myNotifications, setMyNotifications] = useState([])
     const [lastNotification, setLastNotification] = useState()
+    const [listaLectura, setListaLectura] = useState(false)
 
     const [noticias, setNoticias] = useState([])
     const [ultimaNoticia, setUltimaNoticia] = useState()
@@ -29,6 +30,7 @@ export const NotificationsProvider = props => {
         console.log(response.data)
         setNoticias(response.data.data.sort(orderByDate))
         setUltimaNoticia(response.data.data.sort(orderByDate)[0])
+        setListaLectura(true)
     }
 
     const getNotifications = async () => {
@@ -43,7 +45,8 @@ export const NotificationsProvider = props => {
         lastNotification,
         getNotifications,
         noticias,
-        ultimaNoticia
+        ultimaNoticia,
+        listaLectura
     }
 
     return (

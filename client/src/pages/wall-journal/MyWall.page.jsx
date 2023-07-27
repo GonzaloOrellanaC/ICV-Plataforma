@@ -16,7 +16,7 @@ import { Divider } from '@mui/material'
 
 const MyWallPage = () => {
     const navigate = useNavigate()
-    const {noticias} = useNotificationsContext()
+    const {noticias, listaLectura} = useNotificationsContext()
 
     const [noticiasParaMostrar, setNoticiasParaMostrar] = useState([])
 
@@ -36,9 +36,6 @@ const MyWallPage = () => {
 
     return (
         <Box height='100%'>
-            {/* <LoadingLogoDialog
-                open={loadingData}
-            /> */}
             <Grid className={'pageRoot'} container spacing={0}>
                 <Grid item xs={12}>
                     <Card elevation={0} className={'pageCard'}>
@@ -62,7 +59,8 @@ const MyWallPage = () => {
                             <Grid item xs={3}>
                                 <div style={{padding: 10, border: '1px solid #ccc', borderRadius: 8, width: '100%', height: 'calc(100vh - 220px)', overflowY: 'auto'}}>
                                     {
-                                        noticiasParaMostrar.map((noticia, i) => {
+                                        listaLectura ?
+                                        ((noticiasParaMostrar.length > 0) ? noticiasParaMostrar.map((noticia, i) => {
                                             return (
                                                 <div key={i} className='item-mywall' onClick={() => {seleccionarNoticia(noticia)}}>
                                                     <p style={{maxWidth: '80%'}}>{noticia.titulo}</p>
@@ -70,6 +68,14 @@ const MyWallPage = () => {
                                                 </div>
                                             )
                                         })
+                                        :
+                                        <div className='item-mywall'>
+                                            <p style={{maxWidth: '80%'}}>No tiene noticias en su muro</p>
+                                        </div>)
+                                        :
+                                        <div className='item-mywall'>
+                                            <p style={{maxWidth: '80%'}}>Cargando noticias</p>
+                                        </div>
                                     }
                                 </div>
                             </Grid>

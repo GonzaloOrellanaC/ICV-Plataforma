@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { CssBaseline, ThemeProvider } from '@material-ui/core'
 import { theme } from './config'
 import './App.css'
-import { AuthProvider, ConnectionProvider, CreateUserProvider, ExecutionReportProvider, LanguageProvider, MachineProvider, NavigationProvider, ReportsProvider, SitesProvider, TimeProvider, UsersProvider, useAuth } from './context'
+import { AuthProvider, ConnectionProvider, CreateUserProvider, ExecutionReportProvider, LanguageProvider, Machine3DProvider, MachineProvider, NavigationProvider, ReportsProvider, SitesProvider, TimeProvider, UsersProvider, useAuth } from './context'
 import { Header, Navbar } from './containers'
 import { 
     AppliancePage, 
@@ -151,10 +151,12 @@ const App = () => {
                                                 <CreateUserProvider>
                                                     <TimeProvider>
                                                         <MachineProvider>
-                                                            <ThemeProvider theme={theme} >
-                                                                <CssBaseline />
-                                                                <OnApp />
-                                                            </ThemeProvider>
+                                                            <Machine3DProvider>
+                                                                <ThemeProvider theme={theme} >
+                                                                    <CssBaseline />
+                                                                    <OnApp />
+                                                                </ThemeProvider>
+                                                            </Machine3DProvider>
                                                         </MachineProvider>
                                                     </TimeProvider>
                                                 </CreateUserProvider>

@@ -31,7 +31,7 @@ const getNotificationsById = (req, res) => {
         if(err) {
             res.send({err: err})
         }
-        res.send(docs)
+        res.send(docs.slice((docs.length - 2000), docs.length))
     })
 }
 

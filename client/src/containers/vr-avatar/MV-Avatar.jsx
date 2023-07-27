@@ -1,15 +1,28 @@
-import '@google/model-viewer'
+/* import '@google/model-viewer' */
+/* import { ModelViewer } from 'react-model-viewer'; */
 import './style.css'
-import { Box, Button, Drawer, Fab, IconButton } from '@material-ui/core'
+import { Box, Button, Drawer, Fab, IconButton, Popover } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { LoadingModal } from '../../modals'
 import { FilesToStringDatabase, machinesPartsDatabase } from '../../indexedDB'
-import { Close, ControlCamera, Menu } from '@material-ui/icons'
+import { Close, ControlCamera, Menu } from '@mui/icons-material'
 import buttonSelections from './buttonSelections'
 /* import { Joystick } from 'react-joystick-component' */
 
-const MVAvatar = ({machine, subSistem}) => {
 
+const MVAvatar = ({machine, subSistem}) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+    
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+    
+    const openMenu = Boolean(anchorEl);
+    const id = openMenu ? 'simple-popover' : undefined;
     const [ modelViewer, setModelViewer ] = useState()
     const [ newMachine, setNewMachine ] = useState()
     const [ progress, setProgress ] = useState(0)
@@ -30,10 +43,14 @@ const MVAvatar = ({machine, subSistem}) => {
     //const [ machineModel, setMachineModel ] = useState()
 
     useEffect(() => {
+        console.log(newMachine)
+    }, [newMachine])
+    useEffect(() => {
         setButtons([])
         if(subSistem) {
             initModelViewer()
             const data = JSON.parse(subSistem)
+            console.log(data)
             setTimeout(() => {
                 openIfIsFromOT(data.name, data.brand, data.model, data.nameModel)
             }, 500);
@@ -50,10 +67,10 @@ const MVAvatar = ({machine, subSistem}) => {
         if(db) {
             //let files = new Array()
             let file = await FilesToStringDatabase.buscarPorNombreModelo(`Preview_${machine.model}`, db.database)
-            var json = file.data
-            var blob = new Blob([json])
+            var blob = new Blob([file.data])
             var url = URL.createObjectURL(blob)
             setNewMachine(url)
+            /* setNewMachine(file.data) */
             setTitle(changeName('Preview'))
         }
         const machinesPartsDb = await machinesPartsDatabase.initDb()
@@ -129,7 +146,7 @@ const MVAvatar = ({machine, subSistem}) => {
 
     const getNewElement =  (element, index) => {
         console.log(element, index)
-        handleDrawerClose()
+        handleClose()
         setCenter()
         setButtons([])
         setTimeout(() => {
@@ -229,62 +246,78 @@ const MVAvatar = ({machine, subSistem}) => {
     return(
             
             <Box style={{height: '100%', width: '100%'}} id="box">
-                {!subSistem && <Drawer 
-                    sx={{
+                {!subSistem && <Popover 
+                    id={id}
+                    open={openMenu}
+                    anchorEl={anchorEl}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    /* sx={{
                         width: '30%',
                         backgroundColor: 'transparent'
-                    }}
-                    disableBackdropTransition={!iOS} 
-                    disableDiscovery={iOS} 
-                    variant="persistent"
+                    }} */
+                    /* disableBackdropTransition={!iOS} */ 
+                    /* disableDiscovery={iOS}  */
+                    /* variant="persistent"
                     anchor="top"
-                    open={open}
+                    open={open} */
                 >
-                    <div style={{width: '27vw', textAlign: 'right'}}>
-                        <IconButton onClick={()=>handleDrawerClose()}>
+                    {/* <div style={{width: '27vw', textAlign: 'right'}}>
+                        
+                    </div> */}
+                    <div style={{ width: '27vw', position: 'relative', padding: '50px 0px 0px 0px', height: 'calc(100vh - 200px)' }}>
+                        <IconButton style={{position: 'absolute', top: 10, right: 10}} onClick={()=>handleClose()}>
                             <Close />
                         </IconButton>
+                        <div style={{/* width: '100%',  */textAlign: 'center', overflowY: 'auto', height: '100%'}}>
+                            <Button
+                                style={{
+                                    width: '90%',
+                                    marginBottom: 10,
+                                    backgroundColor: isSelected ? 'brown' : 'white',
+                                    color: isSelected ? 'white' : 'brown',
+                                    borderColor: 'brown'
+                                }}
+                                variant="outlined" onClick={() => {setPreview()}}
+                            >
+                                <p>{changeName('Preview')}</p>
+                            </Button>
+                            {
+                                listaPartes.map((element, index) => {
+                                    
+                                    return(
+                                            <Button
+                                                style={{
+                                                    width: '90%', 
+                                                    marginBottom: 10, 
+                                                    backgroundColor: element.isSelected ? 'brown' : 'white',
+                                                    color: element.isSelected ? 'white' : 'brown',
+                                                    borderColor: 'brown'
+                                                 }}
+                                                variant="outlined"
+                                                onClick={() => {getNewElement(element, index)}}
+                                            >
+                                                <img 
+                                                src="../assets/no-image.png" 
+                                                style={{
+                                                    width: 50, 
+                                                    height: 50, 
+                                                    borderRadius: 30, 
+                                                    objectFit: 'cover',
+                                                    position: 'absolute',
+                                                    left: 10
+                                                    }} alt="" />
+                                                <p>{changeName(element.name)}</p>
+                                            </Button>
+                                    )
+                                })
+                            }
+                        </div>
                     </div>
-                    <div>
-                    <div style={{width: '100%', textAlign: 'center'}}>
-                                    <Button
-                                        color={isSelected}
-                                        style={{width: '90%', marginBottom: 10}}
-                                        variant="outlined" onClick={() => {setPreview()}}
-                                    >
-                                        <p>{changeName('Preview')}</p>
-                                    </Button>
-                                </div>
-                        {
-                            listaPartes.map((element, index) => {
-                                
-                                return(
-                                    <div key={index} style={{width: '100%', textAlign: 'center'}}>
-                                        <Button
-                                            color={element.isSelected}
-                                            style={{width: '90%', marginBottom: 10}}
-                                            variant="outlined"
-                                            onClick={() => {getNewElement(element, index)}}
-                                        >
-                                            <img 
-                                            src="../assets/no-image.png" 
-                                            style={{
-                                                width: 50, 
-                                                height: 50, 
-                                                borderRadius: 30, 
-                                                objectFit: 'cover',
-                                                position: 'absolute',
-                                                left: 10
-                                                }} alt="" />
-                                            <p>{changeName(element.name)}</p>
-                                        </Button>
-                                    </div>
-                                )
-                            })
-                        }
-                    </div>
-
-                </Drawer>  }
+                </Popover>  }
                 
                 <img  src={imagePath} id="image" className='image' height={640} width={480}/>
                 <model-viewer
@@ -327,9 +360,9 @@ const MVAvatar = ({machine, subSistem}) => {
                 <LoadingModal open={openLoader} progress={progress} loadingData={'Preparando vista 3D...'} withProgress={true}/>
                 <div style={{position: 'absolute', bottom: 0, left: 0, width: '100%', backgroundColor: 'transparent', textAlign: 'center'}}>
                     <div style={{width: '60%', backgroundColor: 'transparent', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
-                        {isButton && <IconButton onClick={()=>setCenter()}>
+                        {/* {isButton && <IconButton onClick={()=>setCenter()}>
                             <ControlCamera style={{color: 'white', fontFamily: 'Raleway', marginRight: 10}} /> <p style={{color: 'white', fontFamily: 'Raleway'}}>Centrar cámara</p>
-                        </IconButton>}
+                        </IconButton>} */}
                         <h2 style={{color: 'white', fontFamily: 'Raleway'}}>{title}</h2>
                     </div>
                 </div>
@@ -363,7 +396,9 @@ const MVAvatar = ({machine, subSistem}) => {
                 } */}
                     
                 {(!open && !subSistem) && <Fab 
-                    onClick={() => handleDrawerOpen()} 
+                    aria-describedby={id}
+                    onClick={handleClick}
+                    /* onClick={() => handleDrawerOpen()}  */
                     style={{
                         position: 'absolute', 
                         left: 10, 
