@@ -12,6 +12,7 @@ export const Machine3DProvider = props => {
     const [progressDownload3D, setProgressDownload3D] = useState(0)
     const [openDownload3D, setOpenDownload3D] = useState(false)
     const [openVersion, setOpenVersion] = useState(false)
+    const [todoArchivo3DListo, setTodoArchivo3DListo] = useState(false)
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -28,6 +29,7 @@ export const Machine3DProvider = props => {
             setTimeout(() => {
                 setProgressDownload3D(100)
                 setLoadingData3D('Recursos descargados')
+                setTodoArchivo3DListo(true)
                 setTimeout(() => {
                     setOpenDownload3D(false)
                     localStorage.setItem('isLoading3D', 'nok')
@@ -137,7 +139,8 @@ export const Machine3DProvider = props => {
         downloadingData3D,
         progressDownload3D,
         openDownload3D,
-        openVersion
+        openVersion,
+        todoArchivo3DListo
     }
 
     return (

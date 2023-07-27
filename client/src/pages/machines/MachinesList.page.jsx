@@ -5,10 +5,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { styleModal3D, useStylesTheme } from '../../config';
 import { MVAvatar } from '../../containers';
 import { LoadingPage } from '../loading';
-import { useAuth, useMachineContext } from '../../context';
+import { useAuth, useMachineContext, useMachines3DContext } from '../../context';
 
 const MachinesListPage = ({route}) => {  
     const {machinesBySite, setMachineSelected} = useMachineContext()
+    const {todoArchivo3DListo} = useMachines3DContext()
     const [ routeData, setRouteData ] = useState('');
     const [ machinesList, setMachinesList ] = useState([]);
     const [open, setOpen] = useState(false);
@@ -19,6 +20,14 @@ const MachinesListPage = ({route}) => {
     const classes = useStylesTheme();
 
     let { id } = useParams();
+
+    const openModal3D = () => {
+        if (todoArchivo3DListo) {
+            setOpen(true)
+        } else {
+            alert('Espere al término de la descarga de todos los modelos 3D')
+        }
+    }
 
     useEffect(() => {
         setMachine(JSON.parse(id))
@@ -77,7 +86,7 @@ const MachinesListPage = ({route}) => {
                                 {
                                     (machine.model === '793-F' || machine.model === 'PC5500')
                                     &&
-                                    <button style={{height: 30, borderRadius: 20, position: 'relative', right: 10, paddingLeft: 30, paddingRight: 30}} onClick={() => setOpen(true)}>
+                                    <button style={{cursor: 'pointer', height: 30, borderRadius: 20, position: 'relative', right: 10, paddingLeft: 30, paddingRight: 30}} onClick={() => openModal3D()}>
                                     <strong>{`Ver modelo 3D de ${machine.type} ${machine.brand} ${machine.model}`}</strong>
                                 </button>}
                             </div>
