@@ -1,11 +1,11 @@
-/* import '@google/model-viewer' */
+import '@google/model-viewer'
 /* import { ModelViewer } from 'react-model-viewer'; */
 import './style.css'
 import { Box, Button, Drawer, Fab, IconButton, Popover } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { LoadingModal } from '../../modals'
+/* import { LoadingModal } from '../../modals' */
 import { FilesToStringDatabase, machinesPartsDatabase } from '../../indexedDB'
-import { Close, ControlCamera, Menu } from '@mui/icons-material'
+import { Close, /* ControlCamera,  */Menu } from '@mui/icons-material'
 import buttonSelections from './buttonSelections'
 /* import { Joystick } from 'react-joystick-component' */
 
@@ -245,7 +245,7 @@ const MVAvatar = ({machine, subSistem}) => {
     
     return(
             
-            <Box style={{height: '100%', width: '100%'}} id="box">
+            <Box style={{height: '100%', width: '100%', backgroundColor: 'rgba(64, 64, 64, 0.65)'}} id="box">
                 {!subSistem && <Popover 
                     id={id}
                     open={openMenu}
@@ -357,7 +357,7 @@ const MVAvatar = ({machine, subSistem}) => {
                        }
                 </model-viewer>
                 
-                <LoadingModal open={openLoader} progress={progress} loadingData={'Preparando vista 3D...'} withProgress={true}/>
+                {/* <LoadingModal open={openLoader} progress={progress} loadingData={'Preparando vista 3D...'} withProgress={true}/> */}
                 <div style={{position: 'absolute', bottom: 0, left: 0, width: '100%', backgroundColor: 'transparent', textAlign: 'center'}}>
                     <div style={{width: '60%', backgroundColor: 'transparent', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
                         {/* {isButton && <IconButton onClick={()=>setCenter()}>

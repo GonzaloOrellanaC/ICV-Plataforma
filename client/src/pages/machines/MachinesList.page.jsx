@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Card, Grid, Toolbar, IconButton, List, Dialog, Fab } from '@mui/material';
-import { Close } from '@material-ui/icons';
+import { Close, ArrowBackIos } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { styleModal3D, useStylesTheme } from '../../config';
-import { ArrowBackIos } from '@material-ui/icons';
 import { MVAvatar } from '../../containers';
 import { LoadingPage } from '../loading';
 import { useAuth, useMachineContext } from '../../context';
-/* import { Dialog } from '@mui/material'; */
 
 const MachinesListPage = ({route}) => {  
     const {machinesBySite, setMachineSelected} = useMachineContext()
