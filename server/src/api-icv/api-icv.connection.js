@@ -364,6 +364,7 @@ const findSitesToActualiceMachines = async () => {
 /* Crear sitios para enviar a FRONT */
 const createSiteToSend = () => {
     return new Promise(async resolve => {
+        const admins = await UserServices.getUserByRole('admin')
         try {
             const sites = await fetch(`${environment.icvApi.url}pmobras`, {
                 headers: myHeaders,
@@ -383,9 +384,23 @@ const createSiteToSend = () => {
                             }
                             if (index === (readSitesFromDb.length - 1)) {
                                 if(!compareResult) {
-                                    const response = await Site.findOne({idobra: sitioSap.idobra})
-                                    if (!response) {
-                                        await Site.create(sitioSap)
+                                    if (sitioSap.idobra.length === 4) {
+                                        const response = await Site.findOne({idobra: sitioSap.idobra})
+                                        if (!response) {
+                                            await Site.create(sitioSap)
+                                        }
+                                    } else {
+                                        admins.forEach((user) => {
+                                            let notificationToSave = {
+                                                id: user._id.toString(),
+                                                from: 'Sistema Mantención ICV',
+                                                url: null,
+                                                title: `Sitio con ID ${sitioSap.idobra} no creado`, 
+                                                subtitle: 'Error de ID', 
+                                                message: `ID no se reconoce como válido. Debe contener 4 dígitos.`
+                                            }
+                                            NotificationService.createNotification(notificationToSave)
+                                        })
                                     }
                                 }
                             }

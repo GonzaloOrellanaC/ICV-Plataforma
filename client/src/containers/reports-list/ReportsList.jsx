@@ -7,6 +7,7 @@ import { useAuth, useSitesContext } from "../../context"
 import { pdfMakeRoutes } from "../../routes"
 
 const ReportsList = ({list, typeReportsSelected, statusReports}) => {
+    console.log('Reportes: ', process.env.NODE_ENV)
     const {admin} = useAuth()
     const {sites} = useSitesContext()
     const [ reportData, setReportData ] = useState(null)
@@ -152,7 +153,7 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                 {
                     list.map((item, i) => {
                             return(
-                                <Grid onClick={async () => (item.idIndex === 609) && await pdfMakeRoutes.createPdfDoc(item)} container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
+                                <Grid onClick={async () => ((process.env.NODE_ENV === 'development') && await pdfMakeRoutes.createPdfDoc(item))} container key={i} style={{width: '100%', borderBottomColor: '#ccc', borderBottomStyle: 'solid', borderBottomWidth: 1}}>
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} >
                                         <p style={{textAlign: 'center', width: 40}}> {item.idIndex} </p>
                                     </Grid>
