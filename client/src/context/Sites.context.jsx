@@ -22,6 +22,10 @@ export const SitesProvider = props => {
         }
     },[isAuthenticated])
 
+    useEffect(() => {
+        console.log(sites)
+    }, [sites])
+
     const getSites = async () => {
         const response = await sitesRoutes.getSites()
         const {database} = await sitesDatabase.initDbObras()
@@ -29,7 +33,17 @@ export const SitesProvider = props => {
             site.id = index
             await sitesDatabase.actualizar(site, database)
         })
-        setSites(response.data.data)
+        setSites(response.data.data.sort(orderByName))
+    }
+
+    const orderByName = (a, b) => {
+        if (a.descripcion > b.descripcion) {
+            return 1
+        }
+        if (a.descripcion < b.descripcion) {
+            return -1
+        }
+        return 0
     }
 
     const getSitesOffLine = async () => {

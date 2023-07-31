@@ -196,3 +196,13 @@
   border-width: 1px;
   border-radius: 10px;
 }
+
+.selectionType {
+  transition: 500ms;
+}
+
+.selectionType:hover {
+  cursor: pointer;
+  transition: 500ms;
+  background-color: #ececec;
+}

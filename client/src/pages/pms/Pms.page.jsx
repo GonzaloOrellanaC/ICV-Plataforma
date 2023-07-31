@@ -26,12 +26,12 @@ const PmsPage = () => {
     } */
 
     useEffect(() => {
-        readData();
-        pautasDatabase.initDbPMs().then(db => {
+        /* readData(); */
+        /* pautasDatabase.initDbPMs().then(db => {
             pautasDatabase.consultar(db.database).then(data => {
                 setPmList(data);
             })
-        })
+        }) */
     },[])
 
     const readData = async () => {

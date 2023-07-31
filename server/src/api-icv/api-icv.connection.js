@@ -382,6 +382,7 @@ const createSiteToSend = () => {
                             if (sitioLocal.idobra === sitioSap.idobra) {
                                 compareResult = true
                             }
+                            sitioSap.status = true
                             if (index === (readSitesFromDb.length - 1)) {
                                 if(!compareResult) {
                                     if (sitioSap.idobra.length === 4) {
@@ -685,6 +686,17 @@ const crearPautasDesdeSAP = async (pautas, index) => {
     }
 }
 
+const getOMs = async (req, res) => {
+    const {year, month} = req.body
+    const OMSapList = await fetch(`${environment.icvApi.url}OMSap?pYEAR=${year}&pMONTH=${month}`, {
+        headers: myHeaders,
+        method: 'GET',
+        agent: agent
+    })
+    const body = await OMSapList.json();
+    res.status(200).json(body.data)
+}
+
 export default {
     /* Leer sitios */
     readSites,
@@ -711,5 +723,6 @@ export default {
     saveMachineDataById,
     findSitesToActualiceMachines,
     sincronizar,
-    getOMSap
+    getOMSap,
+    getOMs
 }
