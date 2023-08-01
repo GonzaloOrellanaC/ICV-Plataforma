@@ -58,7 +58,7 @@ const ActivitiesDetailPage = () => {
         if (report) {
             setReportLevel(report.level)
             console.log(isSapExecutive, report.level)
-            if ((isOperator && (report.level === 0 || !report.level) && (report.usersAssigned[0] === userData._id)) || 
+            if ((isOperator && (report.level === 0 || !report.level) && (report.usersAssigned[0]._id === userData._id)) || 
             (isShiftManager && (report.level === 1)) || 
             (isChiefMachinery && (report.level === 2)) || 
             (isSapExecutive && (report.level === 3))) {
@@ -441,7 +441,7 @@ const ActivitiesDetailPage = () => {
                                         <LinearProgress variant="determinate" value={itemProgress} style={{width: '100%'}}/>
                                         <br />
                                         {(
-                                            (isOperator && (!report.level || report.level === 0) && (report.usersAssigned[0] === userData._id)) || 
+                                            (isOperator && (!report.level || report.level === 0) && (report.usersAssigned[0]._id === userData._id)) || 
                                             (isShiftManager && (report.level === 1)) || 
                                             isChiefMachinery && (report.level === 2)
                                             ) && <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={forwardReport}>
@@ -464,7 +464,7 @@ const ActivitiesDetailPage = () => {
                                             <Close />
                                             Rechazar OT
                                         </Button>}
-                                        {(isOperator&&(report.level===0 || !report.level) && (report.usersAssigned[0] === userData._id)) && <Button onClick={mensajeTerminoJornada} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
+                                        {(isOperator&&(report.level===0 || !report.level) && (report.usersAssigned[0]._id === userData._id)) && <Button onClick={mensajeTerminoJornada} variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}}>
                                             <FontAwesomeIcon icon={faClock} style={{marginRight: 10}} /> Terminar Jornada
                                         </Button>}
                                         <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 0}} onClick={openMessages}>

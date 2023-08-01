@@ -335,20 +335,20 @@ const Navbar = () => {
                                     </div>
                                 </IconButton>
                             </div>
-                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                            {/* <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton style={{padding: 9}} onClick={closeSideBar}  title='Información' onClickCapture={()=>{toOpenVersionModal()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faInfoCircle}/> {navBarOpen ?  ' Información' : ''}
                                     </div>
                                 </IconButton>
-                            </div>
-                            <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
+                            </div> */}
+                            {/* <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 <IconButton style={{padding: 9}} onClick={closeSideBar}  title='Información' onClickCapture={()=>{openCadAssistant()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
                                         <FontAwesomeIcon icon={faCube}/> {navBarOpen ?  ' Cad Assistant' : ''}
                                     </div>
                                 </IconButton>
-                            </div>
+                            </div> */}
                             <div style={{width: '100%', textAlign: navBarOpen ? 'left' : 'center'}}>
                                 {/* <IconButton onClick={closeSideBar}  title='Limpiar Datos' onClickCapture={()=>{clearAndLogout()}}>
                                     <div className={classes.sideButtons} style={{ color: (path === '/information') ? '#BE2E26' : '#FFFFFF', textDecoration: 'none' }}>
