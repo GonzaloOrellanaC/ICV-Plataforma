@@ -9,7 +9,7 @@ import { ArrowBackIos } from '@material-ui/icons';
 import { useReportsContext } from '../../context';
 import { ReviewReportDialog } from '../../dialogs';
 const CalendarPage = () => {
-    const {reports} = useReportsContext()
+    const {reports, reportsResume} = useReportsContext()
     const classes = useStylesTheme()
     const [reportesIniciados, setReportesIniciados] = useState([])
     const [reportesProgramados, setReportesProgramados] = useState([])
@@ -32,10 +32,10 @@ const CalendarPage = () => {
     },[])
 
     useEffect(() => {
-        if (reports.length > 0) {
+        if (reportsResume.length > 0) {
             const reportesIniciadosCache = []
             const reportesProgramadosCache = []
-            reports.forEach((reporte) => {
+            reportsResume.forEach((reporte) => {
                 if (reporte.dateInit) {
                     reportesIniciadosCache.push(reporte)
                 } else {
@@ -46,20 +46,20 @@ const CalendarPage = () => {
             setReportesProgramados(reportesProgramadosCache)
             reloadData()
         }
-    }, [reports])
+    }, [reportsResume])
 
     const reloadData = () => {
-        const el = document.getElementsByClassName('react-calendar__month-view__days')
-        console.log(el[0].children)
-        if (el) {
-            for (let i = 0; i < el[0].children.length; i++) {
-                console.log(el[0].children[i].childNodes[0].ariaLabel)
-                const date = el[0].children[i].childNodes[0].ariaLabel
-                if (date) {
-                    createOTDiv(date, el[0].children[i])
+        setTimeout(() => {
+            const el = document.getElementsByClassName('react-calendar__month-view__days')
+            if (el) {
+                for (let i = 0; i < el[0].children.length; i++) {
+                    const date = el[0].children[i].childNodes[0].ariaLabel
+                    if (date) {
+                        createOTDiv(date, el[0].children[i])
+                    }
                 }
             }
-        }
+        }, 1000);
     }
 
     useEffect(() => {
@@ -200,9 +200,8 @@ const CalendarPage = () => {
     }
 
     const createOTDiv = (date, element) => {
-        console.log(diaANumero(date))
-        const allReports = [...reports]
-        allReports.forEach((report, i) => {
+        console.log(reportsResume.length)
+        reportsResume.forEach((report, i) => {
             let ul = document.getElementById(`${date}`)
             if (!ul) {
                 ul = document.createElement('ul')
@@ -223,15 +222,18 @@ const CalendarPage = () => {
             element.style.position = 'relative'
             element.appendChild(ul)
             if (removeTime(new Date(report.dateInit ? report.dateInit : report.datePrev)).toLocaleDateString() === new Date(diaANumero(date)).toLocaleDateString()) {
-                const el2 = document.getElementById(`${i}-${report.dateInit ? report.dateInit : report.datePrev}-${report.idIndex}`)
+                const el2 = document.getElementById(`${i}-${report.idIndex}`)
                 if (!el2) {
                     let newElement = document.createElement("li")
                     newElement.className = 'itemList'
                     newElement.setAttribute('id', `${i}-${report.idIndex}`)
                     newElement.innerText = `OT ${report.idIndex} - ${report.dateInit ? 'Iniciado' : 'Programado'}`
                     newElement.onclick = () => {
-                        setReportDataReview(report)
-                        setOpenReviewModalState(true)
+                        const reportFiltered = reports.filter(r => {if (report._id === r._id) return r})
+                        if (reportFiltered[0]) {
+                            setReportDataReview(reportFiltered[0])
+                            setOpenReviewModalState(true)
+                        }
                     }
                     ul.appendChild(newElement)
                 }

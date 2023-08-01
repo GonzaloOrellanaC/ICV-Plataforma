@@ -15,6 +15,7 @@ export const ReportsProvider = (props) => {
     const {isOnline} = useConnectionContext()
     const {admin, isSapExecutive, isShiftManager, isChiefMachinery, roles, site, isOperator, isAuthenticated, userData} = useAuth()
     const [reports, setReports] = useState([])
+    const [reportsResume, setReportsResume] = useState([])
     const [assignments, setAssignments] = useState([])
     const [listSelected, setListSelected] = useState([])
     const [listSelectedCache, setListSelectedCache] = useState([])
@@ -50,12 +51,15 @@ export const ReportsProvider = (props) => {
                         console.log('Cambiando Reporte')
                         reportsCache[reportsFiltered] = newReport
                     }
-                    console.log(reportsCache)
                     setReports(reportsCache)
                 }
             })
         }
     }, [newReport])
+
+    useEffect(() => {
+        console.log(reportsResume)
+    },[reportsResume])
 
     useEffect(() => {
         if (userData && isAuthenticated) {
@@ -96,11 +100,17 @@ export const ReportsProvider = (props) => {
 
     useEffect(() => {
         if (reports.length > 0) {
-            /* reports.forEach((report) => {
-                console.log(report.description)
-            }) */
-            console.log('Guardando reporte')
-            console.log(revision)
+            const reportsResumeCache = []
+            reports.forEach((report) => {
+                /*  */
+                reportsResumeCache.push({
+                    _id: report._id,
+                    idIndex: report.idIndex,
+                    dateInit: report.dateInit,
+                    datePrev: report.datePrev,
+                })
+            })
+            setReportsResume(reportsResumeCache)
             if(revision) {
                 getAllPautas()
                 setRevision(false)
@@ -162,7 +172,6 @@ export const ReportsProvider = (props) => {
     }
 
     const saveReportAsignation = async (reportData) => {
-        /* setLoading(true) */
         setMessage('Guardando reportes')
         const reportsCache = [...reports]
         const response = await reportsRoutes.editReportById(reportData)
@@ -176,7 +185,6 @@ export const ReportsProvider = (props) => {
     }
 
     const saveReportToData = async (reportData) => {
-        /* setLoading(true) */
         setMessage('Guardando reportes')
         const reportsCache = [...reports]
         const response = await reportsRoutes.editReportById(reportData)
@@ -187,7 +195,6 @@ export const ReportsProvider = (props) => {
         })
         reportsCache[reportIndex] = reportUpdated
         setReports(reportsCache)
-        /* setMessage('') */
     }
 
     const savePautas = async () => {
@@ -196,7 +203,6 @@ export const ReportsProvider = (props) => {
             await pautasDatabase.actualizar(pauta, database)
             if (i === (pautas.length - 1)) {
                 setMessage('')
-                /* saveExecutionReportToDatabase() */
             }
         })
     }
@@ -218,33 +224,6 @@ export const ReportsProvider = (props) => {
         const {database} = await executionReportsDatabase.initDb()
         const db = await pautasDatabase.initDbPMs()
         reports.forEach(async (report, i) => {
-            /* const dataExist = await executionReportsDatabase.obtener(response.data._id, database)
-            if(dataExist) {
-                if (response.data.offLineGuard > dataExist.offLineGuard) {
-                    await executionReportsDatabase.actualizar(response.data, database)
-                } else {
-                    setMessage('Revisando base de datos')
-                }
-            } else {
-                setMessage('Guardando datos en navegador')
-                await executionReportsDatabase.actualizar(response.data, database)
-            } */
-            /* const response = await executionReportsRoutes.getExecutionReportById(report)
-            if (response.data._id) {
-                if (isOperator) {
-                    const dataExist = await executionReportsDatabase.obtener(response.data._id, database)
-                    if(dataExist) {
-                        if (response.data.offLineGuard > dataExist.offLineGuard) {
-                            await executionReportsDatabase.actualizar(response.data, database)
-                        } else {
-                            setMessage('Revisando base de datos')
-                        }
-                    } else {
-                        setMessage('Guardando datos en navegador')
-                        await executionReportsDatabase.actualizar(response.data, database)
-                    }
-                }
-            } else { */
                 if (isOperator) {
                     setMessage('Guardando pauta de OT '+report.idIndex)
                     const pautas = await pautasDatabase.consultar(db.database)
@@ -271,7 +250,6 @@ export const ReportsProvider = (props) => {
                         await reportsRoutes.editReportById(report)
                     }
                 }
-            /* } */
         })
         setMessage('')
     }
@@ -395,10 +373,8 @@ export const ReportsProvider = (props) => {
             console.log(isOperator, userData)
             if (admin) {
                 const response = await reportsRoutes.getAllReports()
-                console.log(response)
                 setReports(response.data)
                 setStatusReports(false)
-                /* setMessage('') */
             } else {
                 console.log(isOperator, isSapExecutive , isShiftManager , isChiefMachinery)
                 if (isOperator && (!isSapExecutive && !isShiftManager && !isChiefMachinery)) {
@@ -406,19 +382,16 @@ export const ReportsProvider = (props) => {
                     const response = await reportsRoutes.findMyAssignations(userData._id, site.idobra)
                     console.log(response.data)
                     setReports(response.data)
-                    /* setMessage('') */
                     setStatusReports(false)
                 } else if (isOperator && (isSapExecutive || isShiftManager || isChiefMachinery)) {
                     const response = await reportsRoutes.getAllReportsbySite(site.idobra)
                     setReports(response.data)
                     setStatusReports(false)
-                    /* setMessage('') */
                 } else if (isSapExecutive || isShiftManager || isChiefMachinery) {
                     const response = await reportsRoutes.getAllReportsbySite(site.idobra)
                     console.log('Reportes: ', response.data)
                     setReports(response.data)
                     setStatusReports(false)
-                    /* setMessage('') */
                 }
             }
         } else {
@@ -451,7 +424,8 @@ export const ReportsProvider = (props) => {
         setMessage,
         statusReports,
         setStatusReports,
-        createReport
+        createReport,
+        reportsResume
     }
 
     return (
