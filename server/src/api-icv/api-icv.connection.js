@@ -43,7 +43,7 @@ const leerPautas = async (req, res) => {
     let listaPMsConcat = [];
     let listaPautas = []
     let i = 0;
-    console.log('leer pautas')
+    /* console.log('leer pautas') */
     const machinesList = await Patterns.find()
     leerPauta2(i, machinesList, listaPautas)
     res.send({data: 'ok'})
@@ -53,7 +53,7 @@ const leerPautas = async (req, res) => {
 const leerPautas2 = async () => {
     let listaPautas = []
     let i = 0;
-    console.log('leer pautas')
+    /* console.log('leer pautas') */
     const machinesList = await Patterns.find()
     leerPauta2(i, machinesList, listaPautas)
     /* res.send({data: 'ok'}) */
@@ -604,7 +604,7 @@ const crearPautasDesdeSAP = async (pautas, index) => {
         console.log(`se han gestionado ${pautas.length} pautas.`)
     } else {
         const om = pautas[index]
-        console.log(om)
+        /* console.log(om) */
         const findReport = await Reports.findOne({sapId: om.om })
         if (!findReport) {
             const findEquip = await Machine.findOne({equid: `00000000${om.equipo}`})
@@ -628,14 +628,14 @@ const crearPautasDesdeSAP = async (pautas, index) => {
                     }
                     const reportCreated = await Reports.create(newOt)
                     if (reportCreated) {
-                        console.log(reportCreated)
+                        /* console.log(reportCreated) */
                         index = index + 1
                         crearPautasDesdeSAP(pautas, index)
                     }
                 } else {
                     console.log(`Pauta OM ${om.om} no creada por no encontrar la obra.`)
                     admins.forEach((user) => {
-                        console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
+                        /* console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName) */
                         let notificationToSave = {
                             id: user._id.toString(),
                             from: 'Sistema Mantención ICV',
@@ -652,7 +652,7 @@ const crearPautasDesdeSAP = async (pautas, index) => {
             } else {
                 console.log(`Pauta OM ${om.om} no creada por no encontrar el equipo.`)
                 admins.forEach((user) => {
-                    console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName)
+                    /* console.log('Se crea notificación a '+user._id+' nombre: '+user.name+' '+user.lastName) */
                     let notificationToSave = {
                         id: user._id.toString(),
                         from: 'Sistema Mantención ICV',

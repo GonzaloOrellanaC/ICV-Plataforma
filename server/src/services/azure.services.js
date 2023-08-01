@@ -262,7 +262,7 @@ const uploadVideo = async (req, res) => {
             /* if(mimetype === '.jpeg') {
                 mimetype = '.jpg'
             }  */
-            console.log(video)
+            /* console.log(video) */
             const blobName = path + mimetype;
             const containerClient = blobServiceClient.getContainerClient(containerName);
             const blockBlobClient = containerClient.getBlockBlobClient(blobName);

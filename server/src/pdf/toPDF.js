@@ -175,7 +175,7 @@ const dateSimple = (time) => {
 
 const createTable = ( groupKeys, group ) => {
     return new Promise(resolve => {
-        console.log(groupKeys, group.length)
+        /* console.log(groupKeys, group.length) */
         console.log('Creando Tabla')
         let arrayTable = []
         group.forEach(async (element, index) => {
@@ -187,7 +187,7 @@ const createTable = ( groupKeys, group ) => {
                                     }
                                 }
             if(index === (group.length - 1)) {
-                console.log('****Total imágenes: ', imagesList.length)
+                /* console.log('****Total imágenes: ', imagesList.length) */
                 resolve(arrayTable)
             }
         })
@@ -310,7 +310,7 @@ const setMessage = async (arrayTable, history, numberData, resolve) => {
                     text: '.................................\n'
                 }
             ]
-            console.log(message)
+            /* console.log(message) */
             arrayTable.push(message)
             numberData = numberData + 1
             setMessage(arrayTable, history, numberData, resolve)
@@ -338,8 +338,8 @@ const getImageBase64 = async (imageUrl) => {
 }
 
 const createImagesTables2 = (executionReportData) => {
-    console.log('Creando tabla de imágenes')
-    console.log('Total imágenes: ', imagesList.length)
+    /* console.log('Creando tabla de imágenes')
+    console.log('Total imágenes: ', imagesList.length) */
     let arrayTable = []
     try {
         return new Promise(resolve => {
@@ -389,7 +389,7 @@ const wait = (index, imageArrayColumns, result) => {
 } 
 
 const createSubTables = async (list, index, indexNumber) => {
-    console.log('Creando subtabla ' + (index + 1))
+    /* console.log('Creando subtabla ' + (index + 1)) */
     let pageBreak;
     if(indexNumber == 0) {
         pageBreak = 'none'
@@ -934,7 +934,7 @@ const toPDF = (reportData) => {
             console.log('Enviando...')
             const state = await AzureServices.uploadPdfFile(binary, reportData.idIndex, reportData.sapId, reportData.machine, (reportData.guide === 'Pauta de Inspección') ? 'PI' : reportData.guide)
             await ReportsService.editReportByIndexIntern(reportData.idIndex, {urlPdf: state.data.url})
-            console.log(state.data)
+            /* console.log(state.data) */
             resolve({state: state, url: state.data.url})
         }, (error) => {
             resolve({state: state, url: state.data.url})

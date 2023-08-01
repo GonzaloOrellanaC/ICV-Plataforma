@@ -3,10 +3,10 @@ import { AzureServices } from "."
 
 const getExecutionReportById = async (req, res) => {
     const { body } = req
-    console.log(body.reportData._id)
+    /* console.log(body.reportData._id) */
     try{
         const executionReport = await ExecutionReport.findOne({reportId: body.reportData._id}).populate('report').populate('createdBy')
-        console.log('Excution: ', executionReport._id)
+        /* console.log('Excution: ', executionReport._id) */
         res.json(executionReport)
     }catch(err) {
         res.json(err);

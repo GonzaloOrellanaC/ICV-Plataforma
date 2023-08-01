@@ -15,12 +15,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { trucksDatabase, pautasDatabase, machinesDatabase, sitesDatabase } from '../../indexedDB'
 import { reportsRoutes } from '../../routes';
 import './reports.css'
-import {useAuth, useReportsContext} from '../../context'
+import {useAuth, useReportsContext, useSitesContext} from '../../context'
 import { LoadingLogoDialog } from '../../dialogs';
 
 const CreateReports = () => {
     const {userData, admin} = useAuth()
     const {pautas, createReport} = useReportsContext()
+    const {sitesToSelection} = useSitesContext()
     const [ trucks, setTrucks ] = useState([])
     const [ pautasParaMostrar, setPautas ] = useState([])
     const [ maquinas, setMaquinas ] = useState([])
@@ -364,7 +365,7 @@ const CreateReports = () => {
                                             >
                                                 <option>Seleccione...</option>
                                                 {
-                                                    sites.map((site, index) => {
+                                                    (sitesToSelection.length > 0) && sitesToSelection.map((site, index) => {
                                                         return(
                                                             <option key={index} value={site.idobra}>{site.descripcion}</option>
                                                         )

@@ -48,7 +48,7 @@ const createUser =  (user, password) => {
 }
 
 const editUser = async (user, id) => {
-    console.log('Usuario es: ', user)
+    /* console.log('Usuario es: ', user) */
     try {
         /* Users.findByIdAndUpdate(id, user, (err, user) => {
             Sentry.captureException(err)
@@ -134,7 +134,7 @@ const getUserByRoleAndSite = (role, obra) => {
  * @returns resolves or rejects the request, on resolve returns passportUser
  */
 const authenticateUser = (req, res, next) => {
-    console.log(req)
+    /* console.log(req) */
     return new Promise((resolve, reject) => {
         passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
             Sentry.captureException(err)
@@ -155,7 +155,7 @@ const authenticateUser = (req, res, next) => {
 }
 
 const authenticateUserWithRut = (req, res, next) => {
-    console.log(req)
+    /* console.log(req) */
     return new Promise((resolve, reject) => {
         passport.authenticate('local', { session: false }, async (err, passportUser, info) => {
             Sentry.captureException(err)

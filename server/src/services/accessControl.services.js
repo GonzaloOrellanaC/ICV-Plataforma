@@ -34,7 +34,7 @@ const initAccessControl = async () => {
                 const roles = [user.role]
                 user.roles = roles
                 await Users.findByIdAndUpdate(user._id, user)
-                console.log(user.name + ' ' + user.lastName, ' added role')
+                /* console.log(user.name + ' ' + user.lastName, ' added role') */
             }
             if(user.sites) {
                 if ((JSON.parse(user.sites)).idobra === '0369') {

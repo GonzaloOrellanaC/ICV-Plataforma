@@ -73,10 +73,10 @@ const sendEmail = (typeEmail, fullName, language, email, password) => {
             environment.mailApi.domain,
             messageData
         ).then((res => {
-            console.log(res)
+            /* console.log(res) */
             resolve(true)
         })).catch(err => {
-            console.log(err);
+            /* console.log(err); */
             resolve(false)
         })
         
@@ -155,10 +155,10 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
                 environment.mailApi.domain,
                 messageData
             ).then((res => {
-                console.log(res)
+                /* console.log(res) */
                 resolve(true)
             })).catch(err => {
-                console.log(err);
+                /* console.log(err); */
                 resolve(false)
             })
         }catch (err) {
@@ -222,10 +222,10 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
                 environment.mailApi.domain,
                 messageData
             ).then((res => {
-                console.log(res)
+                /* console.log(res) */
                 resolve(true)
             })).catch(err => {
-                console.log(err);
+                /* console.log(err); */
                 resolve(false)
             })
         }catch (err) {

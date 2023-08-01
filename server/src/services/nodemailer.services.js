@@ -52,7 +52,7 @@ const sendEmail = (typeEmail, fullName, language, email, password) => {
             html: html
         })
         .then(()=> {
-            console.log('Mensaje enviado');
+            /* console.log('Mensaje enviado'); */
             resolve(true)
         })
         .catch(e=>{
@@ -85,7 +85,7 @@ const send = (from, to, subject, html) => {
             html: html
         })
         .then(()=> {
-            console.log('Mensaje enviado');
+            /* console.log('Mensaje enviado'); */
             resolve(true)
         })
         .catch(e=>{
@@ -112,9 +112,9 @@ const forgotPasswordEmail = async (fullName, token, language, email) => {
             platformName: environment.platform.name
         })
 
-        console.log(environment.mailApi.baseSender)
+        /* console.log(environment.mailApi.baseSender) */
         const emailSendState = await send(environment.mailApi.baseSender, [email], dataMsg.forgotPasswordSubject(environment.platform.name), html)
-        console.log(emailSendState)
+        /* console.log(emailSendState) */
         if(emailSendState) {
             resolve(successMsg.resetPasswordEmail)
         }else{

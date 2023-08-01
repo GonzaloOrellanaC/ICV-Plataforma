@@ -5,7 +5,7 @@ import { environment } from '../config'
  * Initialization of the Database, in this case MongoDB through the Mongoose ODM
  */
 export default async () => {
-    console.log(environment.dbURL)
+    /* console.log(environment.dbURL) */
     mongoose.Promise = global.Promise
     try {
         const connection = await mongoose.connect(environment.dbURL, {

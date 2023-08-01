@@ -13,7 +13,7 @@ import { executionReportsRoutes } from '../../routes';
 import { LoadingLogoDialog, ReportsResumeDialog } from '../../dialogs';
 
 const ReportsPage = () => {
-    const {sites} = useSitesContext()
+    const {sitesToSelection} = useSitesContext()
     const {admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
     const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache, getReports, loading, statusReports, pautas} = useReportsContext()
     const [inspeccionesTotales, setInspeccionesTotales] = useState([])
@@ -642,7 +642,7 @@ const ReportsPage = () => {
                                             <select style={{ marginRight: 10, marginTop: 14, marginBottom: 14, width: 300 }} name="select"  onChange={(e) => { seleccionFiltrada(e.target.value) }}>
                                                 <option value={'nada'}>SELECCIONE OBRA...</option>
                                                 {
-                                                    sites.map((site, i) => {
+                                                    sitesToSelection.map((site, i) => {
                                                         return (
                                                             <option key={i} value={site.idobra}>{site.descripcion}</option>
                                                         )

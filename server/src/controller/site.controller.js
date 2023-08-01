@@ -22,7 +22,7 @@ const readSites = () => {
 const detectSiteIfExist = async (site) => {
     try {
         const siteExist = await Site.findOne({idobra: site.idobra})
-        console.log(siteExist)
+        /* console.log(siteExist) */
         if (siteExist) {
             return true
         } else {

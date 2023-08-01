@@ -10,6 +10,7 @@ export const SitesProvider = props => {
     const {isAuthenticated} = useAuth()
     const {isOnline} = useConnectionContext()
     const [sites, setSites] = useState([])
+    const [sitesToSelection, setSitesToSelection] = useState([])
     const [siteSelected, setSiteSelected] = useState()
 
     useEffect(() => {
@@ -23,7 +24,16 @@ export const SitesProvider = props => {
     },[isAuthenticated])
 
     useEffect(() => {
-        console.log(sites)
+        if (sites.length > 0) {
+            console.log(sites)
+            const sitesCache = []
+            sites.forEach((site) => {
+                if (site.status) {
+                    sitesCache.push(site)
+                }
+            })
+            setSitesToSelection(sitesCache)
+        }
     }, [sites])
 
     const getSites = async () => {
@@ -55,7 +65,8 @@ export const SitesProvider = props => {
     const provider = {
         sites,
         siteSelected,
-        setSiteSelected
+        setSiteSelected,
+        sitesToSelection
     }
 
     return (

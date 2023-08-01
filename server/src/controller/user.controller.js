@@ -95,7 +95,7 @@ const readAllUsers = async (req, res, next) => {
         }
         const queryAdmin = {}
         const users = await Users.find((req.body.admin || req.body.isTest) ? queryAdmin : query).populate('obras')
-        console.log(users.length)
+        /* console.log(users.length) */
         res.status(200).json(users)
         /* Users.find({}, (err, users) => {
             res.json(users)
@@ -150,7 +150,7 @@ const readUser = (req, res, next) => {
 
 const getUserSign = (req, res, next) => {
     const { body } = req;
-    console.log(body)
+    /* console.log(body) */
     try{
         Users.findById(body.id, (err, user) => {
             if (err) {

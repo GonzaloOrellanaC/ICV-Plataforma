@@ -17,9 +17,9 @@ const savePattern = async (req, res) => {
         const total = await Patterns.find()
         const pattern = req.body
         pattern.idPattern = total.length
-        console.log(pattern)
+        /* console.log(pattern) */
         const newPattern = await Patterns.create(pattern)
-        console.log(pattern)
+        /* console.log(pattern) */
         res.json(newPattern)
     } catch (err) {
 

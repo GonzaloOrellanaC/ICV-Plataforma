@@ -82,7 +82,7 @@ router.post('/getMyNews', async (req, res) => {
     try {
         const {userId} = req.body
         const response = await News.find({usuarios: {$in: [userId]}})
-        console.log(response)
+        /* console.log(response) */
 
         res.status(200).json({message: 'Noticias encontradas', data: response, state: true})
     } catch (error) {

@@ -17,7 +17,7 @@ const createNotification = (data) => {
         url: data.url,
         historyData: data.historyData
     }
-    console.log(notificationData)
+    /* console.log(notificationData) */
     return new Promise(resolve => {
         const notification = new Notification(notificationData);
         notification.save()
@@ -26,7 +26,7 @@ const createNotification = (data) => {
 
 const getNotificationsById = (req, res) => {
     const { id } = req.body
-    console.log(id)
+    /* console.log(id) */
     Notification.find({userId: id}, (err, docs) => {
         if(err) {
             res.send({err: err})

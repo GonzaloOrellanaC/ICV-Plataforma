@@ -70,7 +70,7 @@ const createReport = async (req, res) => {
 }
 
 const editReport = async (req, res) => {
-    console.log(req.body)
+    /* console.log(req.body) */
     const { body } = req    
     if (!body.report) {
         throw new Error(errorMsg.missingParameters)
@@ -133,7 +133,7 @@ const editReportFromAudit = async (req, res) => {
             }
             /* console.log(body.report) */
             const executionReportData = await ExecutionReportsServices.getExecutionReportByIdInternal(body.report._id)
-            console.log(Object.keys(executionReportData.group))
+            /* console.log(Object.keys(executionReportData.group)) */
             Object.keys(executionReportData.group).forEach(async (key, index) => {
                 executionReportData.group[key].forEach(item => {
                     if (item.messages) {
@@ -282,7 +282,7 @@ const getAllReports = () => {
             reports.forEach(async r => {
                 r.deleted = false
                 const res = await Reports.findByIdAndUpdate(r._id, r, {new: false, timestamps: false})
-                console.log('Respuesta: ', res)
+                /* console.log('Respuesta: ', res) */
             })
         })
     } catch (err) {
@@ -357,7 +357,7 @@ const getReportById = (req, res) => {
     console.log('El id: ', _id)
     try {
         Reports.findById(_id, (err, report) => {
-            console.log(report)
+            /* console.log(report) */
             res.json(report)
         })
     } catch (err) {
@@ -431,7 +431,7 @@ const getReportsByUser = async (req, res) => {
 
 const findMyAssignations = async (req, res) => {
     const { body: {site, userId} } = req
-    console.log(site, userId)
+    /* console.log(site, userId) */
     try {
         const response = await Reports.find({
             site: site,
@@ -502,7 +502,7 @@ const countTotalReports = async () => {
         const order = response.sort((a, b) => {
             return b.idIndex - a.idIndex
         })
-        console.log(order[0].idIndex)
+        /* console.log(order[0].idIndex) */
         return order[0].idIndex + 1
         /* Reports.find({}, (err, reports) => {
             reports.sort((a, b) => {
@@ -519,7 +519,7 @@ const getTotalReportsToIndex = async (req, res) => {
         const order = response.sort((a, b) => {
             return b.idIndex - a.idIndex
         })
-        console.log(order[0].idIndex)
+        /* console.log(order[0].idIndex) */
         res.json(order[0].idIndex + 1)
         /* Reports.find({}, (err, reports) => {
             res.json(reports.length)
