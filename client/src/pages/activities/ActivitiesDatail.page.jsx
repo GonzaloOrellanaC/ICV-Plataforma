@@ -97,8 +97,8 @@ const ActivitiesDetailPage = () => {
         setHabilite3D(state)
     }
 
-    const endReport = async () => {
-        setMessageType(toForward ? 'sendReport' : 'rejectReport')
+    const endReport = async (text) => {
+        setMessageType((text==='aprobado') ? 'sendReport' : 'rejectReport')
         setOpenReportCommitModal(true)
     }
 
@@ -110,7 +110,7 @@ const ActivitiesDetailPage = () => {
     const forwardReport = () => {
         if (isOnline) {
             setToForward(true)
-            endReport()
+            endReport('aprobado')
         } else {
             alert('Dispositivo debe estar conectado a internet.')
         }
@@ -119,7 +119,7 @@ const ActivitiesDetailPage = () => {
     const rejectReport = () => {
         if (isOnline) {
             setToForward(false)
-            endReport()
+            endReport('rechazado')
         } else {
             alert('Dispositivo debe estar conectado a internet.')
         }
