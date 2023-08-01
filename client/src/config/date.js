@@ -7,19 +7,19 @@ export default (time) => {
         let day = new Date(time).getDay()
         let dayName;
         if(day === 0) {
-            dayName = 'Lunes'
+            dayName = 'Dom'
         }else if(day === 1) {
-            dayName = 'Martes'
+            dayName = 'Lun'
         }else if(day === 2) {
-            dayName = 'Miercoles'
+            dayName = 'Mar'
         }else if(day === 3) {
-            dayName = 'Jueves'
+            dayName = 'Mie'
         }else if(day === 4) {
-            dayName = 'Viernes'
+            dayName = 'Jue'
         }else if(day === 5) {
-            dayName = 'Sabado'
+            dayName = 'Vie'
         }else if(day === 6) {
-            dayName = 'Domingo'
+            dayName = 'Sab'
         }
         /* 
         

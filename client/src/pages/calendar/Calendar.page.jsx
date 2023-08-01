@@ -20,8 +20,16 @@ const CalendarPage = () => {
     const [dateSelected, setDateSelected] = useState('')
     const [ reportDataReview, setReportDataReview ] = useState(null)
     const [ openReviewModalState, setOpenReviewModalState ] = useState(false)
-
     const navigate = useNavigate()
+
+    useEffect(() => {
+        const buttons = document.querySelector('.react-calendar__navigation')
+        if (buttons) {
+            buttons.addEventListener('click', (event) => {
+                reloadData()
+            })
+        }
+    },[])
 
     useEffect(() => {
         if (reports.length > 0) {
@@ -36,8 +44,23 @@ const CalendarPage = () => {
             })
             setReportesIniciados(reportesIniciadosCache)
             setReportesProgramados(reportesProgramadosCache)
+            reloadData()
         }
     }, [reports])
+
+    const reloadData = () => {
+        const el = document.getElementsByClassName('react-calendar__month-view__days')
+        console.log(el[0].children)
+        if (el) {
+            for (let i = 0; i < el[0].children.length; i++) {
+                console.log(el[0].children[i].childNodes[0].ariaLabel)
+                const date = el[0].children[i].childNodes[0].ariaLabel
+                if (date) {
+                    createOTDiv(date, el[0].children[i])
+                }
+            }
+        }
+    }
 
     useEffect(() => {
             const dates = []
@@ -57,7 +80,6 @@ const CalendarPage = () => {
                 return 0
             })
             const datesFiltered = removeDuplicates(datesOrders)
-            console.log(datesFiltered)
             setDatesCalendar(datesFiltered)
     },[reportesIniciados, reportesProgramados])
 
@@ -82,6 +104,45 @@ const CalendarPage = () => {
         } else if (num === 6) {
             return 'Sab'
         } 
+    }
+
+    const diaANumero = (date) => {
+        let newDate
+        /* console.log(Number(date[2])) */
+        if (isNaN(Number(date[2]))) {
+            newDate = '0' + `${date}`
+        } else {
+            newDate = `${date}`
+        }
+        let day = `${newDate[0]}${newDate[1]}`
+        let month 
+        if (newDate.includes('enero')) {
+            month = '01'
+        } else if (newDate.includes('febrero')) {
+            month = '02'
+        } else if (newDate.includes('marzo')) {
+            month = '03'
+        } else if (newDate.includes('abril')) {
+            month = '04'
+        } else if (newDate.includes('mayo')) {
+            month = '05'
+        } else if (newDate.includes('junio')) {
+            month = '06'
+        } else if (newDate.includes('julio')) {
+            month = '07'
+        } else if (newDate.includes('agosto')) {
+            month = '08'
+        } else if (newDate.includes('septiembre')) {
+            month = '09'
+        } else if (newDate.includes('octubre')) {
+            month = '10'
+        } else if (newDate.includes('noviembre')) {
+            month = '11'
+        } else if (newDate.includes('diciembre')) {
+            month = '12'
+        }
+        let year = `${newDate[newDate.length - 4]}${newDate[newDate.length - 3]}${newDate[newDate.length - 2]}${newDate[newDate.length - 1]}`
+        return (`${year}/${month}/${day}`)
     }
 
     useEffect(() => {
@@ -136,7 +197,66 @@ const CalendarPage = () => {
     const openReviewModal = (report) => {
         setReportDataReview(report)
         setOpenReviewModalState(true)
-    }    
+    }
+
+    const createOTDiv = (date, element) => {
+        console.log(diaANumero(date))
+        const allReports = [...reports]
+        allReports.forEach((report, i) => {
+            let ul = document.getElementById(`${date}`)
+            if (!ul) {
+                ul = document.createElement('ul')
+                ul.setAttribute('id', `${date}`)
+                ul.style.position = 'absolute'
+                ul.style.overflowY = 'auto'
+                ul.style.maxHeight = 'calc((100vh - 280px)/7)'
+                ul.style.minWidth = '112px'
+                ul.style.right = '5px'
+                ul.style.bottom = '0px'
+                ul.style.padding = '0px 5px'
+                ul.style.margin = '0px'
+                ul.style.backgroundColor = '#d4d4d4'
+                ul.style.color = 'white'
+                ul.style.fontSize = '10px'
+                ul.style.textAlign = 'left'
+            }
+            element.style.position = 'relative'
+            element.appendChild(ul)
+            if (removeTime(new Date(report.dateInit ? report.dateInit : report.datePrev)).toLocaleDateString() === new Date(diaANumero(date)).toLocaleDateString()) {
+                const el2 = document.getElementById(`${i}-${report.dateInit ? report.dateInit : report.datePrev}-${report.idIndex}`)
+                if (!el2) {
+                    let newElement = document.createElement("li")
+                    newElement.className = 'itemList'
+                    newElement.setAttribute('id', `${i}-${report.idIndex}`)
+                    newElement.innerText = `OT ${report.idIndex} - ${report.dateInit ? 'Iniciado' : 'Programado'}`
+                    newElement.onclick = () => {
+                        setReportDataReview(report)
+                        setOpenReviewModalState(true)
+                    }
+                    ul.appendChild(newElement)
+                }
+            } 
+        })
+    }
+    
+
+    const removeTime = (date) => {
+        if (date) {
+            return new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate()
+            );
+        }
+    }
+
+    const changeView = (e) => {
+        console.log('Cambio vista ', e)
+    }
+
+    const traduceFecha = (date) => {
+        const newDate = traduceDia(date)
+    }
  
     return (
         <Box height='100%'>
@@ -163,13 +283,15 @@ const CalendarPage = () => {
                             </div>
                         </Grid>
                         <Grid container spacing={1} style={{padding: '5px 10px 0px 10px'}}>
-                            <Grid item sm={10}>
+                            <Grid item sm={12}>
                                 <Calendar
                                     style={{width: '100%'}}
                                     onChange={onChange}
+                                    onViewChange={changeView}
                                     value={value}
-                                    tileClassName={({date}) => {
-                                        const newDate = new Date(date)
+                                    locale="es-US"
+                                    tileClassName={(e) => {
+                                        const newDate = new Date(e.date)
                                         if(
                                             datesCalendar.find( x => 
                                                 newDate.toISOString().split('T')[0] === x
@@ -180,7 +302,7 @@ const CalendarPage = () => {
                                     }}
                                 />
                             </Grid>
-                            <Grid item sm={2}>
+                            {/* <Grid item sm={2}>
                                 <div className='text-container'>
                                     <p className='text-container-date'>
                                         {dateSelected}
@@ -194,7 +316,7 @@ const CalendarPage = () => {
                                         (reportesSeleccionados.length > 0) ?
                                         reportesSeleccionados.sort(ordenarPorOT).map((reporte, index) => {
                                             return (
-                                                <div>
+                                                <div key={index}>
                                                     <p className={reporte.isActive ? 'otLinkActive' : 'otLink'} onClick={() => {selectOT(index)}}>
                                                         OT N° {reporte.idIndex} {(reporte.level === 4) ? 'terminado' : ((reporte.dateInit) ? 'iniciado' : 'programado')}
                                                     </p>
@@ -207,7 +329,7 @@ const CalendarPage = () => {
                                         </div>
                                     }
                                 </div>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Card>
                 </Grid>

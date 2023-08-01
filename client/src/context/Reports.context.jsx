@@ -96,9 +96,9 @@ export const ReportsProvider = (props) => {
 
     useEffect(() => {
         if (reports.length > 0) {
-            reports.forEach((report) => {
+            /* reports.forEach((report) => {
                 console.log(report.description)
-            })
+            }) */
             console.log('Guardando reporte')
             console.log(revision)
             if(revision) {
