@@ -12,5 +12,11 @@ export default {
             reportData,
         }
         return axios.post('/execution-report/saveExecutionReport', requestBody)
+    },
+    createExecutionReport: (reportData) => {
+        const requestBody = {
+            reportData,
+        }
+        return axios.post('/execution-report/createExecutionReport', requestBody)
     }
 }

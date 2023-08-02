@@ -447,7 +447,7 @@ const ActivitiesDetailPage = () => {
                                             ) && <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={forwardReport}>
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Enviar OT
                                         </Button>}
-                                        {((isSapExecutive && report.level===3) || admin)  && <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={forwardReport}>
+                                        {((isSapExecutive && report.level===3) || (admin && report.level===4))  && <Button variant="contained" color='primary' style={{padding: 10, width: '100%', marginBottom: 20}} onClick={forwardReport}>
                                             <FontAwesomeIcon icon={faPaperPlane} style={{marginRight: 10}} /> Cerrar OT
                                         </Button>
                                         }

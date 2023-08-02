@@ -199,6 +199,7 @@ export const ReportsProvider = (props) => {
 
     const savePautas = async () => {
         const {database} = await pautasDatabase.initDbPMs()
+        console.log(pautas)
         pautas.forEach(async (pauta, i) => {
             await pautasDatabase.actualizar(pauta, database)
             if (i === (pautas.length - 1)) {

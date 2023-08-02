@@ -3,13 +3,13 @@ import environment from "../config/environment.config";
 
 const socket = io()
 
-const toPDF = (report, user) => {
+/* const toPDF = (report, user) => {
     const data = {
         report,
         user
     }
     socket.emit('toPDF', data)
-}
+} */
 
 const listenNotifocations = (userData, notificationData) => {
     socket.on(`notification_${userData._id}`, data => {
@@ -43,7 +43,7 @@ const sendnotificationToAllUsers = (notificationType, from, title, subtitle, mes
 }
 
 export default {
-    toPDF,
+    /* toPDF, */
     listenNotifocations,
     listenReports,
     sendIsActive,

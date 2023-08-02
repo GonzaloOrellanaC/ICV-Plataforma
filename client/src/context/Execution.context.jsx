@@ -61,13 +61,12 @@ export const ExecutionReportProvider = (props) => {
             setMessage('Buscando Pauta')
             getExecutionReport()
         }
+    },[report])
+
+    useEffect(() => {
         if (otIndex) {
             getReportFromOtIndex()
         }
-    },[report, otIndex])
-
-    useEffect(() => {
-        console.log(otIndex)
     },[otIndex])
 
     const getReportFromOtIndex = () => {
@@ -83,11 +82,11 @@ export const ExecutionReportProvider = (props) => {
         if (!isOperator && isOnline) {
             const response = await executionReportsRoutes.getExecutionReportById(report)
             console.log(response.data)
-            if (!response.data._id) {
+            if (!response.data.data) {
                 setMessage('OT no iniciado')
                 setReporteIniciado(false)
             } else {
-                setExecutionReport(response.data)
+                setExecutionReport(response.data.data)
             }
             setLoading(false)
             setTimeout(() => {
@@ -99,17 +98,18 @@ export const ExecutionReportProvider = (props) => {
             const excetutionReportCache = response.filter(doc => {if(doc.reportId === report._id) return doc})
             if (excetutionReportCache.length > 0) {
                 const responseData = await executionReportsRoutes.getExecutionReportById(report)
-                if (excetutionReportCache[0].offLineGuard > responseData.data.offLineGuard) {
+                console.log(responseData)
+                if (excetutionReportCache[0].offLineGuard > responseData.data.data.offLineGuard) {
                     setExecutionReport(excetutionReportCache[0])
                 } else {
-                    setExecutionReport(responseData.data)
+                    setExecutionReport(responseData.data.data)
                 }
             } else {
                 const responseData = await executionReportsRoutes.getExecutionReportById(report)
-                if (responseData.data && responseData.data._id) {
-                    setExecutionReport(responseData.data)
+                if (responseData.data.state) {
+                    setExecutionReport(responseData.data.data)
                 } else {
-                    if (isOperator) {
+                    if (report.usersAssigned[0]._id === userData._id) {
                         const db = await pautasDatabase.initDbPMs()
                         setMessage('Guardando pauta de OT '+report.idIndex)
                         const pautas = await pautasDatabase.consultar(db.database)
@@ -127,15 +127,16 @@ export const ExecutionReportProvider = (props) => {
                             group: group,
                             offLineGuard: null
                         }
-                        const responseNewExecution = await executionReportsRoutes.saveExecutionReport(executionReportData)
-                        console.log('Se guarda reporte ', responseNewExecution)
-                        await executionReportsDatabase.actualizar(responseNewExecution.data, database)
-                        setExecutionReport(responseNewExecution.data)
-                        console.log('Se guarda reporte ', responseNewExecution)
+                        const responseNewExecution = await executionReportsRoutes.createExecutionReport(executionReportData)/* saveExecutionReport(executionReportData) */
+                        console.log('Se guarda reporte ', responseNewExecution.data)
+                        await executionReportsDatabase.actualizar(responseNewExecution.data.data, database)
+                        setExecutionReport(responseNewExecution.data.data)
+                        console.log('Se guarda reporte ', responseNewExecution.data.data)
                         if (!report.dateInit) {
                             report.dateInit = new Date()
                             await reportsRoutes.editReportById(report)
                         }
+
                     }
                     setMessage('No se logra descargar ejecución de datos.')
                     setTimeout(() => {

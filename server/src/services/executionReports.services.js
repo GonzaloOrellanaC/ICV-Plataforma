@@ -2,119 +2,121 @@ import { ExecutionReport, Reports } from "../models"
 import { AzureServices } from "."
 
 const getExecutionReportById = async (req, res) => {
-    const { body } = req
-    /* console.log(body.reportData._id) */
+    const { body: {reportData} } = req
     try{
-        const executionReport = await ExecutionReport.findOne({reportId: body.reportData._id}).populate('report').populate('createdBy')
-        /* console.log('Excution: ', executionReport._id) */
-        res.json(executionReport)
+        const executionReport = await ExecutionReport.findOne({reportId: reportData._id}).populate('report').populate('createdBy')
+        if (executionReport) {
+            res.status(200).json({data: executionReport, state: true})
+        } else {
+            res.status(200).json({state: false})
+        }
     }catch(err) {
-        res.json(err);
+        res.status(400).json(err);
     }
 }
 const getExecutionReportByIdInternal = async (reportId) => {
-    const report = await ExecutionReport.find({reportId: reportId})
+    const report = await ExecutionReport.findOne({reportId: reportId})
     return report[0].toJSON()
 }
 
-const createNewExecutionReport = async (executionReport) => {
-    return new Promise(async resolve => {
-        try{
-            const response = await ExecutionReport.findOne({reportId: executionReport.reportId})
-            if (!response) {
-                const executionReportCreated = await ExecutionReport.create(executionReport)
-                resolve(executionReportCreated)
-            } else {
-                resolve(response)
-            }
-        }catch(err) {
-            resolve(err);
-        } 
-    })
+const createExecutionReport = async (req, res) => {
+    const { body } = req
+    const executionReportData = body.reportData
+    const findReport = await ExecutionReport.findOne({reportId: executionReportData.reportId})
+    if (!findReport) {
+        const newDoc = await ExecutionReport.create(executionReportData)
+        if(newDoc) {
+            res.status(200).json({data: newDoc, state: true, message: 'Elemento creado'});
+        } else {
+            res.status(400).json({data: 'error'})
+        }
+    } else {
+        res.status(200).json({data: findReport, state: true, message: 'Elemento ya ha sido creado'});
+    }
 }
-
-let numberVerification1 = 0
-let numberVerification2 = 0
-
 const saveExecutionReport = async (req, res) => {
     const { body } = req
     const executionReportData = body.reportData
     const response = await Reports.findById(executionReportData.reportId)
     const report = response.toJSON()
-    Object.keys(executionReportData.group).forEach(async (key, index) => {
-        executionReportData.group[key].forEach((item) => {
+    const keys = Object.keys(executionReportData.group)
+    const group = executionReportData.group
+    const messages = []
+    keys.forEach(async (key, index) => {
+        group[key].forEach((item) => {
             if (item.messages) {
-                item.messages.forEach(async (mensaje, i) => {
-                    if (mensaje)
-                    if (mensaje.urlBase64) {
-                        if (mensaje.urlBase64.length > 0) {
-                            numberVerification1 = numberVerification1 + 1
-                            const imageData = await AzureServices.uploadImageFromReport(
-                                mensaje.urlBase64,
-                                report.idIndex,
-                                key,
-                                mensaje.id
-                            )
-                            if (imageData) {
-                                numberVerification2 = numberVerification2 + 1
-                            }
-                            mensaje.urlImageMessage = imageData.data.url
-                            mensaje.urlBase64 = ''
-                        }
-                    }
-                    if (i === (item.messages.length - 1)) {
-                    }
+                item.messages.forEach((mensaje, i) => {
+                    messages.push({key: key, message: mensaje})
                 })
             }
         })
         if (index == (Object.keys(executionReportData.group).length - 1)) {
-            if (executionReportData.astList && (executionReportData.astList.length > 0)) {
-                executionReportData.astList.forEach(async (ast, i) => {
-                    numberVerification1 = numberVerification1 + 1
-                    if (ast.image.length > 0) {
-                        const imageAstData = await AzureServices.uploadImageAstFromReport(
-                            ast.image,
-                            report.idIndex,
-                            ast.id
-                        )
-                        if (imageAstData) {
-                            numberVerification2 = numberVerification2 + 1
-                        }
-                        ast.image = ''
-                        ast.imageUrl = imageAstData.data.url
-                    } else {
-                        numberVerification2 = numberVerification2 + 1
-                    }
-                    if (i == (executionReportData.astList.length - 1)) {
-                        timeout(executionReportData, res)
-                    }
-                })
-            } else {
-                timeout(executionReportData, res)
-            }
+            const index = 0
+            revisarMensajes(messages, index, report, res, executionReportData, keys)
         }
     })
 }
 
-const timeout = (executionReportData, res) => {
-    setTimeout(async() => {
-        if (numberVerification1 == numberVerification2) {
-            let response = await saveExecutionReportInternal(executionReportData)
-            if (response) {
-                res.json({data: 'ok'})
-            } else {
-                const newDoc = await createNewExecutionReport(executionReportData);
-                if(newDoc) {
-                    res.json(newDoc);
+const revisarMensajes = async (messages, index, report, res, executionReportData) => {
+    if (messages.length === index) {
+        await ExecutionReport.findByIdAndUpdate(executionReportData._id, executionReportData)
+        res.status(200).json({state: true, message: 'Elemento actualizado'})
+    } else {
+        if (messages[index].message) {
+            if (messages[index].message.urlBase64) {
+                if (messages[index].message.urlBase64.length > 0) {
+                    const imageData = await AzureServices.uploadImageFromReport(
+                        messages[index].message.urlBase64,
+                        report.idIndex,
+                        messages[index].key,
+                        messages[index].message.id
+                    )
+                    if (imageData) {
+                        messages[index].message.urlImageMessage = imageData.data.url
+                        messages[index].message.urlBase64 = ''
+                    }
+                    index = index + 1
+                    revisarMensajes(messages, index, report, res, executionReportData)
                 } else {
-                    res.json({data: 'error'})
+                    index = index + 1
+                    revisarMensajes(messages, index, report, res, executionReportData)
+                }
+            } else {
+                index = index + 1
+                revisarMensajes(messages, index, report, res, executionReportData)
+            }
+        } else {
+            index = index + 1
+            revisarMensajes(messages, index, report, res, executionReportData)
+        }
+    }
+}
+
+/* const timeout = (executionReportData, res, numberVerification1, numberVerification2) => {
+    setTimeout(async() => {
+        if (numberVerification1 === numberVerification2) {
+            await ExecutionReport.findByIdAndUpdate(executionReportData._id, executionReportData)
+            console.log('Actualizado!')
+            res.status(200).json({state: true, message: 'Elemento actualizado'})
+            const responseExecution = await ExecutionReport.findOne({reportId: executionReportData.reportId})
+            console.log('Response: ', responseExecution)
+            if (responseExecution) {
+                const response = await ExecutionReport.findByIdAndUpdate(executionReportData._id, executionReportData)
+                console.log('Actualizado!')
+                res.status(200).json({data: response, state: true, message: 'Elemento actualizado'})
+            } else {
+                const newDoc = await ExecutionReport.create(executionReportData)
+                if(newDoc) {
+                    res.status(200).json({data: newDoc, state: true, message: 'Elemento creado'});
+                } else {
+                    res.status(400).json({data: 'error'})
                 }
             }
         } else {
-            timeout(executionReportData, res)
+            timeout(executionReportData, res, numberVerification1, numberVerification2)
         }
     }, 1000);
-}
+} */
 
 const saveExecutionReportInternal = async (executionReportData) => {
     try{
@@ -128,6 +130,7 @@ const saveExecutionReportInternal = async (executionReportData) => {
 export default {
     getExecutionReportById,
     saveExecutionReport,
+    createExecutionReport,
     getExecutionReportByIdInternal,
     saveExecutionReportInternal
 }
