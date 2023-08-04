@@ -24,7 +24,7 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
     const {admin, isSapExecutive} = useContext(AuthContext)
     const {setReport} = useExecutionReportContext()
     const [ colorState, setColorState ] = useState();
-    const { idIndex, guide, state, siteName, usersAssigned, sapId } = report;
+    const { idIndex, guide, state, siteName, usersAssigned, sapId, machineData, description } = report;
     const [ userAssignedName, setUserAssignedName ] = useState('')
     const [ userShiftManagerName, setUserShiftManagerName ] = useState('')
     const [ userChiefMachineryName, setChiefMachineryName ] = useState('')
@@ -45,6 +45,9 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
 
     useEffect(() => {
         init()
+        if (report) {
+            console.log(report)
+        }
     }, [report])
 
     const init = async () => {
@@ -123,7 +126,7 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
             >
             <div style={{padding: 30, /* textAlign: 'center', */ /* height: '50vh' */ width: 800}}>
                 <Toolbar style={{width: '100%', height: 59, paddingLeft: 0}}>
-                    <h2>{ (report.reportType === 'Mantención') ? `Pauta de ${report.reportType}` : ''} {guide} SAP {sapId ? sapId : 'N/A'}</h2>
+                    <h2>{ (report.reportType === 'Mantención') ? `Pauta de ${report.reportType}` : ''} Equ: {machineData.equid.replace('00000000', '')} / {machineData.model}{/* SAP {sapId ? sapId : 'N/A'} */}</h2>
                     <div style={{ position: 'absolute', right: 65 , backgroundColor: colorState, paddingTop: 3, borderRadius: 5, width: 100, height: 20, textAlign: 'center'}}>
                         <p style={{margin: 0, fontSize: 12}}>{state.toUpperCase()}</p>
                     </div>
@@ -164,10 +167,15 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
                 </Grid>
                 <Grid container>
                     <Grid item xs={12} sm={12} md={4} lg={4}>
-                    <div style={{marginTop: 30, width: '100%'}}>
-
-                        <strong>Pauta:</strong> <br />
-                        {guide}
+                        <div style={{marginTop: 30, width: '100%'}}>
+                            <strong>Pauta:</strong> <br />
+                            {guide}
+                        </div>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={4} lg={4}>
+                        <div style={{marginTop: 30, width: '100%'}}>
+                            <strong>Descripción:</strong> <br />
+                            {description ? description : 'Sin descripción'}
                         </div>
                     </Grid>
                 </Grid>
@@ -192,16 +200,19 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
                     </Grid>
                     <Grid item>
                         <div style={{marginTop: 30, width: '100%'}}>
-                            <div style={{width: '100%', height: 59}}>
+                            <div style={{width: '100%', height: 44.5}}>
                                 <label>Creado: <b>{dateWithTime(report.createdAt)}</b></label>
                             </div>
-                            <div style={{width: '100%', height: 59}}>
+                            <div style={{width: '100%', height: 44.5}}>
+                                <label>Programado: <b>{(dateWithTime(report.datePrev) === 'Sin información') ? 'Faltan datos' : dateWithTime(report.datePrev)}</b></label>
+                            </div>
+                            <div style={{width: '100%', height: 44.5}}>
                                 <label>Inicio: <b>{(dateWithTime(report.dateInit) === 'Sin información') ? 'No inicado' : dateWithTime(report.dateInit)}</b></label>
                             </div>
-                            <div style={{width: '100%', height: 59}}>
+                            <div style={{width: '100%', height: 44.5}}>
                                 <label>Finalizado: <b>{(dateWithTime(report.endReport) === 'Sin información') ? 'No finalizado' : dateWithTime(report.endReport)}</b></label>
                             </div>
-                            <div style={{width: '100%', height: 59}}>
+                            <div style={{width: '100%', height: 44.5}}>
                                 <label>Cerrado: <b>{(dateWithTime(report.dateClose) === 'Sin información') ? 'No cerrado' : dateWithTime(report.dateClose)}</b></label>
                             </div>
                         </div>

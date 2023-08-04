@@ -108,6 +108,7 @@ export const ReportsProvider = (props) => {
                     idIndex: report.idIndex,
                     dateInit: report.dateInit,
                     datePrev: report.datePrev,
+                    isAutomatic: report.isAutomatic
                 })
             })
             setReportsResume(reportsResumeCache)

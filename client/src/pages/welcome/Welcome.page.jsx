@@ -3,9 +3,7 @@ import { Grid } from '@material-ui/core'
 import { CardButton } from '../../components/buttons'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import './style.css'
-import Files from './3dFiles'
 import { useNavigate } from 'react-router-dom'
-import { dateWithTime, /* download3DFiles, imageToBase64 */ } from '../../config'
 import { useAuth, useTimeContext } from '../../context'
 import { useNotificationsContext } from '../../context/Notifications.context'
 
@@ -75,57 +73,74 @@ const WelcomePage = (/* { readyToLoad } */) => {
         <div>
             <div className='container'>
                 {/* <img src="../assets/no-profile-image.png" width={100} alt="" /> */}
+                
                 <Grid container spacing={5}>
                     <div>
                         <p className='titulo'>Hola {localStorage.getItem('name')} ¿Por dónde quieres comenzar hoy?</p>
                     </div>
                 </Grid>
                 <Grid container spacing={5}>
-                    <Grid item xs={12} sm={12} md={6} lg={4}>
-                        <div className='notificaciones reloj'>
-                            <p className='reloj-fecha'> {date} </p>
-                            <p className='reloj-hora'> {hour} hs </p>
-                        </div>
-                    </Grid>
-                    <Grid item xs={12} sm={12} md={6} lg={4}>
-                        <button className='notificaciones alertas' onClick={() => navigate('/notifications')}>
-                            <p className='notificaciones-texto'> <b>Última Notificación:</b> </p>
-                            <p className='notificaciones-texto'> {lastNotification && lastNotification.message} </p>
-                        </button>
-                    </Grid>
-                    <Grid item xs={12} sm={12} md={6} lg={4}>
-                        <button className='notificaciones alertas' onClick={() => navigate('/mynews')}>
-                                <div>
-                                    <p style={{marginTop: 5}}>Noticias internas</p>
-                                    <p className='notificaciones-texto'> {
-                                    listaLectura ? 
-                                    (ultimaNoticia ? 
-                                    ultimaNoticia.titulo : 'No tiene noticias en su muro') : 'Cargando noticias en su muro'} </p>
+                    <Grid item xs={12} sm={12} md={12} lg={(admin||
+                        isSapExecutive||
+                        isShiftManager||
+                        isChiefMachinery) ? 9 : 12}>
+                        <Grid container spacing={5}>
+                            <Grid item xs={12} sm={12} md={6} lg={4}>
+                                <div className='notificaciones reloj'>
+                                    <p className='reloj-fecha'> {date} </p>
+                                    <p className='reloj-hora'> {hour} hrs </p>
                                 </div>
-                                
-                            {/* {
-                                (isOperator || localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') &&
-                                <p className='notificaciones-texto'> <b>OT Listas a enviar:</b> </p>
-                            }
-                            <p className='notificaciones-texto'> {notificaciones2}</p> */}
-                        </button>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={4}>
+                                <button className='notificaciones alertas' onClick={() => navigate('/notifications')}>
+                                    <p className='notificaciones-texto'> <b>Última Notificación:</b> </p>
+                                    <p className='notificaciones-texto'> {lastNotification && lastNotification.message} </p>
+                                </button>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={4}>
+                                <button className='notificaciones alertas' onClick={() => navigate('/mynews')}>
+                                        <div>
+                                            <p style={{marginTop: 5}}>Noticias internas</p>
+                                            <p className='notificaciones-texto'> {
+                                            listaLectura ? 
+                                            (ultimaNoticia ? 
+                                            ultimaNoticia.titulo : 'No tiene noticias en su muro') : 'Cargando noticias en su muro'} </p>
+                                        </div>
+                                        
+                                    {/* {
+                                        (isOperator || localStorage.getItem('role') === 'inspectionWorker' || localStorage.getItem('role') === 'maintenceOperator') &&
+                                        <p className='notificaciones-texto'> <b>OT Listas a enviar:</b> </p>
+                                    }
+                                    <p className='notificaciones-texto'> {notificaciones2}</p> */}
+                                </button>
+                            </Grid>
+                        </Grid>
+                        <br />
+                        <Grid container spacing={5}>
+                            <Grid item xs={12} sm={12} md={6} lg={3}>
+                                <CardButton variant='assignment' disableButton={disableButton}/>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={3}>
+                                <CardButton variant='machines' disableButton={disableButton}/>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={3}>
+                                <CardButton variant='reports' disableButton={disableButtonNoSAP}/>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={3}>
+                                <CardButton variant='administration' disableButton={disableButtonNoAdmin}/>
+                            </Grid>  
+                        </Grid>
                     </Grid>
-                </Grid>
-                <br />
-                <Grid container spacing={5}>
-                        <Grid item xs={12} sm={12} md={6} lg={3}>
-                            <CardButton variant='assignment' disableButton={disableButton}/>
+                    {(admin||
+                        isSapExecutive||
+                        isShiftManager||
+                        isChiefMachinery) && <Grid item xs={12} sm={12} md={12} lg={3}>
+                        <Grid container /* spacing={5} */ style={{height: '100%'}}>
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                                <CardButton variant='calendar' disableButton={disableButton}/>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12} sm={12} md={6} lg={3}>
-                            <CardButton variant='machines' disableButton={disableButton}/>
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={6} lg={3}>
-                            <CardButton variant='reports' disableButton={disableButtonNoSAP}/>
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={6} lg={3}>
-                            <CardButton variant='administration' disableButton={disableButtonNoAdmin}/>
-                        </Grid>
-                        
+                    </Grid> } 
                 </Grid>
             </div>
             <LoadingModal open={openLoader} progress={progress} loadingData={loadingData} withProgress={true}/>

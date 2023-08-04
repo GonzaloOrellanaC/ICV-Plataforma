@@ -37,7 +37,8 @@ export const TimeProvider = props => {
 
     const provider = {
         date,
-        hour
+        hour,
+        traduceDia
     }
 
     return (

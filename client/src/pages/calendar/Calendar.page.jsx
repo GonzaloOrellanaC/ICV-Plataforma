@@ -214,8 +214,8 @@ const CalendarPage = () => {
                 ul.style.bottom = '0px'
                 ul.style.padding = '0px 5px'
                 ul.style.margin = '0px'
-                ul.style.backgroundColor = '#d4d4d4'
-                ul.style.color = 'white'
+                ul.style.backgroundColor =  report.isAutomatic ? 'd8d8d8' : '#e9e9e9'
+                ul.style.color = 'black'
                 ul.style.fontSize = '10px'
                 ul.style.textAlign = 'left'
             }

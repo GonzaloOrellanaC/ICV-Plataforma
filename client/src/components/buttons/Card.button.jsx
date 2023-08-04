@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Button, makeStyles } from '@material-ui/core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faClipboardList, faTools, faUserCog, faUsers, faListAlt, faTruck, faListOl, faBook, faNewspaper } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faClipboardList, faTools, faUserCog, faUsers, faListAlt, faTruck, faListOl, faBook, faNewspaper, faCalendar } from '@fortawesome/free-solid-svg-icons'
 import { useLanguage } from '../../context'
 import { useNavigate } from 'react-router-dom'
 
@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
         color: '#505050',
         width: '100%',
         //minWidth: 285,
+        height: '100%',
         minHeight: 300,
         borderRadius: 20,
         fontFamily:'Raleway',
@@ -65,6 +66,8 @@ const CardButton = ({ variant, disableButton }) => {
             return (<FontAwesomeIcon icon={faBook} size='4x' className={classes.iconButton}/>)
         case 'news':
             return (<FontAwesomeIcon icon={faNewspaper} size='4x' className={classes.iconButton}/>)
+        case 'calendar':
+            return (<FontAwesomeIcon icon={faCalendar} size='4x' className={classes.iconButton}/>)
         }
     }
     const handleTypeText = () => {
@@ -89,6 +92,8 @@ const CardButton = ({ variant, disableButton }) => {
             return dictionary.patterns.patternsButton
         case 'news':
             return dictionary.news.newsButton
+        case 'calendar':
+            return dictionary.calendar.calendarButton
         }
     }
 
@@ -104,7 +109,7 @@ const CardButton = ({ variant, disableButton }) => {
 }
 
 CardButton.propTypes = {
-    variant: PropTypes.oneOf(['inspection', 'assignment', 'machines', 'maintenance', 'reports', 'configuration', 'administration', 'users', 'roles', 'patterns', 'news'])
+    variant: PropTypes.oneOf(['inspection', 'assignment', 'machines', 'maintenance', 'reports', 'configuration', 'administration', 'users', 'roles', 'patterns', 'news', 'calendar'])
 }
 
 export default CardButton
