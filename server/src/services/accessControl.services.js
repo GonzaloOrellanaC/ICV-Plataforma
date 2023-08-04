@@ -1,7 +1,7 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permission,Roles, Site, Machine, Users, Reports, ExecutionReport, Cron } from '../models';
+import { Permission,Roles, Site, Machine, Users, Reports, ExecutionReport, Cron, Notification } from '../models';
 import { ApiIcv } from '../api-icv';
 import apiIcvConnection from '../api-icv/api-icv.connection';
 import { CronJob } from 'cron'
@@ -25,8 +25,10 @@ const ac = new AccessControl()
  */
 const initAccessControl = async () => {
     try {
+        /* const not = await Notification.find()
+        console.log(not[0]) */
         apiIcvConnection.leerPautas2()
-        const users = await Users.find({})
+        /* const users = await Users.find({})
         users.forEach(async (user, index) => {
             if (user.roles && user.roles.length > 0) {
 
@@ -34,7 +36,6 @@ const initAccessControl = async () => {
                 const roles = [user.role]
                 user.roles = roles
                 await Users.findByIdAndUpdate(user._id, user)
-                /* console.log(user.name + ' ' + user.lastName, ' added role') */
             }
             if(user.sites) {
                 if ((JSON.parse(user.sites)).idobra === '0369') {
@@ -81,7 +82,7 @@ const initAccessControl = async () => {
                     })
                 }
             })
-        }
+        } */
         initTimeMachinesCron()
     } catch (error) {
         console.error(error)

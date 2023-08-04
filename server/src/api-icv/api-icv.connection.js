@@ -599,7 +599,7 @@ const getOMSap = async (year, month) => {
 }
 
 const crearPautasDesdeSAP = async (pautas, index) => {
-    const admins = await UserServices.getUserByRole('admin')
+    /* const admins = await UserServices.getUserByRole('admin') */
     if (index === (pautas.length)) {
         console.log(`se han gestionado ${pautas.length} pautas.`)
     } else {
@@ -633,7 +633,7 @@ const crearPautasDesdeSAP = async (pautas, index) => {
                         }
                     } else {
                         console.log(`Pauta OM ${om.om} no creada por no encontrar la obra.`)
-                        admins.forEach((user) => {
+                        /* admins.forEach((user) => {
                             let notificationToSave = {
                                 id: user._id.toString(),
                                 from: 'Sistema Mantención ICV',
@@ -643,13 +643,13 @@ const crearPautasDesdeSAP = async (pautas, index) => {
                                 message: `La base de datos no encuentra la obra asociada al id ${om.faena}.`
                             }
                             NotificationService.createNotification(notificationToSave)
-                        })
+                        }) */
                         index = index + 1
                         crearPautasDesdeSAP(pautas, index)
                     }
                 } else {
                     console.log(`Pauta OM ${om.om} no creada por no encontrar el equipo.`)
-                    admins.forEach((user) => {
+                    /* admins.forEach((user) => {
                         let notificationToSave = {
                             id: user._id.toString(),
                             from: 'Sistema Mantención ICV',
@@ -659,7 +659,7 @@ const crearPautasDesdeSAP = async (pautas, index) => {
                             message: `La base de datos no encuentra el equipo asociado al id 00000000${om.equipo}.`
                         }
                         NotificationService.createNotification(notificationToSave)
-                    })
+                    }) */
                     index = index + 1
                     crearPautasDesdeSAP(pautas, index)
                 }
@@ -670,7 +670,7 @@ const crearPautasDesdeSAP = async (pautas, index) => {
             }
         } else {
             console.log(`Pauta OM ${om.om} no creada por no encontrar el equipo.`)
-            admins.forEach((user) => {
+            /* admins.forEach((user) => {
                 let notificationToSave = {
                     id: user._id.toString(),
                     from: 'Sistema Mantención ICV',
@@ -680,7 +680,7 @@ const crearPautasDesdeSAP = async (pautas, index) => {
                     message: `La OM ${om.om} se indica como ya realizada en APM`
                 }
                 NotificationService.createNotification(notificationToSave)
-            })
+            }) */
             index = index + 1
             crearPautasDesdeSAP(pautas, index)
         }
