@@ -28,6 +28,15 @@ const initAccessControl = async () => {
         /* const not = await Notification.find()
         console.log(not[0]) */
         apiIcvConnection.leerPautas2()
+        const date = new Date()
+        /* const sitiosCreados = await ApiIcv.createSiteToSend();
+        if (sitiosCreados) {
+            sitiosCreados.forEach(async (sitio) => {
+                console.log(sitio)
+                const response = await ApiIcv.createMachinesToSend(sitio.idobra, true)
+                console.log(response)
+            })
+        } */
         /* const users = await Users.find({})
         users.forEach(async (user, index) => {
             if (user.roles && user.roles.length > 0) {
@@ -53,7 +62,7 @@ const initAccessControl = async () => {
         const findRoles = await Roles.find({})
         const adminResult = await getAdminExist();
         const findSites = await getSites();
-        await ApiIcv.createSiteToSend();
+        
         findSites.forEach(async (site, index) => {
             try {
                 await ApiIcv.createMachinesToSend(site.idobra, false)
@@ -104,14 +113,12 @@ const machinesCron = (time) => {
                 })
             }
         }
-        await ApiIcv.createSiteToSend();
-        findSites.forEach(async (site, index) => {
-            try {
-                await ApiIcv.createMachinesToSend(site.idobra, false)
-            } catch (error) {
-                console.log(error)
-            }
-        })
+        const sitiosCreados = await ApiIcv.createSiteToSend();
+        if (sitiosCreados) {
+            sitiosCreados.forEach(async (sitio) => {
+                await ApiIcv.createMachinesToSend(sitio.idobra, true)
+            })
+        }
 
     })
     return jobMachines
@@ -124,6 +131,7 @@ const pautasCron = (time) => {
         const date = new Date()
         apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth())
         apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1)
+        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2)
     })
     return jobPautas
 }

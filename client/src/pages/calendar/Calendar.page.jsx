@@ -146,6 +146,7 @@ const CalendarPage = () => {
     }
 
     useEffect(() => {
+        console.log(value)
         setDateSelected(` ${traduceDia(value.getDay())} ${value.toLocaleDateString("es-CL")}`)
         setLoading(true)
         console.log(value)
@@ -200,7 +201,6 @@ const CalendarPage = () => {
     }
 
     const createOTDiv = (date, element) => {
-        console.log(reportsResume.length)
         reportsResume.forEach((report, i) => {
             let ul = document.getElementById(`${date}`)
             if (!ul) {
@@ -209,12 +209,12 @@ const CalendarPage = () => {
                 ul.style.position = 'absolute'
                 ul.style.overflowY = 'auto'
                 ul.style.maxHeight = 'calc((100vh - 280px)/7)'
-                ul.style.minWidth = '112px'
+                ul.style.minWidth = '150px'
                 ul.style.right = '5px'
                 ul.style.bottom = '0px'
                 ul.style.padding = '0px 5px'
                 ul.style.margin = '0px'
-                ul.style.backgroundColor =  report.isAutomatic ? 'd8d8d8' : '#e9e9e9'
+                ul.style.backgroundColor = '#e9e9e9'
                 ul.style.color = 'black'
                 ul.style.fontSize = '10px'
                 ul.style.textAlign = 'left'
@@ -225,9 +225,9 @@ const CalendarPage = () => {
                 const el2 = document.getElementById(`${i}-${report.idIndex}`)
                 if (!el2) {
                     let newElement = document.createElement("li")
-                    newElement.className = 'itemList'
+                    newElement.className = report.isAutomatic ? 'itemListAutomatic' :'itemList'
                     newElement.setAttribute('id', `${i}-${report.idIndex}`)
-                    newElement.innerText = `OT ${report.idIndex} - ${report.dateInit ? 'Iniciado' : 'Programado'}`
+                    newElement.innerText = `OT ${report.idIndex} - E ${report.equ} - ${(report.guide === 'Pauta de Inspección') ? 'P. Insp' : report.guide} - ${report.dateInit ? 'Inic.' : 'Progr.'}`
                     newElement.onclick = () => {
                         const reportFiltered = reports.filter(r => {if (report._id === r._id) return r})
                         if (reportFiltered[0]) {

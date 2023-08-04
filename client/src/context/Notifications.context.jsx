@@ -15,7 +15,6 @@ export const NotificationsProvider = props => {
 
     useEffect(() => {
         if (userData && isAuthenticated) {
-            console.log(userData._id, isAuthenticated)
             getNoticias()
             getNotifications()
         }
@@ -27,7 +26,6 @@ export const NotificationsProvider = props => {
 
     const getNoticias = async () => {
         const response = await newsRoutes.getMyNews(userData._id)
-        console.log(response.data)
         setNoticias(response.data.data.sort(orderByDate))
         setUltimaNoticia(response.data.data.sort(orderByDate)[0])
         setListaLectura(true)
@@ -35,7 +33,6 @@ export const NotificationsProvider = props => {
 
     const getNotifications = async () => {
         const response = await notificationsRoutes.getNotificationsById(userData._id)
-        console.log(response.data)
         setMyNotifications(response.data.sort(orderByDate))
         setLastNotification(response.data.sort(orderByDate)[0])
     }

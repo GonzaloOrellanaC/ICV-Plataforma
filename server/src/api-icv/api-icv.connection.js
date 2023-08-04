@@ -407,7 +407,7 @@ const createSiteToSend = () => {
                             }
                         })
                         if (i === (sitios.length - 1)) {
-                            resolve(true)
+                            resolve(sitios)
                         }
                     })
                 }else{
@@ -451,58 +451,62 @@ const leerArchivo = (type) => {
 }
 
 /* Descargar máquinas por obra desde API ICV y guardar en base de datos*/
-const createMachinesToSend = async (pIDOBRA, isSync = false) => {
-    try {
-        const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`, {
-            headers: myHeaders,
-            method: 'GET',
-            agent: agent
-        })
-        let b = await machines.json();
-        let machinesData = []
-        machinesData = b.data
-        machinesData.forEach(async (machine, index) => {
-            machine.idpminspeccion = await getIdPmInspection(machine.equid);
-            machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
-            if(machine.modelo[0]==='7'){
-                machine.type = 'Camión'
-            }else if(machine.modelo[0] === 'P') {
-                machine.type = 'Pala'
-            }else if(machine.modelo[0] === '9') {
-                machine.type = 'Cargador Frontal'
-            }else if(machine.modelo[0] === 'D') {
-                machine.type = 'Bulldozer'
+const createMachinesToSend = (pIDOBRA, isSync = false) => {
+    return new Promise(async (resolve) => {
+        try {
+            const machines = await fetch(`${environment.icvApi.url}PmEquipos?pIDOBRA=${pIDOBRA}`, {
+                headers: myHeaders,
+                method: 'GET',
+                agent: agent
+            })
+            const machinesList = await (await machines.json()).data
+            const response = await Machine.find({idobra: pIDOBRA})
+            const data = {
+                message: `Obra ${pIDOBRA}`,
+                data: machinesList.length,
+                maquinasEnBBDD: response.length
             }
-            machine.brand = machine.marca;
-            machine.model = machine.modelo;
-            machine.hourMeter = machine.horometro;
-            try {
-                const findMachine = await Machine.findOne({equid: machine.equid})
-                if (findMachine) {
-                    await Machine.findByIdAndUpdate(findMachine._id, machine)
-                } else {
-                    console.log('Machine not found')
-                    try {
-                        await Machine.create(machine);
-                    } catch (error) {
-                        /* console.log(error) */
+            machinesList.forEach(async (machine, index) => {
+                /* console.log(machine) */
+                machine.idpminspeccion = await getIdPmInspection(machine.equid);
+                machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
+                if(machine.modelo[0]==='7'){
+                    machine.type = 'Camión'
+                }else if(machine.modelo[0] === 'P') {
+                    machine.type = 'Pala'
+                }else if(machine.modelo[0] === '9') {
+                    machine.type = 'Cargador Frontal'
+                }else if(machine.modelo[0] === 'D') {
+                    machine.type = 'Bulldozer'
+                }
+                machine.brand = machine.marca;
+                machine.model = machine.modelo;
+                machine.hourMeter = machine.horometro;
+                try {
+                    const findMachine = await Machine.findOne({equid: machine.equid})
+                    if (findMachine) {
+                        await Machine.findByIdAndUpdate(findMachine._id, machine)
+                    } else {
+                        console.log('Machine not found')
+                        try {
+                            await Machine.create(machine);
+                        } catch (error) {
+                            console.log(error)
+                        }
+                    }
+                } catch (error) {
+                    console.log(index, ' ERROR ====> ', error)
+                }
+                if(index === (machinesList.length - 1)) {
+                    if (isSync) {
+                        resolve(data)
                     }
                 }
-                if (isSync) {
-                    return {
-                        message: 'Máquinas sincronizadas.'
-                    }
-                }
-            } catch (error) {
-                /* console.log(index, ' ERROR ====> ', error) */
-            }
-            if(index == (machines.length - 1)) {
-    
-            }
-        })
-    } catch (error) {
-        
-    }    
+            })
+        } catch (error) {
+            
+        }
+    })
 }
 
 const editMachineToSend = async (pIDOBRA) => {
@@ -588,6 +592,7 @@ const getAllGuidesHeaderAndStruct = (pIDPM) => {
 }
 
 const getOMSap = async (year, month) => {
+    console.log(year, month)
     const OMSapList = await fetch(`${environment.icvApi.url}OMSap?pYEAR=${year}&pMONTH=${month}`, {
         headers: myHeaders,
         method: 'GET',
@@ -669,7 +674,7 @@ const crearPautasDesdeSAP = async (pautas, index) => {
                 crearPautasDesdeSAP(pautas, index)
             }
         } else {
-            console.log(`Pauta OM ${om.om} no creada por no encontrar el equipo.`)
+            console.log(`Pauta OM ${om.om} está cerrada.`)
             /* admins.forEach((user) => {
                 let notificationToSave = {
                     id: user._id.toString(),

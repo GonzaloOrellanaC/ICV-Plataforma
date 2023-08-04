@@ -134,3 +134,9 @@
     cursor: pointer;
     background-color: #e4e4e4;
 }
+
+.itemListAutomatic {
+    cursor: pointer;
+    background-color: #e4e4e4;
+    font-weight: bold;
+}

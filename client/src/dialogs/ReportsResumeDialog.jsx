@@ -23,7 +23,6 @@ const ReportsResumeDialog = ({open, reports, handleClose}) => {
             const automaticReportsCache = []
             const manualReportsCache = []
             reports.forEach((report, i) => {
-                console.log(report.description)
                 if (report.description) {
                     automaticReportsCache.push(report)
                 } else {

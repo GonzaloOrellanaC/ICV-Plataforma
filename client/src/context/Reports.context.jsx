@@ -45,10 +45,8 @@ export const ReportsProvider = (props) => {
                 }
                 if (i === (reportsCache.length - 1)) {
                     if (reportsFiltered === null) {
-                        console.log('Agregando Reporte')
                         reportsCache.push(newReport)
                     } else {
-                        console.log('Cambiando Reporte')
                         reportsCache[reportsFiltered] = newReport
                     }
                     setReports(reportsCache)
@@ -58,22 +56,16 @@ export const ReportsProvider = (props) => {
     }, [newReport])
 
     useEffect(() => {
-        console.log(reportsResume)
-    },[reportsResume])
-
-    useEffect(() => {
         if (userData && isAuthenticated) {
             stateReports()
         }
     },[userData, isOnline, isAuthenticated])
 
     const notificationData = (data) => {
-        console.log(data)
         getReports()
     }
 
     const reportsData = (data) => {
-        console.log(data)
         getReports()
     }
 
@@ -83,7 +75,6 @@ export const ReportsProvider = (props) => {
     }
 
     const getData = (data) => {
-        console.log(data)
         addNotification({
             icon: logoNotification,
             title: data.title,
@@ -102,13 +93,14 @@ export const ReportsProvider = (props) => {
         if (reports.length > 0) {
             const reportsResumeCache = []
             reports.forEach((report) => {
-                /*  */
                 reportsResumeCache.push({
                     _id: report._id,
                     idIndex: report.idIndex,
                     dateInit: report.dateInit,
                     datePrev: report.datePrev,
-                    isAutomatic: report.isAutomatic
+                    isAutomatic: report.isAutomatic,
+                    guide: report.guide,
+                    equ: report.machineData.equ
                 })
             })
             setReportsResume(reportsResumeCache)
@@ -119,10 +111,8 @@ export const ReportsProvider = (props) => {
                 setPautas(pautasCache)
             }
             setAssignments(reports)
-            console.log(reports)
         } else {
             if (isAuthenticated) {
-                console.log('Guardando reporte') 
                 setMessage('Descargando recursos')
                 getReportsFromDatabase()
                 setAssignments([])
@@ -147,20 +137,17 @@ export const ReportsProvider = (props) => {
         setMessage('Guardando reportes')
         const reportsCache = [...reports]
         const response = await reportsRoutes.editReportById(reportData)
-        console.log(response)
         const reportUpdated = response.data
         const reportIndex = reportsCache.find((report, index) => {
             if (report._id === reportUpdated._id) return index
         })
         reportsCache[reportIndex] = reportUpdated
         setReports(reportsCache)
-        console.log('reporte asignado')
         alert('reporte asignado')
         setLoading(false)
     }
 
     const createReport = async (reportData, setLoading) => {
-        console.log(reportData)
         setLoading(true)
         const reportsCache = [...reports]
         const response = await reportsRoutes.createReport(reportData)
@@ -176,7 +163,6 @@ export const ReportsProvider = (props) => {
         setMessage('Guardando reportes')
         const reportsCache = [...reports]
         const response = await reportsRoutes.editReportById(reportData)
-        console.log(response)
         const reportUpdated = response.data
         const reportIndex = reportsCache.find((report, index) => {
             if (report._id === reportUpdated._id) return index
@@ -189,7 +175,6 @@ export const ReportsProvider = (props) => {
         setMessage('Guardando reportes')
         const reportsCache = [...reports]
         const response = await reportsRoutes.editReportById(reportData)
-        console.log(response)
         const reportUpdated = response.data
         const reportIndex = reportsCache.find((report, index) => {
             if (report._id === reportUpdated._id) return index
@@ -200,7 +185,6 @@ export const ReportsProvider = (props) => {
 
     const savePautas = async () => {
         const {database} = await pautasDatabase.initDbPMs()
-        console.log(pautas)
         pautas.forEach(async (pauta, i) => {
             await pautasDatabase.actualizar(pauta, database)
             if (i === (pautas.length - 1)) {
@@ -222,7 +206,6 @@ export const ReportsProvider = (props) => {
 
     const saveExecutionReportToDatabase = async () => {
         setMessage('Guardando datos en navegador')
-        console.log('init!!!!')
         const {database} = await executionReportsDatabase.initDb()
         const db = await pautasDatabase.initDbPMs()
         reports.forEach(async (report, i) => {
@@ -244,9 +227,7 @@ export const ReportsProvider = (props) => {
                         offLineGuard: null
                     }
                     const responseNewExecution = await executionReportsRoutes.saveExecutionReport(executionReportData)
-                    console.log('Se guarda reporte ', responseNewExecution)
                     await executionReportsDatabase.actualizar(responseNewExecution.data, database)
-                    console.log('Se guarda reporte ', responseNewExecution)
                     if (!report.dateInit) {
                         report.dateInit = new Date()
                         await reportsRoutes.editReportById(report)
@@ -329,13 +310,11 @@ export const ReportsProvider = (props) => {
         setMessage('Descargando pautas')
         const {database} = await pautasDatabase.initDbPMs()
         const response = await pautasDatabase.consultar(database)
-        console.log(response)
         if (response.length > 0) {
             setPautas(response)
             setPautasCache(response)
         } else {
             const responseCache = await patternsRoutes.getPatternDetails()
-            console.log('Pautas: ', responseCache.data)
             setPautas(responseCache.data)
             setPautasCache(responseCache.data)
         }
@@ -372,17 +351,13 @@ export const ReportsProvider = (props) => {
         setMessage('Sincronizando reportes')
         setStatusReports(true)
         if (isOnline) {
-            console.log(isOperator, userData)
             if (admin) {
                 const response = await reportsRoutes.getAllReports()
                 setReports(response.data)
                 setStatusReports(false)
             } else {
-                console.log(isOperator, isSapExecutive , isShiftManager , isChiefMachinery)
                 if (isOperator && (!isSapExecutive && !isShiftManager && !isChiefMachinery)) {
-                    console.log(userData._id, site.idobra)
                     const response = await reportsRoutes.findMyAssignations(userData._id, site.idobra)
-                    console.log(response.data)
                     setReports(response.data)
                     setStatusReports(false)
                 } else if (isOperator && (isSapExecutive || isShiftManager || isChiefMachinery)) {
@@ -391,7 +366,6 @@ export const ReportsProvider = (props) => {
                     setStatusReports(false)
                 } else if (isSapExecutive || isShiftManager || isChiefMachinery) {
                     const response = await reportsRoutes.getAllReportsbySite(site.idobra)
-                    console.log('Reportes: ', response.data)
                     setReports(response.data)
                     setStatusReports(false)
                 }

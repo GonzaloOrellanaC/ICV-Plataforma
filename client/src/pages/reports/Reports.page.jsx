@@ -438,11 +438,11 @@ const ReportsPage = () => {
             <LoadingLogoDialog
                 open={loadingSpinner}
             />
-            <ReportsResumeDialog
+            {openReportSumary && <ReportsResumeDialog
                 open={openReportSumary}
                 handleClose={closeToReportSumary}
                 reports={reports}
-            />
+            />}
             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20, flexGrow: 1}}>
                     {/* <AppBar position="static"> */}
