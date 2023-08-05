@@ -1,4 +1,5 @@
 import { Notification } from '../models'
+import { Sentry } from './sentry.services';
 
 const createNotification = (data) => {
     let historyData;
@@ -30,8 +31,13 @@ const getNotificationsById = (req, res) => {
     Notification.find({userId: id}, (err, docs) => {
         if(err) {
             res.send({err: err})
+            Sentry.captureException(err)
         }
-        res.send(docs.slice((docs.length - 2000), docs.length))
+        if (docs.length > 0) {
+            res.send(docs.slice((docs.length - 2000), docs.length))
+        } else {
+            res.send([])
+        }
     })
 }
 
