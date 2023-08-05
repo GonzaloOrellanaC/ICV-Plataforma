@@ -4,12 +4,13 @@ import https from 'https'
 import { environment } from '../config'
 import { Site, Machine, Patterns, PatternDetail, Reports, Users } from '../models'
 import { machinesOfProject } from '../files'
-import { NotificationService, UserServices } from '../services'
+import { NotificationService, UserServices, Sentry } from '../services'
 
 const myHeaders = {
     'Authorization': 'Token ' + environment.icvApi.token,
     'Content-Type': 'application/json'
 }
+
 const agentOptions = {
     rejectUnauthorized: false
 }
@@ -24,7 +25,8 @@ const getSites = () => {
             });
             
         })
-    } catch (err) {
+    } catch (error) {
+        Sentry.captureException(error)
     }
 }
 
@@ -35,6 +37,7 @@ const sincronizar = async (req, res) => {
             const response = await createMachinesToSend(site.idobra, true)
             res.send(response)
         } catch (error) {
+            Sentry.captureException(error)
         }
     })
 }
@@ -85,9 +88,6 @@ const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {
                     agent: agent
                 })
                 pauta.struct = await response3.json();
-                /* if (pautaName==='SPM000236' && (pauta.typepm==='PS750')) {
-                    console.log(pauta.header, pauta.struct)
-                } */
                 const patternFind = await PatternDetail.findOne({idpm: pautaName, typepm: pauta.typepm})
                 if (!patternFind) {
                     await PatternDetail.create(pauta)
@@ -95,9 +95,6 @@ const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {
                     const compareStruct = JSON.stringify(patternFind.struct).localeCompare(JSON.stringify(pauta.struct))
                     const compareHeader = JSON.stringify(patternFind.header).localeCompare(JSON.stringify(pauta.header))
                     const isOkToKeep = compareStruct + compareHeader
-                    /* if (pautaName==='SPM000236'&&pauta.typepm==='PS750') {
-                        console.log(patternFind.header, pauta.header)
-                    } */
                     if (isOkToKeep === 0 || (pauta.header === 'error') || (patternFind.header === ["error"])) {
                         null
                     } else {
@@ -120,6 +117,7 @@ const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {
                 }
             } catch (error) {
                 console.log(error)
+                Sentry.captureException(error)
             }
         })
     }else{
@@ -145,6 +143,7 @@ const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {
             i = i + 1
             leerPauta2(i, machinesListPmsData, listaPMsConcat)
             console.log('ERROR ======> ', error)
+            Sentry.captureException(error)
         }
     }
 }
@@ -170,6 +169,7 @@ const leerPauta = async (i, machinesListPmsData, listaPMsConcat, res) => {
             i = i + 1
             leerPauta(i, machinesListPmsData, listaPMsConcat, res)
             console.log('ERROR ======> ', error)
+            Sentry.captureException(error)
         }
     }
 }
@@ -194,6 +194,7 @@ const getHeaderPauta = async (req, res) => {
         }
     } catch (error) {
         res.send({error: 'error'})
+        Sentry.captureException(error)
     }
 }
 
@@ -217,6 +218,7 @@ const getStructsPauta = async (req, res) => {
         res.send(structs)
     } catch (error) {
         res.send([])
+        Sentry.captureException(error)
     }
 }
 
@@ -237,6 +239,7 @@ const getIdPmInspection = (equi) => {
             }
         } catch (error) {
             resolve(null)
+            Sentry.captureException(error)
         }
     })
 }
@@ -257,6 +260,7 @@ const getIdPmMaintenance = (equi) => {
             }
         } catch (error) {
             resolve(null)
+            Sentry.captureException(error)
         }
     })
 }
@@ -348,7 +352,7 @@ const saveMachineDataById = ( req, res ) => {
         /* console.log(response) */
         if(err) {
             res.status(502).json({message: 'Error de lectura en Base de Datos'})
-            throw err
+            Sentry.captureException(err)
         }
         res.status(200).json(response)
     })
@@ -418,6 +422,7 @@ const createSiteToSend = () => {
             }
         } catch (error) {
             resolve(false)
+            Sentry.captureException(error)
         }
     })
 }
@@ -504,7 +509,7 @@ const createMachinesToSend = (pIDOBRA, isSync = false) => {
                 }
             })
         } catch (error) {
-            
+            Sentry.captureException(error)
         }
     })
 }
@@ -535,6 +540,7 @@ const editMachineToSend = async (pIDOBRA) => {
         }
     } catch (error) {
         console.log('error: ' + error)
+        Sentry.captureException(error)
     }
 }
 
@@ -554,8 +560,9 @@ const filesPetition = ( req, res ) => {
     try{
         const files = fs.readdirSync('../files/GuidesToSend');
         res.status(200).send(files)
-    } catch (err) {
+    } catch (error) {
         res.status(500).json({message: 'Error al enviar la petición'})
+        Sentry.captureException(error)
     }
 }
 
@@ -563,8 +570,9 @@ const filesPetition = ( req, res ) => {
 const filePetition = ( req, res ) => {
     try{
         res.status(200).download(`../files/GuidesToSend/${req.body.fileName}`)
-    } catch (err) {
+    } catch (error) {
         res.status(500).json({message: 'Error al enviar la petición'})
+        Sentry.captureException(error)
     } 
 }
 
@@ -572,8 +580,9 @@ const filePetition = ( req, res ) => {
 const readMachinesOfProject = ( req, res ) => {
     try{
         res.status(200).send(machinesOfProject)
-    } catch (err) {
+    } catch (error) {
         res.status(500).json({message: 'Error al enviar la petición'})
+        Sentry.captureException(error)
     } 
 }
 
@@ -593,14 +602,18 @@ const getAllGuidesHeaderAndStruct = (pIDPM) => {
 
 const getOMSap = async (year, month) => {
     console.log(year, month)
-    const OMSapList = await fetch(`${environment.icvApi.url}OMSap?pYEAR=${year}&pMONTH=${month}`, {
-        headers: myHeaders,
-        method: 'GET',
-        agent: agent
-    })
-    const body = await OMSapList.json();
-    const index = 0
-    crearPautasDesdeSAP(body.data, index)
+    try {
+        const OMSapList = await fetch(`${environment.icvApi.url}OMSap?pYEAR=${year}&pMONTH=${month}`, {
+            headers: myHeaders,
+            method: 'GET',
+            agent: agent
+        })
+        const body = await OMSapList.json();
+        const index = 0
+        crearPautasDesdeSAP(body.data, index)
+    } catch (error) {
+        Sentry.captureException(error)
+    }
 }
 
 const crearPautasDesdeSAP = async (pautas, index) => {
@@ -693,14 +706,19 @@ const crearPautasDesdeSAP = async (pautas, index) => {
 }
 
 const getOMs = async (req, res) => {
-    const {year, month} = req.body
-    const OMSapList = await fetch(`${environment.icvApi.url}OMSap?pYEAR=${year}&pMONTH=${month}`, {
-        headers: myHeaders,
-        method: 'GET',
-        agent: agent
-    })
-    const body = await OMSapList.json();
-    res.status(200).json(body.data)
+    try {
+        const {year, month} = req.body
+        const OMSapList = await fetch(`${environment.icvApi.url}OMSap?pYEAR=${year}&pMONTH=${month}`, {
+            headers: myHeaders,
+            method: 'GET',
+            agent: agent
+        })
+        const body = await OMSapList.json();
+        res.status(200).json(body.data)
+    } catch (error) {
+        Sentry.captureException(error)
+        res.status(200).json(error)
+    }
 }
 
 export default {

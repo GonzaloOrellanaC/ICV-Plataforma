@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { environment } from '../config'
+import { Sentry } from '../services/sentry.services'
 
 /**
  * Initialization of the Database, in this case MongoDB through the Mongoose ODM
@@ -19,6 +20,7 @@ export default async () => {
 
         }).catch(err => {
             console.log(err)
+            Sentry.captureException(err)
         })
 
 

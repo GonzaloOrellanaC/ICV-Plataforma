@@ -1,10 +1,11 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permission,Roles, Site, Machine, Users, Reports, ExecutionReport, Cron, Notification } from '../models';
+import { Permission,Roles, Site, Machine, Cron } from '../models';
 import { ApiIcv } from '../api-icv';
 import apiIcvConnection from '../api-icv/api-icv.connection';
 import { CronJob } from 'cron'
+import { Sentry } from './sentry.services';
 
 const { error: errorMsg } = environment.messages.services.accessControl
 
@@ -95,6 +96,7 @@ const initAccessControl = async () => {
         initTimeMachinesCron()
     } catch (error) {
         console.error(error)
+        Sentry.captureException(error)
     }
 }
 
@@ -103,46 +105,59 @@ let pautasCroneState
 
 const machinesCron = (time) => {
     const jobMachines = new CronJob(time, async () => {
-        const findSites = await getSites();
-        console.log('Starting CRON Job')
-        const findMachines = await Machine.find();
-        if(findMachines) {
-            if(findMachines.length > 0) {
-                findSites.forEach(({idobra}, index) => {
-                    ApiIcv.editMachineToSend(idobra)
+        try {
+            const findSites = await getSites();
+            console.log('Starting CRON Job')
+            const findMachines = await Machine.find();
+            if(findMachines) {
+                if(findMachines.length > 0) {
+                    findSites.forEach(({idobra}, index) => {
+                        ApiIcv.editMachineToSend(idobra)
+                    })
+                }
+            }
+            const sitiosCreados = await ApiIcv.createSiteToSend();
+            if (sitiosCreados) {
+                sitiosCreados.forEach(async (sitio) => {
+                    await ApiIcv.createMachinesToSend(sitio.idobra, true)
                 })
             }
+        } catch (error) {
+            console.log(error)
+            Sentry.captureException(error)
         }
-        const sitiosCreados = await ApiIcv.createSiteToSend();
-        if (sitiosCreados) {
-            sitiosCreados.forEach(async (sitio) => {
-                await ApiIcv.createMachinesToSend(sitio.idobra, true)
-            })
-        }
-
     })
     return jobMachines
 }
 
 const pautasCron = (time) => {
-    const jobPautas = new CronJob(time, () => {
-        apiIcvConnection.leerPautas2()
-        console.log('Starting CRON Job')
-        const date = new Date()
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth())
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1)
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2)
-    })
-    return jobPautas
+    try {
+        const jobPautas = new CronJob(time, () => {
+            apiIcvConnection.leerPautas2()
+            console.log('Starting CRON Job')
+            const date = new Date()
+            apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth())
+            apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1)
+            apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2)
+        })
+        return jobPautas
+    } catch (error) {
+        console.log(error)
+        Sentry.captureException(error)
+    }
 }
 
 const initTimeMachinesCron = async () => {
-    const times = await Cron.find()
-    if (times.length > 0) {
-        machinesCronState = machinesCron(times[0].timeMachines)
-        pautasCroneState = pautasCron(times[0].timePautas)
-        machinesCronState.start()
-        pautasCroneState.start()
+    try {
+        const times = await Cron.find()
+        if (times.length > 0) {
+            machinesCronState = machinesCron(times[0].timeMachines)
+            pautasCroneState = pautasCron(times[0].timePautas)
+            machinesCronState.start()
+            pautasCroneState.start()
+        }
+    } catch (error) {
+        Sentry.captureException(error)
     }
 }
 
@@ -178,6 +193,7 @@ const getSites = () => {
             
         })
     } catch (err) {
+        Sentry.captureException(err)
     }
 }
 
