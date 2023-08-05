@@ -28,17 +28,25 @@ const createNotification = (data) => {
 const getNotificationsById = (req, res) => {
     const { id } = req.body
     /* console.log(id) */
-    Notification.find({userId: id}, (err, docs) => {
-        if(err) {
-            res.send({err: err})
-            Sentry.captureException(err)
-        }
-        if (docs.length > 0) {
-            res.send(docs.slice((docs.length - 2000), docs.length))
+    if (id) {
+        if (id.length > 1) {
+            Notification.find({userId: id}, (err, docs) => {
+                if(err) {
+                    res.send({err: err})
+                    Sentry.captureException(err)
+                }
+                if (docs.length > 0) {
+                    res.send(docs.slice((docs.length - 2000), docs.length))
+                } else {
+                    res.send([])
+                }
+            })
         } else {
             res.send([])
         }
-    })
+    } else {
+        res.send([])
+    }
 }
 
 const actualiceNotificationState = async (req, res) => {
