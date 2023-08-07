@@ -35,8 +35,12 @@ const getNotificationsById = (req, res) => {
                     res.send({err: err})
                     Sentry.captureException(err)
                 }
-                if (docs.length > 0) {
-                    res.send(docs.slice((docs.length - 2000), docs.length))
+                if (docs) {
+                    if (docs.length > 0) {
+                        res.send(docs.slice((docs.length - 2000), docs.length))
+                    } else {
+                        res.send([])
+                    }
                 } else {
                     res.send([])
                 }
