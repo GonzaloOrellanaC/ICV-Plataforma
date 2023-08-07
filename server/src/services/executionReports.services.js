@@ -46,7 +46,9 @@ const saveExecutionReport = async (req, res) => {
         group[key].forEach((item) => {
             if (item.messages) {
                 item.messages.forEach((mensaje, i) => {
-                    messages.push({key: key, message: mensaje})
+                    if (mensaje) {
+                        messages.push({key: key, message: mensaje})
+                    }
                 })
             }
         })

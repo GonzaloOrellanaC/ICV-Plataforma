@@ -78,6 +78,7 @@ const ReportDataDialog = (
     if(item.messages) {
       const total = []
       item.messages.forEach(async (m, i) => {
+        /* const base64 =  */
         console.log(m)
         /* const findUser = usersFilteredBySite.filter(user =>{if (user._id === m.user) return user})[0]
         if (findUser) {
@@ -88,12 +89,14 @@ const ReportDataDialog = (
         } else {
           m.name = 'User Test'
         } */
-        if (m.urlBase64) {
-          total.push(m)
-        }
-        if (i == (item.messages.length - 1)) {
-          setPicturesOfItem(total.length + 1)
-          setMessages(item.messages)
+        if (m) {
+          if (m.urlBase64) {
+            total.push(m)
+          }
+          if (i == (item.messages.length - 1)) {
+            setPicturesOfItem(total.length + 1)
+            setMessages(item.messages)
+          }
         }
       })
 
@@ -109,17 +112,19 @@ const ReportDataDialog = (
       let haveClip = false
       const messagesCache = [...messages]
       messagesCache.forEach(async (mess, i) => {
-        if (mess.urlBase64 || mess.urlImageMessage) {
-          haveClip = true
-        }
-        if (mess.content === 'Se indica estado ejecutado sin dejar mensajes') {
-
-        } else {
-          haveMessage = true
-        }
-        if (i === (messages.length - 1)) {
-          item.haveMessage = haveMessage
-          item.haveClip = haveClip
+        if (mess) {
+          if (mess.urlBase64 || mess.urlImageMessage) {
+            haveClip = true
+          }
+          if (mess.content === 'Se indica estado ejecutado sin dejar mensajes') {
+  
+          } else {
+            haveMessage = true
+          }
+          if (i === (messages.length - 1)) {
+            item.haveMessage = haveMessage
+            item.haveClip = haveClip
+          }
         }
       })
       setMessage('')
@@ -182,7 +187,13 @@ const ReportDataDialog = (
         urlImageMessage: url
       }
       /* console.log(messageData) */
-      const messagesCache = [...messages]
+      const messagesOk = []
+      messages.forEach((m) => {
+        if (m) {
+          messagesOk.push(m)
+        }
+      })
+      const messagesCache = [...messagesOk]
       messagesCache.push(messageData)
       setMessages(messagesCache)
       /* item.messages = messages */
@@ -191,7 +202,13 @@ const ReportDataDialog = (
   }
 
   const saveItem = (index, state, item) => {
-    item.messages = messages
+    const messagesOk = []
+    messages.forEach((m) => {
+      if (m) {
+        messagesOk.push(m)
+      }
+    })
+    item.messages = [...messagesOk]
     setIsEdited(false)
     if (item.unidad !== '*') {
       if (unidad) {
@@ -203,7 +220,7 @@ const ReportDataDialog = (
         alert('Debe ingresar el total utilizado. Si no utilizó insumo o repuesto solicitado debe ingresar 0')
       }
     } else {
-      if(messages.length > 0) {
+      if(messagesOk.length > 0) {
         save(index, state, item)
         executionReport.offLineGuard = Date.now()
         handleClose()
@@ -364,30 +381,32 @@ const ReportDataDialog = (
               {
                 messages.map((message, index) => {
                   console.log(message)
-                  return(
-                    <div key={index} style={
-                      {
-                        position: 'relative',
-                        color: '#555', 
-                        padding: 5, 
-                        margin: 5, 
-                        borderRadius: 20, 
-                        borderWidth: 2, 
-                        borderStyle: 'solid', 
-                        borderColor: '#dddddd', 
-                        backgroundColor: '#F5F5F5'
-                        }
-                        }>
-                          {
-                            (((userData._id === message.user && canEdit ) || admin)) &&
-                            <IconButton onClick={()=>{deleteMessage(index)}} style={{position: 'absolute', top: 10, right: 10}}><Close style={{fontSize: 14, color: 'black'}}/></IconButton>
+                  if (message) {
+                    return(
+                      <div key={index} style={
+                        {
+                          position: 'relative',
+                          color: '#555', 
+                          padding: 5, 
+                          margin: 5, 
+                          borderRadius: 20, 
+                          borderWidth: 2, 
+                          borderStyle: 'solid', 
+                          borderColor: '#dddddd', 
+                          backgroundColor: '#F5F5F5'
                           }
-                      <p style={{marginBottom: 0, fontSize: 10}}><strong>{message.name}</strong></p>
-                      {(message.urlBase64 || message.urlImageMessage) && <img src={message.urlBase64 ? message.urlBase64 : message.urlImageMessage} height={70} onClick={() => openImage((message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage)} />}
-                      <p style={{marginBottom: 20, whiteSpace: 'pre-line'}}>{message.content}</p>
-                      <p style={{position: 'absolute', fontSize: 10, right: 5, bottom: 0}}>{dateWithTime(message.id)}</p>
-                    </div>
-                  )
+                          }>
+                            {
+                              ((((userData._id === message.user) && canEdit ) || admin)) &&
+                              <IconButton onClick={()=>{deleteMessage(index)}} style={{position: 'absolute', top: 10, right: 10}}><Close style={{fontSize: 14, color: 'black'}}/></IconButton>
+                            }
+                        <p style={{marginBottom: 0, fontSize: 10}}><strong>{message.name}</strong></p>
+                        {(message.urlBase64 || message.urlImageMessage) && <img src={message.urlBase64 ? message.urlBase64 : message.urlImageMessage} height={70} onClick={() => openImage((message.urlBase64.length > 0) ? message.urlBase64 : message.urlImageMessage)} />}
+                        <p style={{marginBottom: 20, whiteSpace: 'pre-line'}}>{message.content}</p>
+                        <p style={{position: 'absolute', fontSize: 10, right: 5, bottom: 0}}>{dateWithTime(message.id)}</p>
+                      </div>
+                    )
+                  }
                 })
               }
             </div>

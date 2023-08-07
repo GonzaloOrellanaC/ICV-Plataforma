@@ -137,9 +137,35 @@ const ActivitiesDetailPage = () => {
                 reportCache.emailing = "termino-jornada"
                 reportCache.fullNameWorker = `${userData.name} ${userData.lastName}`
                 reportCache.emailsToSend = emails
-                let ids = new Array()
-                ids = await getExecutivesSapId()
-                setMessage('Enviando avisos a usuarios.')
+                /* let ids = new Array() */
+                /* setMessage('Enviando avisos a usuarios.') */
+                setMessage('Guardando OT en base de datos.')
+                let actualiza = await reportsRoutes.editReport(reportCache)
+                const executionReportCache = executionReport
+                await executionReportsRoutes.saveExecutionReport(executionReportCache)
+                if(actualiza) {
+                    const {database} = await reportsDatabase.initDbReports()
+                    const state = await reportsDatabase.eliminar(reportCache.idIndex, database)
+                    console.log('Revisando si se borra de bases de datos', state)
+                    setTimeout(() => {
+                        SocketConnection.sendnotificationToManyUsers(
+                            'termino-jornada',
+                            `${userData._id}`,
+                            'Aviso general',
+                            'Término de jornada',
+                            `${userData.name} ${userData.lastName} ha terminado su jornada. Recuerde reasignar OT`,
+                            '/reports',
+                            null,
+                            sitio._id
+                        )
+                        alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
+                        navigate(-1)
+                        setLoadingLogo(false)
+                        setMessage('')
+                        getReportsOffline()
+                    }, 500)
+                }
+                /* ids = await getExecutivesSapId()
                 ids.forEach(async (id, index) => {
                     SocketConnection.sendnotificationToUser(
                         'termino-jornada',
@@ -152,24 +178,9 @@ const ActivitiesDetailPage = () => {
                         sitio._id
                     )
                     if(index == (ids.length - 1)) {
-                        setMessage('Guardando OT en base de datos.')
-                        let actualiza = await reportsRoutes.editReport(reportCache)
-                        const executionReportCache = executionReport
-                        await executionReportsRoutes.saveExecutionReport(executionReportCache)
-                        if(actualiza) {
-                            const {database} = await reportsDatabase.initDbReports()
-                            const state = await reportsDatabase.eliminar(reportCache.idIndex, database)
-                            console.log('Revisando si se borra de bases de datos', state)
-                            setTimeout(() => {
-                                alert('Se ha actualizado su reporte. La orden desaparecerá de su listado.')
-                                navigate(-1)
-                                setLoadingLogo(false)
-                                setMessage('')
-                                getReportsOffline()
-                            }, 500)
-                        }
+                        
                     }
-                })
+                }) */
             }
         }else{
             setLoadingLogo(false)

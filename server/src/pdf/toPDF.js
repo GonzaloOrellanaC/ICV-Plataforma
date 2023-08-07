@@ -423,8 +423,10 @@ const createSubTables = async (list, index, indexNumber) => {
         if(e.writeCommits) {
             if(e.writeCommits.length > 0) {
                 e.writeCommits.forEach((commitItem, index) => {
-                    if(commitItem.urlBase64 || commitItem.urlImageMessage) {
-                        imagesList.push(commitItem)
+                    if (commitItem) {
+                        if(commitItem.urlBase64 || commitItem.urlImageMessage) {
+                            imagesList.push(commitItem)
+                        }
                     }
                 })
             }
@@ -434,8 +436,10 @@ const createSubTables = async (list, index, indexNumber) => {
         }else if(e.readCommits){
             if(e.readCommits.length > 0) {
                 e.readCommits.forEach((commitItem, index) => {
-                    if(commitItem.urlBase64 || commitItem.urlImageMessage) {
-                        imagesList.push(commitItem)
+                    if (commitItem) {
+                        if(commitItem.urlBase64 || commitItem.urlImageMessage) {
+                            imagesList.push(commitItem)
+                        }
                     }
                 })
             }
@@ -445,11 +449,13 @@ const createSubTables = async (list, index, indexNumber) => {
         }else if(e.messages && e.messages.length > 0) {
             if(e.messages.length > 0) {
                 e.messages.forEach((commitItem, index) => {
-                    if(commitItem.urlBase64 || commitItem.urlImageMessage) {
-                        commitItem.title = e.strpmdesc
-                        commitItem.descr = e.taskdesc
-                        commitItem.obs = e.obs01
-                        imagesList.push(commitItem)
+                    if (commitItem) {
+                        if(commitItem.urlBase64 || commitItem.urlImageMessage) {
+                            commitItem.title = e.strpmdesc
+                            commitItem.descr = e.taskdesc
+                            commitItem.obs = e.obs01
+                            imagesList.push(commitItem)
+                        }
                     }
                 })
             }
