@@ -1,5 +1,6 @@
 import { EmailMailgunServices, EmailServices, UserServices } from '../services'
 import { Users } from '../models'
+import { Sentry } from '../services/sentry.services'
 
 const createUser = async  (req, res, next) => {
     
@@ -33,17 +34,18 @@ const createUser = async  (req, res, next) => {
 }
 
 const editUser = async  (req, res, next) => {
-    
     const { body: { userData, id } } = req
-
-
     try {
-        const editingUser = await UserServices.editUser(userData, id);
-
-        res.json(editingUser)
+        if (userData && id) {
+            const editingUser = await UserServices.editUser(userData, id);
+            res.json(editingUser)
+        } else {
+            res.json([])
+        }
         
         //return res.status(200).json({ user: registerUser.generateJWT() })
     } catch (error) {
+        Sentry.captureEvent(error)
         return res.status(400).end(error.message)
     }
 }
@@ -54,36 +56,50 @@ const findByRut = async  (req, res, next) => {
 
 
         try {
-            await Users.find({rut: rut}, (err, user) => {
+            if (rut) {
+                const users = await Users.find({rut: rut})
+                if (users.length > 0) {
+                    res.send(true)
+                } else {
+                    res.send(false)
+                }
+            }
+            /* await Users.find({rut: rut}, (err, user) => {
                 if(err) throw err;
                 if(user.length > 0) {
                     res.send(true)
                 }else{
                     res.send(false)
                 }
-            });
+            }); */
         } catch (error) {
+            res.send(false)
+            Sentry.captureEvent(error)
             //return res.status(400).end(error.message)
         }
     
 }
 
 const findByRole = async  (req, res, next) => {
-    
     const { body: { role } } = req
-
-
         try {
-            await Users.find({role: role}, (err, users) => {
+            if (role) {
+                const users = await Users.find({role: role})
+                res.send(users)
+            } else {
+                res.send([])
+            }
+            /* await Users.find({role: role}, (err, users) => {
                 if(err) throw err;
                 if(users.length > 0) {
                     res.send(users)
                 }else{
                     res.send(false)
                 }
-            });
+            }); */
         } catch (error) {
-
+            Sentry.captureEvent(error)
+            res.send([])
         }
     
 }
@@ -148,20 +164,20 @@ const readUser = (req, res, next) => {
     }
 }
 
-const getUserSign = (req, res, next) => {
+const getUserSign = async (req, res, next) => {
     const { body } = req;
     /* console.log(body) */
     try{
-        Users.findById(body.id, (err, user) => {
-            if (err) {
-                res.status(400).end({message: 'error', error: err})
-            }
-            if (user) {
-                res.json(user.sign)
-            }
-        });
+        const user = await Users.findById(body.id)
+        if (user) {
+            res.json(user.sign)
+        } else {
+            res.status(400).end({message: 'error'})
+        }
     }catch (err) {
+        res.status(400).end({message: 'error', error: err})
         console.log(err)
+        Sentry.captureEvent(err)
     }
 }
 
@@ -170,10 +186,14 @@ const deleteUser = (req, res, next) => {
     const { body } = req;
     try{
         Users.findByIdAndDelete(body.id, (err, response) => {
+            if (err) {
+                Sentry.captureEvent(err)
+            }
             res.json(response)
         });
-    }catch (err) {
-        console.log(err)
+    }catch (error) {
+        console.log(error)
+        Sentry.captureEvent(error)
     }
 }
 
