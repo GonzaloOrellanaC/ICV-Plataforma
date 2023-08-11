@@ -32,9 +32,9 @@ export const NotificationsProvider = props => {
     }
 
     const getNotifications = async () => {
-        const response = await notificationsRoutes.getNotificationsById(userData._id)
+        /* const response = await notificationsRoutes.getNotificationsById(userData._id)
         setMyNotifications(response.data.sort(orderByDate))
-        setLastNotification(response.data.sort(orderByDate)[0])
+        setLastNotification(response.data.sort(orderByDate)[0]) */
     }
 
     const provider = {
