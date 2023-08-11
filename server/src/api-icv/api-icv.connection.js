@@ -523,14 +523,22 @@ const editMachineToSend = async (pIDOBRA) => {
         })
         if( machines ) {
             const body = await machines.json();
+            console.log(body)
             if( body ) {
                 let machines = [];
                 machines = body.data;
                 machines.forEach(async (machine, index) => {
-                    machine.hourMeter = machine.horometro;
-                    let machineEdit = await Machine.findOneAndUpdate({equid: machine.equid},{hourMeter: machine.hourMeter}, { new: true, timestamps: false })
-                    if( machineEdit ) {
-    
+                    try {
+                        machine.idpminspeccion = await getIdPmInspection(machine.equid);
+                        machine.idpmmantencion = await getIdPmMaintenance(machine.equid);    
+                        machine.hourMeter = machine.horometro;
+                        await Machine.findOneAndUpdate(
+                            {equid: machine.equid},
+                            {hourMeter: machine.hourMeter, idpminspeccion: machine.idpminspeccion, idpmmantencion: machine.idpmmantencion},
+                            {new: true, timestamps: false}
+                        )
+                    } catch (error) {
+                        console.log('Error: ', error)
                     }
                     if(index == (machines.length - 1)) {
     

@@ -28,8 +28,8 @@ const initAccessControl = async () => {
     try {
         /* const not = await Notification.find()
         console.log(not[0]) */
-        apiIcvConnection.leerPautas2()
-        const date = new Date()
+        /* apiIcvConnection.leerPautas2() */
+        /* const date = new Date() */
         /* const sitiosCreados = await ApiIcv.createSiteToSend();
         if (sitiosCreados) {
             sitiosCreados.forEach(async (sitio) => {
@@ -94,6 +94,33 @@ const initAccessControl = async () => {
             })
         } */
         initTimeMachinesCron()
+        /* const findMachines = await Machine.find();
+        const group = {}
+
+        findMachines.forEach((machine, i) => {
+            const nameObra = machine.equ
+            if (!group[nameObra]) {
+              group[nameObra] = [];
+            }
+            group[nameObra].push(machine)
+        }) */
+
+        /* const findSites = await getSites();
+        console.log('Starting CRON Job')
+        const findMachines = await Machine.find();
+        if(findMachines) {
+            if(findMachines.length > 0) {
+                findSites.forEach(({idobra}, index) => {
+                    ApiIcv.editMachineToSend(idobra)
+                })
+            }
+        }
+        const sitiosCreados = await ApiIcv.createSiteToSend();
+        if (sitiosCreados) {
+            sitiosCreados.forEach(async (sitio) => {
+                await ApiIcv.createMachinesToSend(sitio.idobra, true)
+            })
+        } */
     } catch (error) {
         console.error(error)
         Sentry.captureException(error)
