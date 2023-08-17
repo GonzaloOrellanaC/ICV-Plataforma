@@ -20,6 +20,7 @@ import PatternsRoutes from './patterns.routes'
 import SitesRoutes from './sites.routes'
 import CronRoutes from './cron.routes'
 import NewsRoutes from './news.routes'
+import ApiExternalRoutes from './api-external.routes'
 
 const router = new Router()
 
@@ -42,5 +43,6 @@ router.use('/patterns', PatternsRoutes)
 router.use('/sites', SitesRoutes)
 router.use('/cron', CronRoutes)
 router.use('/news', NewsRoutes)
+router.use('/api', ApiExternalRoutes)
 
 export default router
