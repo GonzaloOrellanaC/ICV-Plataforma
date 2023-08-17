@@ -13,6 +13,11 @@ export const Machine3DProvider = props => {
     const [openDownload3D, setOpenDownload3D] = useState(false)
     const [openVersion, setOpenVersion] = useState(false)
     const [todoArchivo3DListo, setTodoArchivo3DListo] = useState(false)
+    const [machines3D, setMachines3D] = useState([])
+
+    useEffect(() => {
+        console.log(machines3D)
+    },[machines3D])
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -119,6 +124,7 @@ export const Machine3DProvider = props => {
         let db = await FilesToStringDatabase.initDb3DFiles();
         let consulta = await FilesToStringDatabase.consultar(db.database);
         if(consulta.length > 0) {
+            setMachines3D(consulta)
             setLoadingData3D(`Modelos 3D descargados.`)
             setTimeout(() => {
                 setProgressDownload3D(100)
