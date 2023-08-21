@@ -4,6 +4,7 @@ import UserController from './user.controller'
 import MachinesController from './machines.controller'
 import SiteController from './site.controller'
 import Socket from './socket.controller'
+import ApiExternalController from './api-external.controller'
 
 export {
     AuthController,
@@ -11,5 +12,6 @@ export {
     UserController,
     MachinesController,
     SiteController,
-    Socket
+    Socket,
+    ApiExternalController
 }

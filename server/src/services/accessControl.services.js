@@ -181,8 +181,8 @@ const initTimeMachinesCron = async () => {
         if (times.length > 0) {
             machinesCronState = machinesCron(times[0].timeMachines)
             pautasCroneState = pautasCron(times[0].timePautas)
-            machinesCronState.start()
-            pautasCroneState.start()
+            /* machinesCronState.start()
+            pautasCroneState.start() */
         }
     } catch (error) {
         Sentry.captureException(error)
