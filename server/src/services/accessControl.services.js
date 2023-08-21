@@ -174,6 +174,7 @@ const pautasCron = (time) => {
     }
 }
 
+
 const initTimeMachinesCron = async () => {
     try {
         const times = await Cron.find()

@@ -11,6 +11,7 @@ import { useAuth, useReportsContext, useSitesContext } from '../../context';
 import * as XLSX from 'xlsx'
 import { executionReportsRoutes } from '../../routes';
 import { LoadingLogoDialog, ReportsResumeDialog } from '../../dialogs';
+import { date } from '../../config';
 
 const ReportsPage = () => {
     const {sitesToSelection} = useSitesContext()
@@ -369,53 +370,89 @@ const ReportsPage = () => {
             setLoading(true)
             console.log('download')
             const reportsCache = [...reports]
+            const reportsToDownload = []
+            const materials = []
             reportsCache.forEach(async (report, i)=>{
                 let groupList = []
                 let newVariables = {}
                 const response = await executionReportsRoutes.getExecutionReportById(report)
                 report.commitWarning = ''
                 report.isWarning = false
+                const reporteDescarga = {
+                    'N° OT': report.idIndex,
+                    'Número OM': report.sapId,
+                    'Fecha de creación': date(report.createdAt),
+                    'Fecha de inicio previsto': date(report.datePrev),
+                    'Fecha de término previsto': date(report.endPrev),
+                    'Fecha de inicio reporte': date(report.dateInit),
+                    'Fecha de término reporte': date(report.endReport),
+                    'Fecha de cierre': date(report.dateClose),
+                    'Guía': report.guide,
+                    'ID PM': report.idPm,
+                    'N° máquina': report.machine,
+                    'Tipo de reporte': report.reportType,
+                    'Código de obra': report.site,
+                    'Estado de orden': report.state,
+                    'Modo Test': report.testMode,
+                    'Ultima actualización': date(report.updatedAt),
+                    'URL documento PDF': report.urlPdf,
+                    'Creado por sistema': report.isAutomatic,
+                    'Progreso de avance': report.progress,
+                    'Tiene alerta': false,
+                    'Comentario a considerar': ''
+                }
+                const reportTemp = reporteDescarga
+                console.log(response.state)
                 if (response) {
                     if (response.data.group) {
                         const group = Object.values(response.data.group)
-                        const key = Object.keys(response.data.group)
-                        console.log(group, key)
+                        /* const key = Object.keys(response.data.group) */
+                        /* console.log(group, key) */
+                        const material = {}
                         group.forEach((el, n) => {
                             el.forEach((item, i) => {
                                 if (item.isWarning) {
-                                    report.isWarning = true
-                                    if (!report.commitWarning) {
-                                        report.commitWarning = 'Se detecta tareas pendientes:\n'
+                                    reportTemp['Tiene alerta'] = true
+                                    if (!reportTemp['Comentario a considerar']) {
+                                        reportTemp['Comentario a considerar'] = 'Se detecta tareas pendientes:\n'
                                     }
-                                    report.commitWarning += `- Apartado ${item.strpmdesc}, pregunta ${i + 1};\n`
+                                    reportTemp['Comentario a considerar'] += `- Apartado ${item.strpmdesc}, pregunta ${i + 1};\n`
                                 }
                                 if (item.unidad !== '*') {
                                     /* console.log(item) */
                                     groupList.push(item)
-                                    if (!report[`${item.partnumberUtl}/${item.unidad} proyectada`]) {
-                                        report[`${item.partnumberUtl}/${item.unidad} proyectada`] = 0
+                                    if (!material[`${item.partnumberUtl}/${item.unidad} proyectada`]) {
+                                        material[`${item.partnumberUtl}/${item.unidad} proyectada`] = 0
                                     }
-                                    report[`${item.partnumberUtl}/${item.unidad} proyectada`] = report[`${item.partnumberUtl}/${item.unidad} proyectada`] + item.cantidad
+                                    material[`${item.partnumberUtl}/${item.unidad} proyectada`] = material[`${item.partnumberUtl}/${item.unidad} proyectada`] + item.cantidad
 
-                                    if (!report[`${item.partnumberUtl}/${item.unidad} usada`]) {
-                                        report[`${item.partnumberUtl}/${item.unidad} usada`] = 0
+                                    if (!material[`${item.partnumberUtl}/${item.unidad} usada`]) {
+                                        material[`${item.partnumberUtl}/${item.unidad} usada`] = 0
                                     }
-                                    report[`${item.partnumberUtl}/${item.unidad} usada`] = report[`${item.partnumberUtl}/${item.unidad} usada`] + (item.unidadData ? parseFloat(item.unidadData) : 0)
+                                    material[`${item.partnumberUtl}/${item.unidad} usada`] = material[`${item.partnumberUtl}/${item.unidad} usada`] + (item.unidadData ? parseFloat(item.unidadData) : 0)
                                 }
                             })
                             if (n === (group.length - 1)) {
-                                if (!report.isWarning && (report.commitWarning.length === 0)) {
-                                    report.commitWarning = 'Reporte ha sido completado.'
+                                if (!material['Tiene alerta'] && (material['Comentario a considerar'].length === 0)) {
+                                    material['Comentario a considerar'] = 'Reporte ha sido completado.'
                                 }
                             }
                         })
+                        materials.push(material)
+                        reportsToDownload.push(reportTemp)
+                    } else {
+                        reportsToDownload.push(reportTemp)
                     }
+                } else {
+                    reportsToDownload.push(reportTemp)
                 }
                 if (i === (reportsCache.length - 1)) {
-                    console.log(reportsCache)
-                    const worksheet = XLSX.utils.json_to_sheet(reportsCache);
+                    console.log(reportsToDownload)
                     const workbook = XLSX.utils.book_new();
+                    const worksheet = XLSX.utils.json_to_sheet(reportsToDownload);
+                    const material = XLSX.utils.json_to_sheet(materials);
                     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+                    XLSX.utils.book_append_sheet(workbook, material, "Sheet2");
                     XLSX.writeFile(workbook, "DataSheet.xlsx")
                     setLoading(false)
                 }

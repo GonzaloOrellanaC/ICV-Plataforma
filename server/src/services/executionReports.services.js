@@ -5,6 +5,7 @@ const getExecutionReportById = async (req, res) => {
     const { body: {reportData} } = req
     try{
         const executionReport = await ExecutionReport.findOne({reportId: reportData._id}).populate('report').populate('createdBy')
+        console.log(executionReport)
         if (executionReport) {
             res.status(200).json({data: executionReport, state: true})
         } else {

@@ -523,32 +523,44 @@ const editMachineToSend = async (pIDOBRA) => {
         })
         if( machines ) {
             const body = await machines.json();
-            console.log(body)
             if( body ) {
-                let machines = [];
-                machines = body.data;
-                machines.forEach(async (machine, index) => {
-                    try {
-                        machine.idpminspeccion = await getIdPmInspection(machine.equid);
-                        machine.idpmmantencion = await getIdPmMaintenance(machine.equid);    
-                        machine.hourMeter = machine.horometro;
-                        await Machine.findOneAndUpdate(
-                            {equid: machine.equid},
-                            {hourMeter: machine.hourMeter, idpminspeccion: machine.idpminspeccion, idpmmantencion: machine.idpmmantencion},
-                            {new: true, timestamps: false}
-                        )
-                    } catch (error) {
-                        console.log('Error: ', error)
-                    }
-                    if(index == (machines.length - 1)) {
-    
-                    }
-                })
+                let maquinas = [];
+                maquinas = body.data;
+                const index = 0
+                leerMaquinas(maquinas, index)
             }
         }
     } catch (error) {
         console.log('error: ' + error)
         Sentry.captureException(error)
+    }
+}
+
+const leerMaquinas = async (maquinas, index) => {
+    if (maquinas.length === index) {
+        console.log('Lectura terminada')
+    } else {
+        const machine = maquinas[index]
+        machine.idpminspeccion = null;
+        machine.idpmmantencion = null;
+        machine.idpminspeccion = await getIdPmInspection(machine.equid);
+        machine.idpmmantencion = await getIdPmMaintenance(machine.equid);    
+        machine.hourMeter = machine.horometro;
+        try {
+            const response = await Machine.findOneAndUpdate(
+                {equid: machine.equid},
+                {hourMeter: machine.hourMeter, idpminspeccion: machine.idpminspeccion, idpmmantencion: machine.idpmmantencion},
+                {new: true, timestamps: false}
+            )
+            if (response) {
+                index = index + 1
+                leerMaquinas(maquinas, index)
+            }
+        } catch (error) {
+            Sentry.captureException(error)
+            index = index + 1
+            leerMaquinas(maquinas, index)
+        }
     }
 }
 
