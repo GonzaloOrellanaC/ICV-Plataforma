@@ -9,5 +9,8 @@ export default {
     },
     getPatternDetails: () => {
         return axios.get('/patterns/getPatternDetails')
+    },
+    getPatternsDetailByIdpm: (idpm) => {
+        return axios.post('/patterns/getPatternsDetailByIdpm', {idpm: idpm})
     }
 }

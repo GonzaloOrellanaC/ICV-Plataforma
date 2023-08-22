@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import https from 'https'
 import { environment } from '../config'
 import { Site, Machine, Patterns, PatternDetail, Reports, Users } from '../models'
-import { machinesOfProject } from '../files'
+import { machinesListPms, machinesOfProject } from '../files'
 import { NotificationService, UserServices, Sentry } from '../services'
 
 const myHeaders = {
@@ -56,10 +56,135 @@ const leerPautas = async (req, res) => {
 const leerPautas2 = async () => {
     let listaPautas = []
     let i = 0;
-    /* console.log('leer pautas') */
-    const machinesList = await Patterns.find()
-    leerPauta2(i, machinesList, listaPautas)
-    /* res.send({data: 'ok'}) */
+    const machinesList = await Machine.find()
+    /* console.log(machinesList) */
+    const group = {}
+    leerPauta3(i, machinesList, listaPautas, group)
+}
+
+const leerPauta3 = async (i, machinesList, listaPMsConcat, group) => {
+    if(i === (machinesList.length)) {
+        /* console.log(group) */
+        console.log(Object.keys(group))
+        const idpms = Object.keys(group)
+        const n = 0
+        leerPautasPorIDPM(n, idpms, listaPMsConcat)
+    } else {
+        const machine = machinesList[i]
+        /* console.log(machinesList[i]) */
+        /* machinesList.forEach((machine) => {
+            listaPMsConcat.push(machine)
+        }) */
+        /* const */ 
+        if (!group[machine.idpminspeccion] && (machine.idpminspeccion !== null)) {
+            group[machine.idpminspeccion] = []
+        }
+        /* group[machine.idpminspeccion].push(machine) */
+        if (!group[machine.idpmmantencion] && (machine.idpmmantencion !== null)) {
+            group[machine.idpmmantencion] = []
+        }
+        /* group[machine.idpmmantencion].push(machine) */
+        i = i + 1
+        leerPauta3(i, machinesList, listaPMsConcat, group)
+    }
+}
+
+const leerPautasPorIDPM = async (n, idpms, listaPMsConcat) => {
+    if (n === idpms.length) {
+        /* console.log(listaPMsConcat) */
+        listaPMsConcat.map(async (pauta, number) => {
+            try {
+                pauta.id = number
+                if (!pauta.hmEstandar) {
+                    pauta.hhEstandar = 0
+                }
+                let pautaName
+                if (pauta.idpm === 'Pauta%20de%20Inspecci%C3%B3n') {
+                    pautaName = 'Pauta de Inspección'
+                } else {
+                    pautaName = pauta.idpm
+                }
+                const response2 = await fetch(`${environment.icvApi.url}PmHeader?pIDPM=${pautaName}&pTypePm=${pauta.typepm}`, {
+                    headers: myHeaders,
+                    method: 'GET',
+                    agent: agent
+                })
+                pauta.header = await response2.json();
+                const response3 = await fetch(`${environment.icvApi.url}PmStruct?pIDPM=${pautaName}&pTypePm=${pauta.typepm}`, {
+                    headers: myHeaders,
+                    method: 'GET',
+                    agent: agent
+                })
+                pauta.struct = await response3.json();
+                if (!pauta.zone) {
+                    pauta.zone = 'Genérico'
+                }
+                const patternFind = await PatternDetail.findOne({idpm: pautaName, typepm: pauta.typepm})
+                if (!patternFind) {
+                    await PatternDetail.create(pauta)
+                    console.log('Pauta: ', pauta.idpm, ' Tipo: ', pauta.typepm, ' creado.')
+                } else {
+                    const compareStruct = JSON.stringify(patternFind.struct).localeCompare(JSON.stringify(pauta.struct))
+                    const compareHeader = JSON.stringify(patternFind.header).localeCompare(JSON.stringify(pauta.header))
+                    const isOkToKeep = compareStruct + compareHeader
+                    if (isOkToKeep === 0 || (pauta.header === 'error') || (patternFind.header === ["error"])) {
+                        null
+                    } else {
+                        const pautaEditada = await PatternDetail.findByIdAndUpdate(patternFind._id, pauta, {new: true})
+                        if (pautaEditada) {
+                            const admins = await UserServices.getUserByRole('admin')
+                            admins.map((user) => {
+                                let notificationToSave = {
+                                    id: user._id.toString(),
+                                    from: 'Sistema de Mantención ICV',
+                                    url: '/notifications',
+                                    title: 'Pauta ' + pautaEditada.idpm + ', ' + pautaEditada.typepm + ', ha sido editada', 
+                                    subtitle: pautaEditada.idpm + '/' + pautaEditada.typepm, 
+                                    message: 'Pauta editada correctamente'
+                                }
+                                NotificationService.createNotification(notificationToSave)
+                            })
+                        }
+                    }
+                }
+            } catch (error) {
+                console.log(error)
+                Sentry.captureException(error)
+            }
+        })
+    } else {
+        try{
+            let pIDPM = idpms[n];
+            const response = await fetch(`${environment.icvApi.url}pmtype?pIDPM=${pIDPM}`, {
+                headers: myHeaders,
+                method: 'GET',
+                agent: agent
+            })
+            const listaPMs =  await response.json()
+            if (listaPMs) {
+                /* console.log(listaPMs) */
+                let dataToSend = {}
+                dataToSend = listaPMs.data
+                listaPMsConcat = listaPMsConcat.concat(dataToSend)
+                /* listaPMs.data.forEach(l => {
+                    l.zone = machinesListPmsData[i].zone
+                })
+                let dataToSend = {}
+                dataToSend = listaPMs.data
+                listaPMsConcat = listaPMsConcat.concat(dataToSend) */
+            }
+            /* i = i + 1
+            leerPauta2(i, machinesListPmsData, listaPMsConcat) */
+            n = n + 1
+            leerPautasPorIDPM(n, idpms, listaPMsConcat)
+        } catch (error) {
+            console.log(error)
+            i = i + 1
+            leerPauta2(i, idpms, listaPMsConcat)
+            console.log('ERROR ======> ', error)
+            Sentry.captureException(error)
+        }
+    }
 }
 
 const leerPauta2 = async (i, machinesListPmsData, listaPMsConcat) => {

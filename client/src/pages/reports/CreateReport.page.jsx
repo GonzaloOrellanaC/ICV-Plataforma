@@ -13,7 +13,7 @@ import {
 import { ArrowBackIos } from '@material-ui/icons'
 import { useNavigate, useParams } from 'react-router-dom';
 import { trucksDatabase, pautasDatabase, machinesDatabase, sitesDatabase } from '../../indexedDB'
-import { reportsRoutes } from '../../routes';
+import { patternsRoutes, reportsRoutes } from '../../routes';
 import './reports.css'
 import {useAuth, useReportsContext, useSitesContext} from '../../context'
 import { LoadingLogoDialog } from '../../dialogs';
@@ -51,10 +51,24 @@ const CreateReports = () => {
     const {id} = useParams();
 
     useEffect(() => {
-        if(userData) {
-            console.log(userData)
+        if(machineSelected) {
+            setPautas([])
+            const machineCache = JSON.parse(machineSelected)
+            getPautas(machineCache)
         }
-    }, [userData])
+    }, [machineSelected])
+
+    const getPautas = async (machineCache) => {
+        let idpm;
+        if (reportType==='Inspección') {
+            idpm = machineCache.idpminspeccion
+        } else {
+            idpm = machineCache.idpmmantencion
+        }
+        setIDPM(idpm)
+        const response = await patternsRoutes.getPatternsDetailByIdpm(idpm)
+        setPautas(response.data.data)
+    }
 
     const orderType = (a, b) => {
         if (a.idpm > b.idpm) return 1
@@ -67,32 +81,8 @@ const CreateReports = () => {
         if (machineModel) {
             getMachine(machineModel)
         }
-        if (machineModel && reportType) {
-            let pautasLista = []
-            pautas.forEach((item, i) => {
-                if (item.header != 'error')
-                item.header.forEach((header) => {
-                    if (header.typeDataDesc === machineModel) {
-                        pautasLista.push(item)
-                    }
-                })
-            })
-            const pautasInspeccionFiltered = []
-            const pautasMantencionFiltered = []
-            const response = pautasLista.sort(orderType).forEach((item) => {
-                console.log(item.typepm, reportType)
-                if (reportType === 'Inspección' && (item.typepm === 'Pauta de Inspección')) {
-                    pautasInspeccionFiltered.push(item)
-                } else if (reportType === 'Mantención' && (item.typepm !== 'Pauta de Inspección')) {
-                    pautasMantencionFiltered.push(item)
-                }
-            })
-            console.log(response)
-            setPautas((reportType === 'Inspección') ? pautasInspeccionFiltered : pautasMantencionFiltered)
-        }
-    }, [reportType, pautaIndex, truckSelected, machineModel])
+    }, [machineModel])
     
-
     const saveReportData = async (activate) => {
         /* if(activate) {
             setDisablePautas(true)
@@ -110,15 +100,6 @@ const CreateReports = () => {
         } */
     }
 
-    useEffect(() => {
-        console.log(truckSelected)
-        if (truckSelected) {
-            getMachine(truckSelected)
-            console.log(idObra)
-        }
-    }, [truckSelected])
-
-
     const settingTypePauta = (type) => {
         setPautaIndex(type)
     }
@@ -133,11 +114,9 @@ const CreateReports = () => {
 
     const getMachine = async (machineModel) => {
         setMachineModel(machineModel);
-        console.log(machineModel)
         let db = await machinesDatabase.initDbMachines();
         if(db) {
             const response = await machinesDatabase.consultar(db.database)
-            console.log(response)
             const machinesFiltered = await response.filter((machine) => {if ((machine.model === machineModel)&&(machine.idobra === idObra )) return machine})
             setMaquinas(machinesFiltered)
         }
@@ -151,7 +130,7 @@ const CreateReports = () => {
             state: 'Asignar',
             datePrev: Date.parse(date),
             endPrev: Date.parse(dateEnd),
-            machine: truckSelected,
+            /* machine: truckSelected, */
             guide: pauta,
             reportType: reportType,
             machine: JSON.parse(machineSelected).equid,
@@ -194,7 +173,6 @@ const CreateReports = () => {
     const readTrucks = () => {
         trucksDatabase.initDbMachines().then(async res => {
             let respuestaConsulta = await trucksDatabase.consultar(res.database);
-            /* console.log(respuestaConsulta) */
             setTrucks(respuestaConsulta);
         })
     }
@@ -229,7 +207,6 @@ const CreateReports = () => {
         } else {
             
         } */
-        console.log(pautas)
         if (admin) {
             sitesDatabase.initDbObras()
             .then(async db => {
@@ -237,7 +214,6 @@ const CreateReports = () => {
                 setSites(respuestaConsulta);
             })
         } else {
-            console.log(userData)
             setIdObra(userData.obras[0].idobra)
         }
         /* setIsAdmin(isAdminCache) */
@@ -456,7 +432,7 @@ const CreateReports = () => {
                                                 name="userType" 
                                                 id="userType" 
                                                 style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
-                                                onChange={(e)=> {setTruck(e.target.value); habilitaPauta(); getMachine(e.target.value);}}
+                                                onChange={(e)=> {setTruck(e.target.value); setDisableMaquinas(false); getMachine(e.target.value);}}
                                                 value={truckSelected}
                                             >
                                                 <option>Seleccione...</option>
@@ -472,36 +448,6 @@ const CreateReports = () => {
                                     </div>
                                 </Grid>        
                                 <Grid item xl={6} lg={6} md={6} sm={12} xs={12} >
-                                    <div style={{width: '100%'}}>
-                                        <FormControl >
-                                            <p style={{margin: 0}}>Seleccionar Pauta  {(disablePautas && changed) && <b>ESPERE...</b>}</p>
-                                            <select 
-                                                disabled={disablePautas}
-                                                /* onBlur={()=>saveReportData()}  */
-                                                className={classes.inputsStyle} 
-                                                name="userType" 
-                                                id="userType" 
-                                                style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
-                                                onChange={(e)=>{setPauta(e.target.value.split(',')[1]), setDisableMaquinas(false), setIDPM(e.target.value.split(',')[0])}}
-                                                value={[iDPM, pauta]}
-                                            >
-                                                <option>Seleccione...</option>
-                                                {
-                                                    (pautasParaMostrar.length > 0) && pautasParaMostrar.map((pauta, index) => {
-                                                        return(
-                                                            <option key={index} value={[pauta.idpm, pauta.typepm]}> {(pauta.idpm === 'SPM000787') ? 'Motor LMR' : 'Motor Estándar'} - {pauta.typepm} / {pauta.header[1].typeDataDesc} {pauta.zone === 'Genérico' ? '' : `${[pauta.zone]}`} </option>
-                                                        )
-                                                    })
-                                                }
-                                                {
-                                                    (pautasParaMostrar.length == 0) && <option> Selección no cuenta con pautas. </option>
-                                                } 
-                                            </select>
-                                        </FormControl>
-                                    </div>
-                                    <div style={{width: '100%'}}>
-                                        <p>Test: <Switch checked={isTest} onChange={(e) => setIsTest(e.target.checked)}/></p>
-                                    </div>
                                     <div style={{width: '100%'}}>
                                         <FormControl >
                                             <p>Seleccionar máquina de obra</p>
@@ -529,6 +475,12 @@ const CreateReports = () => {
                                     </div>
                                     <div style={{width: '100%'}}>
                                         <FormControl>
+                                            <p>SPM</p>
+                                            <input disabled value={iDPM ? iDPM : 'SIN SPM'} maxLength={12} onBlur={()=>saveReportData()} className={classes.inputsStyle} type="text" style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
+                                        </FormControl>
+                                    </div>
+                                    <div style={{width: '100%'}}>
+                                        <FormControl>
                                             <p>Horas de operación</p>
                                             <input disabled value={hourMeter} maxLength={12} onBlur={()=>saveReportData()} className={classes.inputsStyle} type="text" style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
                                         </FormControl>
@@ -538,6 +490,37 @@ const CreateReports = () => {
                                             <p>Equipo ID</p>
                                             <input disabled value={equID} maxLength={12} onBlur={()=>saveReportData()} className={classes.inputsStyle} type="text" style={{width: "100%", height: 44, borderRadius: 10, fontSize: 20}} />
                                         </FormControl>
+                                    </div>
+                                    <br />
+                                    <div style={{width: '100%'}}>
+                                        <FormControl >
+                                            <p style={{margin: 0}}>Seleccionar Pauta  {(disablePautas && changed) && <b>ESPERE...</b>}</p>
+                                            <select 
+                                                disabled={(pautasParaMostrar.length === 0) ? true : false}
+                                                /* onBlur={()=>saveReportData()}  */
+                                                className={classes.inputsStyle} 
+                                                name="userType" 
+                                                id="userType" 
+                                                style={{width: '100%', minWidth: 250, height: 44, borderRadius: 10, fontSize: 20}}
+                                                onChange={(e)=>{setPauta(e.target.value)}}
+                                                value={pauta}
+                                            >
+                                                <option>Seleccione...</option>
+                                                {
+                                                    (pautasParaMostrar.length > 0) && pautasParaMostrar.map((pauta, index) => {
+                                                        return(
+                                                            <option key={index} value={[pauta.typepm]}> {(pauta.idpm === 'SPM000787') ? 'Motor LMR' : 'Motor Estándar'} - {pauta.typepm} / {pauta.header[1].typeDataDesc} {pauta.zone === 'Genérico' ? '' : `${[pauta.zone]}`} </option>
+                                                        )
+                                                    })
+                                                }
+                                                {
+                                                    (pautasParaMostrar.length == 0) && <option> Selección no cuenta con pautas. </option>
+                                                } 
+                                            </select>
+                                        </FormControl>
+                                    </div>
+                                    <div style={{width: '100%'}}>
+                                        <p>Test: <Switch checked={isTest} onChange={(e) => setIsTest(e.target.checked)}/></p>
                                     </div>
                                 </Grid>
                             </Grid>

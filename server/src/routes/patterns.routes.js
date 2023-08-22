@@ -9,4 +9,6 @@ router.post('/savePattern', PatternsServices.savePattern)
 
 router.get('/getPatternDetails', PatternsServices.getPatternDetails)
 
+router.post('/getPatternsDetailByIdpm', PatternsServices.getPatternsDetailByIdpm)
+
 export default router

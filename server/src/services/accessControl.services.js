@@ -103,6 +103,7 @@ const initAccessControl = async () => {
                 })
             }
         } */
+        apiIcvConnection.leerPautas2()
         initTimeMachinesCron()
         /* const findMachines = await Machine.find();
         const group = {}
