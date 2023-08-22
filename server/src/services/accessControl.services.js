@@ -93,6 +93,16 @@ const initAccessControl = async () => {
                 }
             })
         } */
+        /* const findSites = await getSites();
+        console.log('Starting CRON Job')
+        const findMachines = await Machine.find();
+        if(findMachines) {
+            if(findMachines.length > 0) {
+                findSites.forEach(({idobra}, index) => {
+                    ApiIcv.editMachineToSend(idobra)
+                })
+            }
+        } */
         initTimeMachinesCron()
         /* const findMachines = await Machine.find();
         const group = {}
@@ -181,8 +191,8 @@ const initTimeMachinesCron = async () => {
         if (times.length > 0) {
             machinesCronState = machinesCron(times[0].timeMachines)
             pautasCroneState = pautasCron(times[0].timePautas)
-            /* machinesCronState.start()
-            pautasCroneState.start() */
+            machinesCronState.start()
+            pautasCroneState.start()
         }
     } catch (error) {
         Sentry.captureException(error)

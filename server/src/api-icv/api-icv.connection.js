@@ -546,6 +546,9 @@ const leerMaquinas = async (maquinas, index) => {
         machine.idpminspeccion = await getIdPmInspection(machine.equid);
         machine.idpmmantencion = await getIdPmMaintenance(machine.equid);    
         machine.hourMeter = machine.horometro;
+        /* if (machine.equ === '726') {
+            console.log(machine.equid, await getIdPmMaintenance(machine.equid))
+        } */
         try {
             const response = await Machine.findOneAndUpdate(
                 {equid: machine.equid},
