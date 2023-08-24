@@ -114,6 +114,7 @@ const MachinesListPage = ({route}) => {
                                                         <p style={{marginTop: 5, marginBottom: 5}}>Marca: {machine.brand.toUpperCase()}</p>
                                                         <p style={{marginTop: 5, marginBottom: 5}}>Modelo: {machine.model}</p>
                                                         <p style={{marginTop: 5, marginBottom: 5}}>Código: {machine.equid}</p>
+                                                        <p style={{marginTop: 5, marginBottom: 5}}>Obra: {machine.idobra}</p>
                                                     </div>
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={3} lg={3}>
@@ -121,6 +122,8 @@ const MachinesListPage = ({route}) => {
                                                     <p style={{marginTop: 5, marginBottom: 5}}>Horómetro Actual: {Number(machine.hourMeter)/3600000}</p>
                                                     <p style={{marginTop: 5, marginBottom: 5}}>Número Interno: {machine.equ}</p>
                                                     <p style={{marginTop: 5, marginBottom: 5}}>Serie motor: {machine.enginesnr}</p>
+                                                    <p style={{marginTop: 5, marginBottom: 5}}>SPM Inspección: {machine.idpminspeccion}</p>
+                                                    <p style={{marginTop: 5, marginBottom: 5}}>SPM Mantención: {machine.idpmmantencion}</p>
                                                     </div>
                                                 </Grid>
                                                 <Grid item xs={12} sm={12} md={12} lg={2}>

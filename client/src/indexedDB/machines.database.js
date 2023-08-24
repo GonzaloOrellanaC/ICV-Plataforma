@@ -88,6 +88,11 @@ const eliminar = (clave, database) =>{
     }
 }
 
+const borrarDb = () =>{      
+    const deleted = indexedDB.deleteDatabase('Machines')
+    console.log(deleted)
+}
+
 const consultar = (database) => {
     return new Promise(resolve => {
         const trasaccion = database.transaction(['Equips'],'readonly')
@@ -113,5 +118,6 @@ export default {
     obtener,
     actualizar,
     eliminar,
-    consultar
+    consultar,
+    borrarDb
 }

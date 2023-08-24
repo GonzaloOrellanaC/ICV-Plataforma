@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { authRoutes, usersRoutes } from '../routes'
-import { userDatabase } from '../indexedDB'
+import { machinesDatabase, userDatabase } from '../indexedDB'
 import { useNavigate } from 'react-router-dom'
 import { FirmaUsuarioDialog } from '../dialogs'
 
@@ -37,6 +37,8 @@ export const AuthProvider = (props) => {
             if (!userData) {
                 getUserDataFromIndexedDb()
             }
+        } else {
+            machinesDatabase.borrarDb()
         }
     }, [isAuthenticated])
 
@@ -225,11 +227,13 @@ export const AuthProvider = (props) => {
                 })
             })
         },
-        logout: () => {
+        logout: async () => {
             if(confirm('Confirme salida de la aplicación. Para volver a iniciar sesión requiere contar con internet para validar las credenciales.')) {
-                window.localStorage.clear();
-                navigate('/', {replace:true})
-                setIsAuthenticated(false)
+                setTimeout(() => {
+                    window.localStorage.clear()
+                    navigate('/', {replace:true})
+                    setIsAuthenticated(false)
+                }, 500);
             }
         }
     }
