@@ -53,6 +53,7 @@ export const AuthProvider = (props) => {
                         localStorage.setItem('isAdmin', true);
                         setAdmin(true)
                     }else if(rol === 'inspectionWorker' || rol === 'maintenceOperator') {
+                        console.log('Es operador')
                         localStorage.setItem('isOperator', true)
                         setIsOperator(true)
                     }else if(rol === 'sapExecutive') {

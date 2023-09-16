@@ -6,6 +6,7 @@ import { ApiIcv } from '../api-icv';
 import apiIcvConnection from '../api-icv/api-icv.connection';
 import { CronJob } from 'cron'
 import { Sentry } from './sentry.services';
+import notificationService from './notification.service';
 
 const { error: errorMsg } = environment.messages.services.accessControl
 
@@ -103,7 +104,7 @@ const initAccessControl = async () => {
                 })
             }
         } */
-        apiIcvConnection.leerPautas2()
+        /* apiIcvConnection.leerPautas2() */
         initTimeMachinesCron()
         /* const findMachines = await Machine.find();
         const group = {}
@@ -125,8 +126,8 @@ const initAccessControl = async () => {
                     ApiIcv.editMachineToSend(idobra)
                 })
             }
-        }
-        const sitiosCreados = await ApiIcv.createSiteToSend();
+        } */
+        /* const sitiosCreados = await ApiIcv.createSiteToSend();
         if (sitiosCreados) {
             sitiosCreados.forEach(async (sitio) => {
                 await ApiIcv.createMachinesToSend(sitio.idobra, true)
@@ -194,6 +195,7 @@ const initTimeMachinesCron = async () => {
             pautasCroneState = pautasCron(times[0].timePautas)
             machinesCronState.start()
             pautasCroneState.start()
+            notificationService.createNotification({})
         }
     } catch (error) {
         Sentry.captureException(error)

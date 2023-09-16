@@ -671,13 +671,21 @@ const leerMaquinas = async (maquinas, index) => {
         machine.idpminspeccion = await getIdPmInspection(machine.equid);
         machine.idpmmantencion = await getIdPmMaintenance(machine.equid);    
         machine.hourMeter = machine.horometro;
+        console.log(machine.equ, machine.equid, await getIdPmInspection(machine.equid))
+        console.log(machine.equ, machine.equid, await getIdPmMaintenance(machine.equid))
         /* if (machine.equ === '726') {
-            console.log(machine.equid, await getIdPmMaintenance(machine.equid))
+            console.log(maquinas[index])
+            console.log(machine.equ, machine.equid, await getIdPmInspection(machine.equid))
+            console.log(machine.equ, machine.equid, await getIdPmMaintenance(machine.equid))
+        }
+        if (machine.equ === '657') {
+            console.log(machine.equ, machine.equid, await getIdPmInspection(machine.equid))
+            console.log(machine.equ, machine.equid, await getIdPmMaintenance(machine.equid))
         } */
         try {
             const response = await Machine.findOneAndUpdate(
                 {equid: machine.equid},
-                {hourMeter: machine.hourMeter, idpminspeccion: machine.idpminspeccion, idpmmantencion: machine.idpmmantencion},
+                {hourMeter: machine.hourMeter, idpminspeccion: machine.idpminspeccion, idpmmantencion: machine.idpmmantencion, idobra: machine.idobra},
                 {new: true, timestamps: false}
             )
             if (response) {

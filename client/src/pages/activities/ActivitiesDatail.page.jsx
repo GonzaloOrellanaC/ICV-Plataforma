@@ -50,6 +50,13 @@ const ActivitiesDetailPage = () => {
     /* NUEVA VERSION */
 
     useEffect(() => {
+        if (isOperator && report && userData)
+        if((isOperator && (!report.level || report.level === 0) && (report.usersAssigned[0]._id === userData._id))) {
+            console.log('*****************************************************OK')
+        }
+    },[report, userData, isOperator])
+
+    useEffect(() => {
         if (site)
         setSitio(site)
     },[site])

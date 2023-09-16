@@ -118,6 +118,8 @@ const MVAvatar = ({machine, subSistem}) => {
             
         })
         mv.addEventListener('load', () => {
+            var modelViewer = document.querySelector('model-viewer');
+		    alert("model-viewer can activate AR: " + modelViewer.canActivateAR);
             setOpenLoader(false)
             mv.cameraControls = true
             document.getElementById('image').style.opacity = '0'
@@ -321,18 +323,24 @@ const MVAvatar = ({machine, subSistem}) => {
                 
                 <img  src={imagePath} id="image" className='image' height={640} width={480}/>
                 <model-viewer
+                    ar
+                    ar-modes="webxr scene-viewer quick-look"
+                    camera-controls
                     id="machine"
                     src={newMachine}
-                    style={{height: '100%', width: '100%', backgroundColor: '#414646', opacity: 1, transition: 'opacity 0.5s' }}
+                    style={{height: '100%', width: '100%', backgroundColor: '#414646', /* background: 'url(../assets/images3d/minera.jpg)',  *//* backgroundSize: '100%', backgroundRepeat: 'no-repeat', backgroundPosition: 'center',  */opacity: 0.5, transition: 'opacity 0.5s' }}
                     camera-target={cameraTarget}
                     camera-orbit={cameraOrbit}
                     scale={scale}
                     alt="A Material Picking Example"
-                    touch-action="none" 
+                    /* touch-action="none" */ 
+                    touch-action="pan-y"
                     min-field-of-view="0deg" 
                     interpolation-decay="200" 
                     min-camera-orbit="auto auto 10%" 
-                    oncontextmenu="return false"
+                    /* oncontextmenu="return false" */
+                    shadow-intensity="1"
+                    field-of-view="0" max-field-of-view="100deg" exposure="1"
                 >
                        {
                            buttons.map((e, i) => {
@@ -355,14 +363,15 @@ const MVAvatar = ({machine, subSistem}) => {
                                )
                            })
                        }
+                        <button slot="ar-button" className='button-ia-style'>
+                            👋 Activate AR
+                        </button>
                 </model-viewer>
                 
                 {/* <LoadingModal open={openLoader} progress={progress} loadingData={'Preparando vista 3D...'} withProgress={true}/> */}
                 <div style={{position: 'absolute', bottom: 0, left: 0, width: '100%', backgroundColor: 'transparent', textAlign: 'center'}}>
                     <div style={{width: '60%', backgroundColor: 'transparent', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
-                        {/* {isButton && <IconButton onClick={()=>setCenter()}>
-                            <ControlCamera style={{color: 'white', fontFamily: 'Raleway', marginRight: 10}} /> <p style={{color: 'white', fontFamily: 'Raleway'}}>Centrar cámara</p>
-                        </IconButton>} */}
+                        
                         <h2 style={{color: 'white', fontFamily: 'Raleway'}}>{title}</h2>
                     </div>
                 </div>

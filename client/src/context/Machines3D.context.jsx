@@ -126,6 +126,7 @@ export const Machine3DProvider = props => {
         if(consulta.length > 0) {
             setMachines3D(consulta)
             setLoadingData3D(`Modelos 3D descargados.`)
+            setTodoArchivo3DListo(true)
             setTimeout(() => {
                 setProgressDownload3D(100)
                 setTimeout(() => {

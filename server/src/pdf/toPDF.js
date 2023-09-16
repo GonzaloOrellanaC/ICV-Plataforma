@@ -819,7 +819,7 @@ const toPDF = (reportData) => {
                                     table: {
                                         body: [
                                             ['Fecha Creación: ', `${dateSimple(reportData.createdAt)}`],
-                                            ['Creado por: ', `${admin.name} ${admin.lastName}`]
+                                            ['Creado por: ', `${admin ? admin.name : ''} ${admin ? admin.lastName : ''}`]
                                         ]
                                     }
                                 },
