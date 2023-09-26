@@ -21,6 +21,7 @@ import SitesRoutes from './sites.routes'
 import CronRoutes from './cron.routes'
 import NewsRoutes from './news.routes'
 import ApiExternalRoutes from './api-external.routes'
+import UnidadesRoutes from './unidades.routes'
 
 const router = new Router()
 
@@ -44,5 +45,6 @@ router.use('/sites', SitesRoutes)
 router.use('/cron', CronRoutes)
 router.use('/news', NewsRoutes)
 router.use('/api', ApiExternalRoutes)
+router.use('/unidades/', UnidadesRoutes)
 
 export default router

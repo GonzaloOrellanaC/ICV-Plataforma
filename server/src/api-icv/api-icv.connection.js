@@ -877,6 +877,21 @@ const getOMs = async (req, res) => {
     }
 }
 
+const getUnidades = async () => {
+    try {
+        const unidades = await fetch(`${environment.icvApi.url}Unidades`, {
+            headers: myHeaders,
+            method: 'GET',
+            agent: agent
+        })
+        const body = await unidades.json();
+        return body.data
+    } catch (error) {
+        Sentry.captureException(error)
+        console.log(error)
+    }
+}
+
 export default {
     /* Leer sitios */
     readSites,
@@ -904,5 +919,6 @@ export default {
     findSitesToActualiceMachines,
     sincronizar,
     getOMSap,
-    getOMs
+    getOMs,
+    getUnidades
 }

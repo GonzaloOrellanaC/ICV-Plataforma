@@ -23,7 +23,7 @@ const PautaDetail = (
         report
     }) => {
         const {isOnline} = useConnectionContext()
-        const {userData, isOperator} = useAuth()
+        const {userData, isOperator, unidades} = useAuth()
     /* const {executionReport, setExecutionReport, report} = useExecutionReportContext() */
 
     const [opened, setOpened] = useState(true)
@@ -97,37 +97,53 @@ const PautaDetail = (
     },[executionReport])
 
     useEffect(() => {
-        console.log(contentData)
-        if (isOnline && contentData && (executionReport._id)) {
-            const checked = []
-            contentData.forEach((item) => {
-                if (item.isChecked) {
-                    checked.push(item)
-                }
-            })
-            const contentDataGlobal = []
-            const checkedGlobal = []
-            Object.values(executionReport.group).forEach((contentData) => {
+        /* console.log(contentData) */
+        if (isOnline && contentData && (executionReport._id) && unidades) {
+            if (unidades.length > 0) {
+                const checked = []
                 contentData.forEach((item) => {
-                    contentDataGlobal.push(item)
-                    if (item.isChecked) {
-                        checkedGlobal.push(item)
+                    item.isRequerido = false
+                    const unidadesFiltradas = unidades.filter(u => {if (u.idUnidad === item.unidad) return u})
+                    console.log((unidadesFiltradas.length > 0) ? unidadesFiltradas[0] : {})
+                    if (unidadesFiltradas && unidadesFiltradas[0]) {
+                        item.isRequerido = true
+                        item.inputCantidad = 1
+                        if (unidadesFiltradas && unidadesFiltradas[0] && unidadesFiltradas[0].inputRequerido==='TRUE') {
+                            item.isRequerido = true
+                            item.inputCantidad = unidadesFiltradas[0].inputCantidad
+                        }
+                        if (item.isChecked) {
+                            checked.push(item)
+                        }
                     }
                 })
-            })
-            const progressPage = ((checked.length * 100) / contentData.length).toFixed(0)
-            const globalProgress = ((checkedGlobal.length * 100) / contentDataGlobal.length).toFixed(0)
-            setProgress({
-                progressPage: progressPage,
-                globalProgress: globalProgress
-            })
-            setOpened(false)
+                const contentDataGlobal = []
+                const checkedGlobal = []
+                Object.values(executionReport.group).forEach((contentData) => {
+                    contentData.forEach((item) => {
+                        /* console.log(item) */
+                        contentDataGlobal.push(item)
+                        if (item.isChecked) {
+                            checkedGlobal.push(item)
+                        }
+                    })
+                })
+                const progressPage = ((checked.length * 100) / contentData.length).toFixed(0)
+                const globalProgress = ((checkedGlobal.length * 100) / contentDataGlobal.length).toFixed(0)
+                setProgress({
+                    progressPage: progressPage,
+                    globalProgress: globalProgress
+                })
+                setOpened(false)
+            }
         }
-    }, [contentData, executionReport, gruposKeys, isOnline])
+    }, [contentData, executionReport, gruposKeys, isOnline, unidades])
 
-    useEffect(() => {
-        console.log(indexGroup)
-    },[indexGroup])
+    /* useEffect(() => {
+        if (unidades && (unidades.length > 0)) {
+            console.log(unidades)
+        }
+    },[unidades]) */
 
     const handleContent = (i, element) => {
         setIndexGroup(element)
@@ -171,7 +187,8 @@ const PautaDetail = (
     const changeState = async (element, number) => {
         console.log(element)
         if (!element.isChecked) {
-            if (element.obs01.includes('__')) {
+            
+            if (/* element.obs01.includes('__') */element.isRequerido) {
                 alert('Actividad requiere que deje un comentario.')
             } else if (element.unidad !== '*') {
                 alert('Actividad requiere que deje una cantidad de insumo utilizado.')

@@ -21,6 +21,8 @@ import PatternDetail from './patternDetail'
 import Cron from './cron'
 import News from './news'
 import InsumosPorReporte from './insumosPorOM'
+import Unidades from './unidades'
+
 export {
     AssignedMaintenance,
     AssignedInspections,
@@ -43,5 +45,6 @@ export {
     PatternDetail,
     Cron,
     News,
-    InsumosPorReporte
+    InsumosPorReporte,
+    Unidades
 }

@@ -13,6 +13,7 @@ import notificationsRoutes from './notifications.routes'
 import patternsRoutes from './patterns.routes'
 import sitesRoutes from './sites.routes'
 import newsRoutes from './news.routes'
+import unidadesRoutes from './unidades.routes'
 
 export {
     authRoutes,
@@ -29,5 +30,6 @@ export {
     notificationsRoutes,
     patternsRoutes,
     sitesRoutes,
-    newsRoutes
+    newsRoutes,
+    unidadesRoutes
 }

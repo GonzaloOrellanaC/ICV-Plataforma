@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { authRoutes, usersRoutes } from '../routes'
+import { authRoutes, unidadesRoutes, usersRoutes } from '../routes'
 import { machinesDatabase, userDatabase } from '../indexedDB'
 import { useNavigate } from 'react-router-dom'
 import { FirmaUsuarioDialog } from '../dialogs'
@@ -18,6 +18,7 @@ export const AuthProvider = (props) => {
     const [ isChiefMachinery, setIsChiefMachinery ] = useState(false)
     const [ refCanvas, setRefCanvas ] = useState()
     const [ openSign, setOpenSign ] = useState(false)
+    const [unidades, setUnidades] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -43,6 +44,20 @@ export const AuthProvider = (props) => {
     }, [isAuthenticated])
 
     useEffect(() => {
+        if (isAuthenticated && userData) {
+            getUnidades()
+        }
+    },[isAuthenticated, userData])
+
+    const getUnidades = async () => {
+        const response = await unidadesRoutes.getUnidades()
+        console.log(response.data)
+        if (response.data.state) {
+            setUnidades(response.data.unidades)
+        }
+    }
+
+    useEffect(() => {
         if (userData) {
             if (!userData.sign || userData.sign.length < 1) {
                 setTimeout(() => {
@@ -50,7 +65,9 @@ export const AuthProvider = (props) => {
                 }, 500)
             }
             if (userData.roles.length > 0) {
-                userData.roles.map(rol => {
+                let listaRoles = []
+                listaRoles = userData.roles
+                listaRoles.forEach(rol => {
                     if(rol === 'admin' || rol === 'superAdmin') {
                         localStorage.setItem('isAdmin', true);
                         setAdmin(true)
@@ -236,7 +253,8 @@ export const AuthProvider = (props) => {
                     setIsAuthenticated(false)
                 }, 500);
             }
-        }
+        },
+        unidades
     }
 
     return (

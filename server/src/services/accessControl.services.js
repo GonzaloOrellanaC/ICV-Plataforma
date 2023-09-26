@@ -1,7 +1,7 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permission,Roles, Site, Machine, Cron } from '../models';
+import { Permission,Roles, Site, Machine, Cron, Unidades } from '../models';
 import { ApiIcv } from '../api-icv';
 import apiIcvConnection from '../api-icv/api-icv.connection';
 import { CronJob } from 'cron'
@@ -127,12 +127,6 @@ const initAccessControl = async () => {
                 })
             }
         } */
-        /* const sitiosCreados = await ApiIcv.createSiteToSend();
-        if (sitiosCreados) {
-            sitiosCreados.forEach(async (sitio) => {
-                await ApiIcv.createMachinesToSend(sitio.idobra, true)
-            })
-        } */
     } catch (error) {
         console.error(error)
         Sentry.captureException(error)
@@ -161,6 +155,15 @@ const machinesCron = (time) => {
                     await ApiIcv.createMachinesToSend(sitio.idobra, true)
                 })
             }
+            const unidades = await ApiIcv.getUnidades();
+            unidades.forEach(async unidad => {
+                const response = await Unidades.findOne({idUnidad: unidad.idUnidad})
+                if (response) {
+                    await Unidades.findOneAndUpdate({idUnidad: unidad.idUnidad}, unidad)
+                } else {
+                    await Unidades.create(unidad)
+                }
+            })
         } catch (error) {
             console.log(error)
             Sentry.captureException(error)

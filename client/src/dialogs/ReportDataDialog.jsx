@@ -210,12 +210,37 @@ const ReportDataDialog = (
     })
     item.messages = [...messagesOk]
     setIsEdited(false)
-    if (item.unidad !== '*') {
+    let stateToSend = false
+    if (item.isRequerido) {
+      item.unidadData = unidad
+      if (item.messages.length > 0) {
+        if (item.unidadData) {
+          save(index, state, item)
+          executionReport.offLineGuard = Date.now()
+          stateToSend = true
+        } else {
+          alert('Debe indicar una cantidad como se solicita.')
+        }
+      } else {
+        alert('Debe dejar al menos un comentario')
+      }
+    } else {
+      stateToSend = true
+    }
+    console.log(item, stateToSend)
+    if (stateToSend === true) {
+      handleClose()
+    }
+    /* if (item.unidad !== '*') {
       if (unidad) {
-        item.unidadData = unidad
-        save(index, state, item)
-        executionReport.offLineGuard = Date.now()
-        handleClose()
+        if (item.isRequerido && item.messages.length > 0) {
+          item.unidadData = unidad
+          save(index, state, item)
+          executionReport.offLineGuard = Date.now()
+          handleClose()
+        } else {
+          alert('Debe dejar al menos un comentario')
+        }
       } else {
         alert('Debe ingresar el total utilizado. Si no utilizó insumo o repuesto solicitado debe ingresar 0')
       }
@@ -227,7 +252,7 @@ const ReportDataDialog = (
       }else{
         alert('Debe dejar un comentario')
       }
-    }
+    } */
   }
 
 /*   const desmarcar = (itemData) => {
