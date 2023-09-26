@@ -98,10 +98,15 @@ const PautaDetail = (
 
     useEffect(() => {
         /* console.log(contentData) */
-        if (isOnline && contentData && (executionReport._id) && unidades) {
+        if (isOnline && contentData && (executionReport._id)) {
             if (unidades.length > 0) {
                 const checked = []
+                const contentDataGlobal = []
+                const checkedGlobal = []
                 contentData.forEach((item) => {
+                    if (item.isChecked) {
+                        checked.push(item)
+                    }
                     item.isRequerido = false
                     const unidadesFiltradas = unidades.filter(u => {if (u.idUnidad === item.unidad) return u})
                     console.log((unidadesFiltradas.length > 0) ? unidadesFiltradas[0] : {})
@@ -112,13 +117,8 @@ const PautaDetail = (
                             item.isRequerido = true
                             item.inputCantidad = unidadesFiltradas[0].inputCantidad
                         }
-                        if (item.isChecked) {
-                            checked.push(item)
-                        }
                     }
                 })
-                const contentDataGlobal = []
-                const checkedGlobal = []
                 Object.values(executionReport.group).forEach((contentData) => {
                     contentData.forEach((item) => {
                         /* console.log(item) */
@@ -130,6 +130,7 @@ const PautaDetail = (
                 })
                 const progressPage = ((checked.length * 100) / contentData.length).toFixed(0)
                 const globalProgress = ((checkedGlobal.length * 100) / contentDataGlobal.length).toFixed(0)
+                console.log(progressPage, globalProgress)
                 setProgress({
                     progressPage: progressPage,
                     globalProgress: globalProgress

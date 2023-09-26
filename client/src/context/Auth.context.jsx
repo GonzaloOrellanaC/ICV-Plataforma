@@ -49,9 +49,19 @@ export const AuthProvider = (props) => {
         }
     },[isAuthenticated, userData])
 
+    useEffect(() => {
+        if (unidades.length === 0) {
+            if (localStorage.getItem('unidades')) {
+                const unidadesCache = JSON.parse(localStorage.getItem('unidades'))
+                setUnidades(unidadesCache)
+            }
+        }
+    }, [unidades])
+
     const getUnidades = async () => {
         const response = await unidadesRoutes.getUnidades()
         console.log(response.data)
+        localStorage.setItem('unidades', JSON.stringify(response.data.unidades))
         if (response.data.state) {
             setUnidades(response.data.unidades)
         }
