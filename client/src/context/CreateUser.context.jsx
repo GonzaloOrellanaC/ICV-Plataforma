@@ -45,6 +45,10 @@ export const CreateUserProvider = (props) => {
         }
     },[location])
 
+    /* useEffect(() => {
+        console.log(userData)
+    },[userData]) */
+
     useEffect(() => {
         if (changeModule) {
             const isRoleSelected = []
@@ -58,6 +62,22 @@ export const CreateUserProvider = (props) => {
             setChangeModule(false)
         }
     }, [changeModule])
+
+    useEffect(() => {
+        if (rolesListSelectionCache) {
+            const isRoleSelected = []
+            rolesListSelectionCache.forEach((role) => {
+                if (role.selected) {
+                    isRoleSelected.push(role.dbName)
+                }
+            })
+            const userDataCache = userData
+            userDataCache.roles = isRoleSelected
+            console.log(userDataCache)
+            setUserData({...userData, roles: isRoleSelected})
+            setChangeModule(false)
+        }
+    },[rolesListSelectionCache])
 
     const provider = {
         userData,

@@ -92,6 +92,7 @@ const CreateUser = ({typeDisplay, uData}) => {
             document.getElementById('rut').className = 'isValid'
         }
         if (userData.roles.length > 0) {
+            console.log(userData)
             const rolesCache = [...rolesListSelection]
             rolesCache.forEach(role => {
                 userData.roles.forEach(roleUser => {
@@ -101,7 +102,7 @@ const CreateUser = ({typeDisplay, uData}) => {
                 })
             })
             setRolesListSelection(rolesCache)
-            setRolesListSelectionCache(rolesCache)
+            /* setRolesListSelectionCache(rolesCache) */
         }
     },[userData])
     
@@ -158,9 +159,9 @@ const CreateUser = ({typeDisplay, uData}) => {
         /* setUserData({...userData, roles: rolesSelected}) */
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         console.log(rolesListSelection)
-    },[rolesListSelection])
+    },[rolesListSelection]) */
 
     return (
             <div style={{height: 'calc(100vh-500px)', width: '100%'}}>

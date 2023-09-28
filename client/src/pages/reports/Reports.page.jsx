@@ -177,6 +177,7 @@ const ReportsPage = () => {
     }, [inspecciones, mantenciones])
 
     const selectList = (lista, idButton, index, name) => {
+        console.log(name)
         setTypeReportsSelected(name)
         localStorage.setItem('buttonSelected', idButton)
         const inspecionesCache = [...inspecciones]
@@ -189,7 +190,11 @@ const ReportsPage = () => {
         })
         document.getElementById(idButton).style.backgroundColor = '#ccc'
         if (lista.length > 0) {
-            setListSelected(lista.sort(compareNumbers))
+            if (name === 'Asignar' || name === 'En proceso') {
+                setListSelected(lista.sort(compareNumbers))
+            } else {
+                setListSelected(lista.sort(compareNumbers))
+            }
             setListSelectedCache(lista)
             setVista(false)
         } else {

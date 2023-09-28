@@ -111,7 +111,7 @@ const AdminNewUserPage = () => {
     const editUser = () => {
         setOpenLoader(true)
         setTimeout(async() => {
-            let userData = JSON.parse(localStorage.getItem('userDataToSave'))
+            /* let userData = JSON.parse(localStorage.getItem('userDataToSave')) */
             let userState = await usersRoutes.editUser(userData, id)
             if(userState) {
                 openCloseModal()
