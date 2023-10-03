@@ -7,7 +7,6 @@ import { useAuth, useSitesContext } from "../../context"
 /* import { pdfMakeRoutes } from "../../routes" */
 
 const ReportsList = ({list, typeReportsSelected, statusReports}) => {
-    console.log('Reportes: ', process.env.NODE_ENV)
     const {admin} = useAuth()
     const {sites} = useSitesContext()
     const [ reportData, setReportData ] = useState(null)

@@ -3,7 +3,7 @@ import {Grid, Toolbar, IconButton, Chip, TablePagination, Button, AppBar, Typogr
 import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar, faDownload, faPlus, faPlusSquare, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar, faDownload, faPlus, faPlusSquare, faInfoCircle, faMapMarker } from '@fortawesome/free-solid-svg-icons';
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import * as XLSX from 'xlsx'
 import { executionReportsRoutes } from '../../routes';
 import { LoadingLogoDialog, ReportsResumeDialog } from '../../dialogs';
 import { date } from '../../config';
+import SeleccionarObraDialog from '../../dialogs/SeleccionarObraDialog';
 
 const ReportsPage = () => {
     const {sitesToSelection} = useSitesContext()
@@ -40,6 +41,9 @@ const ReportsPage = () => {
     const [canOpenNewReport, setCanOpenNewReport] = useState(false)
     const [loadingSpinner, setLoading] = useState(false)
     const [openReportSumary, setOpenReportSumary] = useState(false)
+    const [openSeleccionarObra, setOpnSeleccionarObra] = useState(false)
+
+
     useEffect(() => {
         if (pautas.length === 0) {
             setCanOpenNewReport(false)
@@ -75,6 +79,11 @@ const ReportsPage = () => {
             setMantenciones(Mantenciones)
             setInspeccionesTotales(inspeccionesTemp)
             setMantencionesTotales(mantencionesTemp)
+        } else {
+            setInspecciones(Inspecciones)
+            setMantenciones(Mantenciones)
+            setInspeccionesTotales([])
+            setMantencionesTotales([])
         }
     }, [reports])
     useEffect(() => {
@@ -177,7 +186,6 @@ const ReportsPage = () => {
     }, [inspecciones, mantenciones])
 
     const selectList = (lista, idButton, index, name) => {
-        console.log(name)
         setTypeReportsSelected(name)
         localStorage.setItem('buttonSelected', idButton)
         const inspecionesCache = [...inspecciones]
@@ -191,7 +199,7 @@ const ReportsPage = () => {
         document.getElementById(idButton).style.backgroundColor = '#ccc'
         if (lista.length > 0) {
             if (name === 'Asignar' || name === 'En proceso') {
-                setListSelected(lista.sort(compareNumbers))
+                setListSelected(lista.sort(compareReverse))
             } else {
                 setListSelected(lista.sort(compareNumbers))
             }
@@ -206,6 +214,10 @@ const ReportsPage = () => {
         return b.idIndex - a.idIndex;
     }
 
+    const compareReverse = (a, b) => {
+        return a.idIndex - b.idIndex;
+    }
+
     const reloadData = () => {
         location.reload();
     }
@@ -218,7 +230,7 @@ const ReportsPage = () => {
             }
             if (i === ((rowsPerPage+(0*rowsPerPage)) - 1)) {
                 const listaCache = [...lista]
-                const nuevaLista = listaCache.sort(compareNumbers)/* .sort((a, b) => {
+                const nuevaLista = listaCache.sort((typeReportsSelected === 'Asignar' || typeReportsSelected === 'En proceso') ? compareReverse : compareNumbers)/* .sort((a, b) => {
                     return b.idIndex - a.idIndex
                 }) */
                 setListToShow(nuevaLista)
@@ -475,6 +487,10 @@ const ReportsPage = () => {
         setOpenReportSumary(false)
     }
 
+    const closeSeleccionarObra = () => {
+        setOpnSeleccionarObra(false)
+    }
+
     return(
         <div className='container-width' >
             <LoadingLogoDialog
@@ -485,6 +501,9 @@ const ReportsPage = () => {
                 handleClose={closeToReportSumary}
                 reports={reports}
             />}
+            {
+            openSeleccionarObra && <SeleccionarObraDialog open={openSeleccionarObra} handleClose={closeSeleccionarObra} />
+            }
             <div style={{width: '100%', textAlign: 'left', padding: 10 }}>
                 <div style={{width: '100%', textAlign: 'left', color: '#333', backgroundColor: '#fff', borderRadius: 20, flexGrow: 1}}>
                     {/* <AppBar position="static"> */}
@@ -497,6 +516,16 @@ const ReportsPage = () => {
                             <Typography variant='h1' style={{marginTop: 0, marginBottom: 0, fontSize: 16, width: '100%'}}>
                                 Ordenes de trabajo
                             </Typography>
+                            {admin && <IconButton
+                                color={'primary'} 
+                                style={{ marginRight: 5 }}
+                                edge={'end'}
+                                hidden={!hableCreateReport}
+                                onClick={() => setOpnSeleccionarObra(true)}
+                                title='Seleccionar Obra'
+                            >
+                                <FontAwesomeIcon icon={faMapMarker}/>
+                            </IconButton>}
                             <IconButton
                                 color={'primary'} 
                                 style={{ marginRight: 5 }}
@@ -676,7 +705,7 @@ const ReportsPage = () => {
                                             placeholder={'Ingrese N° OT, Máquina, Flota o Cód. SAP'}
                                             onChange={(e) => { textoFiltrado(e.target.value) }}  />
                                     </Grid>
-                                    {admin && <>
+                                    {/* {admin && <>
                                         <Grid item xl={'auto'}>
                                             <p style={{ width: 80 }}>Obra: </p>
                                         </Grid>
@@ -692,7 +721,7 @@ const ReportsPage = () => {
                                                 }
                                             </select>
                                         </Grid>                                    
-                                    </>}
+                                    </>} */}
                                     <Grid item sm={'auto'}>
                                         {/* <button disabled={loading} style={
                                             {

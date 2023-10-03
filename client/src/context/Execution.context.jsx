@@ -52,7 +52,6 @@ export const ExecutionReportProvider = (props) => {
 
     useEffect(() => {
         if (report) {
-            console.log(report)
             setReportId(report._id)
             setOtIndex(report.idIndex)
             setSapId(report.sapId)
@@ -72,7 +71,6 @@ export const ExecutionReportProvider = (props) => {
     const getReportFromOtIndex = () => {
         console.log('Obteniendo reporte')
         const reportFiltered = reports.filter(report => {if(report.idIndex === Number(otIndex)) {return report}})
-        console.log(reportFiltered)
         setReport(reportFiltered[0])
     }
 
@@ -81,7 +79,6 @@ export const ExecutionReportProvider = (props) => {
         setExecutionReport(undefined)
         if (!isOperator && isOnline) {
             const response = await executionReportsRoutes.getExecutionReportById(report)
-            console.log(response.data)
             if (!response.data.data) {
                 setMessage('OT no iniciado')
                 setReporteIniciado(false)
@@ -98,7 +95,6 @@ export const ExecutionReportProvider = (props) => {
             const excetutionReportCache = response.filter(doc => {if(doc.reportId === report._id) return doc})
             if (excetutionReportCache.length > 0) {
                 const responseData = await executionReportsRoutes.getExecutionReportById(report)
-                console.log(responseData)
                 if (excetutionReportCache[0].offLineGuard > responseData.data.data.offLineGuard) {
                     setExecutionReport(excetutionReportCache[0])
                 } else {
@@ -109,6 +105,7 @@ export const ExecutionReportProvider = (props) => {
                 if (responseData.data.state) {
                     setExecutionReport(responseData.data.data)
                 } else {
+                    if (report && report.usersAssigned[0])
                     if (report.usersAssigned[0]._id === userData._id) {
                         const db = await pautasDatabase.initDbPMs()
                         setMessage('Guardando pauta de OT '+report.idIndex)
@@ -128,10 +125,8 @@ export const ExecutionReportProvider = (props) => {
                             offLineGuard: null
                         }
                         const responseNewExecution = await executionReportsRoutes.createExecutionReport(executionReportData)/* saveExecutionReport(executionReportData) */
-                        console.log('Se guarda reporte ', responseNewExecution.data)
                         await executionReportsDatabase.actualizar(responseNewExecution.data.data, database)
                         setExecutionReport(responseNewExecution.data.data)
-                        console.log('Se guarda reporte ', responseNewExecution.data.data)
                         if (!report.dateInit) {
                             report.dateInit = new Date()
                             await reportsRoutes.editReportById(report)

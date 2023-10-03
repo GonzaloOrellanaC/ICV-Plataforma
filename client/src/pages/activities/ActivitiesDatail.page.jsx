@@ -50,7 +50,7 @@ const ActivitiesDetailPage = () => {
     /* NUEVA VERSION */
 
     useEffect(() => {
-        if (isOperator && report && userData)
+        if (isOperator && report && report.usersAssigned[0] && userData)
         if((isOperator && (!report.level || report.level === 0) && (report.usersAssigned[0]._id === userData._id))) {
             console.log('*****************************************************OK')
         }
@@ -62,7 +62,7 @@ const ActivitiesDetailPage = () => {
     },[site])
 
     useEffect(() => {
-        if (report) {
+        if (report && report.usersAssigned[0]) {
             setReportLevel(report.level)
             console.log(isSapExecutive, report.level)
             if ((isOperator && (report.level === 0 || !report.level) && (report.usersAssigned[0]._id === userData._id)) || 

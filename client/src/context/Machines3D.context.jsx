@@ -16,10 +16,6 @@ export const Machine3DProvider = props => {
     const [machines3D, setMachines3D] = useState([])
 
     useEffect(() => {
-        console.log(machines3D)
-    },[machines3D])
-
-    useEffect(() => {
         if (isAuthenticated) {
             obtenerModelos3D()
         }
@@ -50,7 +46,6 @@ export const Machine3DProvider = props => {
             const { model, brand, type, name } = files[number];
             setLoadingData3D(`Descargando modelo 3D de ${name}, ${brand} ${model}`)
             let res = await fetch(`${environment.storageURL}${files[number].url}`);
-            console.log(res)
             const reader = res.body.getReader()
             /* console.log(reader) */
             const contentLength = + res.headers.get('Content-Length');

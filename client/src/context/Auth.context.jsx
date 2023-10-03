@@ -21,8 +21,12 @@ export const AuthProvider = (props) => {
     const [unidades, setUnidades] = useState([])
     const navigate = useNavigate()
 
+    /* useEffect(() =>{
+        console.log(site)
+    },[site]) */
+
     useEffect(() => {
-        console.log(Boolean(window.localStorage.getItem('isauthenticated')))
+        /* console.log(Boolean(window.localStorage.getItem('isauthenticated'))) */
         if (window.localStorage.getItem('isauthenticated')==='true') {
             setIsAuthenticated(true)
         }
@@ -60,7 +64,7 @@ export const AuthProvider = (props) => {
 
     const getUnidades = async () => {
         const response = await unidadesRoutes.getUnidades()
-        console.log(response.data)
+        /* console.log(response.data) */
         localStorage.setItem('unidades', JSON.stringify(response.data.unidades))
         if (response.data.state) {
             setUnidades(response.data.unidades)
@@ -82,7 +86,6 @@ export const AuthProvider = (props) => {
                         localStorage.setItem('isAdmin', true);
                         setAdmin(true)
                     }else if(rol === 'inspectionWorker' || rol === 'maintenceOperator') {
-                        console.log('Es operador')
                         localStorage.setItem('isOperator', true)
                         setIsOperator(true)
                     }else if(rol === 'sapExecutive') {
@@ -156,10 +159,8 @@ export const AuthProvider = (props) => {
         /* newReport, */
         loginRut: (rut, password) => {
             return new Promise(resolve => {
-                console.log(rut)
                 authRoutes.loginRut(rut, password)
                 .then(async response => {
-                    console.log(response)
                     let userDataToSave = response.data
                     if(response.data.enabled) {
                         setRoles(userDataToSave.roles)
@@ -209,7 +210,6 @@ export const AuthProvider = (props) => {
             return new Promise(resolve => {
                 authRoutes.login(email, password)
                 .then(async response => {
-                    console.log(response)
                     let userDataToSave = response.data
                     if(response.data.enabled) {
                         setRoles(userDataToSave.roles)

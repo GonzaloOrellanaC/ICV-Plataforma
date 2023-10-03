@@ -143,14 +143,14 @@ const Header = () => {
                                         userData.roles && userData.roles.map((role, i) => {
                                             return (
                                                 <Grid item key={i} style={{marginRight: 10}}>
-                                                    {changeTypeUser(role)} |
+                                                    {changeTypeUser(role)}
                                                 </Grid>
                                             )
                                         })
                                     }
-                                    <Grid item style={{marginRight: 10}}>
+                                    {/* <Grid item style={{marginRight: 10}}>
                                         {site && site.descripcion}
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item>
                                         <strong>{messageDownloading}</strong>
                                     </Grid>

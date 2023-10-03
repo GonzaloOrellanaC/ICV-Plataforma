@@ -25,7 +25,6 @@ export const SitesProvider = props => {
 
     useEffect(() => {
         if (sites.length > 0) {
-            console.log(sites)
             const sitesCache = []
             sites.forEach((site) => {
                 if (site.status) {

@@ -14,10 +14,6 @@ export const ConnectionProvider = props => {
         })
     },[])
 
-    useEffect(() => {
-        console.log('Network: ', isOnline)
-    },[isOnline])
-
     const provider = {
         isOnline
     }

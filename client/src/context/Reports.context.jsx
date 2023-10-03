@@ -15,6 +15,7 @@ export const ReportsProvider = (props) => {
     const {isOnline} = useConnectionContext()
     const {admin, isSapExecutive, isShiftManager, isChiefMachinery, roles, site, isOperator, isAuthenticated, userData} = useAuth()
     const [reports, setReports] = useState([])
+    const [reportsCache, setReportsCache] = useState([])
     const [reportsResume, setReportsResume] = useState([])
     const [assignments, setAssignments] = useState([])
     const [listSelected, setListSelected] = useState([])
@@ -28,12 +29,19 @@ export const ReportsProvider = (props) => {
     const [statusReports, setStatusReports] = useState(false)
     const [revision, setRevision] = useState(true)
     const [newReport, setNewReport] = useState()
+    const [siteSelected, setSiteSelected] = useState()
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (priorityAssignments || normalAssignments)
-        setMessage('')
-    }, [priorityAssignments, normalAssignments])
+        console.log(siteSelected)
+        if (siteSelected && siteSelected === 'none') {
+            setReports(reportsCache)
+        } else if (siteSelected && siteSelected !== 'none') {
+            console.log(reportsCache.filter(report => {if (report.site === siteSelected) return true}))
+            const reportsFinal = reportsCache.filter(report => {if (report.site === siteSelected) return true})
+            setReports(reportsFinal)
+        }
+    },[siteSelected])
 
     useEffect(() => {
         if (newReport) {
@@ -50,6 +58,7 @@ export const ReportsProvider = (props) => {
                         reportsCache[reportsFiltered] = newReport
                     }
                     setReports(reportsCache)
+                    setReportsCache(reportsCache)
                 }
             })
         }
@@ -91,6 +100,10 @@ export const ReportsProvider = (props) => {
 
     useEffect(() => {
         if (reports.length > 0) {
+            console.log(reports)
+            if (reportsCache.length === 0) {
+                setReportsCache(reports)
+            }
             const reportsResumeCache = []
             reports.forEach((report) => {
                 reportsResumeCache.push({
@@ -112,10 +125,11 @@ export const ReportsProvider = (props) => {
             }
             setAssignments(reports)
         } else {
-            if (isAuthenticated) {
+            if (isAuthenticated && !siteSelected) {
                 setMessage('Descargando recursos')
                 getReportsFromDatabase()
                 setAssignments([])
+                setReportsResume([])
             }
         }
     }, [reports, isAuthenticated])
@@ -143,6 +157,7 @@ export const ReportsProvider = (props) => {
         })
         reportsCache[reportIndex] = reportUpdated
         setReports(reportsCache)
+        setReportsCache(reportsCache)
         alert('reporte asignado')
         setLoading(false)
     }
@@ -154,6 +169,7 @@ export const ReportsProvider = (props) => {
         const reportUpdated = response.data
         reportsCache.push(reportUpdated)
         setReports(reportsCache)
+        setReportsCache(reportsCache)
         alert(`Reporte ${reportUpdated.idIndex}, para máquina modelo ${reportUpdated.machine} creado satisfactoriamente.`)
         setLoading(false)
         navigate('/reports', {replace: true})
@@ -181,6 +197,7 @@ export const ReportsProvider = (props) => {
         })
         reportsCache[reportIndex] = reportUpdated
         setReports(reportsCache)
+        setReportsCache(reportsCache)
     }
 
     const savePautas = async () => {
@@ -199,6 +216,7 @@ export const ReportsProvider = (props) => {
         const response = await reportsDatabase.consultar(database)
         if (response.length > 0) {
             setReports(response)
+            setReportsCache(reportsCache)
         } else {
             setMessage('')
         }
@@ -259,7 +277,7 @@ export const ReportsProvider = (props) => {
                         assignmentsCache.push(assignment)
                     }
                 })
-                setPriorityAssignments(priorityAssignmentsCache)
+                setPriorityAssignments(priorityAssignmentsCache.filter((report) => {if (report.level === 4) {return null} else {return report}}))
                 setnormalAssignments(assignmentsCache)
             } else if (isChiefMachinery) {
                 const priorityAssignmentsCache = []
@@ -278,8 +296,8 @@ export const ReportsProvider = (props) => {
                         assignmentsCache.push(assignment)
                     }
                 })
-                setPriorityAssignments(priorityAssignmentsCache)
-                setnormalAssignments(assignmentsCache)
+                setPriorityAssignments(priorityAssignmentsCache.filter((report) => {if (report.level === 4) {return null} else {return report}}))
+                setnormalAssignments(assignmentsCache.filter((report) => {if (report.level === 4) {return null} else {return report}}))
             } else if (isOperator || admin || isSapExecutive) {
                 assignments.forEach((assignment, i) => {
                     if(assignment.guide === 'Pauta de Inspección') {
@@ -288,7 +306,8 @@ export const ReportsProvider = (props) => {
                         assignment._guide = assignment.guide
                     }
                 })
-                setnormalAssignments(assignments)
+                const newAssignment = assignments.filter((report) => {if (report.level === 4) {return null} else {return report}})
+                setPriorityAssignments(newAssignment)
             }
         } else {
             setPriorityAssignments([])
@@ -345,28 +364,35 @@ export const ReportsProvider = (props) => {
         const {database} = await reportsDatabase.initDbReports()
         const reportsResponse = await reportsDatabase.consultar(database)
         setReports(reportsResponse)
+        setReportsCache(reportsResponse)
     }
 
     const getReports = async () => {
+        console.log('Sincronizando reportes')
         setMessage('Sincronizando reportes')
+        setReports([])
         setStatusReports(true)
         if (isOnline) {
             if (admin) {
                 const response = await reportsRoutes.getAllReports()
                 setReports(response.data)
+                setReportsCache(response.data)
                 setStatusReports(false)
             } else {
                 if (isOperator && (!isSapExecutive && !isShiftManager && !isChiefMachinery)) {
                     const response = await reportsRoutes.findMyAssignations(userData._id, site.idobra)
                     setReports(response.data)
+                    setReportsCache(response.data)
                     setStatusReports(false)
                 } else if (isOperator && (isSapExecutive || isShiftManager || isChiefMachinery)) {
                     const response = await reportsRoutes.getAllReportsbySite(site.idobra)
                     setReports(response.data)
+                    setReportsCache(response.data)
                     setStatusReports(false)
                 } else if (isSapExecutive || isShiftManager || isChiefMachinery) {
                     const response = await reportsRoutes.getAllReportsbySite(site.idobra)
                     setReports(response.data)
+                    setReportsCache(response.data)
                     setStatusReports(false)
                 }
             }
@@ -401,7 +427,8 @@ export const ReportsProvider = (props) => {
         statusReports,
         setStatusReports,
         createReport,
-        reportsResume
+        reportsResume,
+        setSiteSelected
     }
 
     return (

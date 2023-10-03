@@ -52,7 +52,6 @@ export const CreateUserProvider = (props) => {
     useEffect(() => {
         if (changeModule) {
             const isRoleSelected = []
-            console.log(rolesListSelectionCache)
             rolesListSelectionCache.forEach((role) => {
                 if (role.selected) {
                     isRoleSelected.push(role.dbName)
@@ -73,7 +72,6 @@ export const CreateUserProvider = (props) => {
             })
             const userDataCache = userData
             userDataCache.roles = isRoleSelected
-            console.log(userDataCache)
             setUserData({...userData, roles: isRoleSelected})
             setChangeModule(false)
         }
