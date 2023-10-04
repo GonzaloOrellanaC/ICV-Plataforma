@@ -428,7 +428,8 @@ export const ReportsProvider = (props) => {
         setStatusReports,
         createReport,
         reportsResume,
-        setSiteSelected
+        setSiteSelected,
+        siteSelected
     }
 
     return (

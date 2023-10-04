@@ -4,7 +4,7 @@ import { ArrowBackIos } from '@material-ui/icons'
 import { date, useStylesTheme } from '../../config'
 import { useNavigate } from 'react-router-dom'
 /* import { machinesDatabase, reportsDatabase } from '../../indexedDB' */
-import { AuthContext, ExecutionReportContext, useReportsContext } from '../../context'
+import { AuthContext, ExecutionReportContext, useReportsContext, useSitesContext } from '../../context'
 import { FormControl, InputLabel, ListItemButton, MenuItem, Select } from '@mui/material'
 import SeleccionarObraDialog from '../../dialogs/SeleccionarObraDialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,7 +15,8 @@ const ActivitiesPage = () => {
     const navigate = useNavigate();
     const {isOperator, isSapExecutive, isShiftManager, isChiefMachinery, admin, userData} = useContext(AuthContext)
     const {setReport} = useContext(ExecutionReportContext)
-    const {priorityAssignments, normalAssignments} = useReportsContext()
+    const {priorityAssignments, normalAssignments, siteSelected} = useReportsContext()
+    const {sites} = useSitesContext()
     const [showList, setShowList] = useState(true)
     const theme = useTheme();
     const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
@@ -25,6 +26,7 @@ const ActivitiesPage = () => {
     const [openSeleccionarObra, setOpnSeleccionarObra] = useState(false)
     const [loading, setLoading] = useState(false)
     const [order, setOrder] = useState(false)
+    const [siteObject, setSiteObject] = useState()
 
     useEffect(() => {
         setTimeout(() => {
@@ -34,6 +36,14 @@ const ActivitiesPage = () => {
             setLoading(false)
         },[500])
     },[priorityAssignments, normalAssignments])
+
+    useEffect(() => {
+        if (sites.length > 0 && siteSelected) {
+            console.log(sites)
+            const siteFiltered = sites.filter(site => {if (site.idobra === siteSelected) return site})[0]
+            setSiteObject(siteFiltered)
+        }
+    },[siteSelected])
 
     /* useEffect(() => {
         listadoReportes.map(report => {
@@ -51,6 +61,11 @@ const ActivitiesPage = () => {
 
     const compareBy = (value) => {
         console.log(value)
+        if (order) {
+            setOrder(false)
+        } else {
+            setOrder(true)
+        }
         const listadoReportesCache2 = [...listadoReportesCache]
         if (value === 'ot') {
             setListadoReportes(listadoReportesCache2.sort(compareByOt))
@@ -58,52 +73,92 @@ const ActivitiesPage = () => {
             setListadoReportes(listadoReportesCache2.sort(compareInicio))
         } else if (value === 'datePrev') {
             setListadoReportes(listadoReportesCache2.sort(compareInicioProgramado))
+        } else if (value === 'endPrev') {
+            setListadoReportes(listadoReportesCache2.sort(compareTerminoProgramado))
+        } else if (value === 'endReport') {
+            setListadoReportes(listadoReportesCache2.sort(compareTermino))
+        } else if (value === 'guia') {
+            setListadoReportes(listadoReportesCache2.sort(compareByGuia))
+        } else if (value === 'sap') {
+            setListadoReportes(listadoReportesCache2.sort(compareBySAP))
         }
     }
 
     const compareByOt = (a, b) => {
         if (order) {
-            setOrder(false)
             return a.idIndex - b.idIndex
         } else {
-            setOrder(true)
             return b.idIndex - a.idIndex
         }
     }
 
-    const compareInicio = (a, b) => {
-        console.log(a.dateInit)
+    const compareByGuia = (a, b) => {
         if (order) {
-            setOrder(false)
-            return Date.now(a.dateInit) - Date.now(b.dateInit)
+            if(a.guide < b.guide) { return -1; }
+            if(a.guide > b.guide) { return 1; }
+            return 0
         } else {
-            setOrder(true)
-            return Date.now(b.dateInit) - Date.now(a.dateInit)
+            if(b.guide < a.guide) { return -1; }
+            if(b.guide > a.guide) { return 1; }
+            return 0
+        }
+    }
+
+    const compareBySAP = (a, b) => {
+        if (order) {
+            return a.sapId - b.sapId
+        } else {
+            return b.sapId - a.sapId
+        }
+    }
+
+    const compareInicio = (a, b) => {
+        if (order) {
+            return new Date(a.dateInit) - new Date(b.dateInit)
+        } else {
+            return new Date(b.dateInit) - new Date(a.dateInit)
         }
     }
 
     const compareInicioProgramado = (a, b) => {
-        console.log(a.datePrev)
         if (order) {
-            setOrder(false)
             return new Date(a.datePrev) - new Date(b.datePrev)
         } else {
-            setOrder(true)
             return new Date(b.datePrev) - new Date(a.datePrev)
+        }
+    }
+
+    const compareTerminoProgramado = (a, b) => {
+        if (order) {
+            return new Date(a.endPrev) - new Date(b.endPrev)
+        } else {
+            return new Date(b.endPrev) - new Date(a.endPrev)
+        }
+    }
+
+    const compareTermino = (a, b) => {
+        if (order) {
+            return new Date(a.endReport) - new Date(b.endReport)
+        } else {
+            return new Date(b.endReport) - new Date(a.endReport)
         }
     }
 
     useEffect(() => {
         if (asignaciones === 'only') {
             setListadoReportes(priorityAssignments)
+            setListadoReportesCache(priorityAssignments)
         } else {
             setListadoReportes(normalAssignments)
+            setListadoReportesCache(normalAssignments)
         }
     },[asignaciones])
 
-    const closeSeleccionarObra = () => {
-        setLoading(true)
-        setListadoReportes([])
+    const closeSeleccionarObra = (value) => {
+        if (value === 'Selected') {
+            setLoading(true)
+            setListadoReportes([])
+        }
         setOpnSeleccionarObra(false)
     }
 
@@ -127,6 +182,21 @@ const ActivitiesPage = () => {
                                         <h1 style={{marginTop: 0, marginBottom: 0, fontSize: 16}}>
                                             Actividades Asignadas
                                         </h1>
+                                        {
+                                            (admin && siteObject) && <p style={{ position: 'absolute',right: 70, textAlign: 'right', maxWidth: 300, borderColor: '#ccc' }}>
+                                                Obra seleccionada: <br />{`${siteObject && siteObject.descripcion}`}
+                                            </p>
+                                        }
+                                        {admin && <IconButton
+                                            color={'primary'} 
+                                            style={{ position: 'absolute',right: 5, marginRight: 5 }}
+                                            edge={'end'}
+                                            /* hidden={!hableCreateReport} */
+                                            onClick={() => setOpnSeleccionarObra(true)}
+                                            title='Seleccionar Obra'
+                                        >
+                                            <FontAwesomeIcon icon={faMapMarker}/>
+                                        </IconButton>}
                                         {!admin && <FormControl fullWidth style={{ position: 'absolute',right: 5, width: 180, borderColor: '#ccc' }}>
                                             <InputLabel id="demo-simple-select-label" color={'error'}>Lista</InputLabel>
                                             <Select
@@ -141,16 +211,6 @@ const ActivitiesPage = () => {
                                                 <MenuItem value={'all'}>Otras</MenuItem>
                                             </Select>
                                         </FormControl>}
-                                        {admin && <IconButton
-                                            color={'primary'} 
-                                            style={{ position: 'absolute',right: 5, marginRight: 5 }}
-                                            edge={'end'}
-                                            /* hidden={!hableCreateReport} */
-                                            onClick={() => setOpnSeleccionarObra(true)}
-                                            title='Seleccionar Obra'
-                                        >
-                                            <FontAwesomeIcon icon={faMapMarker}/>
-                                        </IconButton>}
                                     </Toolbar>
                                 </div>
                             </div>
@@ -174,12 +234,12 @@ const ActivitiesPage = () => {
                                                 </ListItemButton>
                                             </Grid>
                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={1} xs={1}>
-                                                <ListItemButton onClick={() => {compareBy('')}} style={{width: 50, textAlign: 'center', padding: 0, margin: '12px 0px'}}>
+                                                <ListItemButton onClick={() => {compareBy('guia')}} style={{width: 50, textAlign: 'center', padding: 0, margin: '12px 0px'}}>
                                                     <p style={{width: 50, fontSize: 12, fontWeight: 'bold'}}>Guía</p>
                                                 </ListItemButton>
                                             </Grid>
                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'}>
-                                                <ListItemButton onClick={() => {compareBy('')}} style={{minWidth: 100, textAlign: 'center', padding: 0, margin: '12px 0px'}}>
+                                                <ListItemButton onClick={() => {compareBy('sap')}} style={{minWidth: 100, textAlign: 'center', padding: 0, margin: '12px 0px'}}>
                                                     <p style={{width: 100, fontSize: 12, fontWeight: 'bold'}}>SAP ID</p>
                                                 </ListItemButton>
                                             </Grid>
@@ -194,27 +254,27 @@ const ActivitiesPage = () => {
                                                 </ListItemButton>
                                             </Grid>
                                             {!isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                <ListItemButton style={{minWidth: 170, padding: 0, margin: '12px 0px'}}>
+                                                <ListItemButton onClick={() => {compareBy('endPrev')}} style={{minWidth: 170, padding: 0, margin: '12px 0px'}}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 170}}>Término programado</p>
                                                 </ListItemButton>
                                             </Grid>}
                                             {!isSmall && <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                <ListItemButton style={{minWidth: 170, padding: 0, margin: '12px 0px'}}>
+                                                <ListItemButton onClick={() => {compareBy('endReport')}} style={{minWidth: 170, padding: 0, margin: '12px 0px'}}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold', minWidth: 170}}>Término ejecución</p>
                                                 </ListItemButton>
                                             </Grid>}
                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                <ListItemButton style={{minWidth: 150, textAlign: 'center', padding: 0, margin: '12px 0px'}}>
+                                                <ListItemButton disabled style={{minWidth: 150, textAlign: 'center', padding: 0, margin: '12px 0px', opacity: 1}}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'left', minWidth: 150}}>Flota</p>
                                                 </ListItemButton>
                                             </Grid>
                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                <ListItemButton style={{minWidth: 70, textAlign: 'center', padding: 0, margin: '12px 0px'}}>
+                                                <ListItemButton disabled style={{minWidth: 70, textAlign: 'center', padding: 0, margin: '12px 0px', opacity: 1}}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'left', minWidth: 70}}> Progreso </p>
                                                 </ListItemButton>
                                             </Grid>
                                             <Grid item xl={'auto'} lg={'auto'} md={'auto'} sm={'auto'} xs={'auto'}>
-                                                <ListItemButton style={{minWidth: 70, textAlign: 'center', padding: 0, margin: '12px 0px'}}>
+                                                <ListItemButton disabled style={{minWidth: 70, textAlign: 'center', padding: 0, margin: '12px 0px', opacity: 1}}>
                                                 <p style={{fontSize: 12, fontWeight: 'bold', textAlign: 'center', minWidth: 70}}>Nro Máquina</p>
                                                     </ListItemButton>
                                             </Grid>

@@ -29,7 +29,7 @@ const SeleccionarObraDialog = ({open, handleClose}) => {
             <DialogTitle>Seleccione Obra</DialogTitle>
             <DialogContent>
                     <ListItemButton onClick={() => {setSiteSelected('none'); setTimeout(() => {
-                        handleClose()
+                        handleClose('Selected')
                     }, 500);}}>
                         <ListItemText primary={'Todas las obras'}/>
                     </ListItemButton>
@@ -37,7 +37,7 @@ const SeleccionarObraDialog = ({open, handleClose}) => {
                         obras.map((obra, i)=>{
                             return (
                                 <ListItemButton key={i} onClick={() => {setSiteSelected(obra.idobra); setTimeout(() => {
-                                    handleClose()
+                                    handleClose('Selected')
                                 }, 500)}}>
                                     <ListItemText primary={obra.descripcion}/>
                                 </ListItemButton>

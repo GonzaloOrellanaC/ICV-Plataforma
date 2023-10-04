@@ -15,9 +15,9 @@ import { date } from '../../config';
 import SeleccionarObraDialog from '../../dialogs/SeleccionarObraDialog';
 
 const ReportsPage = () => {
-    const {sitesToSelection} = useSitesContext()
+    const {sites} = useSitesContext()
     const {admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
-    const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache, getReports, loading, statusReports, pautas} = useReportsContext()
+    const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache, getReports, loading, statusReports, pautas, siteSelected} = useReportsContext()
     const [inspeccionesTotales, setInspeccionesTotales] = useState([])
     const [mantencionesTotales, setMantencionesTotales] = useState([])
     const [ inspecciones, setInspecciones ] = useState([]);
@@ -42,7 +42,17 @@ const ReportsPage = () => {
     const [loadingSpinner, setLoading] = useState(false)
     const [openReportSumary, setOpenReportSumary] = useState(false)
     const [openSeleccionarObra, setOpnSeleccionarObra] = useState(false)
+    const [siteObject, setSiteObject] = useState()
 
+
+
+    useEffect(() => {
+        if (sites.length > 0 && siteSelected) {
+            console.log(sites)
+            const siteFiltered = sites.filter(site => {if (site.idobra === siteSelected) return site})[0]
+            setSiteObject(siteFiltered)
+        }
+    },[siteSelected])
 
     useEffect(() => {
         if (pautas.length === 0) {
@@ -516,6 +526,11 @@ const ReportsPage = () => {
                             <Typography variant='h1' style={{marginTop: 0, marginBottom: 0, fontSize: 16, width: '100%'}}>
                                 Ordenes de trabajo
                             </Typography>
+                            {
+                                (admin && siteObject) && <p style={{ position: 'absolute',right: 270, textAlign: 'right', maxWidth: 300, borderColor: '#ccc' }}>
+                                    Obra seleccionada: <br />{`${siteObject && siteObject.descripcion}`}
+                                </p>
+                            }
                             {admin && <IconButton
                                 color={'primary'} 
                                 style={{ marginRight: 5 }}
