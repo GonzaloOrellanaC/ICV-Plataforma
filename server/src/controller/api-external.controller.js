@@ -17,15 +17,20 @@ const insumosPorReporte = async (req, res) => {
                 res.status(200).send({message: 'Datos compilados', data: dataToSend, state: true})
             } else {
                 const report = await Reports.findOne({sapId: om})
+                console.log(report)
                 if (!report) {
                     res.status(404).send({message: 'Orden de Trabajo no encontrado.', state: false})
                 } else {
-                    if (report.level < 4) {
-                        res.status(404).send({message: 'OM solicitada aún no ha sido cerrada.', state: false})
+                    if (!report.level) {
+                        res.status(404).send({message: 'OM solicitada aún no ha sido iniciada.', state: false})
+                    } else if (report.level === 1) {
+                        res.status(404).send({message: 'OM solicitada en ejecución por operario.', state: false})
+                    } else if (report.level > 1 && report.level < 4) {
+                        res.status(404).send({message: 'OM solicitada en proceso de revisión.', state: false})
                     } else {
                         const ejecucionDeReporte = await ExecutionReport.findOne({reportId: report._id})
                         if (!ejecucionDeReporte) {
-                            res.status(404).send({message: 'OM solicitada no ejecución.', state: false})
+                            res.status(404).send({message: 'OM solicitada no cuenta con ejecución.', state: false})
                         } else {
                             const listaMateriales = []
                             Object.keys(ejecucionDeReporte.group).forEach(async (element, index) => {
