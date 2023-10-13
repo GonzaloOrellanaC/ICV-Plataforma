@@ -226,6 +226,9 @@ const ReportDataDialog = (
       }
     } else {
       stateToSend = true
+      save(index, state, item)
+      executionReport.offLineGuard = Date.now()
+      stateToSend = true
     }
     console.log(item, stateToSend)
     if (stateToSend === true) {

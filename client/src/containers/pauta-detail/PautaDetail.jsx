@@ -109,7 +109,7 @@ const PautaDetail = (
                     }
                     item.isRequerido = false
                     const unidadesFiltradas = unidades.filter(u => {if (u.idUnidad === item.unidad) return u})
-                    console.log((unidadesFiltradas.length > 0) ? unidadesFiltradas[0] : {})
+                    /* console.log((unidadesFiltradas.length > 0) ? unidadesFiltradas[0] : {}) */
                     if (unidadesFiltradas && unidadesFiltradas[0]) {
                         item.isRequerido = true
                         item.inputCantidad = 1
@@ -174,9 +174,13 @@ const PautaDetail = (
         element.isChecked = true
         element.isWarning = state ? false : true
         contentDataCache[index] = element
-        const executionReportCache = executionReport
+        /* const executionReportCache = executionReport
         executionReportCache.group[indexGroup] = contentDataCache
-        executionReportCache.offLineGuard = Date.now()
+        executionReportCache.offLineGuard = Date.now() */
+        executionReport.group[indexGroup] = contentDataCache
+        executionReport.offLineGuard = Date.now()
+        const executionReportCache = executionReport
+        console.log(contentDataCache)
         setContentData(contentDataCache)
         const {database} = await executionReportsDatabase.initDb()
         await executionReportsDatabase.actualizar(executionReportCache, database)
@@ -276,7 +280,7 @@ const PautaDetail = (
                     <Grid item xl={'auto'} md={'auto'}>
                         <p style={{margin: 0, textAlign: 'center', width: 150}}> <strong>Descripcion De Tarea</strong> </p>
                     </Grid>
-                    <Grid item xl={(report.reportType === 'Mantención') ? 3 : 5} md={(report.reportType === 'Mantención') ? 3 : 5} sm={4}>
+                    <Grid item xl={(report.reportType === 'Mantención') ? 3 : 4} md={(report.reportType === 'Mantención') ? 3 : 4} sm={4}>
                         <p style={{margin: 0, textAlign: 'center'}}> <strong>Observaciones</strong> </p>
                     </Grid>
                     <Hidden mdDown>
@@ -317,7 +321,7 @@ const PautaDetail = (
                                     <Grid item xl={'auto'} md={'auto'}>
                                         <p style={{fontSize: 12, padding: 5, margin: 0, textAlign: 'left', width: 150}}> {e.taskdesc} </p>
                                     </Grid>
-                                    <Grid item xl={(report.reportType === 'Mantención') ? 3 : 5} md={(report.reportType === 'Mantención') ? 3 : 5} sm={4}>
+                                    <Grid item xl={(report.reportType === 'Mantención') ? 3 : 4} md={(report.reportType === 'Mantención') ? 3 : 4} sm={4}>
                                         <p style={{fontSize: 12, padding: 5, margin: 0, textAlign: 'justify'}}> {e.obs01} </p>
                                     </Grid>
                                     <Hidden mdDown>
@@ -335,29 +339,29 @@ const PautaDetail = (
                                         </Grid>}
                                     </Hidden>
                                     <Grid item xl={1} md={'auto'}>
-                                        <div style={{textAlign: 'center', width: 60}}>
-                                            <IconButton style={{width: '5%', textAlign: 'center'}} onClick={()=>{openDialog(e, n); setIndexActivity(n)}}>
-                                                <FontAwesomeIcon icon={canEdit ? faPen : faEye}/>
+                                        <div style={{textAlign: 'center', width: 20}}>
+                                            <IconButton style={{width: 10, textAlign: 'center'}} onClick={()=>{openDialog(e, n); setIndexActivity(n)}}>
+                                                <FontAwesomeIcon style={{fontSize: 20}} icon={canEdit ? faPen : faEye}/>
                                             </IconButton>
                                         </div>
                                     </Grid>
-                                    <Grid item xl={1} md={1}>
+                                    <Grid item xl={'auto'} md={'auto'}>
                                         {
                                             !canEdit && (e.isChecked ? 
                                             <Checkbox 
                                             checked={e.isChecked} 
                                             disabled
                                             style={{transform: "scale(1.2)"}} 
-                                            icon={<CircleUnchecked />} 
-                                            checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} 
+                                            icon={<CircleUnchecked style={{fontSize: 20}} />} 
+                                            checkedIcon={<CircleCheckedFilled style={{fontSize: 20, color: e.isWarning ? '#EAD749' : '#27AE60'}} />} 
                                             />
                                         :
                                             <Checkbox 
                                             checked={e.isChecked} 
                                             disabled 
                                             style={{transform: "scale(1.2)"}} 
-                                            icon={<CircleUnchecked />} 
-                                            checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} 
+                                            icon={<CircleUnchecked style={{fontSize: 20}} />} 
+                                            checkedIcon={<CircleCheckedFilled style={{fontSize: 20, color: e.isWarning ? '#EAD749' : '#27AE60'}} />} 
                                             />)
                                         }
                                         {
@@ -367,8 +371,8 @@ const PautaDetail = (
                                                 checked={e.isChecked} 
                                                 onClick={() => { changeState(e, n) }} 
                                                 style={{transform: "scale(1.2)"}} 
-                                                icon={<CircleUnchecked />} 
-                                                checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} 
+                                                icon={<CircleUnchecked style={{fontSize: 20}} />} 
+                                                checkedIcon={<CircleCheckedFilled style={{fontSize: 20, color: e.isWarning ? '#EAD749' : '#27AE60'}} />} 
                                                 />
                                             :
                                                 <Checkbox 
@@ -376,14 +380,14 @@ const PautaDetail = (
                                                 checked={e.isChecked} 
                                                 onClick={() => { changeState(e, n) }} 
                                                 style={{transform: "scale(1.2)"}} 
-                                                icon={<CircleUnchecked />} 
-                                                checkedIcon={<CircleCheckedFilled style={{color: e.isWarning ? '#EAD749' : '#27AE60'}} />} 
+                                                icon={<CircleUnchecked style={{fontSize: 20}} />} 
+                                                checkedIcon={<CircleCheckedFilled style={{fontSize: 20, color: e.isWarning ? '#EAD749' : '#27AE60'}} />} 
                                                 />)
                                         }
-                                        {e.haveMessage && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon icon={faCommentDots} /></IconButton>}
-                                        {!e.messages && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faCommentDots} /></IconButton>}
-                                        {e.haveClip && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon icon={faPaperclip} /></IconButton>}
-                                        {!e.haveClip && <IconButton style={{padding: 5}} disabled><FontAwesomeIcon style={{color: 'transparent'}} icon={faPaperclip} /></IconButton>}
+                                        {e.haveMessage && <IconButton style={{padding: 1}} disabled><FontAwesomeIcon style={{fontSize: 20}} icon={faCommentDots} /></IconButton>}
+                                        {!e.messages && <IconButton style={{padding: 1}} disabled><FontAwesomeIcon style={{fontSize: 20, color: 'transparent'}} icon={faCommentDots} /></IconButton>}
+                                        {e.haveClip && <IconButton style={{padding: 1}} disabled><FontAwesomeIcon style={{fontSize: 20}} icon={faPaperclip} /></IconButton>}
+                                        {!e.haveClip && <IconButton style={{padding: 1}} disabled><FontAwesomeIcon style={{fontSize: 20, color: 'transparent'}} icon={faPaperclip} /></IconButton>}
                                     </Grid>
                                 </Grid>
                             )

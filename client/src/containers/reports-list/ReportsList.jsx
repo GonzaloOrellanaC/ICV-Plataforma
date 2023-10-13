@@ -89,8 +89,8 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                 <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}  >
                     <p style={{textAlign: 'center', minWidth: 60}}> <strong>Máquina</strong> </p>
                 </Grid>
-                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
-                    <p style={{textAlign: 'center'}}> <strong>Pauta</strong> </p>
+                <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} >
+                    <p style={{textAlign: 'center', width: 20}}> <strong>Pauta</strong> </p>
                 </Grid>
                 {
                     (typeReportsSelected !== 'Completadas') && <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
@@ -112,11 +112,14 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                 <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                     <p style={{textAlign: 'center'}}> <strong>Estado</strong> </p>
                 </Grid>
-                {(typeReportsSelected !== 'Completadas') ? <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
-                    <p style={{textAlign: 'center'}}> <strong>Responsable</strong> </p>
-                </Grid> : <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
+                <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
                     <p style={{textAlign: 'center'}}> <strong>OM SAP</strong> </p>
-                </Grid>}
+                </Grid>
+                {(typeReportsSelected !== 'Completadas') && <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
+                    <p style={{textAlign: 'center'}}> <strong>Responsable</strong> </p>
+                </Grid> /* : <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
+                    <p style={{textAlign: 'center'}}> <strong>OM SAP</strong> </p>
+                </Grid> */}
                 {admin && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
                     <p style={{textAlign: 'center', minWidth: 70}}> <strong>Obra</strong> </p>
                 </Grid>}
@@ -159,8 +162,8 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}  >
                                         <p style={{textAlign: 'center', minWidth: 60}}> {item.machineData && item.machineData.equ} </p>
                                     </Grid>
-                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
-                                        <p style={{textAlign: 'center'}}> {item.guide} </p>
+                                    <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'} >
+                                        <p style={{textAlign: 'center', width: 20}}> {item.guide === 'Pauta de Inspección' ? 'P.I.' : item.guide} </p>
                                     </Grid>
                                     {
                                         (typeReportsSelected !== 'Completadas') && <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
@@ -184,17 +187,20 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                                             <p> <strong>{levelToState(item.level, item.usersAssigned, item.state)}</strong> </p>
                                         </div>
                                     </Grid>
+                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
+                                        <p style={{textAlign: 'center'}}> {item.sapId} </p>
+                                    </Grid>
                                     {
-                                        (typeReportsSelected !== 'Completadas') ? ((item.enabled) ? 
+                                        (typeReportsSelected !== 'Completadas') && ((item.enabled) ? 
                                             <Grid item xs={1} sm={1} md={2} lg={1} xl={1} >
                                                 <p style={{textAlign: 'center'}}> <button onClick={()=>{openModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Asignar</button> </p>
                                             </Grid> :
                                             <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                                 <p style={{textAlign: 'center'}}> <button disabled style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Terminado</button> </p>
                                             </Grid>
-                                        ) : <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
+                                        )/*  : <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
                                         <p style={{textAlign: 'center'}}> {item.sapId} </p>
-                                    </Grid>
+                                    </Grid> */
                                     }
                                     {
                                         admin &&
