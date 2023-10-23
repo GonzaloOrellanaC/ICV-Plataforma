@@ -3,7 +3,7 @@ import {Grid, Toolbar, IconButton, Chip, TablePagination, Button, AppBar, Typogr
 import { ArrowBackIos } from '@material-ui/icons';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar, faDownload, faPlus, faPlusSquare, faInfoCircle, faMapMarker } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar, faDownload, faPlus, faPlusSquare, faInfoCircle, faMapMarker, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { executionReportsRoutes } from '../../routes';
 import { LoadingLogoDialog, ReportsResumeDialog } from '../../dialogs';
 import { date } from '../../config';
 import SeleccionarObraDialog from '../../dialogs/SeleccionarObraDialog';
+import ReportsKPIDialog from '../../dialogs/ReportsKPIDialog';
 
 const ReportsPage = () => {
     const {sites} = useSitesContext()
@@ -42,6 +43,7 @@ const ReportsPage = () => {
     const [loadingSpinner, setLoading] = useState(false)
     const [openReportSumary, setOpenReportSumary] = useState(false)
     const [openSeleccionarObra, setOpnSeleccionarObra] = useState(false)
+    const [opnKPI, setOpnKPI] = useState(false)
     const [siteObject, setSiteObject] = useState()
 
 
@@ -501,6 +503,10 @@ const ReportsPage = () => {
         setOpnSeleccionarObra(false)
     }
 
+    const closeKPI = () => {
+        setOpnKPI(false)
+    }
+
     return(
         <div className='container-width' >
             <LoadingLogoDialog
@@ -511,6 +517,12 @@ const ReportsPage = () => {
                 handleClose={closeToReportSumary}
                 reports={reports}
             />}
+            {opnKPI && <ReportsKPIDialog 
+                open={opnKPI}
+                handleClose={closeKPI}
+                reports={reports}
+            />
+            }
             {
             openSeleccionarObra && <SeleccionarObraDialog open={openSeleccionarObra} handleClose={closeSeleccionarObra} />
             }
@@ -527,7 +539,7 @@ const ReportsPage = () => {
                                 Ordenes de trabajo
                             </Typography>
                             {
-                                (admin && siteObject) && <p style={{ position: 'absolute',right: 270, textAlign: 'right', maxWidth: 300, borderColor: '#ccc' }}>
+                                (admin && siteObject) && <p style={{ position: 'absolute',right: 320, textAlign: 'right', maxWidth: 300, borderColor: '#ccc' }}>
                                     Obra seleccionada: <br />{`${siteObject && siteObject.descripcion}`}
                                 </p>
                             }
@@ -540,6 +552,16 @@ const ReportsPage = () => {
                                 title='Seleccionar Obra'
                             >
                                 <FontAwesomeIcon icon={faMapMarker}/>
+                            </IconButton>}
+                            {admin && <IconButton
+                                color={'primary'} 
+                                style={{ marginRight: 5 }}
+                                edge={'end'}
+                                hidden={!hableCreateReport}
+                                onClick={() => setOpnKPI(true)}
+                                title='KPI'
+                            >
+                                <FontAwesomeIcon icon={faChartBar}/>
                             </IconButton>}
                             <IconButton
                                 color={'primary'} 

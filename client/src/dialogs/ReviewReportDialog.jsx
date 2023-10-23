@@ -32,6 +32,11 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
     const [ loadingDelete, setLoadingDelete ] = useState(false)
     const [ toEditSapId, setToEditSapId ] = useState(false)
     const [ sapIdToEdit, setSapIdToEdit ] = useState(sapId)
+    const [tiempoDesarrollo, setTiempoDesarrollo] = useState(0)
+    const [tiempoAprobacionSup, setTiempoAprobacionSup] = useState(0)
+    const [tiempoJMaquinaria, setTiempoJMaquinaria] = useState(0)
+    const [tiempoCierreOt, setTiempoCierreOt] = useState(0)
+    const [tiempoTotal, setTiempoTotal] = useState(0)
     const navigate = useNavigate()
 
     const getUsers = () => {
@@ -46,9 +51,22 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
     useEffect(() => {
         init()
         if (report) {
-            console.log(report)
+            setTiempoDesarrollo(Number((((((new Date(report.endReport) - new Date(report.createdAt)) / 1000) / 60) / 60) / 24).toFixed(2)))
+            setTiempoAprobacionSup(Number((((((new Date(report.shiftManagerApprovedDate) - new Date(report.endReport)) / 1000) / 60) / 60) / 24).toFixed(2)))
+            setTiempoJMaquinaria(Number((((((new Date(report.chiefMachineryApprovedDate) - new Date(report.shiftManagerApprovedDate)) / 1000) / 60) / 60) / 24).toFixed(2)))
+            setTiempoCierreOt(Number((((((new Date(report.dateClose) - new Date(report.chiefMachineryApprovedDate)) / 1000) / 60) / 60) / 24).toFixed(2)))
         }
     }, [report])
+
+    useEffect(() => {
+        let number = tiempoDesarrollo + tiempoAprobacionSup + tiempoJMaquinaria + tiempoCierreOt
+        setTiempoTotal(number.toFixed(2))
+    },[
+        tiempoDesarrollo,
+        tiempoAprobacionSup,
+        tiempoJMaquinaria,
+        tiempoCierreOt
+    ])
 
     const init = async () => {
         getUserNameById(report.chiefMachineryApprovedBy).then(user => {
@@ -124,7 +142,7 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
             adaptiveHeight={true}
             maxWidth={'xl'}
             >
-            <div style={{padding: 30, /* textAlign: 'center', */ /* height: '50vh' */ width: 800}}>
+            <div style={{padding: 30, /* textAlign: 'center', */ /* height: '50vh' */ width: 1000}}>
                 <Toolbar style={{width: '100%', height: 59, paddingLeft: 0}}>
                     <h2>{ (report.reportType === 'Mantención') ? `Pauta de ${report.reportType}` : ''} Equ: {machineData.equid.replace('00000000', '')} / {machineData.model}{/* SAP {sapId ? sapId : 'N/A'} */}</h2>
                     <div style={{ position: 'absolute', right: 65 , backgroundColor: colorState, paddingTop: 3, borderRadius: 5, width: 100, height: 20, textAlign: 'center'}}>
@@ -180,47 +198,60 @@ const ReviewReportDialog = ({open, report, onlyClose}) => {
                     </Grid>
                 </Grid>
                 <Grid container>
-                    <Grid item md={6} xs={12} sm={12} lg={6} >
+                    <Grid item md={6} xs={12} sm={12} lg={4} xl={4} >
                         <div style={{marginTop: 30, width: '100%'}}>
-
-                        <div style={{width: '100%', height: 59}}>
-                            <label>Pauta asignada a: <b>{userAssignedName  ? userAssignedName : 'No encontrado'}</b></label>
-                        </div>
-                        <div style={{width: '100%', height: 59}}>
-                            <label>Jefe de turno revisor: <b>{userShiftManagerName.length > 1 ? userShiftManagerName : 'No encontrado'}</b></label>
-                        </div>
-                        <div style={{width: '100%', height: 59}}>
-                            <label>Jefe de maquinaria revisor: <b>{userChiefMachineryName.length > 1 ? userChiefMachineryName : 'No encontrado'}</b></label>
-                        </div>
-                        <div style={{width: '100%', height: 59}}>
-                            <label>Ejecutivo SAP revisor: <b>{userSapExecutiveName.length > 1 ? userSapExecutiveName : 'No encontrado'}</b></label>
-                        </div>
+                            <label>Revisores: </label>
+                            {/* <div style={{width: '100%', height: 59}}> */}
+                                <p>Pauta asignada a: <br /> <b>{userAssignedName  ? userAssignedName : 'No encontrado'}</b></p>
+                            {/* </div> */}
+                            {/* <div style={{width: '100%', height: 59}}> */}
+                                <p>Jefe de turno: <br /> <b>{userShiftManagerName.length > 1 ? userShiftManagerName : 'No encontrado'}</b></p>
+                            {/* </div> */}
+                            {/* <div style={{width: '100%', height: 59}}> */}
+                                <p>Jefe de maquinaria: <br /> <b>{userChiefMachineryName.length > 1 ? userChiefMachineryName : 'No encontrado'}</b></p>
+                            {/* </div> */}
+                            {/* <div style={{width: '100%', height: 59}}> */}
+                                <p>Ejecutivo SAP: <br /> <b>{userSapExecutiveName.length > 1 ? userSapExecutiveName : 'No encontrado'}</b></p>
+                            {/* </div> */}
                         </div>
 
                     </Grid>
-                    <Grid item>
+                    <Grid item lg={4} xl={4} >
                         <div style={{marginTop: 30, width: '100%'}}>
-                            <div style={{width: '100%', height: 44.5}}>
-                                <label>Creado: <b>{dateWithTime(report.createdAt)}</b></label>
-                            </div>
-                            <div style={{width: '100%', height: 44.5}}>
-                                <label>Programado: <b>{(dateWithTime(report.datePrev) === 'Sin información') ? 'Faltan datos' : dateWithTime(report.datePrev)}</b></label>
-                            </div>
-                            <div style={{width: '100%', height: 44.5}}>
-                                <label>Inicio: <b>{(dateWithTime(report.dateInit) === 'Sin información') ? 'No inicado' : dateWithTime(report.dateInit)}</b></label>
-                            </div>
-                            <div style={{width: '100%', height: 44.5}}>
-                                <label>Finalizado: <b>{(dateWithTime(report.endReport) === 'Sin información') ? 'No finalizado' : dateWithTime(report.endReport)}</b></label>
-                            </div>
-                            <div style={{width: '100%', height: 44.5}}>
-                                <label>Cerrado: <b>{(dateWithTime(report.dateClose) === 'Sin información') ? 'No cerrado' : dateWithTime(report.dateClose)}</b></label>
-                            </div>
+                            <p>Registro horario: </p>
+                            {/* <div style={{width: '100%', height: 44.5}}> */}
+                                <p>Creado: <br /> <b>{dateWithTime(report.createdAt)}</b></p>
+                            {/* </div> */}
+                            {/* <div style={{width: '100%', height: 44.5}}> */}
+                                <p>Programado: <br /> <b>{(dateWithTime(report.datePrev) === 'Sin información') ? 'Faltan datos' : dateWithTime(report.datePrev)}</b></p>
+                            {/* </div>
+                            <div style={{width: '100%', height: 44.5}}> */}
+                                <p>Inicio: <br /> <b>{(dateWithTime(report.dateInit) === 'Sin información') ? 'No inicado' : dateWithTime(report.dateInit)}</b></p>
+                            {/* </div>
+                            <div style={{width: '100%', height: 44.5}}> */}
+                                <p>Finalizado: <br /> <b>{(dateWithTime(report.endReport) === 'Sin información') ? 'No finalizado' : dateWithTime(report.endReport)}</b></p>
+                            {/* </div>
+                            <div style={{width: '100%', height: 44.5}}> */}
+                                <p>Aprobado Jefe Turno: <br /> <b>{(dateWithTime(report.shiftManagerApprovedDate) === 'Sin información') ? 'No cerrado' : dateWithTime(report.shiftManagerApprovedDate)}</b></p>
+                                <p>Aprobado Jefe maquinaria: <br /> <b>{(dateWithTime(report.chiefMachineryApprovedDate) === 'Sin información') ? 'No cerrado' : dateWithTime(report.chiefMachineryApprovedDate)}</b></p>
+                                <p>Cerrado: <br /> <b>{(dateWithTime(report.dateClose) === 'Sin información') ? 'No cerrado' : dateWithTime(report.dateClose)}</b></p>
+                            {/* </div> */}
                         </div>
                     </Grid>
 
-                    <div style={{width: '100%', textAlign: 'right'}}>
+                    <Grid item lg={4} xl={4} >
+                        <div style={{marginTop: 30, width: '100%'}}>
+                            <p>Tiempo de Desarrollo de OT: <b>{isNaN(tiempoDesarrollo) ? 0 : tiempoDesarrollo} días</b></p>
+                            <p>Aprobación de supervisor: <b>{isNaN(tiempoAprobacionSup) ? 0 : tiempoAprobacionSup} días</b></p>
+                            <p>Aprobación de jefe maquinaria: <b>{isNaN(tiempoJMaquinaria) ? 0 : tiempoJMaquinaria} días</b></p>
+                            <p>Cierre de la OT: <b>{isNaN(tiempoCierreOt) ? 0 : tiempoCierreOt} días</b></p>
+                            <p>Tiempo Total: <b>{isNaN(tiempoTotal) ? 0 : tiempoTotal} días</b></p>
+                        </div>
+                    </Grid>
+
+                    {/* <div style={{width: '100%', textAlign: 'right'}}>
                         
-                    </div>
+                    </div> */}
 
                 </Grid>
                 <Grid container>
