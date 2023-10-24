@@ -12,6 +12,7 @@ import ReportMessagesDialog from './RepotMessagesDialog'
 import LoadingLogoDialog from './LoadingLogoDialog'
 import UserDataEditDialog from './UserDataEditDialog'
 import ReportsResumeDialog from './ReportsResumeDialog'
+import LianearProgresDialog from './LianearProgresDialog'
 export {
     AlertDialog,
     ReportDataDialog,
@@ -26,5 +27,6 @@ export {
     ReportMessagesDialog,
     LoadingLogoDialog,
     UserDataEditDialog,
-    ReportsResumeDialog
+    ReportsResumeDialog,
+    LianearProgresDialog
 }

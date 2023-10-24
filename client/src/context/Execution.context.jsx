@@ -3,6 +3,7 @@ import { executionReportsDatabase, pautasDatabase } from "../indexedDB";
 import { ReportsContext, useAuth, useConnectionContext } from ".";
 import { executionReportsRoutes, reportsRoutes } from "../routes";
 import { useLocation } from "react-router-dom";
+import { LianearProgresDialog } from "../dialogs";
 
 export const ExecutionReportContext = createContext()
 
@@ -22,8 +23,16 @@ export const ExecutionReportProvider = (props) => {
     const [loading, setLoading] = useState(false)
     const [loadingMessage, setLoadingMessage] = useState('')
     const [reporteIniciado, setReporteIniciado] = useState(true)
+    const [openLinear, setOpenLinear] = useState(false)
+    const [percentDownload, setPercentDownload] = useState(0)
 
     const location = useLocation()
+
+    useEffect(() => {
+        if (!openLinear) {
+            setPercentDownload(0)
+        }
+    }, [openLinear])
 
     useEffect(() => {
         if (!location.pathname.includes('assignment/')) {
@@ -86,30 +95,42 @@ export const ExecutionReportProvider = (props) => {
         console.log('Buscando Pauta')
         setExecutionReport(undefined)
         if (!isOperator && isOnline) {
-            const response = await executionReportsRoutes.getExecutionReportById(report)
-            if (!response.data.data) {
-                setMessage('OT no iniciado')
-                setReporteIniciado(false)
-            } else {
-                setExecutionReport(response.data.data)
-            }
-            setLoading(false)
+            setOpenLinear(true)
+            const response = await executionReportsRoutes.getExecutionReportById(report, setPercentDownload)
+            setOpenLinear(false)
             setTimeout(() => {
-                setMessage('')
-            }, (500));
+                if (!response.data.data) {
+                    setMessage('OT no iniciado')
+                    setReporteIniciado(false)
+                } else {
+                    setExecutionReport(response.data.data)
+                }
+                setLoading(false)
+                setTimeout(() => {
+                    setMessage('')
+                }, (500));
+            }, 500);
         } else if (isOperator && isOnline) {
             const {database} = await executionReportsDatabase.initDb()
             const response = await executionReportsDatabase.consultar(database)
             const excetutionReportCache = response.filter(doc => {if(doc.reportId === report._id) return doc})
             if (excetutionReportCache.length > 0) {
-                const responseData = await executionReportsRoutes.getExecutionReportById(report)
-                if (excetutionReportCache[0].offLineGuard > responseData.data.data.offLineGuard) {
-                    setExecutionReport(excetutionReportCache[0])
-                } else {
-                    setExecutionReport(responseData.data.data)
-                }
+                setOpenLinear(true)
+                const responseData = await executionReportsRoutes.getExecutionReportById(report, setPercentDownload)
+                setOpenLinear(false)
+                setTimeout(() => {
+                    if (excetutionReportCache[0].offLineGuard > responseData.data.data.offLineGuard) {
+                        setExecutionReport(excetutionReportCache[0])
+                    } else {
+                        setExecutionReport(responseData.data.data)
+                    }
+                }, 500);
             } else {
-                const responseData = await executionReportsRoutes.getExecutionReportById(report)
+                setOpenLinear(true)
+                const responseData = await executionReportsRoutes.getExecutionReportById(report, setPercentDownload)
+                setOpenLinear(false)
+                setTimeout(async () => {
+                    
                 if (responseData.data.state) {
                     setExecutionReport(responseData.data.data)
                 } else {
@@ -146,6 +167,7 @@ export const ExecutionReportProvider = (props) => {
                         setMessage('')
                     }, 1000);
                 }
+                }, 500);
                 setTimeout(() => {
                     setMessage('')
                 }, 1000);
@@ -187,6 +209,7 @@ export const ExecutionReportProvider = (props) => {
 
     return (
         <>
+        <LianearProgresDialog open={openLinear} progress={percentDownload} />
         <ExecutionReportContext.Provider value={provider} {...props} />
         </>
     )
