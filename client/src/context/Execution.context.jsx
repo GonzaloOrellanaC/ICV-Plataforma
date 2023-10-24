@@ -58,7 +58,11 @@ export const ExecutionReportProvider = (props) => {
             setSerieEquipo(report.machine)
             setModoTest(report.testMode)
             setMessage('Buscando Pauta')
-            getExecutionReport()
+            try {
+                getExecutionReport()
+            } catch (error) {
+                
+            }
         }
     },[report])
 
@@ -69,9 +73,13 @@ export const ExecutionReportProvider = (props) => {
     },[otIndex])
 
     const getReportFromOtIndex = () => {
-        console.log('Obteniendo reporte')
-        const reportFiltered = reports.filter(report => {if(report.idIndex === Number(otIndex)) {return report}})
-        setReport(reportFiltered[0])
+        try {
+            console.log('Obteniendo reporte')
+            const reportFiltered = reports.filter(report => {if(report.idIndex === Number(otIndex)) {return report}})
+            setReport(reportFiltered[0])
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const getExecutionReport = async () => {

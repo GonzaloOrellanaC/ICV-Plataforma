@@ -15,7 +15,6 @@ import * as Sentry from "@sentry/node"
 
 Sentry.init({
   dsn: environment.sentry.dns,
-
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
