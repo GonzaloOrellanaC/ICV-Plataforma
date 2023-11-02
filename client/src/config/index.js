@@ -4,6 +4,7 @@ import environment from './environment.config'
 import date from './date'
 import dateSimple from './dateSimple'
 import dateWithTime from './dateWithTime'
+import dateWithYear from './dateWithYear'
 import uploadImage from './uploadImage'
 import imageToBase64 from './imageToBase64'
 import base64ToImage from './base64ToImage'
@@ -52,6 +53,7 @@ export {
     date,
     dateSimple,
     dateWithTime,
+    dateWithYear,
     uploadImage,
     imageToBase64,
     base64ToImage,

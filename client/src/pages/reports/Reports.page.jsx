@@ -9,9 +9,9 @@ import { ReportsList } from '../../containers';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useReportsContext, useSitesContext } from '../../context';
 import * as XLSX from 'xlsx'
-import { executionReportsRoutes } from '../../routes';
-import { LoadingLogoDialog, ReportsResumeDialog } from '../../dialogs';
-import { date } from '../../config';
+import { executionReportsRoutes, usersRoutes } from '../../routes';
+import { LianearProgresDialog, LoadingLogoDialog, ReportsResumeDialog } from '../../dialogs';
+import { date, dateSimple, dateWithYear } from '../../config';
 import SeleccionarObraDialog from '../../dialogs/SeleccionarObraDialog';
 import ReportsKPIDialog from '../../dialogs/ReportsKPIDialog';
 
@@ -45,6 +45,8 @@ const ReportsPage = () => {
     const [openSeleccionarObra, setOpnSeleccionarObra] = useState(false)
     const [opnKPI, setOpnKPI] = useState(false)
     const [siteObject, setSiteObject] = useState()
+    const [totalReport, setTotalReport] = useState(0)
+    const [revisionNumber, setRevisionNumber] = useState(0)
 
 
 
@@ -398,57 +400,77 @@ const ReportsPage = () => {
         if (reports.length > 0) {
             setLoading(true)
             console.log('download')
+            setTotalReport(reports.length)
             const reportsCache = [...reports]
             const reportsToDownload = []
             const materials = []
+            const users = []
             reportsCache.forEach(async (report, i)=>{
                 let groupList = []
                 let newVariables = {}
                 const response = await executionReportsRoutes.getExecutionReportById(report)
                 report.commitWarning = ''
                 report.isWarning = false
+                const operators = report.usersAssigned
+                const operatorsList = []
+                operators.forEach(async operator => {
+                    const res = await usersRoutes.getUser(operator)
+                    operatorsList.push(res.data)
+                })
+                const shiftManager = await usersRoutes.getUser(report.shiftManagerApprovedBy)
+                const chiefMachinery = await usersRoutes.getUser(report.chiefMachineryApprovedBy)
+                const sapExecutive = await usersRoutes.getUser(report.sapExecutiveApprovedBy)
+                const usersData = {
+                    'N° OT': report.idIndex,
+                    'Ejecutivo SAP': sapExecutive.data && sapExecutive.data.name ? `${sapExecutive.data.name} ${sapExecutive.data.lastName}` : 'Sin Cierre SAP',
+                    'Fecha de aprobación SAP': report.dateClose ? dateWithYear(report.dateClose) : 'Sin Cierre SAP',
+                    'Jefe de Maquinaria': chiefMachinery.data && chiefMachinery.data.name ? `${chiefMachinery.data.name} ${chiefMachinery.data.lastName}` : 'Sin Aprobación Maquinaria',
+                    'Fecha de aprobación Maquinaria': report.chiefMachineryApprovedDate ? dateWithYear(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
+                    'Jefe de Turno': shiftManager.data && shiftManager.data.name ? `${shiftManager.data.name} ${shiftManager.data.lastName}` : 'Sin Aprobación Jefe de Turno',
+                    'Fecha de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? dateWithYear(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
+                }
+                console.log(usersData)
+                users.push(usersData)
                 const reporteDescarga = {
                     'N° OT': report.idIndex,
                     'Número OM': report.sapId,
-                    'Fecha de creación': date(report.createdAt),
-                    'Fecha de inicio previsto': date(report.datePrev),
-                    'Fecha de término previsto': date(report.endPrev),
-                    'Fecha de inicio reporte': date(report.dateInit),
-                    'Fecha de término reporte': date(report.endReport),
-                    'Fecha de cierre': date(report.dateClose),
+                    'Fecha de creación': dateWithYear(report.createdAt),
+                    'Fecha de inicio previsto': dateWithYear(report.datePrev),
+                    'Fecha de término previsto': dateWithYear(report.endPrev),
+                    'Fecha de inicio reporte': dateWithYear(report.dateInit),
+                    'Fecha de término reporte': dateWithYear(report.endReport),
+                    'Fecha de cierre': dateWithYear(report.dateClose),
                     'Guía': report.guide,
                     'ID PM': report.idPm,
                     'N° máquina': report.machine,
                     'Tipo de reporte': report.reportType,
                     'Código de obra': report.site,
                     'Estado de orden': report.state,
-                    'Modo Test': report.testMode,
-                    'Ultima actualización': date(report.updatedAt),
+                    'Modo Test': report.testMode ? 'SI' : 'NO',
+                    'Ultima actualización': dateWithYear(report.updatedAt),
                     'URL documento PDF': report.urlPdf,
-                    'Creado por sistema': report.isAutomatic,
+                    'Creado por sistema': report.isAutomatic ? 'SI' : 'NO',
                     'Progreso de avance': report.progress,
-                    'Tiene alerta': false,
+                    'Tiene alerta': 'NO',
                     'Comentario a considerar': ''
                 }
                 const reportTemp = reporteDescarga
-                console.log(response.state)
                 if (response) {
-                    if (response.data.group) {
-                        const group = Object.values(response.data.group)
-                        /* const key = Object.keys(response.data.group) */
-                        /* console.log(group, key) */
-                        const material = {}
+                    if (response.data && response.data.data && response.data.data.group) {
+                        const group = Object.values(response.data.data.group)
+                        const material = {
+                            'N° OT': report.idIndex
+                        }
                         group.forEach((el, n) => {
                             el.forEach((item, i) => {
                                 if (item.isWarning) {
-                                    reportTemp['Tiene alerta'] = true
+                                    reportTemp['Tiene alerta'] = 'SI'
                                     if (!reportTemp['Comentario a considerar']) {
                                         reportTemp['Comentario a considerar'] = 'Se detecta tareas pendientes:\n'
                                     }
                                     reportTemp['Comentario a considerar'] += `- Apartado ${item.strpmdesc}, pregunta ${i + 1};\n`
                                 }
                                 if (item.unidad !== '*') {
-                                    /* console.log(item) */
                                     groupList.push(item)
                                     if (!material[`${item.partnumberUtl}/${item.unidad} proyectada`]) {
                                         material[`${item.partnumberUtl}/${item.unidad} proyectada`] = 0
@@ -462,7 +484,7 @@ const ReportsPage = () => {
                                 }
                             })
                             if (n === (group.length - 1)) {
-                                if (!material['Tiene alerta'] && (material['Comentario a considerar'].length === 0)) {
+                                if (!material['Tiene alerta'] && (material['Comentario a considerar'] && material['Comentario a considerar'].length === 0)) {
                                     material['Comentario a considerar'] = 'Reporte ha sido completado.'
                                 }
                             }
@@ -475,14 +497,19 @@ const ReportsPage = () => {
                 } else {
                     reportsToDownload.push(reportTemp)
                 }
+                setRevisionNumber((100 * (i + 1))/reportsCache)
                 if (i === (reportsCache.length - 1)) {
                     console.log(reportsToDownload)
+                    console.log(materials)
+                    console.log(users)
                     const workbook = XLSX.utils.book_new();
                     const worksheet = XLSX.utils.json_to_sheet(reportsToDownload);
                     const material = XLSX.utils.json_to_sheet(materials);
-                    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-                    XLSX.utils.book_append_sheet(workbook, material, "Sheet2");
-                    XLSX.writeFile(workbook, "DataSheet.xlsx")
+                    const userDataXLS = XLSX.utils.json_to_sheet(users);
+                    XLSX.utils.book_append_sheet(workbook, worksheet, "Datos de reporte");
+                    XLSX.utils.book_append_sheet(workbook, material, "Datos de material");
+                    XLSX.utils.book_append_sheet(workbook, userDataXLS, "Datos de usuarios");
+                    XLSX.writeFile(workbook, `${Date.now()}.xlsx`)
                     setLoading(false)
                 }
             })
@@ -512,6 +539,7 @@ const ReportsPage = () => {
             <LoadingLogoDialog
                 open={loadingSpinner}
             />
+            <LianearProgresDialog open={loadingSpinner} progress={revisionNumber} />
             {openReportSumary && <ReportsResumeDialog
                 open={openReportSumary}
                 handleClose={closeToReportSumary}

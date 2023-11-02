@@ -7,13 +7,13 @@ export default {
         }
         return axios.post('/execution-report/getExecutionReportById', requestBody, {
             onDownloadProgress: progressEvent => {
-                console.log(progressEvent)
                 const total = 50000
                 const current = progressEvent.loaded
             
                 const percentCompleted = Math.floor(current / total * 100)
-                console.log('completed: ', percentCompleted)
-                setPercentDownload(percentCompleted)
+                if (setPercentDownload) {
+                    setPercentDownload(percentCompleted)
+                }
             }
         })
     },
