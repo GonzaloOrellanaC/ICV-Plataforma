@@ -7,7 +7,7 @@ import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar, faDownlo
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useNavigate } from 'react-router-dom';
-import { useAuth, useReportsContext, useSitesContext } from '../../context';
+import { useAuth, useReportsContext, useSitesContext, useUsersContext } from '../../context';
 import * as XLSX from 'xlsx'
 import { executionReportsRoutes, usersRoutes } from '../../routes';
 import { LianearProgresDialog, LoadingLogoDialog, ReportsResumeDialog } from '../../dialogs';
@@ -19,6 +19,7 @@ const ReportsPage = () => {
     const {sites} = useSitesContext()
     const {admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
     const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache, getReports, loading, statusReports, pautas, siteSelected} = useReportsContext()
+    const {users} = useUsersContext()
     const [inspeccionesTotales, setInspeccionesTotales] = useState([])
     const [mantencionesTotales, setMantencionesTotales] = useState([])
     const [ inspecciones, setInspecciones ] = useState([]);
@@ -405,8 +406,9 @@ const ReportsPage = () => {
             const reportsToDownload = []
             const materials = []
             const users = []
+            const groupList = []
+            const tareasPendientes = []
             reportsCache.forEach(async (report, i)=>{
-                let groupList = []
                 let newVariables = {}
                 const response = await executionReportsRoutes.getExecutionReportById(report)
                 report.commitWarning = ''
@@ -414,22 +416,22 @@ const ReportsPage = () => {
                 const operators = report.usersAssigned
                 const operatorsList = []
                 operators.forEach(async operator => {
-                    const res = await usersRoutes.getUser(operator)
-                    operatorsList.push(res.data)
+                    const res = users.filter(user => {if(user._id === operator) return user})/* await usersRoutes.getUser(operator) */
+                    operatorsList.push(res[0])
                 })
-                const shiftManager = await usersRoutes.getUser(report.shiftManagerApprovedBy)
-                const chiefMachinery = await usersRoutes.getUser(report.chiefMachineryApprovedBy)
-                const sapExecutive = await usersRoutes.getUser(report.sapExecutiveApprovedBy)
+                const shiftManager = users.filter(user => {if(user._id === report.shiftManagerApprovedBy) return user})/* await usersRoutes.getUser(report.shiftManagerApprovedBy) */
+                const chiefMachinery = users.filter(user => {if(user._id === report.chiefMachineryApprovedBy) return user})/* await usersRoutes.getUser(report.chiefMachineryApprovedBy) */
+                const sapExecutive = users.filter(user => {if(user._id === report.sapExecutiveApprovedBy) return user})/* await usersRoutes.getUser(report.sapExecutiveApprovedBy) */
                 const usersData = {
                     'N° OT': report.idIndex,
-                    'Ejecutivo SAP': sapExecutive.data && sapExecutive.data.name ? `${sapExecutive.data.name} ${sapExecutive.data.lastName}` : 'Sin Cierre SAP',
+                    'Ejecutivo SAP': sapExecutive[0] && sapExecutive[0].name ? `${sapExecutive[0].name} ${sapExecutive[0].lastName}` : 'Sin Cierre SAP',
                     'Fecha de aprobación SAP': report.dateClose ? dateWithYear(report.dateClose) : 'Sin Cierre SAP',
-                    'Jefe de Maquinaria': chiefMachinery.data && chiefMachinery.data.name ? `${chiefMachinery.data.name} ${chiefMachinery.data.lastName}` : 'Sin Aprobación Maquinaria',
+                    'Jefe de Maquinaria': chiefMachinery[0] && chiefMachinery[0].name ? `${chiefMachinery[0].name} ${chiefMachinery[0].lastName}` : 'Sin Aprobación Maquinaria',
                     'Fecha de aprobación Maquinaria': report.chiefMachineryApprovedDate ? dateWithYear(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
-                    'Jefe de Turno': shiftManager.data && shiftManager.data.name ? `${shiftManager.data.name} ${shiftManager.data.lastName}` : 'Sin Aprobación Jefe de Turno',
+                    'Jefe de Turno': shiftManager[0] && shiftManager[0].name ? `${shiftManager[0].name} ${shiftManager[0].lastName}` : 'Sin Aprobación Jefe de Turno',
                     'Fecha de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? dateWithYear(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
                 }
-                console.log(usersData)
+                /* console.log(usersData) */
                 users.push(usersData)
                 const reporteDescarga = {
                     'N° OT': report.idIndex,
@@ -454,14 +456,17 @@ const ReportsPage = () => {
                     'Tiene alerta': 'NO',
                     'Comentario a considerar': ''
                 }
+                const listaDeContenidoTablaCantidades = {}
                 const reportTemp = reporteDescarga
                 if (response) {
                     if (response.data && response.data.data && response.data.data.group) {
+                        console.log(response.data.data.group)
                         const group = Object.values(response.data.data.group)
                         const material = {
                             'N° OT': report.idIndex
                         }
                         group.forEach((el, n) => {
+                            
                             el.forEach((item, i) => {
                                 if (item.isWarning) {
                                     reportTemp['Tiene alerta'] = 'SI'
@@ -469,9 +474,31 @@ const ReportsPage = () => {
                                         reportTemp['Comentario a considerar'] = 'Se detecta tareas pendientes:\n'
                                     }
                                     reportTemp['Comentario a considerar'] += `- Apartado ${item.strpmdesc}, pregunta ${i + 1};\n`
+                                    const tareaPendiente = {
+                                        'N° OT': report.idIndex,
+                                        'Hoja': item.strpmdesc,
+                                        'Tarea': i + 1
+                                    }
+                                    if (item.messages.length > 0) {
+                                        item.messages.forEach((message, n) => {
+                                            tareaPendiente[`Mensaje ${n + 1}`] = `${message.name}: ${message.content}`
+                                        })
+                                    }
+                                    tareasPendientes.push(tareaPendiente)
                                 }
                                 if (item.unidad !== '*') {
-                                    groupList.push(item)
+                                    const contenidoMateriales = {
+                                        'N° OT': report.idIndex,
+                                        'Hoja': item.strpmdesc,
+                                        'Tarea': i + 1,
+                                        'Descripcion de tarea': item.obs01,
+                                        'Repuesto': item.partnumberUtl,
+                                        'Cantidad a utilizar': item.cantidad,
+                                        'Cantidad utilizada': item.unidadData ? item.unidadData : 0,
+                                        'Unidad': item.unidad,
+                                        'Tipo de repuesto': item.idtypeutlPartnumber
+                                    }
+                                    groupList.push(contenidoMateriales)
                                     if (!material[`${item.partnumberUtl}/${item.unidad} proyectada`]) {
                                         material[`${item.partnumberUtl}/${item.unidad} proyectada`] = 0
                                     }
@@ -499,15 +526,20 @@ const ReportsPage = () => {
                 }
                 setRevisionNumber((100 * (i + 1))/reportsCache)
                 if (i === (reportsCache.length - 1)) {
-                    console.log(reportsToDownload)
+                    console.log(groupList)
+                    /* console.log(reportsToDownload)
                     console.log(materials)
-                    console.log(users)
+                    console.log(users) */
                     const workbook = XLSX.utils.book_new();
                     const worksheet = XLSX.utils.json_to_sheet(reportsToDownload);
                     const material = XLSX.utils.json_to_sheet(materials);
+                    const datosMaterial = XLSX.utils.json_to_sheet(groupList);
+                    const datosTareasPendientes = XLSX.utils.json_to_sheet(tareasPendientes);
                     const userDataXLS = XLSX.utils.json_to_sheet(users);
                     XLSX.utils.book_append_sheet(workbook, worksheet, "Datos de reporte");
-                    XLSX.utils.book_append_sheet(workbook, material, "Datos de material");
+                    XLSX.utils.book_append_sheet(workbook, material, "Datos de material v1");
+                    XLSX.utils.book_append_sheet(workbook, datosMaterial, "Datos de material v2");
+                    XLSX.utils.book_append_sheet(workbook, datosTareasPendientes, "Datos de tareas pendientes");
                     XLSX.utils.book_append_sheet(workbook, userDataXLS, "Datos de usuarios");
                     XLSX.writeFile(workbook, `${Date.now()}.xlsx`)
                     setLoading(false)
@@ -591,7 +623,7 @@ const ReportsPage = () => {
                             >
                                 <FontAwesomeIcon icon={faChartBar}/>
                             </IconButton>}
-                            <IconButton
+                            {admin && <IconButton
                                 color={'primary'} 
                                 style={{ marginRight: 5 }}
                                 edge={'end'}
@@ -600,7 +632,7 @@ const ReportsPage = () => {
                                 title='Exportar Información de Reportes'
                             >
                                 <FontAwesomeIcon icon={faDownload}/>
-                            </IconButton>
+                            </IconButton>}
                             <IconButton
                                 color={'primary'} 
                                 style={{ marginRight: 5 }}
