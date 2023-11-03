@@ -20,7 +20,7 @@ const initDbPMs = () => {
         conexion.onupgradeneeded = (e) =>{
             db = e.target.result
             const coleccionObjetos = db.createObjectStore('pautas',{
-                keyPath: 'id'
+                keyPath: '_id'
             })
             coleccionObjetos.transaction.oncomplete = (event) => {
                 resolve(
@@ -41,9 +41,17 @@ const initDbPMs = () => {
 }
 
 const agregar = (data, database) => {
-    const trasaccion = database.transaction(['pautas'],'readwrite')
-    const coleccionObjetos = trasaccion.objectStore('pautas')
-    const conexion = coleccionObjetos.add(data)
+    return new Promise(resolve => {
+        const trasaccion = database.transaction(['pautas'],'readwrite')
+        const coleccionObjetos = trasaccion.objectStore('pautas')
+        const conexion = coleccionObjetos.add(data)
+        conexion.onsuccess = () => {
+            resolve({state: true, data: 'Ok'})
+        }
+        conexion.onerror = (e) => {
+            resolve({stata: false, data: e})
+        }
+    })
     //consultar()
 }
 
@@ -70,17 +78,14 @@ const consultarPorDato = (dato, database) =>{
 
 const actualizar = (data, database) =>{
     return new Promise(resolve => {
-        try {
-            const trasaccion = database.transaction(['pautas'],'readwrite')
-            const coleccionObjetos = trasaccion.objectStore('pautas')
-            const conexion = coleccionObjetos.put(data)
-            
-            conexion.onsuccess = () =>{
-                resolve(true)
-            }
-        
-        } catch (err) {
-            resolve(false)
+        const trasaccion = database.transaction(['pautas'],'readwrite')
+        const coleccionObjetos = trasaccion.objectStore('pautas')
+        const conexion = coleccionObjetos.put(data)
+        conexion.onsuccess = () => {
+            resolve({state: true, data: 'Ok'})
+        }
+        conexion.onerror = (e) => {
+            resolve({stata: false, data: e})
         }
     })
 }
@@ -90,9 +95,15 @@ const eliminar = (clave, database) =>{
     const coleccionObjetos = trasaccion.objectStore('pautas')
     const conexion = coleccionObjetos.delete(clave)
 
-    conexion.onsuccess = () =>{
-        consultar()
+    conexion.onsuccess = async () =>{
+        const res = await consultar()
+        console.log(res)
     }
+}
+
+const borrarDb = () =>{      
+    const deleted = indexedDB.deleteDatabase('Pautas')
+    console.log(deleted)
 }
 
 const consultar = (database) =>{
@@ -117,6 +128,7 @@ export default {
     obtener,
     actualizar,
     eliminar,
+    borrarDb,
     consultar,
     consultarPorDato
 }

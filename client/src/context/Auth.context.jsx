@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { authRoutes, unidadesRoutes, usersRoutes } from '../routes'
-import { machinesDatabase, userDatabase } from '../indexedDB'
+import { machinesDatabase, pautasDatabase, userDatabase } from '../indexedDB'
 import { useNavigate } from 'react-router-dom'
 import { FirmaUsuarioDialog } from '../dialogs'
 
@@ -261,6 +261,7 @@ export const AuthProvider = (props) => {
                     window.localStorage.clear()
                     navigate('/', {replace:true})
                     setIsAuthenticated(false)
+                    pautasDatabase.borrarDb()
                 }, 500);
             }
         },

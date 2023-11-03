@@ -27,11 +27,14 @@ const savePattern = async (req, res) => {
 }
 
 const getPatternDetails = async (req, res) => {
-    console.log('Leyendo Pautas...')
+    console.log('Leyendo Pautas totales...')
     try {
-        PatternDetail.find({}, (err, patterns) => {
+        const pautas = await PatternDetail.find()
+        console.log(pautas.length)
+        res.json(pautas)
+        /* PatternDetail.find({}, (err, patterns) => {
             res.json(patterns)
-        });
+        }); */
     } catch (err) {
 
     }

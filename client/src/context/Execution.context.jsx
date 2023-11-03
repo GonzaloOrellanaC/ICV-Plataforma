@@ -96,8 +96,9 @@ export const ExecutionReportProvider = (props) => {
         setExecutionReport(undefined)
         if (!isOperator && isOnline) {
             setOpenLinear(true)
-            const response = await executionReportsRoutes.getExecutionReportById(report, setPercentDownload)
+            const response = await executionReportsRoutes.getExecutionReportById(report._id, setPercentDownload)
             setOpenLinear(false)
+            console.log(response)
             setTimeout(() => {
                 if (!response.data.data) {
                     setMessage('OT no iniciado')
@@ -109,14 +110,15 @@ export const ExecutionReportProvider = (props) => {
                 setTimeout(() => {
                     setMessage('')
                 }, (500));
-            }, 500);
+            }, 1500);
         } else if (isOperator && isOnline) {
             const {database} = await executionReportsDatabase.initDb()
             const response = await executionReportsDatabase.consultar(database)
             const excetutionReportCache = response.filter(doc => {if(doc.reportId === report._id) return doc})
             if (excetutionReportCache.length > 0) {
                 setOpenLinear(true)
-                const responseData = await executionReportsRoutes.getExecutionReportById(report, setPercentDownload)
+                const responseData = await executionReportsRoutes.getExecutionReportById(report._id, setPercentDownload)
+                console.log(responseData)
                 setOpenLinear(false)
                 setTimeout(() => {
                     if (excetutionReportCache[0].offLineGuard > responseData.data.data.offLineGuard) {
@@ -127,10 +129,10 @@ export const ExecutionReportProvider = (props) => {
                 }, 500);
             } else {
                 setOpenLinear(true)
-                const responseData = await executionReportsRoutes.getExecutionReportById(report, setPercentDownload)
+                const responseData = await executionReportsRoutes.getExecutionReportById(report._id, setPercentDownload)
                 setOpenLinear(false)
                 setTimeout(async () => {
-                    
+                console.log(responseData)
                 if (responseData.data.state) {
                     setExecutionReport(responseData.data.data)
                 } else {
@@ -139,10 +141,14 @@ export const ExecutionReportProvider = (props) => {
                         const db = await pautasDatabase.initDbPMs()
                         setMessage('Guardando pauta de OT '+report.idIndex)
                         const pautas = await pautasDatabase.consultar(db.database)
-                        const pautaFiltered = pautas.filter((info) => { 
+                        console.log(pautas)
+                        const pautaFiltered = pautas.filter((info) => {
+                            console.log(info.typepm, report.guide)
+                            console.log(info.idpm, report.idPm)
                             if((info.typepm === report.guide)&&(report.idPm===info.idpm)) {
                                     return info
                                 }})
+                        console.log(pautaFiltered)
                         const group = await pautaFiltered[0].struct.reduce((r, a) => {
                             r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
                             return r

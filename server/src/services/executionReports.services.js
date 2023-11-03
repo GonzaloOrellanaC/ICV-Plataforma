@@ -2,9 +2,9 @@ import { ExecutionReport, Reports } from "../models"
 import { AzureServices } from "."
 
 const getExecutionReportById = async (req, res) => {
-    const { body: {reportData} } = req
+    const { body: {reportId} } = req
     try{
-        const executionReport = await ExecutionReport.findOne({reportId: reportData._id}).populate('report').populate('createdBy')
+        const executionReport = await ExecutionReport.findOne({reportId: reportId}).populate('report').populate('createdBy')
         console.log(executionReport)
         if (executionReport) {
             res.status(200).json({data: executionReport, state: true})

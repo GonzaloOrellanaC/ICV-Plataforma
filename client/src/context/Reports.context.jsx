@@ -117,12 +117,7 @@ export const ReportsProvider = (props) => {
                 })
             })
             setReportsResume(reportsResumeCache)
-            if(revision) {
-                getAllPautas()
-                setRevision(false)
-            } else {
-                setPautas(pautasCache)
-            }
+            getAllPautas()
             setAssignments(reports)
         } else {
             if (isAuthenticated && !siteSelected) {
@@ -135,17 +130,27 @@ export const ReportsProvider = (props) => {
     }, [reports, isAuthenticated])
 
     useEffect(() => {
+        if (isAuthenticated)
+        if (revision) {
+            getAllPautas()
+            setRevision(false)
+        } else {
+            setPautas(pautasCache)
+        }
+    },[revision, isAuthenticated])
+
+    useEffect(() => {
         if (!isOnline) {
             setRevision(true)
         }
     }, [isOnline])
 
     useEffect(() => {
-        if (pautas.length > 0) {
+        if (pautas.length > 0 && isAuthenticated) {
             setMessage('Guardando pautas')
             savePautas()
         }
-    }, [pautas])
+    }, [pautas, isAuthenticated])
 
     const saveReport = async (reportData) => {
         setMessage('Guardando reportes')
@@ -202,12 +207,36 @@ export const ReportsProvider = (props) => {
 
     const savePautas = async () => {
         const {database} = await pautasDatabase.initDbPMs()
-        pautas.forEach(async (pauta, i) => {
-            await pautasDatabase.actualizar(pauta, database)
+        console.log(pautas)
+        const n = 0
+        guardarPautaDeUna(pautas, n, database)
+        /* pautas.forEach((pauta, i) => {
+            console.log(pauta.idpm, pauta.typepm)
+            pautasDatabase.agregar(pauta, database).onsuccess = () =>{
+                console.log(pauta.idpm, pauta.typepm, ' lista')
+            }
             if (i === (pautas.length - 1)) {
                 setMessage('')
             }
-        })
+        }) */
+    }
+
+    const guardarPautaDeUna = async (pautas, index, database) => {
+        if (pautas.length === index) {
+            console.log('IndexedDB Pautas listas')
+            setMessage('')
+        } else {
+            console.log('Revision ', index)
+            const response = await pautasDatabase.actualizar(pautas[index], database)
+            console.log(response)
+            if (response.state) {
+                index = index + 1
+                guardarPautaDeUna(pautas, index, database)
+            } else {
+                index = index + 1
+                guardarPautaDeUna(pautas, index, database)
+            }
+        }
     }
 
     const getReportsFromDatabase = async () => {
@@ -333,6 +362,7 @@ export const ReportsProvider = (props) => {
             setPautas(response)
             setPautasCache(response)
         } else {
+            console.log('Se descargan pautas')
             const responseCache = await patternsRoutes.getPatternDetails()
             setPautas(responseCache.data)
             setPautasCache(responseCache.data)

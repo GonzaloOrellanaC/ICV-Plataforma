@@ -34,11 +34,11 @@ const getAssignments = (setProgress) => {
 
 const getReportExecutionFromId = (reportId) => {
     return new Promise(async resolve => {
-        let reportData = {
+        /* let reportData = {
             reportId: reportId,
             createdBy: localStorage.getItem('_id')
-        };
-        let res = await executionReportsRoutes.getExecutionReportById(reportData);
+        }; */
+        let res = await executionReportsRoutes.getExecutionReportById(reportId);
         let db = await executionReportsDatabase.initDb();
         if(db) {
             await executionReportsDatabase.actualizar(res.data[0], db.database);

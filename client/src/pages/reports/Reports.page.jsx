@@ -410,7 +410,7 @@ const ReportsPage = () => {
             const tareasPendientes = []
             reportsCache.forEach(async (report, i)=>{
                 let newVariables = {}
-                const response = await executionReportsRoutes.getExecutionReportById(report)
+                const response = await executionReportsRoutes.getExecutionReportById(report._id)
                 report.commitWarning = ''
                 report.isWarning = false
                 const operators = report.usersAssigned

@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 export default {
-    getExecutionReportById: (reportData, setPercentDownload) => {
+    getExecutionReportById: (reportId, setPercentDownload) => {
         const requestBody = {
-            reportData,
+            reportId,
         }
         return axios.post('/execution-report/getExecutionReportById', requestBody, {
             onDownloadProgress: progressEvent => {
