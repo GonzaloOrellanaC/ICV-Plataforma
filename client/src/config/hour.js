@@ -2,8 +2,8 @@ export default (time) => {
     let hora = ""
     let minutos = ""
 
-    let minutes = new Date(time).getMinutes();
-    let hr = new Date(time).getHours();
+    let minutes = new Date(time).getMinutes().toLocaleString('es-CL');
+    let hr = new Date(time).getHours().toLocaleString('es-CL');
     let minString
     if(minutes < 10) {
         minString = '0'+minutes

@@ -226,9 +226,7 @@ export const ReportsProvider = (props) => {
             console.log('IndexedDB Pautas listas')
             setMessage('')
         } else {
-            console.log('Revision ', index)
             const response = await pautasDatabase.actualizar(pautas[index], database)
-            console.log(response)
             if (response.state) {
                 index = index + 1
                 guardarPautaDeUna(pautas, index, database)
@@ -405,6 +403,7 @@ export const ReportsProvider = (props) => {
         if (isOnline) {
             if (admin) {
                 const response = await reportsRoutes.getAllReports()
+                console.log(response.data)
                 setReports(response.data)
                 setReportsCache(response.data)
                 setStatusReports(false)

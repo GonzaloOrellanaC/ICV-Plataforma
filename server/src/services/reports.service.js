@@ -59,7 +59,8 @@ const createReport = async (req, res) => {
                     shiftManagerApprovedBy:createReportState.shiftManagerApprovedBy,
                     endReport: createReportState.endReport,
                     dateInit: createReportState.dateInit,
-                    isAutomatic: false
+                    isAutomatic: false,
+                    origen: true
                 }
                 res.json(newReport)
             }
@@ -267,7 +268,8 @@ const addMachineData = async (reports, reportsToSend, n, res) => {
                 dateInit: reports[n].dateInit,
                 description: reports[n].description,
                 isAutomatic: reports[n].isAutomatic,
-                progress: reports[n].progress
+                progress: reports[n].progress,
+                origen: reports[n].origen
             }
             reportsToSend.push(newReport)
             n = n + 1

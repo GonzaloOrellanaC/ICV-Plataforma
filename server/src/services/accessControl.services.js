@@ -1,7 +1,7 @@
 import { AccessControl } from 'accesscontrol'
 import { UserServices } from '.'
 import { environment } from '../config'
-import { Permission,Roles, Site, Machine, Cron, Unidades } from '../models';
+import { Permission,Roles, Site, Machine, Cron, Unidades, Reports } from '../models';
 import { ApiIcv } from '../api-icv';
 import apiIcvConnection from '../api-icv/api-icv.connection';
 import { CronJob } from 'cron'
@@ -105,6 +105,22 @@ const initAccessControl = async () => {
             }
         } */
         /* apiIcvConnection.leerPautas2() */
+            /* if (!report.origen && ((report.level === 0)||!report.level||report.level===undefined) && (report.usersAssigned.length === 0) && (!report.dateInit && report.dateInit===undefined)) {
+                report.origen = true
+            } else {
+                report.origen = false
+            } */
+        /* const reports = await Reports.find()
+
+        reports.forEach(async (report) => {
+            if (report.origen) {
+                    if (report.usersAssigned.length > 0) {
+                        console.log(report.usersAssigned)
+                        report.origen = false
+                    }
+            }
+            await Reports.findByIdAndUpdate(report._id, report)
+        }) */
         initTimeMachinesCron()
         /* const findMachines = await Machine.find();
         const group = {}

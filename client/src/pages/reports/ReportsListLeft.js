@@ -29,6 +29,13 @@ const Inspecciones = [
         buttonColor: '#F9F9F9',
         number: null
     },
+    {
+        color: '#161616',
+        name: 'Origen',
+        button: 'Detalle',
+        buttonColor: '#F9F9F9',
+        number: null
+    }
 ]
 
 
@@ -61,6 +68,13 @@ const Mantenciones = [
         buttonColor: '#F9F9F9',
         number: null
     },
+    {
+        color: '#161616',
+        name: 'Origen',
+        button: 'Detalle',
+        buttonColor: '#F9F9F9',
+        number: null
+    }
 ]
 
 
