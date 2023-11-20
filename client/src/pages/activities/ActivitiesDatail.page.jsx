@@ -446,8 +446,8 @@ const ActivitiesDetailPage = () => {
                                         <div style={{textAlign: 'center', width: '100%'}}>
                                             <h2 style={{margin: 0}}>OT {id}</h2>
                                             <p style={{margin: 0}}>OM SAP: {sapId && sapId}</p>
-                                            <p style={{margin: 0}}>Serie Equipo: {serieEquipo && serieEquipo}</p>
-                                            <p style={{margin: 0}}>Tipo de pauta: <strong>{report && report.reportType}</strong></p>
+                                            <p style={{margin: 0}}>Serie Equipo: {serieEquipo && serieEquipo.replace('00000000', '')}</p>
+                                            <p style={{margin: 0}}>Tipo de pauta: <strong>{report && report.guide}</strong></p>
                                             <p style={{backgroundColor: 'red', color: 'white', marginBottom: 0}}><strong>{(report && report.testMode) ? 'Modo test' : ''}</strong></p>
                                             {machineData && <p style={{margin: 0}}>Modelo Máquina {machineData.model}, N°{machineData.equ}</p>}
                                             <br />

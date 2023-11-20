@@ -48,7 +48,7 @@ const AssignDialog = ({open, report, closeModal, reportType, onlyClose}) => {
         if (open) {
             setSiteNameById()
             if (reportType === 'Inspección') {
-                setOperarios(inspectors.sort((a, b) => {
+                const inspectorsCache = inspectors.sort((a, b) => {
                     if (a.name < b.name) {
                         return -1
                     }
@@ -56,9 +56,10 @@ const AssignDialog = ({open, report, closeModal, reportType, onlyClose}) => {
                         return 1
                     }
                     return 0
-                }))
+                })
+                setOperarios(inspectorsCache)
             } else {
-                setOperarios(maitenances.sort((a, b) => {
+                const maintenancesCache = maitenances.sort((a, b) => {
                     if (a.name < b.name) {
                         return -1
                     }
@@ -66,7 +67,8 @@ const AssignDialog = ({open, report, closeModal, reportType, onlyClose}) => {
                         return 1
                     }
                     return 0
-                }))
+                })
+                setOperarios(maintenancesCache)
             }
         }
     },[open])
