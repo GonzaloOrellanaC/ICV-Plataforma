@@ -14,6 +14,7 @@ import { LianearProgresDialog, LoadingLogoDialog, ReportsResumeDialog } from '..
 import { date, dateSimple, dateWithYear } from '../../config';
 import SeleccionarObraDialog from '../../dialogs/SeleccionarObraDialog';
 import ReportsKPIDialog from '../../dialogs/ReportsKPIDialog';
+import { fechaAno, fechaCompleta, fechaDia, fechaMes } from '../../config/fecha';
 
 const ReportsPage = () => {
     const {sites} = useSitesContext()
@@ -422,7 +423,7 @@ const ReportsPage = () => {
                 const shiftManager = users.filter(user => {if(user._id === report.shiftManagerApprovedBy) return user})/* await usersRoutes.getUser(report.shiftManagerApprovedBy) */
                 const chiefMachinery = users.filter(user => {if(user._id === report.chiefMachineryApprovedBy) return user})/* await usersRoutes.getUser(report.chiefMachineryApprovedBy) */
                 const sapExecutive = users.filter(user => {if(user._id === report.sapExecutiveApprovedBy) return user})/* await usersRoutes.getUser(report.sapExecutiveApprovedBy) */
-                const usersData = {
+                /* const usersData = {
                     'N° OT': report.idIndex,
                     'Ejecutivo SAP': sapExecutive[0] && sapExecutive[0].name ? `${sapExecutive[0].name} ${sapExecutive[0].lastName}` : 'Sin Cierre SAP',
                     'Fecha de aprobación SAP': report.dateClose ? dateWithYear(report.dateClose) : 'Sin Cierre SAP',
@@ -430,18 +431,30 @@ const ReportsPage = () => {
                     'Fecha de aprobación Maquinaria': report.chiefMachineryApprovedDate ? dateWithYear(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
                     'Jefe de Turno': shiftManager[0] && shiftManager[0].name ? `${shiftManager[0].name} ${shiftManager[0].lastName}` : 'Sin Aprobación Jefe de Turno',
                     'Fecha de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? dateWithYear(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
-                }
+                } */
                 /* console.log(usersData) */
-                users.push(usersData)
+                /* users.push(usersData) */
                 const reporteDescarga = {
                     'N° OT': report.idIndex,
                     'Número OM': report.sapId,
-                    'Fecha de creación': dateWithYear(report.createdAt),
-                    'Fecha de inicio previsto': dateWithYear(report.datePrev),
-                    'Fecha de término previsto': dateWithYear(report.endPrev),
-                    'Fecha de inicio reporte': dateWithYear(report.dateInit),
-                    'Fecha de término reporte': dateWithYear(report.endReport),
-                    'Fecha de cierre': dateWithYear(report.dateClose),
+                    'Día de creación': fechaDia(report.createdAt),
+                    'Mes de creación': fechaMes(report.createdAt),
+                    'Año de creación': fechaAno(report.createdAt),
+                    'Día de inicio previsto': fechaDia(report.datePrev),
+                    'Mes de inicio previsto': fechaMes(report.datePrev),
+                    'Año de inicio previsto': fechaAno(report.datePrev),
+                    'Día de término previsto': fechaDia(report.endPrev),
+                    'Mes de término previsto': fechaMes(report.endPrev),
+                    'Año de término previsto': fechaAno(report.endPrev),
+                    'Día de inicio reporte': fechaDia(report.dateInit),
+                    'Mes de inicio reporte': fechaMes(report.dateInit),
+                    'Año de inicio reporte': fechaAno(report.dateInit),
+                    'Día de término reporte': fechaDia(report.endReport),
+                    'Mes de término reporte': fechaMes(report.endReport),
+                    'Año de término reporte': fechaAno(report.endReport),
+                    'Día de cierre': fechaDia(report.dateClose),
+                    'Mes de cierre': fechaMes(report.dateClose),
+                    'Año de cierre': fechaAno(report.dateClose),
                     'Guía': report.guide,
                     'ID PM': report.idPm,
                     'N° máquina': report.machine,
@@ -449,7 +462,6 @@ const ReportsPage = () => {
                     'Código de obra': report.site,
                     'Estado de orden': report.state,
                     'Modo Test': report.testMode ? 'SI' : 'NO',
-                    'Ultima actualización': dateWithYear(report.updatedAt),
                     'URL documento PDF': report.urlPdf,
                     'Creado por sistema': report.isAutomatic ? 'SI' : 'NO',
                     'Progreso de avance': report.progress,
@@ -486,8 +498,13 @@ const ReportsPage = () => {
                                     }
                                     tareasPendientes.push(tareaPendiente)
                                 }
+                                let fecha = 'Sin Información'
                                 if (item.unidad !== '*') {
+                                    if (item.messages.length > 0) {
+                                        fecha = fechaCompleta(new Date(item.messages[item.messages.length - 1].id))
+                                    }
                                     const contenidoMateriales = {
+                                        'Fecha': fecha,
                                         'N° OT': report.idIndex,
                                         'Hoja': item.strpmdesc,
                                         'Tarea': i + 1,
@@ -535,12 +552,12 @@ const ReportsPage = () => {
                     const material = XLSX.utils.json_to_sheet(materials);
                     const datosMaterial = XLSX.utils.json_to_sheet(groupList);
                     const datosTareasPendientes = XLSX.utils.json_to_sheet(tareasPendientes);
-                    const userDataXLS = XLSX.utils.json_to_sheet(users);
+                    /* const userDataXLS = XLSX.utils.json_to_sheet(users); */
                     XLSX.utils.book_append_sheet(workbook, worksheet, "Datos de reporte");
                     XLSX.utils.book_append_sheet(workbook, material, "Datos de material v1");
                     XLSX.utils.book_append_sheet(workbook, datosMaterial, "Datos de material v2");
                     XLSX.utils.book_append_sheet(workbook, datosTareasPendientes, "Datos de tareas pendientes");
-                    XLSX.utils.book_append_sheet(workbook, userDataXLS, "Datos de usuarios");
+                    /* XLSX.utils.book_append_sheet(workbook, userDataXLS, "Datos de usuarios"); */
                     XLSX.writeFile(workbook, `${Date.now()}.xlsx`)
                     setLoading(false)
                 }
