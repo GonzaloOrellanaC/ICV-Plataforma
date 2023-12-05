@@ -126,7 +126,12 @@ const ReportShema = new Schema({
     progress: {
         type: Schema.Types.Number,
         default: 0
+    },
+    origen: {
+        type: Schema.Types.Boolean,
+        default: true
     }
+
 },
 {
     timestamps: true

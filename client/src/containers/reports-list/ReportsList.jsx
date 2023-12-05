@@ -3,12 +3,13 @@ import { Button, Grid, Popover } from '@material-ui/core'
 import './style.css'
 import { dateSimple } from "../../config"
 import { AssignDialog, ReviewReportDialog } from "../../dialogs"
-import { useAuth, useSitesContext } from "../../context"
+import { useAuth, useReportsContext, useSitesContext } from "../../context"
 /* import { pdfMakeRoutes } from "../../routes" */
 
 const ReportsList = ({list, typeReportsSelected, statusReports}) => {
     const {admin} = useAuth()
     const {sites} = useSitesContext()
+    const {saveReport} = useReportsContext()
     const [ reportData, setReportData ] = useState(null)
     const [ reportDataReview, setReportDataReview ] = useState(null)
     const [ openModalState, setOpenModalState ] = useState(false)
@@ -56,6 +57,13 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
         setReportDataReview(report)
         setOpenReviewModalState(true)
     }    
+
+    const elevar = (report) => {
+        if (confirm('Permitirá asignar OT '+report.idIndex+'.')) {
+            report.origen = false
+            saveReport(report)
+        }
+    }
 
     const levelToState = (level, usersAssigned, state) => {
         if (level === 0 || !level) {
@@ -235,7 +243,13 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                                     <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >                                
                                         <Grid container>
                                             <Grid item>
-                                                <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  
+                                                {
+                                                    item.origen
+                                                    ?
+                                                    <p style={{textAlign: 'center'}}> <button onClick={()=>{elevar(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Elevar</button> </p>  
+                                                    :
+                                                    <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  
+                                                }
                                             </Grid>
                                             {/* <Grid item>
                                                 {item.enabled &&

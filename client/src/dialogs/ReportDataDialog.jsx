@@ -213,16 +213,19 @@ const ReportDataDialog = (
     let stateToSend = false
     if (item.isRequerido) {
       item.unidadData = unidad
-      if (item.messages.length > 0) {
-        if (item.unidadData) {
+      if (item.unidadData) {
+        save(index, state, item)
+        executionReport.offLineGuard = Date.now()
+        stateToSend = true
+      } else {
+        if (item.messages.length > 0) {
           save(index, state, item)
           executionReport.offLineGuard = Date.now()
           stateToSend = true
         } else {
-          alert('Debe indicar una cantidad como se solicita.')
+          alert('Debe dejar al menos un comentario')
         }
-      } else {
-        alert('Debe dejar al menos un comentario')
+        alert('Debe indicar una cantidad como se solicita.')
       }
     } else {
       stateToSend = true

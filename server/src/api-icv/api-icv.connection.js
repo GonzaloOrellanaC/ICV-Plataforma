@@ -89,6 +89,16 @@ const leerPauta3 = async (i, machinesList, listaPMsConcat, group) => {
     }
 }
 
+const testGetSites = async () => {
+    console.log(`${environment.icvApi.url}pmobras`)
+    const sites = await fetch(`${environment.icvApi.url}pmobras`, {
+        headers: myHeaders,
+        method: 'GET',
+        agent: agent
+    });
+    return sites
+}
+
 const leerPautasPorIDPM = async (n, idpms, listaPMsConcat) => {
     if (n === idpms.length) {
         /* console.log(listaPMsConcat) */
@@ -756,42 +766,68 @@ const getAllGuidesHeaderAndStruct = (pIDPM) => {
     })
 }
 
-const getOMSap = async (year, month) => {
+const getOMSap = async (year, month, type) => {
     console.log(year, month)
+    let typeInApi = ''
+    if (type==='mantencion') {
+        typeInApi = 'OMSap'
+    } else if (type === 'inspeccion') {
+        typeInApi = 'AVISOSap'
+    }
     try {
-        const OMSapList = await fetch(`${environment.icvApi.url}OMSap?pYEAR=${year}&pMONTH=${month}`, {
+        console.log(`${environment.icvApi.url}${typeInApi}?pYEAR=${year}&pMONTH=${month}`)
+        const OMSapList = await fetch(`${environment.icvApi.url}${typeInApi}?pYEAR=${year}&pMONTH=${month}`, {
             headers: myHeaders,
             method: 'GET',
             agent: agent
         })
         const body = await OMSapList.json();
         const index = 0
-        crearPautasDesdeSAP(body.data, index)
+        /* console.log(type==='mantencion' ? body.data[0] : body.data) */
+        if (body.data && body.data.length > 0) {
+            crearPautasDesdeSAP(body.data, index, type)
+        }
     } catch (error) {
         Sentry.captureException(error)
     }
 }
 
-const crearPautasDesdeSAP = async (pautas, index) => {
-    /* const admins = await UserServices.getUserByRole('admin') */
+const crearPautasDesdeSAP = async (pautas, index, type) => {
+    let typeInApi = ''
+    let guide = ''
+    let faena = ''
     if (index === (pautas.length)) {
         console.log(`se han gestionado ${pautas.length} pautas.`)
     } else {
         const om = pautas[index]
         if (om.estado === "0") {
+            if (type==='mantencion') {
+                typeInApi = 'Mantención'
+                guide = om.pauta.replace('-', '')
+            } else if (type === 'inspeccion') {
+                typeInApi = 'Inspección'
+                guide = 'Pauta de Inspección'
+            }
+            if (om.faena.length < 4) {
+                faena = `0${om.faena}`
+            } else {
+                faena = om.faena
+            }
+            const equipo = (om.equipo.includes('00000000')) ? om.equipo : `00000000${om.equipo}`
+            console.log('Equipo: ', equipo)
             const findReport = await Reports.findOne({sapId: om.om })
             if (!findReport) {
-                const findEquip = await Machine.findOne({equid: `00000000${om.equipo}`})
+                const findEquip = await Machine.findOne({equid: equipo})
                 if (findEquip) {
-                    const findSite = await Site.findOne({idobra: om.faena})
+                    const findSite = await Site.findOne({idobra: faena})
                     if (findSite) {
                         const totalOT = await Reports.find()
                         const newOt = {
                             sapId: om.om,
-                            site: om.faena,
-                            reportType: 'Mantención',
-                            machine: `00000000${om.equipo}`,
-                            guide: om.pauta.replace('-', ''),
+                            site: faena,
+                            reportType: typeInApi,
+                            machine: (om.equipo.includes('00000000')) ? om.equipo : `00000000${om.equipo}` ,
+                            guide: guide,
                             datePrev: new Date(om.fechA_INICIO.replace(/(\d+)(\d{2})(\d{2})/g, '$1-$2-$3')),
                             endPrev: new Date(om.fechA_TERMINO.replace(/(\d+)(\d{2})(\d{2})/g, '$1-$2-$3')),
                             idIndex: totalOT.length - 1,
@@ -800,6 +836,9 @@ const crearPautasDesdeSAP = async (pautas, index) => {
                             state: 'Asignar',
                             isAutomatic: true
                         }
+                        /* if (typeInApi==='Inspección') {
+                            console.log(newOt)
+                        } */
                         const reportCreated = await Reports.create(newOt)
                         if (reportCreated) {
                             index = index + 1
@@ -920,5 +959,6 @@ export default {
     sincronizar,
     getOMSap,
     getOMs,
-    getUnidades
+    getUnidades,
+    testGetSites
 }

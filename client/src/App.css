@@ -206,3 +206,18 @@
   transition: 500ms;
   background-color: #ececec;
 }
+
+.list-item {
+  position: relative;
+  width: 100%;
+  padding: 0px 10px;
+  height: 6vh;
+}
+
+.item-icon-text {
+  display: inline-block;
+}
+
+.button {
+  cursor: pointer;
+}

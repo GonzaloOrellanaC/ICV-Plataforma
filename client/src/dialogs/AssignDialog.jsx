@@ -17,6 +17,7 @@ import { Close } from '@material-ui/icons';
 /* import { SocketConnection } from '../../connections'; */
 import { useAuth, useReportsContext, useSitesContext, useUsersContext } from '../context';
 import { SocketConnection } from '../connections';
+import { Button } from '@mui/material';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -37,11 +38,17 @@ const AssignDialog = ({open, report, closeModal, reportType, onlyClose}) => {
     const [reading, setReading] = useState(true)
     const [siteName, setSiteName] = useState('')
     const [messageOperarios, setMessageOperarios] = useState('')
+    const [removeUserButton, setRemoveUserButton] = useState(true)
+    useEffect(() => {
+        if(usersAssigned.length > 0) {
+            setRemoveUserButton(false)
+        }
+    },[usersAssigned])
     useEffect(() => {
         if (open) {
             setSiteNameById()
             if (reportType === 'Inspección') {
-                setOperarios(inspectors.sort((a, b) => {
+                const inspectorsCache = inspectors.sort((a, b) => {
                     if (a.name < b.name) {
                         return -1
                     }
@@ -49,9 +56,10 @@ const AssignDialog = ({open, report, closeModal, reportType, onlyClose}) => {
                         return 1
                     }
                     return 0
-                }))
+                })
+                setOperarios(inspectorsCache)
             } else {
-                setOperarios(maitenances.sort((a, b) => {
+                const maintenancesCache = maitenances.sort((a, b) => {
                     if (a.name < b.name) {
                         return -1
                     }
@@ -59,7 +67,8 @@ const AssignDialog = ({open, report, closeModal, reportType, onlyClose}) => {
                         return 1
                     }
                     return 0
-                }))
+                })
+                setOperarios(maintenancesCache)
             }
         }
     },[open])
@@ -183,6 +192,44 @@ const AssignDialog = ({open, report, closeModal, reportType, onlyClose}) => {
             setColorState('#27AE60');
         }     
     }, [guide])
+
+    const borrarUltimaAsignacion = async () => {
+        if (usersAssigned.length > 0) {
+            console.log(usersAssigned)
+            if (window.confirm(`Confirme que quitará a ${usersAssigned[0].name} ${usersAssigned[0].lastName} a la OT ${report.idIndex}`)) {
+                const reportCache = report
+                if (reportCache.usersAssigned) {
+                    const usersAssigned = reportCache.usersAssigned.shift()
+                    console.log(usersAssigned)
+                    if (usersAssigned && usersAssigned.length > 0) {
+                        usersAssigned.find((uid, n) => {
+                            if (uid===userId) {
+                                usersAssigned.splice(n, 1)
+                            }
+                        })
+                        usersAssigned.unshift(userId)
+                    } else {
+                        usersAssigned.push(userId)
+                    }
+                    reportCache.usersAssigned = usersAssigned
+                    reportCache.state = 'Asignar'
+                    reportCache.level = 0
+                    await saveReport(reportCache)
+                    /* SocketConnection.sendnotificationToUser(
+                        'nueva-asignacion',
+                        `${userData._id}`,
+                        userId,
+                        'Asignaciones',
+                        'Se ha asignado nueva OT',
+                        `OT ${reportCache.idIndex} asignada a usted`,
+                        '/assignment',
+                        report._id
+                        ) */
+                }
+                close()
+            }
+        }
+    }
     
     return(
         <Dialog
@@ -242,6 +289,10 @@ const AssignDialog = ({open, report, closeModal, reportType, onlyClose}) => {
                             })
                         }
                     </Select>
+                    <br />
+                    <Button disabled={removeUserButton} onClick={borrarUltimaAsignacion} style={{width: 150}} color='error'>
+                        Quitar usuario
+                    </Button>
                 </FormControl>
                 <Fab onClick={close} style={{position: 'absolute', right: 10, top: 10, boxShadow: 'none', backgroundColor: 'transparent'}}>
                     <Close style={{color: '#ccc'}} />

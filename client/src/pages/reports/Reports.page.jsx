@@ -7,7 +7,7 @@ import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar, faDownlo
 import './reports.css'
 import { ReportsList } from '../../containers';
 import { useNavigate } from 'react-router-dom';
-import { useAuth, useReportsContext, useSitesContext, useUsersContext } from '../../context';
+import { useAuth, useMachineContext, useReportsContext, useSitesContext, useUsersContext } from '../../context';
 import * as XLSX from 'xlsx'
 import { executionReportsRoutes, usersRoutes } from '../../routes';
 import { LianearProgresDialog, LoadingLogoDialog, ReportsResumeDialog } from '../../dialogs';
@@ -21,6 +21,7 @@ const ReportsPage = () => {
     const {admin, isSapExecutive, isShiftManager, isChiefMachinery} = useAuth()
     const {reports, setListSelected, listSelected, listSelectedCache, setListSelectedCache, getReports, loading, statusReports, pautas, siteSelected} = useReportsContext()
     const {users} = useUsersContext()
+    const {machinesBySite} = useMachineContext()
     const [inspeccionesTotales, setInspeccionesTotales] = useState([])
     const [mantencionesTotales, setMantencionesTotales] = useState([])
     const [ inspecciones, setInspecciones ] = useState([]);
@@ -104,8 +105,13 @@ const ReportsPage = () => {
     }, [reports])
     useEffect(() => {
         if (inspeccionesTotales.length > 0) {
+            const inspeccionesOrigen = inspeccionesTotales.filter(inspeccion => {
+                if(inspeccion.origen) {
+                    return inspeccion
+                }
+            })
             const inspeccionesSinAsignar = inspeccionesTotales.filter(inspeccion => {
-                if(inspeccion.state==='Asignar'/* usersAssigned.length === 0 */) {
+                if(inspeccion.state==='Asignar' && (!inspeccion.origen)) {
                     return inspeccion
                 }
             })
@@ -129,10 +135,12 @@ const ReportsPage = () => {
             inspeccionesTable[1].number = inspeccionesPorCerrar.length
             inspeccionesTable[2].number = inspeccionesEnProceso.length
             inspeccionesTable[3].number = inspeccionesSinAsignar.length
+            inspeccionesTable[4].number = inspeccionesOrigen.length
             inspeccionesTable[0].lista = inspeccionesCerradas
             inspeccionesTable[1].lista = inspeccionesPorCerrar
             inspeccionesTable[2].lista = inspeccionesEnProceso
             inspeccionesTable[3].lista = inspeccionesSinAsignar
+            inspeccionesTable[4].lista = inspeccionesOrigen
             setInspecciones(inspeccionesTable)
         } else {
             const inspeccionesTable = [...Inspecciones]
@@ -140,32 +148,40 @@ const ReportsPage = () => {
             inspeccionesTable[1].number = 0
             inspeccionesTable[2].number = 0
             inspeccionesTable[3].number = 0
+            inspeccionesTable[4].number = 0
             inspeccionesTable[0].lista = []
             inspeccionesTable[1].lista = []
             inspeccionesTable[2].lista = []
             inspeccionesTable[3].lista = []
+            inspeccionesTable[4].lista = []
             setInspecciones(inspeccionesTable)
         }
     },[inspeccionesTotales])
     useEffect(() => {
         if (mantencionesTotales.length > 0) {
+            const mantencionesOrigen = mantencionesTotales.filter(mantencion => {
+                if(mantencion.origen) {
+                    console.log(mantencion.idIndex)
+                    return mantencion
+                }
+            })
             const mantencionesSinAsignar = mantencionesTotales.filter(mantencion => {
-                if(mantencion.state==='Asignar'/* usersAssigned.length === 0 */) {
+                if(mantencion.state==='Asignar' && (!mantencion.origen)) {
                     return mantencion
                 }
             })
             const mantencionesEnProceso = mantencionesTotales.filter(mantencion => {
-                if(mantencion.usersAssigned.length > 0 && mantencion.state==='En proceso' && (mantencion.level < 3 && (mantencion.level > 0 || !mantencion.level))) {
+                if(mantencion.usersAssigned.length > 0 && mantencion.state==='En proceso' && (mantencion.level < 3 && (mantencion.level > 0 || !mantencion.level)) && (!mantencion.origen)) {
                     return mantencion
                 }
             })
             const mantencionesPorCerrar = mantencionesTotales.filter(mantencion => {
-                if(mantencion.level === 3) {
+                if(mantencion.level === 3 && (!mantencion.origen)) {
                     return mantencion
                 }
             })
             const mantencionesCerradas = mantencionesTotales.filter(mantencion => {
-                if(mantencion.level === 4) {
+                if(mantencion.level === 4 && (!mantencion.origen)) {
                     return mantencion
                 }
             })
@@ -174,10 +190,12 @@ const ReportsPage = () => {
             mantencionesTable[1].number = mantencionesPorCerrar.length
             mantencionesTable[2].number = mantencionesEnProceso.length
             mantencionesTable[3].number = mantencionesSinAsignar.length
+            mantencionesTable[4].number = mantencionesOrigen.length
             mantencionesTable[0].lista = mantencionesCerradas
             mantencionesTable[1].lista = mantencionesPorCerrar
             mantencionesTable[2].lista = mantencionesEnProceso
             mantencionesTable[3].lista = mantencionesSinAsignar
+            mantencionesTable[4].lista = mantencionesOrigen
             setMantenciones(mantencionesTable)
         } else {
             const mantencionesTable = [...Mantenciones]
@@ -185,10 +203,12 @@ const ReportsPage = () => {
             mantencionesTable[1].number = 0
             mantencionesTable[2].number = 0
             mantencionesTable[3].number = 0
+            mantencionesTable[4].number = 0
             mantencionesTable[0].lista = []
             mantencionesTable[1].lista = []
             mantencionesTable[2].lista = []
             mantencionesTable[3].lista = []
+            mantencionesTable[4].lista = []
             setMantenciones(mantencionesTable)
         }
     },[mantencionesTotales])
@@ -206,11 +226,17 @@ const ReportsPage = () => {
         localStorage.setItem('buttonSelected', idButton)
         const inspecionesCache = [...inspecciones]
         inspecionesCache.forEach((el, i) => {
-            document.getElementById(`button_${i}_inspecciones`).style.backgroundColor = el.buttonColor
+            const buttonCache = document.getElementById(`button_${i}_inspecciones`)
+            if (buttonCache) {
+                buttonCache.style.backgroundColor = el.buttonColor
+            }
         })
         const mantencionesCache = [...mantenciones]
         mantencionesCache.forEach((el, i) => {
-            document.getElementById(`button_${i}_mantenciones`).style.backgroundColor = el.buttonColor
+            const buttonCache = document.getElementById(`button_${i}_mantenciones`)
+            if (buttonCache) {
+                buttonCache.style.backgroundColor = el.buttonColor
+            }
         })
         document.getElementById(idButton).style.backgroundColor = '#ccc'
         if (lista.length > 0) {
@@ -406,162 +432,188 @@ const ReportsPage = () => {
             const reportsCache = [...reports]
             const reportsToDownload = []
             const materials = []
-            const users = []
+            /* const users = [] */
             const groupList = []
             const tareasPendientes = []
-            reportsCache.forEach(async (report, i)=>{
-                let newVariables = {}
-                const response = await executionReportsRoutes.getExecutionReportById(report._id)
-                report.commitWarning = ''
-                report.isWarning = false
-                const operators = report.usersAssigned
-                const operatorsList = []
-                operators.forEach(async operator => {
-                    const res = users.filter(user => {if(user._id === operator) return user})/* await usersRoutes.getUser(operator) */
-                    operatorsList.push(res[0])
-                })
-                const shiftManager = users.filter(user => {if(user._id === report.shiftManagerApprovedBy) return user})/* await usersRoutes.getUser(report.shiftManagerApprovedBy) */
-                const chiefMachinery = users.filter(user => {if(user._id === report.chiefMachineryApprovedBy) return user})/* await usersRoutes.getUser(report.chiefMachineryApprovedBy) */
-                const sapExecutive = users.filter(user => {if(user._id === report.sapExecutiveApprovedBy) return user})/* await usersRoutes.getUser(report.sapExecutiveApprovedBy) */
-                /* const usersData = {
-                    'N° OT': report.idIndex,
-                    'Ejecutivo SAP': sapExecutive[0] && sapExecutive[0].name ? `${sapExecutive[0].name} ${sapExecutive[0].lastName}` : 'Sin Cierre SAP',
-                    'Fecha de aprobación SAP': report.dateClose ? dateWithYear(report.dateClose) : 'Sin Cierre SAP',
-                    'Jefe de Maquinaria': chiefMachinery[0] && chiefMachinery[0].name ? `${chiefMachinery[0].name} ${chiefMachinery[0].lastName}` : 'Sin Aprobación Maquinaria',
-                    'Fecha de aprobación Maquinaria': report.chiefMachineryApprovedDate ? dateWithYear(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
-                    'Jefe de Turno': shiftManager[0] && shiftManager[0].name ? `${shiftManager[0].name} ${shiftManager[0].lastName}` : 'Sin Aprobación Jefe de Turno',
-                    'Fecha de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? dateWithYear(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
-                } */
-                /* console.log(usersData) */
-                /* users.push(usersData) */
-                const reporteDescarga = {
-                    'N° OT': report.idIndex,
-                    'Número OM': report.sapId,
-                    'Día de creación': fechaDia(report.createdAt),
-                    'Mes de creación': fechaMes(report.createdAt),
-                    'Año de creación': fechaAno(report.createdAt),
-                    'Día de inicio previsto': fechaDia(report.datePrev),
-                    'Mes de inicio previsto': fechaMes(report.datePrev),
-                    'Año de inicio previsto': fechaAno(report.datePrev),
-                    'Día de término previsto': fechaDia(report.endPrev),
-                    'Mes de término previsto': fechaMes(report.endPrev),
-                    'Año de término previsto': fechaAno(report.endPrev),
-                    'Día de inicio reporte': fechaDia(report.dateInit),
-                    'Mes de inicio reporte': fechaMes(report.dateInit),
-                    'Año de inicio reporte': fechaAno(report.dateInit),
-                    'Día de término reporte': fechaDia(report.endReport),
-                    'Mes de término reporte': fechaMes(report.endReport),
-                    'Año de término reporte': fechaAno(report.endReport),
-                    'Día de cierre': fechaDia(report.dateClose),
-                    'Mes de cierre': fechaMes(report.dateClose),
-                    'Año de cierre': fechaAno(report.dateClose),
-                    'Guía': report.guide,
-                    'ID PM': report.idPm,
-                    'N° máquina': report.machine,
-                    'Tipo de reporte': report.reportType,
-                    'Código de obra': report.site,
-                    'Estado de orden': report.state,
-                    'Modo Test': report.testMode ? 'SI' : 'NO',
-                    'URL documento PDF': report.urlPdf,
-                    'Creado por sistema': report.isAutomatic ? 'SI' : 'NO',
-                    'Progreso de avance': report.progress,
-                    'Tiene alerta': 'NO',
-                    'Comentario a considerar': ''
-                }
-                const listaDeContenidoTablaCantidades = {}
-                const reportTemp = reporteDescarga
-                if (response) {
-                    if (response.data && response.data.data && response.data.data.group) {
-                        console.log(response.data.data.group)
-                        const group = Object.values(response.data.data.group)
-                        const material = {
-                            'N° OT': report.idIndex
-                        }
-                        group.forEach((el, n) => {
-                            
-                            el.forEach((item, i) => {
-                                if (item.isWarning) {
-                                    reportTemp['Tiene alerta'] = 'SI'
-                                    if (!reportTemp['Comentario a considerar']) {
-                                        reportTemp['Comentario a considerar'] = 'Se detecta tareas pendientes:\n'
+            console.log(machinesBySite)
+            if (machinesBySite.length > 0) {
+                reportsCache.forEach(async (report, i)=>{
+                    let newVariables = {}
+                    const response = await executionReportsRoutes.getExecutionReportById(report._id)
+                    report.commitWarning = ''
+                    report.isWarning = false
+                    const machineFiltered = machinesBySite.filter(m => {if(m.equid === report.machine) return m})
+                    const operators = report.usersAssigned
+                    const operatorsList = []
+                    operators.forEach(async operator => {
+                        const res = users.filter(user => {if(user._id === operator) return user})/* await usersRoutes.getUser(operator) */
+                        operatorsList.push(res[0])
+                    })
+                    const shiftManager = users.filter(user => {if(user._id === report.shiftManagerApprovedBy) return user})/* await usersRoutes.getUser(report.shiftManagerApprovedBy) */
+                    const chiefMachinery = users.filter(user => {if(user._id === report.chiefMachineryApprovedBy) return user})/* await usersRoutes.getUser(report.chiefMachineryApprovedBy) */
+                    const sapExecutive = users.filter(user => {if(user._id === report.sapExecutiveApprovedBy) return user})/* await usersRoutes.getUser(report.sapExecutiveApprovedBy) */
+                    /* const usersData = {
+                        'N° OT': report.idIndex,
+                        'Ejecutivo SAP': sapExecutive[0] && sapExecutive[0].name ? `${sapExecutive[0].name} ${sapExecutive[0].lastName}` : 'Sin Cierre SAP',
+                        'Fecha de aprobación SAP': report.dateClose ? dateWithYear(report.dateClose) : 'Sin Cierre SAP',
+                        'Jefe de Maquinaria': chiefMachinery[0] && chiefMachinery[0].name ? `${chiefMachinery[0].name} ${chiefMachinery[0].lastName}` : 'Sin Aprobación Maquinaria',
+                        'Fecha de aprobación Maquinaria': report.chiefMachineryApprovedDate ? dateWithYear(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
+                        'Jefe de Turno': shiftManager[0] && shiftManager[0].name ? `${shiftManager[0].name} ${shiftManager[0].lastName}` : 'Sin Aprobación Jefe de Turno',
+                        'Fecha de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? dateWithYear(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
+                    } */
+                    /* console.log(usersData) */
+                    /* users.push(usersData) */
+                    const reporteDescarga = {
+                        'N° OT': report.idIndex,
+                        'Número OM': report.sapId,
+                        'Día de creación': fechaDia(report.createdAt),
+                        'Mes de creación': fechaMes(report.createdAt),
+                        'Año de creación': fechaAno(report.createdAt),
+                        'Día de inicio previsto': fechaDia(report.datePrev),
+                        'Mes de inicio previsto': fechaMes(report.datePrev),
+                        'Año de inicio previsto': fechaAno(report.datePrev),
+                        'Día de término previsto': fechaDia(report.endPrev),
+                        'Mes de término previsto': fechaMes(report.endPrev),
+                        'Año de término previsto': fechaAno(report.endPrev),
+                        'Día de inicio reporte': fechaDia(report.dateInit),
+                        'Mes de inicio reporte': fechaMes(report.dateInit),
+                        'Año de inicio reporte': fechaAno(report.dateInit),
+                        'Día de término reporte': fechaDia(report.endReport),
+                        'Mes de término reporte': fechaMes(report.endReport),
+                        'Año de término reporte': fechaAno(report.endReport),
+                        'Día de cierre': fechaDia(report.dateClose),
+                        'Mes de cierre': fechaMes(report.dateClose),
+                        'Año de cierre': fechaAno(report.dateClose),
+                        'Ejecutivo SAP': sapExecutive[0] && sapExecutive[0].name ? `${sapExecutive[0].name} ${sapExecutive[0].lastName}` : 'Sin Cierre SAP',
+                        /* 'Fecha de aprobación SAP': report.dateClose ? dateWithYear(report.dateClose) : 'Sin Cierre SAP', */
+                        'Día de aprobación SAP': report.dateClose ? fechaDia(report.dateClose) : 'Sin Cierre SAP',
+                        'Mes de aprobación SAP': report.dateClose ? fechaMes(report.dateClose) : 'Sin Cierre SAP',
+                        'Año de aprobación SAP': report.dateClose ? fechaAno(report.dateClose) : 'Sin Cierre SAP',
+                        /* 'Hora de aprobación SAP': report.dateClose ? hour(report.dateClose) : 'Sin Cierre SAP', */
+                        'Jefe de Maquinaria': chiefMachinery[0] && chiefMachinery[0].name ? `${chiefMachinery[0].name} ${chiefMachinery[0].lastName}` : 'Sin Aprobación Maquinaria',
+                        /* 'Fecha de aprobación Maquinaria': report.chiefMachineryApprovedDate ? dateWithYear(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria', */
+                        'Día de aprobación Maquinaria': report.chiefMachineryApprovedDate ? fechaDia(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
+                        'Mes de aprobación Maquinaria': report.chiefMachineryApprovedDate ? fechaMes(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
+                        'Año de aprobación Maquinaria': report.chiefMachineryApprovedDate ? fechaAno(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
+                        /* 'Hora de aprobación Maquinaria': report.chiefMachineryApprovedDate ? hour(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria', */
+                        'Jefe de Turno': shiftManager[0] && shiftManager[0].name ? `${shiftManager[0].name} ${shiftManager[0].lastName}` : 'Sin Aprobación Jefe de Turno',
+                        /* 'Fecha de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? dateWithYear(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno', */
+                        'Día de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? fechaDia(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
+                        'Mes de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? fechaMes(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
+                        'Año de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? fechaAno(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
+                        /* 'Hora de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? hour(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno', */
+                        'Guía': report.guide,
+                        'ID PM': report.idPm,
+                        'N° máquina': machineFiltered[0].equid.toString().replace('00000000', ''),
+                        'Tipo de reporte': report.reportType,
+                        'Código de obra': report.site,
+                        'Estado de orden': report.state,
+                        'Modo Test': report.testMode ? 'SI' : 'NO',
+                        'URL documento PDF': report.urlPdf,
+                        'Creado por sistema': report.isAutomatic ? 'SI' : 'NO',
+                        'Progreso de avance': report.progress,
+                        'Tiene alerta': 'NO',
+                        'Comentario a considerar': ''
+                    }
+                    const listaDeContenidoTablaCantidades = {}
+                    const reportTemp = reporteDescarga
+                    if (response) {
+                        if (response.data && response.data.data && response.data.data.group) {
+                            console.log(response.data.data.group)
+                            const group = Object.values(response.data.data.group)
+                            const material = {
+                                'N° OT': report.idIndex
+                            }
+                            group.forEach((el, n) => {
+                                el.forEach((item, i) => {
+                                    let fecha = 'Sin información'
+                                    if (item.messages && (item.messages.length > 0)) {
+                                        fecha = fechaCompleta(new Date(item.messages[item.messages.length -1].id))
                                     }
-                                    reportTemp['Comentario a considerar'] += `- Apartado ${item.strpmdesc}, pregunta ${i + 1};\n`
-                                    const tareaPendiente = {
-                                        'N° OT': report.idIndex,
-                                        'Hoja': item.strpmdesc,
-                                        'Tarea': i + 1
+                                    if (item.isWarning) {
+                                        reportTemp['Tiene alerta'] = 'SI'
+                                        if (!reportTemp['Comentario a considerar']) {
+                                            reportTemp['Comentario a considerar'] = 'Se detecta tareas pendientes:\n'
+                                        }
+                                        reportTemp['Comentario a considerar'] += `- Apartado ${item.strpmdesc}, pregunta ${i + 1};\n`
+                                        const tareaPendiente = {
+                                            'Fecha': fecha,
+                                            'N° OT': report.idIndex,
+                                            'Hoja': item.strpmdesc,
+                                            'Descripcion De Tarea': item.taskdesc,
+                                            'Flota': machineFiltered[0].model,
+                                            'Pauta': report.guide,
+                                            'Obra': report.site,
+                                            'Tarea': i + 1
+                                        }
+                                        if (item.messages.length > 0) {
+                                            item.messages.forEach((message, n) => {
+                                                tareaPendiente[`Mensaje ${n + 1}`] = `${message.name}: ${message.content}`
+                                            })
+                                        }
+                                        tareasPendientes.push(tareaPendiente)
                                     }
-                                    if (item.messages.length > 0) {
-                                        item.messages.forEach((message, n) => {
-                                            tareaPendiente[`Mensaje ${n + 1}`] = `${message.name}: ${message.content}`
-                                        })
+                                    if (item.unidad !== '*') {
+                                        const contenidoMateriales = {
+                                            'Fecha': fecha,
+                                            'N° OT': report.idIndex,
+                                            'Hoja': item.strpmdesc,
+                                            'Tarea': i + 1,
+                                            'Descripcion de tarea': item.obs01,
+                                            'Repuesto': item.partnumberUtl,
+                                            'Cantidad a utilizar': item.cantidad,
+                                            'Cantidad utilizada': item.unidadData ? item.unidadData : 0,
+                                            'Unidad': item.unidad,
+                                            'Tipo de repuesto': item.idtypeutlPartnumber
+                                        }
+                                        groupList.push(contenidoMateriales)
+                                        if (!material[`${item.partnumberUtl}/${item.unidad} proyectada`]) {
+                                            material[`${item.partnumberUtl}/${item.unidad} proyectada`] = 0
+                                        }
+                                        material[`${item.partnumberUtl}/${item.unidad} proyectada`] = material[`${item.partnumberUtl}/${item.unidad} proyectada`] + item.cantidad
+    
+                                        if (!material[`${item.partnumberUtl}/${item.unidad} usada`]) {
+                                            material[`${item.partnumberUtl}/${item.unidad} usada`] = 0
+                                        }
+                                        material[`${item.partnumberUtl}/${item.unidad} usada`] = material[`${item.partnumberUtl}/${item.unidad} usada`] + (item.unidadData ? parseFloat(item.unidadData) : 0)
                                     }
-                                    tareasPendientes.push(tareaPendiente)
-                                }
-                                let fecha = 'Sin Información'
-                                if (item.unidad !== '*') {
-                                    if (item.messages.length > 0) {
-                                        fecha = fechaCompleta(new Date(item.messages[item.messages.length - 1].id))
+                                })
+                                if (n === (group.length - 1)) {
+                                    if (!material['Tiene alerta'] && (material['Comentario a considerar'] && material['Comentario a considerar'].length === 0)) {
+                                        material['Comentario a considerar'] = 'Reporte ha sido completado.'
                                     }
-                                    const contenidoMateriales = {
-                                        'Fecha': fecha,
-                                        'N° OT': report.idIndex,
-                                        'Hoja': item.strpmdesc,
-                                        'Tarea': i + 1,
-                                        'Descripcion de tarea': item.obs01,
-                                        'Repuesto': item.partnumberUtl,
-                                        'Cantidad a utilizar': item.cantidad,
-                                        'Cantidad utilizada': item.unidadData ? item.unidadData : 0,
-                                        'Unidad': item.unidad,
-                                        'Tipo de repuesto': item.idtypeutlPartnumber
-                                    }
-                                    groupList.push(contenidoMateriales)
-                                    if (!material[`${item.partnumberUtl}/${item.unidad} proyectada`]) {
-                                        material[`${item.partnumberUtl}/${item.unidad} proyectada`] = 0
-                                    }
-                                    material[`${item.partnumberUtl}/${item.unidad} proyectada`] = material[`${item.partnumberUtl}/${item.unidad} proyectada`] + item.cantidad
-
-                                    if (!material[`${item.partnumberUtl}/${item.unidad} usada`]) {
-                                        material[`${item.partnumberUtl}/${item.unidad} usada`] = 0
-                                    }
-                                    material[`${item.partnumberUtl}/${item.unidad} usada`] = material[`${item.partnumberUtl}/${item.unidad} usada`] + (item.unidadData ? parseFloat(item.unidadData) : 0)
                                 }
                             })
-                            if (n === (group.length - 1)) {
-                                if (!material['Tiene alerta'] && (material['Comentario a considerar'] && material['Comentario a considerar'].length === 0)) {
-                                    material['Comentario a considerar'] = 'Reporte ha sido completado.'
-                                }
-                            }
-                        })
-                        materials.push(material)
-                        reportsToDownload.push(reportTemp)
+                            materials.push(material)
+                            reportsToDownload.push(reportTemp)
+                        } else {
+                            reportsToDownload.push(reportTemp)
+                        }
                     } else {
                         reportsToDownload.push(reportTemp)
                     }
-                } else {
-                    reportsToDownload.push(reportTemp)
-                }
-                setRevisionNumber((100 * (i + 1))/reportsCache)
-                if (i === (reportsCache.length - 1)) {
-                    console.log(groupList)
-                    /* console.log(reportsToDownload)
-                    console.log(materials)
-                    console.log(users) */
-                    const workbook = XLSX.utils.book_new();
-                    const worksheet = XLSX.utils.json_to_sheet(reportsToDownload);
-                    const material = XLSX.utils.json_to_sheet(materials);
-                    const datosMaterial = XLSX.utils.json_to_sheet(groupList);
-                    const datosTareasPendientes = XLSX.utils.json_to_sheet(tareasPendientes);
-                    /* const userDataXLS = XLSX.utils.json_to_sheet(users); */
-                    XLSX.utils.book_append_sheet(workbook, worksheet, "Datos de reporte");
-                    XLSX.utils.book_append_sheet(workbook, material, "Datos de material v1");
-                    XLSX.utils.book_append_sheet(workbook, datosMaterial, "Datos de material v2");
-                    XLSX.utils.book_append_sheet(workbook, datosTareasPendientes, "Datos de tareas pendientes");
-                    /* XLSX.utils.book_append_sheet(workbook, userDataXLS, "Datos de usuarios"); */
-                    XLSX.writeFile(workbook, `${Date.now()}.xlsx`)
-                    setLoading(false)
-                }
-            })
+                    setRevisionNumber((100 * (i + 1))/reportsCache)
+                    if (i === (reportsCache.length - 1)) {
+                        console.log(groupList)
+                        /* console.log(reportsToDownload)
+                        console.log(materials)
+                        console.log(users) */
+                        const workbook = XLSX.utils.book_new();
+                        const worksheet = XLSX.utils.json_to_sheet(reportsToDownload);
+                        const material = XLSX.utils.json_to_sheet(materials);
+                        const datosMaterial = XLSX.utils.json_to_sheet(groupList);
+                        const datosTareasPendientes = XLSX.utils.json_to_sheet(tareasPendientes);
+                        /* const userDataXLS = XLSX.utils.json_to_sheet(users); */
+                        XLSX.utils.book_append_sheet(workbook, worksheet, "Datos de reporte");
+                        XLSX.utils.book_append_sheet(workbook, material, "Datos de material v1");
+                        XLSX.utils.book_append_sheet(workbook, datosMaterial, "Datos de material v2");
+                        XLSX.utils.book_append_sheet(workbook, datosTareasPendientes, "Datos de tareas pendientes");
+                        /* XLSX.utils.book_append_sheet(workbook, userDataXLS, "Datos de usuarios"); */
+                        XLSX.writeFile(workbook, `${Date.now()}.xlsx`)
+                        setLoading(false)
+                    }
+                })
+            }
         } else {
             alert('Debe contar con al menos una OT creada.')
         }
