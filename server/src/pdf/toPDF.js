@@ -601,21 +601,25 @@ const createSignsTable = (chiefMachinerySign, shiftManagerSign, chiefMachineryNa
         )
         const columns1 = []
         operators.forEach((user, i) => {
-            columns1[i] = {
-                alignment: 'center',
-                margin: [0, 100, 0, 10],
-                width: 200,
-                height: 100,
-                image: user.sign ? user.sign : null
+            if (user.sign) {
+                columns1[i] = {
+                    alignment: 'center',
+                    margin: [0, 100, 0, 10],
+                    width: 200,
+                    height: 100,
+                    image: user.sign ? user.sign : ''
+                }
             }
         })
         const columns2 = []
         operators.forEach((user, i) => {
-            columns2[i] = {
-                alignment: 'center',
-                margin: [0, 10, 0, 200],
-                width: 200,
-                text: `${user.name} ${user.lastName} \n\ Técnico Inspección o Mantenimiento ${(i===0) ? 'y que termina OT' : ''}`
+            if (user.sign) {
+                columns2[i] = {
+                    alignment: 'center',
+                    margin: [0, 10, 0, 200],
+                    width: 200,
+                    text: `${user.name} ${user.lastName} \n\ Técnico Inspección o Mantenimiento ${(i===0) ? 'y que termina OT' : ''}`
+                }
             }
         })
         table.push({
@@ -635,21 +639,25 @@ const createOperatorsSignsTable = (operators) => {
         ]
         const columns1 = []
         operators.forEach((user, i) => {
-            columns1[i] = {
-                alignment: 'center',
-                margin: [0, 100, 0, 10],
-                width: 200,
-                height: 100,
-                image: user.sign ? user.sign : null
+            if (user.sign) {
+                columns1[i] = {
+                    alignment: 'center',
+                    margin: [0, 100, 0, 10],
+                    width: 200,
+                    height: 100,
+                    image: user.sign ? user.sign : null
+                }
             }
         })
         const columns2 = []
         operators.forEach((user, i) => {
-            columns2[i] = {
-                alignment: 'center',
-                margin: [0, 10, 0, 200],
-                width: 200,
-                text: `${user.name} ${user.lastName} \n\ Técnico Inspección o Mantenimiento ${(i===0) ? 'y que termina OT' : ''}`
+            if (user.sign) {
+                columns2[i] = {
+                    alignment: 'center',
+                    margin: [0, 10, 0, 200],
+                    width: 200,
+                    text: `${user.name} ${user.lastName} \n\ Técnico Inspección o Mantenimiento ${(i===0) ? 'y que termina OT' : ''}`
+                }
             }
         })
         table[1] = {
@@ -709,11 +717,11 @@ const toPDF = (reportData) => {
         const findReport = await Reports.findById(reportData._id)
         const admin = await Users.findById(findReport.createdBy)
         const chiefMachineryName = await Users.findById(findReport.chiefMachineryApprovedBy)
-        const chiefMachinerySign = chiefMachineryName.sign ? chiefMachineryName.sign : ''
+        const chiefMachinerySign = chiefMachineryName.sign/*  ? chiefMachineryName.sign : '' */
         const shiftManagerName = await Users.findById(findReport.shiftManagerApprovedBy)
-        const shiftManagerSign = shiftManagerName.sign ? shiftManagerName.sign : ''
+        const shiftManagerSign = shiftManagerName.sign/*  ? shiftManagerName.sign : '' */
         const executionUser = await Users.findById(findReport.usersAssigned[0])
-        const executionUserSign = executionUser.sign ? executionUser.sign : ''
+        const executionUserSign = executionUser.sign/*  ? executionUser.sign : '' */
         const executionReportData = await ExecutionReport.findOne({reportId: findReport._id})
         const operators = []
         findReport.usersAssigned.forEach(async (user, i) => {
@@ -729,6 +737,9 @@ const toPDF = (reportData) => {
         if (executionUserSign) {
             console.log('Firma de operario')
         }
+        // console.log(chiefMachinerySign)
+        // console.log(shiftManagerSign)
+        // console.log(executionUserSign)
         let groupKeys
         let group
         if(reportData.testMode) {
@@ -940,7 +951,6 @@ const toPDF = (reportData) => {
             console.log('Enviando...')
             const state = await AzureServices.uploadPdfFile(binary, reportData.idIndex, reportData.sapId, reportData.machine, (reportData.guide === 'Pauta de Inspección') ? 'PI' : reportData.guide)
             await ReportsService.editReportByIndexIntern(reportData.idIndex, {urlPdf: state.data.url})
-            /* console.log(state.data) */
             resolve({state: state, url: state.data.url})
         }, (error) => {
             resolve({state: state, url: state.data.url})

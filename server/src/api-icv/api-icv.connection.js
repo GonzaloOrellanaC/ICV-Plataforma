@@ -783,7 +783,7 @@ const getOMSap = async (year, month, type) => {
         })
         const body = await OMSapList.json();
         const index = 0
-        /* console.log(type==='mantencion' ? body.data[0] : body.data) */
+        console.log(body.data)
         if (body.data && body.data.length > 0) {
             crearPautasDesdeSAP(body.data, index, type)
         }
@@ -814,7 +814,6 @@ const crearPautasDesdeSAP = async (pautas, index, type) => {
                 faena = om.faena
             }
             const equipo = (om.equipo.includes('00000000')) ? om.equipo : `00000000${om.equipo}`
-            console.log('Equipo: ', equipo)
             const findReport = await Reports.findOne({sapId: om.om })
             if (!findReport) {
                 const findEquip = await Machine.findOne({equid: equipo})
@@ -834,68 +833,45 @@ const crearPautasDesdeSAP = async (pautas, index, type) => {
                             idPm: findEquip.idpmmantencion,
                             description: om.texto,
                             state: 'Asignar',
-                            isAutomatic: true
+                            isAutomatic: true,
                         }
-                        /* if (typeInApi==='Inspección') {
-                            console.log(newOt)
-                        } */
                         const reportCreated = await Reports.create(newOt)
                         if (reportCreated) {
                             index = index + 1
-                            crearPautasDesdeSAP(pautas, index)
+                            crearPautasDesdeSAP(pautas, index, type)
                         }
                     } else {
+                        if (type === 'inspeccion')
                         console.log(`Pauta OM ${om.om} no creada por no encontrar la obra.`)
-                        /* admins.forEach((user) => {
-                            let notificationToSave = {
-                                id: user._id.toString(),
-                                from: 'Sistema Mantención ICV',
-                                url: null,
-                                title: `OT de OM ${om.om} no creado`, 
-                                subtitle: 'No se se encuentra obra', 
-                                message: `La base de datos no encuentra la obra asociada al id ${om.faena}.`
-                            }
-                            NotificationService.createNotification(notificationToSave)
-                        }) */
                         index = index + 1
-                        crearPautasDesdeSAP(pautas, index)
+                        crearPautasDesdeSAP(pautas, index, type)
                     }
                 } else {
+                    if (type === 'inspeccion')
                     console.log(`Pauta OM ${om.om} no creada por no encontrar el equipo.`)
-                    /* admins.forEach((user) => {
-                        let notificationToSave = {
-                            id: user._id.toString(),
-                            from: 'Sistema Mantención ICV',
-                            url: null,
-                            title: `OT de OM ${om.om} no creado`, 
-                            subtitle: 'No se se encuentra equipo', 
-                            message: `La base de datos no encuentra el equipo asociado al id 00000000${om.equipo}.`
-                        }
-                        NotificationService.createNotification(notificationToSave)
-                    }) */
                     index = index + 1
-                    crearPautasDesdeSAP(pautas, index)
+                    crearPautasDesdeSAP(pautas, index, type)
                 }
             } else {
+                if (findReport.reportType.length === 0 && findReport.guide.length === 0 ) {
+                    try {
+                        await Reports.findByIdAndUpdate(findReport._id, {reportType: typeInApi, guide: guide})
+                        console.log('OT ', findReport.idIndex, ' corregida.')
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
+                if (type === 'inspeccion')
                 console.log(`Pauta OM ${om.om} no creada porque ya se encuentra en BBDD.`)
                 index = index + 1
-                crearPautasDesdeSAP(pautas, index)
+                crearPautasDesdeSAP(pautas, index, type)
+
             }
         } else {
+            if (type === 'inspeccion')
             console.log(`Pauta OM ${om.om} está cerrada.`)
-            /* admins.forEach((user) => {
-                let notificationToSave = {
-                    id: user._id.toString(),
-                    from: 'Sistema Mantención ICV',
-                    url: null,
-                    title: `OT de OM ${om.om} no creado`, 
-                    subtitle: 'OM ya ejecutada', 
-                    message: `La OM ${om.om} se indica como ya realizada en APM`
-                }
-                NotificationService.createNotification(notificationToSave)
-            }) */
             index = index + 1
-            crearPautasDesdeSAP(pautas, index)
+            crearPautasDesdeSAP(pautas, index, type)
         }
     }
 }

@@ -124,16 +124,15 @@ const initAccessControl = async () => {
         /* const sites = await apiIcvConnection.testGetSites()
         console.log(await sites.json()) */
         
-        /* const date = new Date() */
-        /* apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'inspeccion')
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'mantencion') */
-/*         apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'inspeccion')
+        /* const date = new Date()
+        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'inspeccion')
         apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'mantencion')
         apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1, 'inspeccion')
         apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1, 'mantencion')
         apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'inspeccion')
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'mantencion')
- */
+        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'mantencion') */
+        /* const reports = await Reports.find({reportType:"", guide:""})
+        console.log(reports) */
         initTimeMachinesCron()
         /* const findMachines = await Machine.find();
         const group = {}
