@@ -53,21 +53,27 @@ Explicación de los npm scripts en package.json:
 
 Acá se debe crear un archivo ```.env```
 
-```properties
+```
 STATE='development'
 NODE_ENV='development'
+
 # MongoDB Connection
-DB_URL='mongodb://localhost:27017/icvmantencion'
-#DB_URL='mongodb+srv://azure:CcqMmYgR6xqUN3x@cluster0.qtnw7.mongodb.net/mantencion?retryWrites=true&w=majority'
+# DB_URL='mongodb://localhost:27017/icvmantencion'  
+DB_URL='mongodb+srv://azure:CcqMmYgR6xqUN3x@cluster0.qtnw7.mongodb.net/mantencion?retryWrites=true&w=majority'
+API_EXTERNAL=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+
 # Port Server
 PORT=5001
+
 #Sentry
 SENTRY_DSN='https://85bd356928264d658825f95e5601c085@o939500.ingest.sentry.io/6390186'
+
 # SuperAdmin Test
 EMAIL='gonzalo.orellana@kauel.com'
 NOMBRE='ADMINISTRADOR'
 APELLIDO='PLATAFORMA'
 PASSWORD='kauelicv2021'
+
 # Storage Azure
 AZURE_ACCOUNT='icvmantencion'
 STORAGE_URL='https://icvmantencion.blob.core.windows.net'
@@ -76,91 +82,36 @@ URL_SAS_BLOB='https://icvmantencion.blob.core.windows.net/plataforma-mantencion?
 ACCESS_KEYS='DefaultEndpointsProtocol=https;AccountName=icvmantencion;AccountKey=cz+hJzm3PrM0bYun7IU1OjlFJH7xrHcrgqtI4pGxPBmyT0PEl/+fc+o32YKZRzYt68H/zrTFKJ3HyY+zk9eC0A==;EndpointSuffix=core.windows.net'
 REPORT_IMAGES_CONTAINER='reports-images'
 PDF_CONTAINER='pdf-dev'
+
 # API ICV
 ICV_URL='https://apmv2.icv.cl/api/apm/'
 ICV_API_TOKEN='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
+
 # Sandbox
 MAIL_KEY='faea6105f3ea3029c6b2b511c56e4bb7-b2f5ed24-0daf1a56'
 MAIL_DOMAIN='mantencion.icv.cl'
 MAIL_SENDER='postmaster@mantencion.icv.cl'
+
 # KEY
 JWT_KEY='secret1'
 RESET_KEY='secret2'
+
 # Mail Settings
 PLATFORM_NAME='ICV Plataforma Inspección y Mantenimiento'
 PLATFORM_LOGO_ROUTE='https://icvmantencion.blob.core.windows.net/plataforma-mantencion/assets/ICV.jpg'
 PLATFORM_LOGO_ALT='LOGO'
 PLATFORM_BASE_URL='https://icv-plataforma-mantencion.azurewebsites.net'
 ROUTE_RESET_PASS='/restore-password/'
+
 ```
 
-# Actualizaciones
-<h3>Semana 16 y 17</h3>
+# AZURE WEB APP
 
-- Se avanza desarrollo de back end.
-- Llegan anrchivos JSON para pruebas de base de datos de ICV.
-- Se modifica librería visora 3D de A-Frame a Google Model Viewer.
+La rama que carga datos en la plataforma de Azure es ```dev-fase3-node18```
+Se recomienda generar una nueva rama para desarrollos desde esta para luego hacer el *merge* correspondiente.
 
+Cualquier cambio en el *front* debe ser anticipado por un build, utilizando en la carpeta raís el siguiente script:
 
-<h3>Semana 15</h3>
-
-- Se avanza desarrollo de front end.
-- Se conforma reuniones de seguimiento, ajuste y muestra de funcionamiento de templates 3D.
-- Se ajustan vistas según aprobación. Ver a continuación.
-- Pantallas
-
-    * Login <br>
-    <img src="./pantallas_v2/Login.PNG" style="max-width: 600px">
-
-    * Welcome <br>
-    <img src="./pantallas_v2/Welcome.PNG" style="max-width: 600px">
-
-    * Welcome (Side Bar) <br>
-    <img src="./pantallas_v2/Welcome-Sidebar.PNG" style="max-width: 600px">
-
-    * Inspeccion-Maquinaria <br>
-    <img src="./pantallas_v2/Inspeccion-Maquinaria.PNG" style="max-width: 600px">
-
-    * Reportes <br>
-    <img src="./pantallas_v2/Reportes.PNG" style="max-width: 600px">
-
-    * Selección de Obras <br>
-    <img src="./pantallas_v2/Sitios.PNG" style="max-width: 600px">
-
-    * Prueba de Vistas 3D con Camión Caterpillar<br>
-    <img src="./pantallas_v2/Vista-3D.gif" style="max-width: 600px">
-
-<h3>Semana 14</h3>
-
-- En Backend se corrige gestor de correo electrónico. Se utilizará <a href="https://nodemailer.com">Nodemailer</a>.
-- En Frontend se actualiza vistas web respecto a diseño figma.
-- Preparación de recepción vistas 3D
-- Pantallas
-
-    * Login <br>
-    <img src="./pantallas/Login.PNG" style="max-width: 600px">
-
-    * Welcome <br>
-    <img src="./pantallas/Welcome.PNG" style="max-width: 600px">
-
-    * Welcome (Side Bar) <br>
-    <img src="./pantallas/Welcome-Sidebar.PNG" style="max-width: 600px">
-
-    * Inspeccion-Maquinaria <br>
-    <img src="./pantallas/Inspeccion-Maquinaria.PNG" style="max-width: 600px">
-
-    * Prueba de Vistas 3D <br>
-    <img src="./pantallas/Vista-3D.gif" style="max-width: 600px">
-
-<h3>Semana 13</h3>
-
-- Se toma conocimiento del proyecto.
-- Se agregan Assets a Frontend para eliminar errores
-- Se conecta con base de datos en modo local para desarrollo y pruebas
-- Se hace revisión UX/UI desarrollado y se planifica reprogramación en base a diseño entregado en <a href="https://www.figma.com/file/grZYy6qrd0msfdjx9JBJuF/Wireframes-en-media-fidelidad?node-id=2%3A5">Figma</a>
-- En Backend se realiza revisión del código y se ajusta para ejecución de servidor
-- Se hacen pruebas de:
-    * Creación de base de datos desde Servidor
-    * Creación de Administrador por Defecto
-    * Login de Admin
-    * Logout de Admin
+```
+npm run build-client
+```

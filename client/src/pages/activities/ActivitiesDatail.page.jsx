@@ -21,7 +21,7 @@ const ActivitiesDetailPage = () => {
     const classes = useStylesTheme()
     const navigate = useNavigate()
     const {id} = useParams()
-    const {report, executionReport, setOtIndex, otIndex, sapId, serieEquipo, setLoading, setLoadingMessage, reporteIniciado} = useExecutionReportContext()
+    const {report, executionReport, setOtIndex, otIndex, sapId, serieEquipo, setLoading, setLoadingMessage, reporteIniciado, messageOnReport} = useExecutionReportContext()
     const {saveReportToData, getReports, setStatusReports, getReportsOffline, setMessage} = useReportsContext()
     const [ progress, resutProgress ] = useState(0)
     const [ itemProgress, resultThisItemProgress ] = useState(0)
@@ -435,7 +435,9 @@ const ActivitiesDetailPage = () => {
                                                         verticalAlign: 'middle',
                                                         fontSize: 25
                                                     }}
-                                                >{reporteIniciado ? 'Descargando pauta...' : 'Reporte no iniciado'}</p>
+                                                >{/* {reporteIniciado ? 'Descargando pauta...' : (messageOnReport.length > 0 ? messageOnReport : 'Reporte no iniciado')} */}
+                                                    {messageOnReport}
+                                                </p>
                                             </div>
                                         }
                                     </div>

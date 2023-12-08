@@ -25,6 +25,7 @@ export const ExecutionReportProvider = (props) => {
     const [reporteIniciado, setReporteIniciado] = useState(true)
     const [openLinear, setOpenLinear] = useState(false)
     const [percentDownload, setPercentDownload] = useState(0)
+    const [messageOnReport, setMessageOnReport] = useState('')
 
     const location = useLocation()
 
@@ -94,7 +95,9 @@ export const ExecutionReportProvider = (props) => {
     const getExecutionReport = async () => {
         console.log('Buscando Pauta')
         setExecutionReport(undefined)
+        setMessageOnReport('Buscando Pauta')
         if (!isOperator && isOnline) {
+            setMessageOnReport('Descargando Pauta')
             setOpenLinear(true)
             const response = await executionReportsRoutes.getExecutionReportById(report._id, setPercentDownload)
             setOpenLinear(false)
@@ -126,6 +129,7 @@ export const ExecutionReportProvider = (props) => {
                     } else {
                         setExecutionReport(responseData.data.data)
                     }
+                    setMessageOnReport('')
                 }, 500);
             } else {
                 setOpenLinear(true)
@@ -135,9 +139,11 @@ export const ExecutionReportProvider = (props) => {
                 console.log(responseData)
                 if (responseData.data.state) {
                     setExecutionReport(responseData.data.data)
+                    setMessageOnReport('')
                 } else {
                     if (report && report.usersAssigned[0])
                     if (report.usersAssigned[0]._id === userData._id) {
+                        setMessageOnReport('Guardando pauta de OT '+report.idIndex)
                         const db = await pautasDatabase.initDbPMs()
                         setMessage('Guardando pauta de OT '+report.idIndex)
                         const pautas = await pautasDatabase.consultar(db.database)
@@ -148,27 +154,31 @@ export const ExecutionReportProvider = (props) => {
                             if((info.typepm === report.guide)&&(report.idPm===info.idpm)) {
                                     return info
                                 }})
-                        console.log(pautaFiltered)
-                        const group = await pautaFiltered[0].struct.reduce((r, a) => {
-                            r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
-                            return r
-                        }, {})
-                        const executionReportData = {
-                            reportId: report._id,
-                            createdBy: userData._id,
-                            group: group,
-                            offLineGuard: null
+                        if (pautaFiltered.length > 0) {
+                            const group = await pautaFiltered[0].struct.reduce((r, a) => {
+                                r[a.strpmdesc] = [...r[a.strpmdesc] || [], a]
+                                return r
+                            }, {})
+                            const executionReportData = {
+                                reportId: report._id,
+                                createdBy: userData._id,
+                                group: group,
+                                offLineGuard: null
+                            }
+                            const responseNewExecution = await executionReportsRoutes.createExecutionReport(executionReportData)/* saveExecutionReport(executionReportData) */
+                            await executionReportsDatabase.actualizar(responseNewExecution.data.data, database)
+                            setExecutionReport(responseNewExecution.data.data)
+                            if (!report.dateInit) {
+                                report.dateInit = new Date()
+                                await reportsRoutes.editReportById(report)
+                                setMessageOnReport('')
+                            }
+                        } else {
+                            setMessageOnReport(report.idPm+' para ' + report.guide + ' no encontrado en bases de datos. \n Contacte al administrador de sistema.')
                         }
-                        const responseNewExecution = await executionReportsRoutes.createExecutionReport(executionReportData)/* saveExecutionReport(executionReportData) */
-                        await executionReportsDatabase.actualizar(responseNewExecution.data.data, database)
-                        setExecutionReport(responseNewExecution.data.data)
-                        if (!report.dateInit) {
-                            report.dateInit = new Date()
-                            await reportsRoutes.editReportById(report)
-                        }
-
                     }
                     setMessage('No se logra descargar ejecución de datos.')
+                    /* setMessageOnReport('No se logra descargar ejecución de datos.') */
                     setTimeout(() => {
                         setMessage('')
                     }, 1000);
@@ -210,7 +220,8 @@ export const ExecutionReportProvider = (props) => {
         setLoading,
         setOtIndex,
         setLoadingMessage,
-        reporteIniciado
+        reporteIniciado,
+        messageOnReport
     }
 
     return (

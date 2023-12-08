@@ -783,7 +783,6 @@ const getOMSap = async (year, month, type) => {
         })
         const body = await OMSapList.json();
         const index = 0
-        console.log(body.data)
         if (body.data && body.data.length > 0) {
             crearPautasDesdeSAP(body.data, index, type)
         }
@@ -830,7 +829,7 @@ const crearPautasDesdeSAP = async (pautas, index, type) => {
                             datePrev: new Date(om.fechA_INICIO.replace(/(\d+)(\d{2})(\d{2})/g, '$1-$2-$3')),
                             endPrev: new Date(om.fechA_TERMINO.replace(/(\d+)(\d{2})(\d{2})/g, '$1-$2-$3')),
                             idIndex: totalOT.length - 1,
-                            idPm: findEquip.idpmmantencion,
+                            idPm: type==='mantencion' ? findEquip.idpmmantencion : findEquip.idpminspeccion,
                             description: om.texto,
                             state: 'Asignar',
                             isAutomatic: true,
@@ -853,23 +852,28 @@ const crearPautasDesdeSAP = async (pautas, index, type) => {
                     crearPautasDesdeSAP(pautas, index, type)
                 }
             } else {
-                if (findReport.reportType.length === 0 && findReport.guide.length === 0 ) {
+                /* if (findReport.reportType.length === 0 && findReport.guide.length === 0 ) {
                     try {
                         await Reports.findByIdAndUpdate(findReport._id, {reportType: typeInApi, guide: guide})
                         console.log('OT ', findReport.idIndex, ' corregida.')
                     } catch (error) {
                         console.log(error)
                     }
+                } */
+                if (type === 'inspeccion') {
+                    console.log(`Pauta OM ${om.om} no creada porque ya se encuentra en BBDD.`)
+                    /* const findEquip = await Machine.findOne({equid: equipo})
+                    console.log(findEquip.idpminspeccion)
+                    await Reports.findOneAndUpdate({sapId: om.om}, {idPm: findEquip.idpminspeccion}) */
                 }
-                if (type === 'inspeccion')
-                console.log(`Pauta OM ${om.om} no creada porque ya se encuentra en BBDD.`)
                 index = index + 1
                 crearPautasDesdeSAP(pautas, index, type)
 
             }
         } else {
-            if (type === 'inspeccion')
-            console.log(`Pauta OM ${om.om} está cerrada.`)
+            if (type === 'inspeccion') {
+                console.log(`Pauta OM ${om.om} está cerrada.`)
+            }
             index = index + 1
             crearPautasDesdeSAP(pautas, index, type)
         }

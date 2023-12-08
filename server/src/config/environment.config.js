@@ -1,3 +1,4 @@
+import { check_, logo_, noCheck_ } from '../files/icons'
 import { englishLanguage, spanishLanguage } from '../language'
 
 const languageSelector = (select) => {
@@ -20,9 +21,9 @@ const languageSelector = (select) => {
  */
 const environment = {
     images: {
-        logo: process.env.ICV_LOGO,
-        check: process.env.CHECK,
-        noCheck: process.env.NO_CHECK
+        logo: (process.env.NODE_ENV === 'production') ? process.env.ICV_LOGO : logo_,
+        check: (process.env.NODE_ENV === 'production') ? process.env.CHECK : check_,
+        noCheck: (process.env.NODE_ENV === 'production') ? process.env.NO_CHECK : noCheck_
     },
     sentry: {
         dsn: process.env.SENTRY_DSN
