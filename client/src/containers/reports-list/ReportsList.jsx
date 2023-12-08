@@ -129,15 +129,15 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                     <p style={{textAlign: 'center'}}> <strong>OM SAP</strong> </p>
                 </Grid> */}
                 {admin && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                    <p style={{textAlign: 'center', minWidth: 70}}> <strong>Obra</strong> </p>
+                    <p style={{textAlign: 'center', minWidth: 60}}> <strong>Obra</strong> </p>
                 </Grid>}
                 {(typeReportsSelected === 'Completadas') && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                    <p style={{textAlign: 'center', minWidth: 70}}> <strong>Download</strong> </p>
+                    <p style={{textAlign: 'center', minWidth: 60}}> <strong>Download</strong> </p>
                 </Grid>}
                 <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}  >
-                    <p style={{textAlign: 'center', minWidth: 70}}> <strong>Flota</strong> </p>
+                    <p style={{textAlign: 'center', minWidth: 60}}> <strong>Flota</strong> </p>
                 </Grid>
-                <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >
+                <Grid item xs={1} sm={1} md={1} lg={'auto'} xl={'auto'} >
                     <p style={{textAlign: 'left'}}> <strong>Acción</strong> </p>
                 </Grid>
             </Grid>
@@ -214,7 +214,7 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                                         admin &&
                                         
                                         <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{ textAlign: 'center' }} >
-                                            <Button aria-describedby={id} style={{textAlign: 'center', minWidth: 70, marginTop: 5}} onClick={(e) => {handleClick(e, item.site)}}> {item.site} </Button>
+                                            <Button aria-describedby={id} style={{textAlign: 'center', minWidth: 60, marginTop: 5}} onClick={(e) => {handleClick(e, item.site)}}> {item.site} </Button>
                                             <Popover
                                                 id={id}
                                                 open={open}
@@ -234,21 +234,21 @@ const ReportsList = ({list, typeReportsSelected, statusReports}) => {
                                         </Grid>
                                     }
                                     {(typeReportsSelected==='Completadas') && <Grid item xs={1} sm={1} md={1} lg={1} xl={1}  >
-                                        {item.urlPdf ? <p style={{textAlign: 'center', minWidth: 70}}><a href={`${item.urlPdf}`}>Link</a></p> : <p style={{textAlign: 'center', minWidth: 70}}> Sin URL </p>}
+                                        {item.urlPdf ? <p style={{textAlign: 'center', minWidth: 60}}><a href={`${item.urlPdf}`}>Link</a></p> : <p style={{textAlign: 'center', minWidth: 70}}> Sin URL </p>}
                                     </Grid>}
                                     <Grid item xs={'auto'} sm={'auto'} md={'auto'} lg={'auto'} xl={'auto'}  >
-                                        <p style={{textAlign: 'center', minWidth: 70}}> {item.machineData && item.machineData.model} </p>
+                                        <p style={{textAlign: 'center', minWidth: 60}}> {item.machineData && item.machineData.model} </p>
                                     </Grid>
                             
-                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} >                                
+                                    <Grid item xs={1} sm={1} md={1} lg={'auto'} xl={'auto'} >                                
                                         <Grid container>
                                             <Grid item>
                                                 {
                                                     item.origen
                                                     ?
-                                                    <p style={{textAlign: 'center'}}> <button onClick={()=>{elevar(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Elevar</button> </p>  
+                                                    <p style={{textAlign: 'center'}}> <button onClick={()=>{elevar(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', /* maxWidth: 130,  */height: 24, fontSize: 12}}>Elevar</button> </p>  
                                                     :
-                                                    <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', maxWidth: 130, height: 24, fontSize: 12}}>Ver</button> </p>  
+                                                    <p style={{textAlign: 'center'}}> <button onClick={()=>{openReviewModal(item)}} style={{backgroundColor: '#F9F9F9', borderRadius: 20, borderColor: '#757575', /* maxWidth: 130,  */height: 24, fontSize: 12}}>Ver</button> </p>  
                                                 }
                                             </Grid>
                                             {/* <Grid item>

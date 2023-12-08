@@ -115,3 +115,110 @@ Cualquier cambio en el *front* debe ser anticipado por un build, utilizando en l
 ```
 npm run build-client
 ```
+
+# Usuarios de prueba
+
+Revisar las obras a las que están asignados.
+
+## Admin:
+
+Rut:
+```
+78.827.280-4
+```
+
+Password:
+```
+123456
+```
+## Jefe De Turno:
+
+<strong>RADOMIRO TOMIC 5</strong>
+
+Rut:
+```
+76.426.265-4
+```
+
+Password:
+```
+123456
+```
+
+<strong>ARRIENDO INTEGRAL MINISTRO HALES 3</strong>
+
+Rut:
+```
+76.580.036-6
+```
+
+Password:
+```
+123456
+```
+
+## Jefe Maquinaria:
+
+<strong>RADOMIRO TOMIC 5</strong>
+
+Rut:
+```
+77.818.480-K
+```
+
+Password:
+```
+123456
+```
+
+<strong>ARRIENDO INTEGRAL MINISTRO HALES 3</strong>
+
+Rut:
+```
+99.588.680-4
+```
+
+Password:
+```
+123456
+```
+
+## Ejecutivo SAP:
+
+<strong>RADOMIRO TOMIC 5</strong>
+
+Rut:
+```
+76.486.150-7
+```
+
+Password:
+```
+123456
+```
+
+## Operario Inspección:
+
+<strong>ARRIENDO INTEGRAL MINISTRO HALES 3</strong>
+
+Rut:
+```
+59.093.620-0
+```
+
+Password:
+```
+123456
+```
+
+<strong>RADOMIRO TOMIC 5</strong>
+
+Rut:
+```
+77.341.890-K
+```
+
+Password:
+```
+123456
+```

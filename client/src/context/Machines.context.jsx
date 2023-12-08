@@ -36,6 +36,7 @@ export const MachineProvider = props => {
     },[machines, isOnline, site])
 
     const getMachinesBySite = async () => {
+        console.log('Descargando máquinas!')
         let response
         if (site && !admin) {
             response = await apiIvcRoutes.getMachineBySiteId(site.idobra)
@@ -44,6 +45,7 @@ export const MachineProvider = props => {
             response = await apiIvcRoutes.getAllMachines()
         }
         const {database} = await machinesDatabase.initDbMachines()
+        console.log(response.data)
         response.data.forEach(async (machine, index) => {
             machine.id = index
             await machinesDatabase.actualizar(machine, database)

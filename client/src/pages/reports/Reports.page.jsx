@@ -44,6 +44,7 @@ const ReportsPage = () => {
     const [ flechaListaxOT, setFlechaListaxOT ] = useState(faArrowUp)
     const [canOpenNewReport, setCanOpenNewReport] = useState(false)
     const [loadingSpinner, setLoading] = useState(false)
+    const [loadingSpinnerCounter, setLoadingCounter] = useState(false)
     const [openReportSumary, setOpenReportSumary] = useState(false)
     const [openSeleccionarObra, setOpnSeleccionarObra] = useState(false)
     const [opnKPI, setOpnKPI] = useState(false)
@@ -161,7 +162,6 @@ const ReportsPage = () => {
         if (mantencionesTotales.length > 0) {
             const mantencionesOrigen = mantencionesTotales.filter(mantencion => {
                 if(mantencion.origen) {
-                    console.log(mantencion.idIndex)
                     return mantencion
                 }
             })
@@ -426,19 +426,20 @@ const ReportsPage = () => {
 
     const downloadFile = async () => {
         if (reports.length > 0) {
-            setLoading(true)
+            setLoadingCounter(true)
             console.log('download')
             setTotalReport(reports.length)
             const reportsCache = [...reports]
             const reportsToDownload = []
             const materials = []
-            /* const users = [] */
             const groupList = []
             const tareasPendientes = []
-            console.log(machinesBySite)
+            const index = 0
+            console.log(machinesBySite.length)
             if (machinesBySite.length > 0) {
-                reportsCache.forEach(async (report, i)=>{
-                    let newVariables = {}
+                downloadReport(reportsCache, index, reportsToDownload, materials, groupList, tareasPendientes, machinesBySite)
+
+                /* reportsCache.forEach(async (report, i)=>{
                     const response = await executionReportsRoutes.getExecutionReportById(report._id)
                     report.commitWarning = ''
                     report.isWarning = false
@@ -446,23 +447,12 @@ const ReportsPage = () => {
                     const operators = report.usersAssigned
                     const operatorsList = []
                     operators.forEach(async operator => {
-                        const res = users.filter(user => {if(user._id === operator) return user})/* await usersRoutes.getUser(operator) */
+                        const res = users.filter(user => {if(user._id === operator) return user})
                         operatorsList.push(res[0])
                     })
-                    const shiftManager = users.filter(user => {if(user._id === report.shiftManagerApprovedBy) return user})/* await usersRoutes.getUser(report.shiftManagerApprovedBy) */
-                    const chiefMachinery = users.filter(user => {if(user._id === report.chiefMachineryApprovedBy) return user})/* await usersRoutes.getUser(report.chiefMachineryApprovedBy) */
-                    const sapExecutive = users.filter(user => {if(user._id === report.sapExecutiveApprovedBy) return user})/* await usersRoutes.getUser(report.sapExecutiveApprovedBy) */
-                    /* const usersData = {
-                        'N° OT': report.idIndex,
-                        'Ejecutivo SAP': sapExecutive[0] && sapExecutive[0].name ? `${sapExecutive[0].name} ${sapExecutive[0].lastName}` : 'Sin Cierre SAP',
-                        'Fecha de aprobación SAP': report.dateClose ? dateWithYear(report.dateClose) : 'Sin Cierre SAP',
-                        'Jefe de Maquinaria': chiefMachinery[0] && chiefMachinery[0].name ? `${chiefMachinery[0].name} ${chiefMachinery[0].lastName}` : 'Sin Aprobación Maquinaria',
-                        'Fecha de aprobación Maquinaria': report.chiefMachineryApprovedDate ? dateWithYear(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
-                        'Jefe de Turno': shiftManager[0] && shiftManager[0].name ? `${shiftManager[0].name} ${shiftManager[0].lastName}` : 'Sin Aprobación Jefe de Turno',
-                        'Fecha de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? dateWithYear(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
-                    } */
-                    /* console.log(usersData) */
-                    /* users.push(usersData) */
+                    const shiftManager = users.filter(user => {if(user._id === report.shiftManagerApprovedBy) return user})
+                    const chiefMachinery = users.filter(user => {if(user._id === report.chiefMachineryApprovedBy) return user})
+                    const sapExecutive = users.filter(user => {if(user._id === report.sapExecutiveApprovedBy) return user})
                     const reporteDescarga = {
                         'N° OT': report.idIndex,
                         'Número OM': report.sapId,
@@ -485,23 +475,17 @@ const ReportsPage = () => {
                         'Mes de cierre': fechaMes(report.dateClose),
                         'Año de cierre': fechaAno(report.dateClose),
                         'Ejecutivo SAP': sapExecutive[0] && sapExecutive[0].name ? `${sapExecutive[0].name} ${sapExecutive[0].lastName}` : 'Sin Cierre SAP',
-                        /* 'Fecha de aprobación SAP': report.dateClose ? dateWithYear(report.dateClose) : 'Sin Cierre SAP', */
                         'Día de aprobación SAP': report.dateClose ? fechaDia(report.dateClose) : 'Sin Cierre SAP',
                         'Mes de aprobación SAP': report.dateClose ? fechaMes(report.dateClose) : 'Sin Cierre SAP',
                         'Año de aprobación SAP': report.dateClose ? fechaAno(report.dateClose) : 'Sin Cierre SAP',
-                        /* 'Hora de aprobación SAP': report.dateClose ? hour(report.dateClose) : 'Sin Cierre SAP', */
                         'Jefe de Maquinaria': chiefMachinery[0] && chiefMachinery[0].name ? `${chiefMachinery[0].name} ${chiefMachinery[0].lastName}` : 'Sin Aprobación Maquinaria',
-                        /* 'Fecha de aprobación Maquinaria': report.chiefMachineryApprovedDate ? dateWithYear(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria', */
                         'Día de aprobación Maquinaria': report.chiefMachineryApprovedDate ? fechaDia(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
                         'Mes de aprobación Maquinaria': report.chiefMachineryApprovedDate ? fechaMes(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
                         'Año de aprobación Maquinaria': report.chiefMachineryApprovedDate ? fechaAno(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
-                        /* 'Hora de aprobación Maquinaria': report.chiefMachineryApprovedDate ? hour(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria', */
                         'Jefe de Turno': shiftManager[0] && shiftManager[0].name ? `${shiftManager[0].name} ${shiftManager[0].lastName}` : 'Sin Aprobación Jefe de Turno',
-                        /* 'Fecha de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? dateWithYear(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno', */
                         'Día de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? fechaDia(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
                         'Mes de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? fechaMes(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
                         'Año de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? fechaAno(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
-                        /* 'Hora de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? hour(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno', */
                         'Guía': report.guide,
                         'ID PM': report.idPm,
                         'N° máquina': machineFiltered[0].equid.toString().replace('00000000', ''),
@@ -515,11 +499,9 @@ const ReportsPage = () => {
                         'Tiene alerta': 'NO',
                         'Comentario a considerar': ''
                     }
-                    const listaDeContenidoTablaCantidades = {}
                     const reportTemp = reporteDescarga
                     if (response) {
                         if (response.data && response.data.data && response.data.data.group) {
-                            console.log(response.data.data.group)
                             const group = Object.values(response.data.data.group)
                             const material = {
                                 'N° OT': report.idIndex
@@ -594,28 +576,182 @@ const ReportsPage = () => {
                     }
                     setRevisionNumber((100 * (i + 1))/reportsCache)
                     if (i === (reportsCache.length - 1)) {
-                        console.log(groupList)
-                        /* console.log(reportsToDownload)
-                        console.log(materials)
-                        console.log(users) */
                         const workbook = XLSX.utils.book_new();
                         const worksheet = XLSX.utils.json_to_sheet(reportsToDownload);
                         const material = XLSX.utils.json_to_sheet(materials);
                         const datosMaterial = XLSX.utils.json_to_sheet(groupList);
                         const datosTareasPendientes = XLSX.utils.json_to_sheet(tareasPendientes);
-                        /* const userDataXLS = XLSX.utils.json_to_sheet(users); */
                         XLSX.utils.book_append_sheet(workbook, worksheet, "Datos de reporte");
                         XLSX.utils.book_append_sheet(workbook, material, "Datos de material v1");
                         XLSX.utils.book_append_sheet(workbook, datosMaterial, "Datos de material v2");
                         XLSX.utils.book_append_sheet(workbook, datosTareasPendientes, "Datos de tareas pendientes");
-                        /* XLSX.utils.book_append_sheet(workbook, userDataXLS, "Datos de usuarios"); */
                         XLSX.writeFile(workbook, `${Date.now()}.xlsx`)
                         setLoading(false)
                     }
-                })
+                }) */
+            } else {
+                alert('Espere que se termine de descargar los recursos.')
+                setLoadingCounter(false)
             }
         } else {
             alert('Debe contar con al menos una OT creada.')
+        }
+    }
+
+    const downloadReport = async (reports, index, reportsToDownload, materials, groupList, tareasPendientes, machinesBySite) => {
+        if (reports.length === index) {
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.json_to_sheet(reportsToDownload);
+            const material = XLSX.utils.json_to_sheet(materials);
+            const datosMaterial = XLSX.utils.json_to_sheet(groupList);
+            const datosTareasPendientes = XLSX.utils.json_to_sheet(tareasPendientes);
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Datos de reporte");
+            XLSX.utils.book_append_sheet(workbook, material, "Datos de material v1");
+            XLSX.utils.book_append_sheet(workbook, datosMaterial, "Datos de material v2");
+            XLSX.utils.book_append_sheet(workbook, datosTareasPendientes, "Datos de tareas pendientes");
+            XLSX.writeFile(workbook, `${Date.now()}.xlsx`)
+            setLoadingCounter(false)
+        } else {
+            console.log(index)
+            setRevisionNumber((index * 100)/reports.length)
+            const report = reports[index]
+            const response = await executionReportsRoutes.getExecutionReportById(report._id)
+            report.commitWarning = ''
+            report.isWarning = false
+            const machineFiltered = machinesBySite.filter(m => {if(m.equid === report.machine) return m})
+            const operators = report.usersAssigned
+            const operatorsList = []
+            operators.forEach(async operator => {
+                const res = users.filter(user => {if(user._id === operator) return user})
+                operatorsList.push(res[0])
+            })
+            const shiftManager = users.filter(user => {if(user._id === report.shiftManagerApprovedBy) return user})
+            const chiefMachinery = users.filter(user => {if(user._id === report.chiefMachineryApprovedBy) return user})
+            const sapExecutive = users.filter(user => {if(user._id === report.sapExecutiveApprovedBy) return user})
+            const reporteDescarga = {
+                'N° OT': report.idIndex,
+                'Número OM': report.sapId,
+                'Día de creación': fechaDia(report.createdAt),
+                'Mes de creación': fechaMes(report.createdAt),
+                'Año de creación': fechaAno(report.createdAt),
+                'Día de inicio previsto': fechaDia(report.datePrev),
+                'Mes de inicio previsto': fechaMes(report.datePrev),
+                'Año de inicio previsto': fechaAno(report.datePrev),
+                'Día de término previsto': fechaDia(report.endPrev),
+                'Mes de término previsto': fechaMes(report.endPrev),
+                'Año de término previsto': fechaAno(report.endPrev),
+                'Día de inicio reporte': fechaDia(report.dateInit),
+                'Mes de inicio reporte': fechaMes(report.dateInit),
+                'Año de inicio reporte': fechaAno(report.dateInit),
+                'Día de término reporte': fechaDia(report.endReport),
+                'Mes de término reporte': fechaMes(report.endReport),
+                'Año de término reporte': fechaAno(report.endReport),
+                'Día de cierre': fechaDia(report.dateClose),
+                'Mes de cierre': fechaMes(report.dateClose),
+                'Año de cierre': fechaAno(report.dateClose),
+                'Ejecutivo SAP': sapExecutive[0] && sapExecutive[0].name ? `${sapExecutive[0].name} ${sapExecutive[0].lastName}` : 'Sin Cierre SAP',
+                'Día de aprobación SAP': report.dateClose ? fechaDia(report.dateClose) : 'Sin Cierre SAP',
+                'Mes de aprobación SAP': report.dateClose ? fechaMes(report.dateClose) : 'Sin Cierre SAP',
+                'Año de aprobación SAP': report.dateClose ? fechaAno(report.dateClose) : 'Sin Cierre SAP',
+                'Jefe de Maquinaria': chiefMachinery[0] && chiefMachinery[0].name ? `${chiefMachinery[0].name} ${chiefMachinery[0].lastName}` : 'Sin Aprobación Maquinaria',
+                'Día de aprobación Maquinaria': report.chiefMachineryApprovedDate ? fechaDia(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
+                'Mes de aprobación Maquinaria': report.chiefMachineryApprovedDate ? fechaMes(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
+                'Año de aprobación Maquinaria': report.chiefMachineryApprovedDate ? fechaAno(report.chiefMachineryApprovedDate) : 'Sin Aprobación Maquinaria',
+                'Jefe de Turno': shiftManager[0] && shiftManager[0].name ? `${shiftManager[0].name} ${shiftManager[0].lastName}` : 'Sin Aprobación Jefe de Turno',
+                'Día de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? fechaDia(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
+                'Mes de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? fechaMes(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
+                'Año de aprobación Jefe de Turno': report.shiftManagerApprovedDate ? fechaAno(report.shiftManagerApprovedDate) : 'Sin Aprobación Jefe de Turno',
+                'Guía': report.guide,
+                'ID PM': report.idPm,
+                'N° máquina': machineFiltered[0].equid.toString().replace('00000000', ''),
+                'Tipo de reporte': report.reportType,
+                'Código de obra': report.site,
+                'Estado de orden': report.state,
+                'Modo Test': report.testMode ? 'SI' : 'NO',
+                'URL documento PDF': report.urlPdf,
+                'Creado por sistema': report.isAutomatic ? 'SI' : 'NO',
+                'Progreso de avance': report.progress,
+                'Tiene alerta': 'NO',
+                'Comentario a considerar': ''
+            }
+            const reportTemp = reporteDescarga
+            if (response) {
+                if (response.data && response.data.data && response.data.data.group) {
+                    const group = Object.values(response.data.data.group)
+                    const material = {
+                        'N° OT': report.idIndex
+                    }
+                    group.forEach((el, n) => {
+                        el.forEach((item, i) => {
+                            let fecha = 'Sin información'
+                            if (item.messages && (item.messages.length > 0)) {
+                                fecha = fechaCompleta(new Date(item.messages[item.messages.length -1].id))
+                            }
+                            if (item.isWarning) {
+                                reportTemp['Tiene alerta'] = 'SI'
+                                if (!reportTemp['Comentario a considerar']) {
+                                    reportTemp['Comentario a considerar'] = 'Se detecta tareas pendientes:\n'
+                                }
+                                reportTemp['Comentario a considerar'] += `- Apartado ${item.strpmdesc}, pregunta ${i + 1};\n`
+                                const tareaPendiente = {
+                                    'Fecha': fecha,
+                                    'N° OT': report.idIndex,
+                                    'Hoja': item.strpmdesc,
+                                    'Descripcion De Tarea': item.taskdesc,
+                                    'Flota': machineFiltered[0].model,
+                                    'Pauta': report.guide,
+                                    'Obra': report.site,
+                                    'Tarea': i + 1
+                                }
+                                if (item.messages.length > 0) {
+                                    item.messages.forEach((message, n) => {
+                                        tareaPendiente[`Mensaje ${n + 1}`] = `${message.name}: ${message.content}`
+                                    })
+                                }
+                                tareasPendientes.push(tareaPendiente)
+                            }
+                            if (item.unidad !== '*') {
+                                const contenidoMateriales = {
+                                    'Fecha': fecha,
+                                    'N° OT': report.idIndex,
+                                    'Hoja': item.strpmdesc,
+                                    'Tarea': i + 1,
+                                    'Descripcion de tarea': item.obs01,
+                                    'Repuesto': item.partnumberUtl,
+                                    'Cantidad a utilizar': item.cantidad,
+                                    'Cantidad utilizada': item.unidadData ? item.unidadData : 0,
+                                    'Unidad': item.unidad,
+                                    'Tipo de repuesto': item.idtypeutlPartnumber
+                                }
+                                groupList.push(contenidoMateriales)
+                                if (!material[`${item.partnumberUtl}/${item.unidad} proyectada`]) {
+                                    material[`${item.partnumberUtl}/${item.unidad} proyectada`] = 0
+                                }
+                                material[`${item.partnumberUtl}/${item.unidad} proyectada`] = material[`${item.partnumberUtl}/${item.unidad} proyectada`] + item.cantidad
+
+                                if (!material[`${item.partnumberUtl}/${item.unidad} usada`]) {
+                                    material[`${item.partnumberUtl}/${item.unidad} usada`] = 0
+                                }
+                                material[`${item.partnumberUtl}/${item.unidad} usada`] = material[`${item.partnumberUtl}/${item.unidad} usada`] + (item.unidadData ? parseFloat(item.unidadData) : 0)
+                            }
+                        })
+                        if (n === (group.length - 1)) {
+                            if (!material['Tiene alerta'] && (material['Comentario a considerar'] && material['Comentario a considerar'].length === 0)) {
+                                material['Comentario a considerar'] = 'Reporte ha sido completado.'
+                            }
+                        }
+                    })
+                    materials.push(material)
+                    reportsToDownload.push(reportTemp)
+                } else {
+                    reportsToDownload.push(reportTemp)
+                }
+            } else {
+                reportsToDownload.push(reportTemp)
+            }
+            setRevisionNumber((100 * (index + 1))/reports)
+            index = index + 1
+            downloadReport(reports, index, reportsToDownload, materials, groupList, tareasPendientes, machinesBySite)
         }
     }
 
@@ -640,7 +776,7 @@ const ReportsPage = () => {
             <LoadingLogoDialog
                 open={loadingSpinner}
             />
-            <LianearProgresDialog open={loadingSpinner} progress={revisionNumber} />
+            <LianearProgresDialog open={loadingSpinnerCounter} progress={revisionNumber}/>
             {openReportSumary && <ReportsResumeDialog
                 open={openReportSumary}
                 handleClose={closeToReportSumary}
@@ -759,7 +895,33 @@ const ReportsPage = () => {
                         {
                             inspecciones.map((e, i) => {
                                 return(
-                                    <Grid key={i} container style={{height: '5vh'}}>
+                                    <div key={i} style={{display: 'flex', fontSize: 10}}>
+                                        <FontAwesomeIcon icon={faCircle} size='2x' style={{marginRight: 10}} color={e.color}/>
+                                        <p style={{ minWidth: 100, marginBottom: 0, marginTop: 4 }}>{e.name}</p>
+                                        {/* <Chip label={e.number} style={{marginLeft: 5, marginRight: 5, fontSize: 10}} /> */}
+                                        <div style={{padding: 3, backgroundColor: '#ccc', borderRadius: 20, width: 30, textAlign: 'center', height: 23}}>
+                                        {e.number}
+                                        </div>
+                                        <button
+                                                id={`button_${i}_inspecciones`}
+                                                onClick={()=>selectList(e.lista, `button_${i}_inspecciones`, i, e.name)}
+                                                style={
+                                                    {
+                                                        position: 'relative',
+                                                        right: 5,
+                                                        width: 80,
+                                                        height: 23,
+                                                        borderRadius: 20,
+                                                        backgroundColor: e.buttonColor,
+                                                        marginLeft: 20,
+                                                        marginBottom: 8
+                                                    }
+                                                }
+                                            >
+                                                {e.button}
+                                            </button>
+                                    </div>
+                                    /*<Grid key={i} container style={{height: '5vh'}}>
                                         <Grid item style={{width: '15%'}}>
                                             <FontAwesomeIcon icon={faCircle} size='2x' style={{marginRight: 10}} color={e.color}/>
                                         </Grid>
@@ -787,7 +949,7 @@ const ReportsPage = () => {
                                                 {e.button}
                                             </button>
                                         </Grid>
-                                    </Grid>
+                                    </Grid>*/
                                 )
                             })
                         }
@@ -815,7 +977,33 @@ const ReportsPage = () => {
                         {
                             mantenciones.map((e, i) => {
                                 return(
-                                    <Grid key={i} container style={{height: '5vh'}}>
+                                    <div key={i} style={{display: 'flex', fontSize: 10}}>
+                                        <FontAwesomeIcon icon={faCircle} size='2x' style={{marginRight: 10}} color={e.color}/>
+                                        <p style={{ minWidth: 100, marginBottom: 0, marginTop: 4 }}>{e.name}</p>
+                                        {/* <Chip label={e.number} style={{marginLeft: 5, marginRight: 5, fontSize: 10}} /> */}
+                                        <div style={{padding: 3, backgroundColor: '#ccc', borderRadius: 20, width: 30, textAlign: 'center', height: 23}}>
+                                        {e.number}
+                                        </div>
+                                        <button
+                                                id={`button_${i}_mantenciones`}
+                                                onClick={()=>selectList(e.lista, `button_${i}_mantenciones`, i, e.name)}
+                                                style={
+                                                    {
+                                                        position: 'relative',
+                                                        right: 5,
+                                                        width: 80,
+                                                        height: 23,
+                                                        borderRadius: 20,
+                                                        backgroundColor: e.buttonColor,
+                                                        marginLeft: 20,
+                                                        marginBottom: 8
+                                                    }
+                                                }
+                                            >
+                                                {e.button}
+                                            </button>
+                                    </div>
+                                    /*<Grid key={i} container style={{height: '5vh'}}>
                                         <Grid item style={{width: '15%'}}>
                                             <FontAwesomeIcon icon={faCircle} size='2x' style={{marginRight: 10}} color={e.color}/>
                                         </Grid>
@@ -843,7 +1031,7 @@ const ReportsPage = () => {
                                                 {e.button}
                                             </button>
                                         </Grid>
-                                    </Grid>
+                                    </Grid>*/
                                 )
                             })
                         }
