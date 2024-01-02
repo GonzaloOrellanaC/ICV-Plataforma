@@ -4,6 +4,7 @@ import AdminNewUserPage from './AdminNewUser.page'
 import UserProfilePage from './UserProfile.page'
 import RolesPage from './Roles.page'
 import PatternsPage from './Patterns.page'
+import MachinesAdminPage from './AdminMachines.page'
 
 export {
     AdminPage,
@@ -11,5 +12,6 @@ export {
     AdminNewUserPage,
     UserProfilePage,
     RolesPage,
-    PatternsPage
+    PatternsPage,
+    MachinesAdminPage
 }

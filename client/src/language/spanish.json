@@ -23,7 +23,8 @@
         "administrationButton": "Administración"
     },
     "admin": {
-        "adminUsersButton": "Usuarios"
+        "adminUsersButton": "Usuarios",
+        "machinesAdmin": "Máquinas"
     },
     "roles": {
         "rolesUsersButton": "Roles"

@@ -133,7 +133,38 @@ const initAccessControl = async () => {
         apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'mantencion') */
         /* const reports = await Reports.find({reportType:"", guide:""})
         console.log(reports) */
+        /* try {
+            const findSites = await getSites();
+            console.log('Starting CRON Job')
+            const findMachines = await Machine.find();
+            if(findMachines) {
+                if(findMachines.length > 0) {
+                    findSites.forEach(({idobra}, index) => {
+                        ApiIcv.editMachineToSend(idobra)
+                    })
+                }
+            }
+            const sitiosCreados = await ApiIcv.createSiteToSend();
+            if (sitiosCreados) {
+                sitiosCreados.forEach(async (sitio) => {
+                    await ApiIcv.createMachinesToSend(sitio.idobra, true)
+                })
+            }
+            const unidades = await ApiIcv.getUnidades();
+            unidades.forEach(async unidad => {
+                const response = await Unidades.findOne({idUnidad: unidad.idUnidad})
+                if (response) {
+                    await Unidades.findOneAndUpdate({idUnidad: unidad.idUnidad}, unidad)
+                } else {
+                    await Unidades.create(unidad)
+                }
+            })
+        } catch (error) {
+            console.log(error)
+            Sentry.captureException(error)
+        } */
         initTimeMachinesCron()
+
         /* const findMachines = await Machine.find();
         const group = {}
 

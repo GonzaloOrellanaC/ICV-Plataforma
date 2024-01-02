@@ -2,8 +2,8 @@ import fs from 'fs'
 import fetch from 'node-fetch'
 import https from 'https'
 import { environment } from '../config'
-import { Site, Machine, Patterns, PatternDetail, Reports, Users } from '../models'
-import { machinesListPms, machinesOfProject } from '../files'
+import { Site, Machine, Patterns, PatternDetail, Reports, Users, MachineOfProject } from '../models'
+/* import { machinesListPms, machinesOfProject } from '../files' */
 import { NotificationService, UserServices, Sentry } from '../services'
 
 const myHeaders = {
@@ -661,6 +661,7 @@ const editMachineToSend = async (pIDOBRA) => {
             if( body ) {
                 let maquinas = [];
                 maquinas = body.data;
+                console.log(maquinas)
                 const index = 0
                 leerMaquinas(maquinas, index)
             }
@@ -743,12 +744,13 @@ const filePetition = ( req, res ) => {
 }
 
 /* Leer las máquinas del proyecto */
-const readMachinesOfProject = ( req, res ) => {
+const readMachinesOfProject = async ( req, res ) => {
     try{
-        res.status(200).send(machinesOfProject)
+        const machinesOfProject = await MachineOfProject.find()
+        res.status(200).json({data: machinesOfProject})
     } catch (error) {
         res.status(500).json({message: 'Error al enviar la petición'})
-        Sentry.captureException(error)
+        /* Sentry.captureException(error) */
     } 
 }
 

@@ -20,20 +20,21 @@ const readMachineByModel = (model) => {
     })
 }
 
-const createMachine = (machine) => {
-    machine.machineId = machine.id
-    return new Promise(async resolve => {
-        try {
-            const registreMachine = await new MachineOfProject(machine);
-            registreMachine.save();
-            if(registreMachine) {
-                resolve(true)
-            }
-        } catch (err) {
-            console.error('Error al crear máquina: ', err);
-            resolve(true)
+const createMachine = async (req, res) => {
+    const {id, type, brand, model, pIDPM} = req.body
+    /* machine.machineId = machine.id */
+    const machine = {
+        machineId: id, type, brand, model, pIDPM
+    }
+    try {
+        const registreMachine = await MachineOfProject.create(machine);
+        if(registreMachine) {
+            res.status(200).json({data: registreMachine})
         }
-    })
+    } catch (err) {
+        console.error('Error al crear máquina: ', err);
+        res.status(400).json({data: err})
+    }
 }
 
 export default {

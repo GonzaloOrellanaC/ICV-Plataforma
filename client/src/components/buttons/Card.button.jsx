@@ -68,6 +68,8 @@ const CardButton = ({ variant, disableButton }) => {
             return (<FontAwesomeIcon icon={faNewspaper} size='4x' className={classes.iconButton}/>)
         case 'calendar':
             return (<FontAwesomeIcon icon={faCalendar} size='4x' className={classes.iconButton}/>)
+        case 'machinesAdmin':
+            return (<FontAwesomeIcon icon={faTruck} size='4x' className={classes.iconButton}/>)
         }
     }
     const handleTypeText = () => {
@@ -94,6 +96,8 @@ const CardButton = ({ variant, disableButton }) => {
             return dictionary.news.newsButton
         case 'calendar':
             return dictionary.calendar.calendarButton
+        case 'machinesAdmin':
+            return dictionary.admin.machinesAdmin
         }
     }
 
@@ -109,7 +113,7 @@ const CardButton = ({ variant, disableButton }) => {
 }
 
 CardButton.propTypes = {
-    variant: PropTypes.oneOf(['inspection', 'assignment', 'machines', 'maintenance', 'reports', 'configuration', 'administration', 'users', 'roles', 'patterns', 'news', 'calendar'])
+    variant: PropTypes.oneOf(['inspection', 'assignment', 'machines', 'maintenance', 'reports', 'configuration', 'administration', 'users', 'roles', 'patterns', 'news', 'calendar', 'machinesAdmin'])
 }
 
 export default CardButton

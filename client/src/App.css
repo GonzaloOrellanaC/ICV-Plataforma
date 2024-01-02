@@ -221,3 +221,23 @@
 .button {
   cursor: pointer;
 }
+
+.editarBoton {
+  padding: 10px 20px;
+  background-color: green;
+  color: white;
+  border: 1px green solid;
+  border-radius: 20px;
+}
+
+.borrarBoton {
+  padding: 10px 20px;
+  background-color: red;
+  color: white;
+  border: 1px red solid;
+  border-radius: 20px;
+}
+
+.editarBoton:hover, .borrarBoton:hover {
+  cursor: pointer;
+}

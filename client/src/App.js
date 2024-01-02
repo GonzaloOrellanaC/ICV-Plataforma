@@ -36,7 +36,7 @@ import {
     CalendarPage,
     WallJournalPage
 } from './pages';
-import { PatternsPage, RolesPage, UserProfilePage } from './pages/administration'
+import { MachinesAdminPage, PatternsPage, RolesPage, UserProfilePage } from './pages/administration'
 import { Notifications } from 'react-push-notification';
 import { SocketConnection } from './connections'
 import { NotificationsProvider } from './context/Notifications.context'
@@ -90,6 +90,11 @@ const OnApp = () => {
                     (localStorage.getItem('role') === 'sapExecutive') ||
                     (localStorage.getItem('role') === 'superAdmin')
                     ) && <Route exact path='/users' element={<AdminUsersPage route={'users'}/>} />
+                    }
+                {(
+                    isSapExecutive ||
+                    admin 
+                    ) && <Route exact path='/machinesAdmin' element={<MachinesAdminPage />} />
                     }
                 {(
                     isOperator ||

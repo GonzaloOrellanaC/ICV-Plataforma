@@ -26,6 +26,7 @@ export const MachineProvider = props => {
 
     useEffect(() => {
         if (machines.length > 0) {
+            console.log(machines)
             if (isOnline) {
                 if (site)
                 getMachinesBySite()
@@ -68,8 +69,10 @@ export const MachineProvider = props => {
     const getMachines = async () => {
         const response = await apiIvcRoutes.getMachines()
         const {database} = await trucksDatabase.initDbMachines()
-        const machinesCache = [...response.data]
+        console.log(response.data.data)
+        const machinesCache = [...response.data.data]
         machinesCache.forEach(async (fileName, index) => {
+            console.log(fileName)
             fileName.id = index
             const xhr = new XMLHttpRequest()
             xhr.onload = async () => {
@@ -91,12 +94,31 @@ export const MachineProvider = props => {
         setMachines(machinesCache)
     }
 
+    const nuevaMaquina = async (maquina) => {
+        if (maquina.type) {
+            if (maquina.brand) {
+                if (maquina.model) {
+                    const response = await apiIvcRoutes.createMachine(maquina)
+                    console.log(response)
+                    getMachines()
+                } else {
+                    alert('Falta Modelo de Equipo')
+                }
+            } else {
+                alert('Falta Marca de Equipo')
+            }
+        } else {
+            alert('Falta Tipo de Equipo')
+        }
+    }
+
     const provider = {
         setMachines,
         machines,
         machinesBySite,
         machineSelected,
-        setMachineSelected
+        setMachineSelected,
+        nuevaMaquina
     }
 
     return (
