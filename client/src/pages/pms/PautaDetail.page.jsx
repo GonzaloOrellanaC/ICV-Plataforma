@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
-import { Box, Grid, IconButton, Card, Toolbar } from "@material-ui/core";
-import { ArrowBackIos } from '@material-ui/icons'
+import { Box, Grid, IconButton, Card, Toolbar } from "@mui/material";
+import { ArrowBackIos } from '@mui/icons-material'
 import { pautasDatabase } from "../../indexedDB"
 import { PautaDetail } from '../../containers'
 import { useStylesTheme } from '../../config'

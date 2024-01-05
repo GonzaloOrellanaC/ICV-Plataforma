@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Button, Grid, IconButton, Link, makeStyles, TextField } from '@material-ui/core'
+import { Button, Grid, IconButton, TextField } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import { useAuth, useLanguage } from '../../context'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'

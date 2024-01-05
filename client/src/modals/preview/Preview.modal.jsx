@@ -2,8 +2,8 @@ import {
     Box, 
     Fab, 
     Modal
-} from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { styleInternalMessageModal } from '../../config';
 
 const PreviewModal = ({open, data, closePreviewModal}) => {

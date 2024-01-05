@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Hidden } from '@material-ui/core'
+import { Card, Hidden } from '@mui/material'
 import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
 import { useStylesTheme } from '../../config'

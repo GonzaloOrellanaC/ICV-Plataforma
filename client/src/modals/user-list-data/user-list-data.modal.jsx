@@ -1,5 +1,5 @@
-import { Modal, ListItem, Fab, Switch, Box } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+import { Modal, ListItem, Fab, Switch, Box } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { styleModal } from '../../config';
 
 const UserListDataModal = ({open, userModal, handleChange, checked, permissionsReports, permissionsUsers, closeModal}) => {

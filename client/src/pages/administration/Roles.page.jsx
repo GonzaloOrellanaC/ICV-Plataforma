@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { Box, Card, Grid, Toolbar, IconButton } from '@material-ui/core';
-import { ArrowBackIos } from '@material-ui/icons';
+import { Box, Card, Grid, Toolbar, IconButton } from '@mui/material';
+import { ArrowBackIos } from '@mui/icons-material';
 import { useStylesTheme } from '../../config';
 import { useNavigate } from 'react-router-dom';
 import { UsersList } from '../../containers';

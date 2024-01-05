@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Drawer, Grid, IconButton, makeStyles } from '@material-ui/core';
-import { Menu, Close } from '@material-ui/icons';
+import { Drawer, Grid, IconButton } from '@mui/material';
+import { makeStyles } from '@mui/styles'
+import { Menu, Close } from '@mui/icons-material';
 import clsx from 'clsx';
 /* import logo from '../../assets/Logologo_icv_1.svg'; */
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

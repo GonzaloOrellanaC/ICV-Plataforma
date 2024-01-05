@@ -5,8 +5,8 @@ import {
     Toolbar,
     Fab,
 
-} from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { styleModalReport } from '../../config';
 import { reportsRoutes, usersRoutes } from '../../routes';
 import { SocketConnection } from '../../connections';

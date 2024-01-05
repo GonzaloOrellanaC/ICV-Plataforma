@@ -1,6 +1,6 @@
 import { faEraser, faPen, faSave } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Button, Dialog } from "@material-ui/core"
+import { Button, Dialog } from "@mui/material"
 import { Canvas } from "../containers"
 
 const FirmaUsuarioDialog = ({openSign, setRefCanvasFunction, getImage, clear}) => {

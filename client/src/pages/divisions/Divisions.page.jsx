@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 //import PropTypes from 'prop-types'
-import { Box, Card, Grid, makeStyles } from '@material-ui/core'
-
+import { Box, Card, Grid } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import { useStylesTheme } from '../../config'
 import { FilterField } from '../../components/fields'
 import clsx from 'clsx'

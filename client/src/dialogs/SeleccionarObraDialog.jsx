@@ -2,7 +2,7 @@ import {Dialog, DialogTitle, DialogContent, TextField, Button, ListItemButton} f
 import { useEffect, useState } from 'react';
 import { usersRoutes } from '../routes';
 import { useAuth, useReportsContext, useSitesContext } from '../context';
-import { ListItemText } from '@material-ui/core';
+import { ListItemText } from '@mui/material';
 
 const SeleccionarObraDialog = ({open, handleClose}) => {
 

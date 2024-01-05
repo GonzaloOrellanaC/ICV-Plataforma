@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Card, Grid, ListItem, Button, Toolbar, IconButton } from '@material-ui/core'
+import { Box, Card, Grid, ListItem, Button, Toolbar, IconButton } from '@mui/material'
 import { useStylesTheme } from '../../config'
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './Calendar.css'
 import { useNavigate } from 'react-router-dom';
-import { ArrowBackIos } from '@material-ui/icons';
+import { ArrowBackIos } from '@mui/icons-material';
 import { useReportsContext } from '../../context';
 import { ReviewReportDialog } from '../../dialogs';
 const CalendarPage = () => {

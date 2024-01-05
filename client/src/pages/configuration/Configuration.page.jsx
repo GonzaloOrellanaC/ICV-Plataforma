@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Card, Grid, ListItem, Button } from '@material-ui/core'
+import { Box, Card, Grid, ListItem, Button } from '@mui/material'
 import { useStylesTheme } from '../../config'
 
 const ConfigurationPage = () => {

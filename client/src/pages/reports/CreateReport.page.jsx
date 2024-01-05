@@ -9,8 +9,8 @@ import {
     IconButton,
     FormControl,
     Switch
-} from '@material-ui/core'
-import { ArrowBackIos } from '@material-ui/icons'
+} from '@mui/material'
+import { ArrowBackIos } from '@mui/icons-material'
 import { useNavigate, useParams } from 'react-router-dom';
 import { trucksDatabase, pautasDatabase, machinesDatabase, sitesDatabase } from '../../indexedDB'
 import { patternsRoutes, reportsRoutes } from '../../routes';

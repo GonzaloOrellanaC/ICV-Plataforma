@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Toolbar, ListItem, IconButton, Grid } from "@material-ui/core";
+import { Toolbar, ListItem, IconButton, Grid } from "@mui/material";
 import { faInfoCircle, faPen, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, useNavigate } from 'react-router-dom';

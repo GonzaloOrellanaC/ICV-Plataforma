@@ -1,5 +1,5 @@
-import { Button, Dialog, DialogContent, IconButton, LinearProgress, Slide } from "@material-ui/core"
-import { Close } from "@material-ui/icons"
+import { Button, Dialog, DialogContent, IconButton, LinearProgress, Slide } from "@mui/material"
+import { Close } from "@mui/icons-material"
 import { forwardRef, useState } from "react"
 
 const Transition = forwardRef(function Transition(props, ref) {

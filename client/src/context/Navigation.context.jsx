@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom'
 // import { faChartBar, faClipboard } from '@fortawesome/free-regular-svg-icons'
 // import { useLanguage } from './Language.context'
 
-const NavigationContext = createContext()
+export const NavigationContext = createContext()
 
 export const NavigationProvider = (props) => {
     const [navBarOpen, setNavBarOpen] = useState(false)

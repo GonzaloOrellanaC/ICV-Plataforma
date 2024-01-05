@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button, Modal, Fab } from '@material-ui/core'
-import { ArrowBackIos, Close } from '@material-ui/icons'
+import { Box, Card, Grid, Toolbar, IconButton, LinearProgress, Button, Modal, Fab } from '@mui/material'
+import { ArrowBackIos, Close } from '@mui/icons-material'
 import { getExecutionReport, getExecutivesSapEmail, getExecutivesSapId, getMachineData, useStylesTheme, detectIf3DModelExist, translateSubSystem, styleModal3D, dateSimple, dateWithTime, saveExecutionReport, base64ToImage } from '../../config'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import { pautasDatabase, reportsDatabase, readyToSendReportsDatabase, executionReportsDatabase } from '../../indexedDB'

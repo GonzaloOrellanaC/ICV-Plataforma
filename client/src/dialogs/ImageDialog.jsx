@@ -1,5 +1,5 @@
-import { Button, Dialog, IconButton, Slide } from "@material-ui/core"
-import { Close } from "@material-ui/icons"
+import { Button, Dialog, IconButton, Slide } from "@mui/material"
+import { Close } from "@mui/icons-material"
 import { forwardRef } from "react";
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;

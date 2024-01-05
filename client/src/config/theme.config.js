@@ -1,6 +1,7 @@
 /* Material UI */
-import { createTheme, makeStyles } from '@material-ui/core'
-import { esES } from '@material-ui/core/locale'
+import { createTheme } from '@mui/material'
+import { makeStyles } from '@mui/styles'
+import { esES } from '@mui/material/locale'
 
 export const theme = createTheme({
     palette: {

@@ -1,4 +1,4 @@
-import { Drawer, List, ListItem, ListItemIcon, SwipeableDrawer } from "@material-ui/core"
+import { Drawer, List, ListItem, ListItemIcon, SwipeableDrawer } from "@mui/material"
 import { Fragment } from "react"
 
 

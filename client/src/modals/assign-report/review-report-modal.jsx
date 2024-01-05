@@ -7,8 +7,8 @@ import {
     Grid,
     Button,
 
-} from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { getUserNameById, styleModalReport } from '../../config';
 import { reportsRoutes, usersRoutes } from '../../routes';
 import { dateWithTime } from '../../config';

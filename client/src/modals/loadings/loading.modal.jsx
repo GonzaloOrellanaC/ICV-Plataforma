@@ -3,7 +3,7 @@ import {
     Modal,
     CircularProgress
 
-} from '@material-ui/core';
+} from '@mui/material';
 import { styleModal } from '../../config';
 
 const LoadingModal = ({open, progress, loadingData, withProgress}) => {

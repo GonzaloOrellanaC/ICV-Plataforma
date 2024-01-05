@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Button, Grid, Popover } from '@material-ui/core'
+import { Button, Grid, Popover } from '@mui/material'
 import './style.css'
 import { dateSimple } from "../../config"
 import { AssignDialog, ReviewReportDialog } from "../../dialogs"

@@ -163,7 +163,8 @@
   border-radius: 0px;
   box-shadow: none;
   padding: 20px;
-  overflow-y: auto
+  overflow-y: auto;
+  height: 85vh;
 }
 
 .noNavBarMargin {
@@ -240,4 +241,48 @@
 
 .editarBoton:hover, .borrarBoton:hover {
   cursor: pointer;
+}
+
+.botonMaquinaContainer {
+  width: 100%;
+  /* height: 150px; */
+  border: transparent;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+}
+
+.botonMaquinaContainer:hover {
+  cursor: pointer;
+}
+
+.imagenBotonMaquina {
+  width: 25%;
+  border: #be2e26 1px solid;
+  border-radius: 50%;
+  position: relative;
+  float: left;
+  right: -20px;
+}
+
+.textoBotonMaquinaContainer {
+  width: 70%;
+  /* height: 90px; */
+  margin: 30px 0px 30px 0px;
+  border: #be2e26 1px solid;
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+  font-size: 16px;
+  text-align: left;
+  /* position: absolute; */
+  /* float: right; */
+  /* top: 50%;
+  left: 50%; */
+}
+
+.textoBotonMaquinaContainer p {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 30px;
 }

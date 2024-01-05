@@ -3,8 +3,8 @@ import {
     Box, 
     Modal,
     Fab
-} from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
 import MagicDropzone from "react-magic-dropzone";
 import * as tf from '@tensorflow/tfjs';
 import { styleModalIA } from '../../config';

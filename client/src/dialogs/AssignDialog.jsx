@@ -1,5 +1,5 @@
 import { useState, useEffect, forwardRef } from 'react';
-import { 
+/* import { 
     Box, 
     Toolbar,
     Fab,
@@ -10,14 +10,21 @@ import {
     MenuItem,
     Select,
 
-} from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+} from '@mui/material'; */
+import { Close } from '@mui/icons-material';
 /* import { styleModalReport } from '../../config'; */
 /* import { reportsRoutes, usersRoutes } from '../../routes'; */
 /* import { SocketConnection } from '../../connections'; */
 import { useAuth, useReportsContext, useSitesContext, useUsersContext } from '../context';
 import { SocketConnection } from '../connections';
-import { Button } from '@mui/material';
+import { Button, Toolbar,
+    Fab,
+    Dialog,
+    Slide,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select, } from '@mui/material';
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;

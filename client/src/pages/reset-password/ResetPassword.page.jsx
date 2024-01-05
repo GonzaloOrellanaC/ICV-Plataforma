@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Hidden } from '@material-ui/core'
+import { Card, Hidden } from '@mui/material'
 import clsx from 'clsx'
 import { useStylesTheme } from '../../config'
 import imageBackground from '../../assets/Iniciar sesión-1.png';

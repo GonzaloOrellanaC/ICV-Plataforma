@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
-import { Button, Grid, Link, makeStyles, TextField } from '@material-ui/core'
+import { Button, Grid, TextField } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import { useAuth, useLanguage } from '../../context'
 import { authRoutes } from '../../routes'
 import { useNavigate } from 'react-router-dom';

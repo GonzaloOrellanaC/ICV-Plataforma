@@ -2,9 +2,9 @@ import { Modal, ListItem, Fab, Switch, Box, TextField, Paper,
     InputBase,
     IconButton,
     Divider,CustomButton, Button
-     } from '@material-ui/core';
-import { ArrowRight, Close } from '@material-ui/icons';
-import { Directions, Search } from '@material-ui/icons';
+     } from '@mui/material';
+import { ArrowRight, Close } from '@mui/icons-material';
+import { Directions, Search } from '@mui/icons-material';
 import { useState } from 'react';
 import { imageToBase64, styleModalActivity, uploadImage } from '../../config';
 import { useEffect } from 'react'

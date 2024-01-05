@@ -1,6 +1,7 @@
 import React, { Fragment, useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { AppBar, makeStyles, Toolbar, Grid } from '@material-ui/core'
+import { AppBar, Toolbar, Grid } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import logo from '../../assets/logo_icv_gris.png'

@@ -3,7 +3,7 @@ import {
     CircularProgress,
     Dialog
 
-} from '@material-ui/core';
+} from '@mui/material';
 
 const LoadingLogoDialog = ({open}) => {
     return(

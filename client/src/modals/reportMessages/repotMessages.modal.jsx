@@ -1,5 +1,5 @@
-import { Box, Button, Fab, Grid, Modal } from "@material-ui/core"
-import { Close } from "@material-ui/icons";
+import { Box, Button, Fab, Grid, Modal } from "@mui/material"
+import { Close } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { dateWithTime, getUserNameById, styleInternalMessageModal } from '../../config';
 import { useAuth } from "../../context";

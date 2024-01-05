@@ -1,5 +1,5 @@
-import { Box, Card, Grid, Toolbar, IconButton } from '@material-ui/core'
-import { ArrowBackIos } from '@material-ui/icons'
+import { Box, Card, Grid, Toolbar, IconButton } from '@mui/material'
+import { ArrowBackIos } from '@mui/icons-material'
 import { useStylesTheme } from '../../config'
 
 

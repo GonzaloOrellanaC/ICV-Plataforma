@@ -1,5 +1,5 @@
-import { Button, Dialog, DialogContent, IconButton, Slide } from "@material-ui/core"
-import { Close/* , ChangenavigateTwoTone  */ } from "@material-ui/icons"
+import { Button, Dialog, DialogContent, IconButton, Slide } from "@mui/material"
+import { Close/* , ChangenavigateTwoTone  */ } from "@mui/icons-material"
 import { forwardRef, /* useEffect,  */useState } from "react"
 /* import Slider from "react-slick" */
 import "slick-carousel/slick/slick.css" 

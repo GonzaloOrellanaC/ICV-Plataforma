@@ -12,6 +12,7 @@ export const MachineProvider = props => {
     const [machinesBySite, setMachinesBySite] = useState([])
     const [machineSelected, setMachineSelected] = useState()
     const {isOnline} = useConnectionContext()
+    const urlImagenes = 'https://icvmantencion.blob.core.windows.net/plataforma-mantencion/maquinas/imagenes/'
 
     useEffect(() => {
         if(isAuthenticated) {
@@ -87,7 +88,7 @@ export const MachineProvider = props => {
                 }
                 reader.readAsDataURL(xhr.response)
             }
-            xhr.open('GET', `/assets/${fileName.model}.png`)
+            xhr.open('GET', `${urlImagenes}${fileName.model}.png`)
             xhr.responseType = 'blob'
             xhr.send()
         })

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Card, CircularProgress, Grid } from '@material-ui/core'
+import { Box, Card, CircularProgress, Grid } from '@mui/material'
 import clsx from 'clsx'
 
 import { useStylesTheme } from '../../config'

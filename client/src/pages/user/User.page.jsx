@@ -1,4 +1,4 @@
-import { Box, Card, Grid } from '@material-ui/core'
+import { Box, Card, Grid } from '@mui/material'
 import { useStylesTheme } from '../../config'
 
 

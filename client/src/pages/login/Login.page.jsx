@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react'
-import { Card, Hidden } from '@material-ui/core'
+import { Card, Hidden } from '@mui/material'
 
 import { Login } from '../../containers'
 import { environment } from '../../config'

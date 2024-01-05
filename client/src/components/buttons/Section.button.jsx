@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, makeStyles } from '@material-ui/core'
+import { Button } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChartBar, faClipboard, faTools, faUserCog } from '@fortawesome/free-solid-svg-icons'
 import { useLanguage } from '../../context'

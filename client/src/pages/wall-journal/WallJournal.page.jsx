@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Card, IconButton, Toolbar, Grid } from "@material-ui/core"
-import { ArrowBackIos } from "@material-ui/icons"
+import { Box, Card, IconButton, Toolbar, Grid } from "@mui/material"
+import { ArrowBackIos } from "@mui/icons-material"
 import { useNavigate } from 'react-router-dom'
 import './Wall.css'
 import { Swiper, SwiperSlide } from 'swiper/react';

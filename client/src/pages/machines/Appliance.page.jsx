@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Box, Card, Grid, Modal, IconButton, Fab, Toolbar } from '@material-ui/core'
-import { Close, ArrowBackIos } from '@material-ui/icons'
+import { Box, Card, Grid, Modal, IconButton, Fab, Toolbar } from '@mui/material'
+import { Close, ArrowBackIos } from '@mui/icons-material'
 import { useParams } from "react-router-dom";
 import { imageToBase64, useStylesTheme } from '../../config'
 import { useNavigate } from 'react-router-dom'

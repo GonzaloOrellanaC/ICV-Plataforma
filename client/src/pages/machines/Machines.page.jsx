@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { Box, Grid, Toolbar, IconButton } from '@material-ui/core'
-import { ArrowBackIos } from '@material-ui/icons'
+import { Box, Grid, Toolbar, IconButton } from '@mui/material'
+import { ArrowBackIos } from '@mui/icons-material'
 import { useStylesTheme } from '../../config'
 import { MachineButton } from '../../components/buttons'
 import { useNavigate } from 'react-router-dom'
@@ -11,6 +11,8 @@ const MachinesPage = ({ route }) => {
     const {machines} = useMachineContext()
     const navigate = useNavigate();
     const [routeData, setRouteData] = useState()
+
+    const urlImagenes = 'https://icvmantencion.blob.core.windows.net/plataforma-mantencion/maquinas/imagenes/'
 
     useEffect(() => {
         if(route === 'inspection') {
@@ -42,12 +44,13 @@ const MachinesPage = ({ route }) => {
                                     </Toolbar>
                                 </div>
                             </div>
-                            <Grid container spacing={5} justifyContent='flex-start' style={{textAlign: 'center', height: '75vh', overflowY: 'auto'}}>
+                            <Grid container spacing={5} justifyContent='flex-start' style={{textAlign: 'center', /* height: '75vh',  */overflowY: 'auto'}}>
                                 {
-                                    machines.map((machine) => {
+                                    machines.map((machine, index) => {
                                         return (
-                                            <Grid item xs={12} sm={12} md={4} lg={4} xl={4} key={machine.id}>
-                                                <MachineButton machine={machine} route={route}/>
+                                            <Grid item xs={12} sm={12} md={6} lg={4} xl={4} key={machine.id}>
+                                                {/* <MachineButton machine={machine} route={route}/> */}
+                                                <BotonMaquina machine={machine} route={route} key={index} navigate={navigate} />
                                             </Grid>
                                         )
                                     })
@@ -58,6 +61,33 @@ const MachinesPage = ({ route }) => {
                 </Grid>
             </Grid>
         </Box>
+    )
+}
+
+const BotonMaquina = ({machine, route, navigate}) => {
+    const newMachine = {
+        brand: machine.brand,
+        id: machine.id,
+        model: machine.model,
+        pIDPM: machine.pIDPM,
+        type: machine.type
+    }
+    return (
+        <button className='botonMaquinaContainer' onClick={()=>{navigate(`/${route}/${JSON.stringify(newMachine)}`)}}>
+{/*             <Grid container style={{width: '100%'}}>
+                <Grid item sm={4} md={4} lg={4} xl={4}> */}
+                    <div style={{backgroundColor: '#fff'}} className='imagenBotonMaquina'>
+                        {machine.image.data && <img src={`data:${machine.image.data}`} width={'100%'} />}
+                    </div>
+{/*                 </Grid>
+                <Grid item sm={8} md={8} lg={8} xl={8}> */}
+                    <div className='textoBotonMaquinaContainer'>
+                        <p><strong>{`${machine.type}`}</strong></p>
+                        <p>{`${machine.brand} ${machine.model}`}</p>
+                    </div>
+{/*                 </Grid>
+            </Grid> */}
+        </button>
     )
 }
 

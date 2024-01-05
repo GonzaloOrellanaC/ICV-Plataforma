@@ -1,11 +1,11 @@
-import { Box, Button, CircularProgress, Modal } from "@material-ui/core"
+import { Box, Button, CircularProgress, Modal } from "@mui/material"
 import { getMachineData, styleModal, styleModalReport } from '../../config';
 import './pdf.modal.css';
 import { useEffect } from "react";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPrint } from "@fortawesome/free-solid-svg-icons";
-import { Close } from "@material-ui/icons";
+import { Close } from "@mui/icons-material";
 import toPDF from "./toPDF";
 
 

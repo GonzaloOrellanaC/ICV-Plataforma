@@ -3,7 +3,7 @@ import {
     Modal,
     CircularProgress
 
-} from '@material-ui/core';
+} from '@mui/material';
 import { styleImageTransitionModal } from '../../config';
 
 const ImageTransitiongModal = ({open, imagePath}) => {

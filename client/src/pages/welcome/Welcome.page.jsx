@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Grid } from '@material-ui/core'
+import { Grid } from '@mui/material'
 import { CardButton } from '../../components/buttons'
 import { LoadingModal, VersionControlModal } from '../../modals'
 import './style.css'

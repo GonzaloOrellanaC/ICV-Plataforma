@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
-import { IconButton, Modal } from "@material-ui/core"
+import { IconButton, Modal } from "@mui/material"
 import Webcam from "react-webcam"
 import { useState } from "react";
 

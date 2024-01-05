@@ -9,8 +9,8 @@ import {
     Grid,
     Button,
 
-} from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { dateWithTime, styleInternalMessageModal } from '../../config';
 import { internalMessagesRoutes } from '../../routes';
 import { useNavigate } from 'react-router-dom';

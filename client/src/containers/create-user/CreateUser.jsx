@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Grid, FormControl, IconButton, Checkbox } from "@material-ui/core";
+import { Grid, FormControl, IconButton, Checkbox } from "@mui/material";
 import { faEye, faEyeSlash, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { rolesRoutes, usersRoutes } from '../../routes';

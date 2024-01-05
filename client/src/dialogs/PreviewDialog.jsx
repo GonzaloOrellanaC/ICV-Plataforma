@@ -2,8 +2,8 @@ import {
     Box, 
     Dialog, 
     Fab, 
-} from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
 
 const PreviewDialog = ({open, data, closePreviewModal}) => {
     console.log(data)

@@ -5,8 +5,8 @@ import {
     Toolbar,
     Fab,
 
-} from '@material-ui/core';
-import { Close } from '@material-ui/icons';
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { styleModal } from '../../config';
 
 const Alert = ({open, report, closeModal}) => {

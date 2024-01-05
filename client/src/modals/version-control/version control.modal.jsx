@@ -1,5 +1,5 @@
-import { Modal, Fab, Box } from '@material-ui/core'
-import { Close, Undo } from '@material-ui/icons'
+import { Modal, Fab, Box } from '@mui/material'
+import { Close, Undo } from '@mui/icons-material'
 import { environment, styleModal } from '../../config'
 
 const VersionControlModal = ({open, closeModal}) => {

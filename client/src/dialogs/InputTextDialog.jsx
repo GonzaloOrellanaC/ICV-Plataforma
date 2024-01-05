@@ -1,5 +1,5 @@
-import { Button, Dialog, IconButton, Slide, TextField } from "@material-ui/core"
-import { ArrowForward, Close } from "@material-ui/icons"
+import { Button, Dialog, IconButton, Slide, TextField } from "@mui/material"
+import { ArrowForward, Close } from "@mui/icons-material"
 import { forwardRef } from "react";
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;

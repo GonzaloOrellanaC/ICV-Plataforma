@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState } from "react";
-import { Grid } from "@material-ui/core";
+import { Grid } from "@mui/material";
 import { sitesRoutes } from "../../routes";
 import { changeTypeUser } from '../../config'
 import { CreateUserContext, useSitesContext } from "../../context";

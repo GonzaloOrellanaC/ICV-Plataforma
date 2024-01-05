@@ -3,15 +3,15 @@ import {
     Box, 
     Grid, 
     Card, 
-    makeStyles, 
     Toolbar, 
     IconButton, 
     ListItem, 
     ListItemIcon,
     ListItemText,
     Checkbox,
-    Chip} from '@material-ui/core';
-import { ArrowBackIos } from '@material-ui/icons';
+    Chip} from '@mui/material';
+import { makeStyles } from '@mui/styles'
+import { ArrowBackIos } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useStylesTheme } from '../../config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

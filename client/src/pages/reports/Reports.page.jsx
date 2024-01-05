@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react'
-import {Grid, Toolbar, IconButton, Chip, TablePagination, Button, AppBar, Typography} from '@material-ui/core';
-import { ArrowBackIos } from '@material-ui/icons';
+import {Grid, Toolbar, IconButton, Chip, TablePagination, Button, AppBar, Typography} from '@mui/material';
+import { ArrowBackIos } from '@mui/icons-material';
 import { Mantenciones, Inspecciones } from './ReportsListLeft';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown, faCircle, faClipboardList, faCalendar, faDownload, faPlus, faPlusSquare, faInfoCircle, faMapMarker, faChartBar } from '@fortawesome/free-solid-svg-icons';

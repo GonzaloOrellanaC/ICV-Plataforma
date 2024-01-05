@@ -1,5 +1,6 @@
 import React from 'react'
-import { InputAdornment, makeStyles, TextField } from '@material-ui/core'
+import { InputAdornment, TextField } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 

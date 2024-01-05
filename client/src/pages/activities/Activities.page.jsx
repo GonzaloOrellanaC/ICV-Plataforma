@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme, CircularProgress } from '@material-ui/core'
-import { ArrowBackIos } from '@material-ui/icons'
+import { Box, Card, Grid, Toolbar, IconButton, Button, useMediaQuery, useTheme, CircularProgress } from '@mui/material'
+import { ArrowBackIos } from '@mui/icons-material'
 import { date, useStylesTheme } from '../../config'
 import { useNavigate } from 'react-router-dom'
 /* import { machinesDatabase, reportsDatabase } from '../../indexedDB' */

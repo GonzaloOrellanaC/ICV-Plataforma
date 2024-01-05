@@ -2,9 +2,9 @@ import { useState, useEffect } from "react"
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css" 
 import "slick-carousel/slick/slick-theme.css"
-import { Button, IconButton, Checkbox, Grid, Hidden } from "@material-ui/core"
-import CircleCheckedFilled from '@material-ui/icons/CheckCircle'
-import CircleUnchecked from '@material-ui/icons/RadioButtonUnchecked'
+import { Button, IconButton, Checkbox, Grid, Hidden } from "@mui/material"
+import CircleCheckedFilled from '@mui/icons-material/CheckCircle'
+import CircleUnchecked from '@mui/icons-material/RadioButtonUnchecked'
 import { faPen, faPaperclip, faCommentDots, faEye } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { executionReportsDatabase } from "../../indexedDB"

@@ -1,5 +1,5 @@
-import { Dialog, Fab } from "@material-ui/core"
-import { Close } from "@material-ui/icons";
+import { Dialog, Fab } from "@mui/material"
+import { Close } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
