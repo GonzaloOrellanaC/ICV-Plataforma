@@ -3,6 +3,7 @@ import { useAuth } from "./Auth.context";
 import { apiIvcRoutes } from "../routes";
 import { machinesDatabase, trucksDatabase } from "../indexedDB";
 import { useConnectionContext } from "./Connection.context";
+import { agregarMarcaMaquina, agregarModeloMaquina, agregarTipoMaquina, createMachine, obtenerMarcaMaquinas, obtenerModeloMaquinas, obtenerTipoMaquinas } from "../routes/machines.routes";
 
 export const MachineContext = createContext()
 
@@ -11,6 +12,9 @@ export const MachineProvider = props => {
     const [machines, setMachines] = useState([])
     const [machinesBySite, setMachinesBySite] = useState([])
     const [machineSelected, setMachineSelected] = useState()
+    const [tipoMaquinas, setTipoMaquinas] = useState([])
+    const [marcasMaquinas, setMarcasMaquinas] = useState([])
+    const [modelosMaquinas, setModelosMaquinas] = useState([])
     const {isOnline} = useConnectionContext()
     const urlImagenes = 'https://icvmantencion.blob.core.windows.net/plataforma-mantencion/maquinas/imagenes/'
 
@@ -18,6 +22,9 @@ export const MachineProvider = props => {
         if(isAuthenticated) {
             if (isOnline) {
                 getMachines()
+                leerTipoMaquinas()
+                leerMarcasMaquinas()
+                leerModelosMaquinas()
             } else {
                 console.log('Machines offline')
                 getMachinesOffLine()
@@ -37,8 +44,40 @@ export const MachineProvider = props => {
         }
     },[machines, isOnline, site])
 
+    const sumarTipoMaquina = async (tipo) => {
+        const response = await agregarTipoMaquina(tipo)
+        leerTipoMaquinas()
+        return response
+    }
+
+    const sumarMarcaMaquina = async (marca) => {
+        const response = await agregarMarcaMaquina(marca)
+        leerMarcasMaquinas()
+        return response
+    }
+
+    const sumarModeloMaquina = async (marcaId, modelo) => {
+        const response = await agregarModeloMaquina(marcaId, modelo)
+        leerModelosMaquinas()
+        return response
+    }
+
+    const leerTipoMaquinas = async () => {
+        const response = await obtenerTipoMaquinas()
+        setTipoMaquinas(response.data)
+    }
+
+    const leerMarcasMaquinas = async () => {
+        const response = await obtenerMarcaMaquinas()
+        setMarcasMaquinas(response.data)
+    }
+
+    const leerModelosMaquinas = async () => {
+        const response = await obtenerModeloMaquinas()
+        setModelosMaquinas(response.data)
+    }
+
     const getMachinesBySite = async () => {
-        console.log('Descargando máquinas!')
         let response
         if (site && !admin) {
             response = await apiIvcRoutes.getMachineBySiteId(site.idobra)
@@ -47,7 +86,6 @@ export const MachineProvider = props => {
             response = await apiIvcRoutes.getAllMachines()
         }
         const {database} = await machinesDatabase.initDbMachines()
-        console.log(response.data)
         response.data.forEach(async (machine, index) => {
             machine.id = index
             await machinesDatabase.actualizar(machine, database)
@@ -73,7 +111,6 @@ export const MachineProvider = props => {
         console.log(response.data.data)
         const machinesCache = [...response.data.data]
         machinesCache.forEach(async (fileName, index) => {
-            console.log(fileName)
             fileName.id = index
             const xhr = new XMLHttpRequest()
             xhr.onload = async () => {
@@ -88,7 +125,7 @@ export const MachineProvider = props => {
                 }
                 reader.readAsDataURL(xhr.response)
             }
-            xhr.open('GET', `${urlImagenes}${fileName.model}.png`)
+            xhr.open('GET', fileName.urlImagen)
             xhr.responseType = 'blob'
             xhr.send()
         })
@@ -99,9 +136,9 @@ export const MachineProvider = props => {
         if (maquina.type) {
             if (maquina.brand) {
                 if (maquina.model) {
-                    const response = await apiIvcRoutes.createMachine(maquina)
-                    console.log(response)
+                    const response = await createMachine(maquina)
                     getMachines()
+                    return response
                 } else {
                     alert('Falta Modelo de Equipo')
                 }
@@ -119,7 +156,13 @@ export const MachineProvider = props => {
         machinesBySite,
         machineSelected,
         setMachineSelected,
-        nuevaMaquina
+        nuevaMaquina,
+        tipoMaquinas,
+        sumarTipoMaquina,
+        marcasMaquinas,
+        sumarMarcaMaquina,
+        modelosMaquinas,
+        sumarModeloMaquina
     }
 
     return (

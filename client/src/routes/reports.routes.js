@@ -39,6 +39,7 @@ export default {
         return axios.post('/reports/getReportById', requestBody);
     },
     getAllReports: () => {
+        console.log('Descargando reportes...')
         return axios.get('/reports/getAllReports')
     },
     getAllReportsbySite: (site) => {

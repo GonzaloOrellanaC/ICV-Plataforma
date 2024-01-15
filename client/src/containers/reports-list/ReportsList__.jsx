@@ -5,7 +5,7 @@ import { Toolbar, ListItem, Checkbox, Modal, Box } from "@mui/material";
 import { changeTypeUser } from '../../config'
 import { AssignReportModal } from '../../modals'
 import { useNavigate } from "react-router-dom";
-import { machinesRoutes, reportsRoutes } from "../../routes";
+import { getMachineByEquid } from "../../routes/machines.routes";
 
 const styleModal = {
     position: 'absolute',
@@ -44,7 +44,7 @@ const ReportsList = ({height, reportType, repsList}) => {
 
     const readingDataReports = () => {
             reportesList.forEach((report, index) => {
-                machinesRoutes.getMachineByEquid(report.machine).then(data => {
+                getMachineByEquid(report.machine).then(data => {
                     report.hourMeter = (Number(data.data[0].hourMeter)/3600000);
                 })
                 if(index == (reportesList.length - 1)) {

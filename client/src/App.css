@@ -224,7 +224,7 @@
 }
 
 .editarBoton {
-  padding: 10px 20px;
+  padding: 5px 10px;
   background-color: green;
   color: white;
   border: 1px green solid;
@@ -232,7 +232,7 @@
 }
 
 .borrarBoton {
-  padding: 10px 20px;
+  padding: 5px 10px;
   background-color: red;
   color: white;
   border: 1px red solid;
@@ -285,4 +285,8 @@
   margin-top: 10px;
   margin-bottom: 10px;
   margin-left: 30px;
+}
+
+#imagenContainer:hover {
+  cursor: pointer;
 }

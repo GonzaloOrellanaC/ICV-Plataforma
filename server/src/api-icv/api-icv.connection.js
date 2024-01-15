@@ -606,38 +606,45 @@ const createMachinesToSend = (pIDOBRA, isSync = false) => {
                 data: machinesList.length,
                 maquinasEnBBDD: response.length
             }
+            /* console.log(machinesList.length) */
+            const machinesData = {}
             machinesList.forEach(async (machine, index) => {
-                /* console.log(machine) */
+                /* if (index === 0) {
+                    console.log(machine)
+                } */
+                if (!machinesData[pIDOBRA]) {
+                    machinesData[pIDOBRA] = {}
+                }
+                if (!machinesData[pIDOBRA][machine.modelo]) {
+                    machinesData[pIDOBRA][machine.modelo] = 0
+                }
+                machinesData[pIDOBRA][machine.modelo] = machinesData[pIDOBRA][machine.modelo] + 1
                 machine.idpminspeccion = await getIdPmInspection(machine.equid);
                 machine.idpmmantencion = await getIdPmMaintenance(machine.equid);
-                if(machine.modelo[0]==='7'){
-                    machine.type = 'Camión'
-                }else if(machine.modelo[0] === 'P') {
-                    machine.type = 'Pala'
-                }else if(machine.modelo[0] === '9') {
-                    machine.type = 'Cargador Frontal'
-                }else if(machine.modelo[0] === 'D') {
-                    machine.type = 'Bulldozer'
-                }
-                machine.brand = machine.marca;
-                machine.model = machine.modelo;
-                machine.hourMeter = machine.horometro;
-                try {
-                    const findMachine = await Machine.findOne({equid: machine.equid})
-                    if (findMachine) {
-                        await Machine.findByIdAndUpdate(findMachine._id, machine)
-                    } else {
-                        console.log('Machine not found')
-                        try {
-                            await Machine.create(machine);
-                        } catch (error) {
-                            console.log(error)
+                const machineOfProject = await MachineOfProject.findOne({model: machine.modelo})
+                if (machineOfProject) {
+                    machine.type = machineOfProject.type
+                    machine.brand = machineOfProject.brand;
+                    machine.model = machineOfProject.model;
+                    machine.hourMeter = machine.horometro;
+                    try {
+                        const findMachine = await Machine.findOne({equid: machine.equid})
+                        if (findMachine) {
+                            await Machine.findByIdAndUpdate(findMachine._id, machine)
+                        } else {
+                            console.log('Machine not found')
+                            try {
+                                await Machine.create(machine);
+                            } catch (error) {
+                                console.log(error)
+                            }
                         }
+                    } catch (error) {
+                        console.log(index, ' ERROR ====> ', error)
                     }
-                } catch (error) {
-                    console.log(index, ' ERROR ====> ', error)
                 }
                 if(index === (machinesList.length - 1)) {
+                    console.log(machinesData)
                     if (isSync) {
                         resolve(data)
                     }
@@ -661,7 +668,7 @@ const editMachineToSend = async (pIDOBRA) => {
             if( body ) {
                 let maquinas = [];
                 maquinas = body.data;
-                console.log(maquinas)
+                /* console.log(maquinas) */
                 const index = 0
                 leerMaquinas(maquinas, index)
             }
@@ -672,9 +679,20 @@ const editMachineToSend = async (pIDOBRA) => {
     }
 }
 
+const listMachinesToEdit = []
+
 const leerMaquinas = async (maquinas, index) => {
     if (maquinas.length === index) {
         console.log('Lectura terminada')
+        /* console.log(listMachinesToEdit) */
+        /* listMachinesToEdit.forEach(async (m, i) => {
+            const r = await Machine.findByIdAndUpdate(m._id, {type: m.type.toUpperCase()})
+            console.log(r)
+        }) */
+        /* const r = await Promise.all(listMachinesToEdit.map(async (m, i) => {
+            return await Machine.findByIdAndUpdate(m._id, {type: m.type.toUpperCase()})
+        }))
+        console.log('Lista: ', r) */
     } else {
         const machine = maquinas[index]
         machine.idpminspeccion = null;
@@ -682,8 +700,9 @@ const leerMaquinas = async (maquinas, index) => {
         machine.idpminspeccion = await getIdPmInspection(machine.equid);
         machine.idpmmantencion = await getIdPmMaintenance(machine.equid);    
         machine.hourMeter = machine.horometro;
-        console.log(machine.equ, machine.equid, await getIdPmInspection(machine.equid))
-        console.log(machine.equ, machine.equid, await getIdPmMaintenance(machine.equid))
+        /* console.log(machine) */
+        /* console.log(machine.equ, machine.equid, await getIdPmInspection(machine.equid))
+        console.log(machine.equ, machine.equid, await getIdPmMaintenance(machine.equid)) */
         /* if (machine.equ === '726') {
             console.log(maquinas[index])
             console.log(machine.equ, machine.equid, await getIdPmInspection(machine.equid))
@@ -699,6 +718,8 @@ const leerMaquinas = async (maquinas, index) => {
                 {hourMeter: machine.hourMeter, idpminspeccion: machine.idpminspeccion, idpmmantencion: machine.idpmmantencion, idobra: machine.idobra},
                 {new: true, timestamps: false}
             )
+            listMachinesToEdit.push(response)
+            /* console.log(response) */
             if (response) {
                 index = index + 1
                 leerMaquinas(maquinas, index)
@@ -746,7 +767,7 @@ const filePetition = ( req, res ) => {
 /* Leer las máquinas del proyecto */
 const readMachinesOfProject = async ( req, res ) => {
     try{
-        const machinesOfProject = await MachineOfProject.find()
+        const machinesOfProject = await MachineOfProject.find().populate('tipeId')
         res.status(200).json({data: machinesOfProject})
     } catch (error) {
         res.status(500).json({message: 'Error al enviar la petición'})

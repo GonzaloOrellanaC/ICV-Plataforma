@@ -1,13 +1,12 @@
 import { machinesDatabase } from "../indexedDB"
-import { machinesRoutes } from "../routes"
+import { getMachineByEquid } from "../routes/machines.routes"
 
 
 export default (equid) => {
-    return new Promise(resolve => {
+    return new Promise(async resolve => {
         if (navigator.onLine) {
-            machinesRoutes.getMachineByEquid(equid).then(data => {
-                resolve(data.data)
-            })
+            const data = await getMachineByEquid(equid)
+            resolve (data.data)
         } else {
             machinesDatabase.initDbMachines().then(db => {
                 machinesDatabase.consultar(db.database).then(data => {

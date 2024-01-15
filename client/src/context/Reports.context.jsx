@@ -100,7 +100,6 @@ export const ReportsProvider = (props) => {
 
     useEffect(() => {
         if (reports.length > 0) {
-            console.log(reports)
             if (reportsCache.length === 0) {
                 setReportsCache(reports)
             }
@@ -207,18 +206,8 @@ export const ReportsProvider = (props) => {
 
     const savePautas = async () => {
         const {database} = await pautasDatabase.initDbPMs()
-        console.log(pautas)
         const n = 0
         guardarPautaDeUna(pautas, n, database)
-        /* pautas.forEach((pauta, i) => {
-            console.log(pauta.idpm, pauta.typepm)
-            pautasDatabase.agregar(pauta, database).onsuccess = () =>{
-                console.log(pauta.idpm, pauta.typepm, ' lista')
-            }
-            if (i === (pautas.length - 1)) {
-                setMessage('')
-            }
-        }) */
     }
 
     const guardarPautaDeUna = async (pautas, index, database) => {
@@ -400,10 +389,12 @@ export const ReportsProvider = (props) => {
         setMessage('Sincronizando reportes')
         setReports([])
         setStatusReports(true)
+        console.log(isOnline)
         if (isOnline) {
+            console.log(admin)
             if (admin) {
                 const response = await reportsRoutes.getAllReports()
-                console.log(response.data)
+                console.log('Reportes: ', response.data)
                 setReports(response.data)
                 setReportsCache(response.data)
                 setStatusReports(false)

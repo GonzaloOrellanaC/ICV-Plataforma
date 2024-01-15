@@ -1,25 +1,29 @@
-export const fechaDia = (fecha) => {
-    if (fecha) {
-    const dia = new Date(fecha).getUTCDate();
-    return dia
+export const fechaDia = (time) => {
+    if (time) {
+        const fecha = new Date(time).toISOString()
+        const dia = new Date(fecha).getUTCDate();
+        return dia
     } else {
         return 'Sin fecha'
     }
 }
 
-export const fechaMes = (fecha) => {
-    if (fecha) {
-    const mes = new Date(fecha).getMonth();
-    return mes
+export const fechaMes = (time) => {
+    if (time) {
+        const fecha = new Date(time).toISOString()
+        const mes = new Date(fecha).getMonth();
+        return mes + 1
     } else {
         return 'Sin fecha'
     }
 }
 
-export const fechaAno = (fecha) => {
-    if (fecha) {
-    const ano = new Date(fecha).getUTCFullYear();
-    return ano
+export const fechaAno = (time) => {
+    if (time) {
+        const fecha = new Date(time).toISOString()
+
+        const ano = new Date(fecha).getUTCFullYear();
+        return ano
     } else {
         return 'Sin fecha'
     }
@@ -27,8 +31,8 @@ export const fechaAno = (fecha) => {
 
 export const fechaCompleta = (time) => {
     if(time) {
-        
-        let day = new Date(time).getDay()
+        const fecha = new Date(time).toISOString()
+        let day = new Date(fecha).getDay()
         let dayName;
         if(day === 0) {
             dayName = 'Dom'
@@ -46,8 +50,8 @@ export const fechaCompleta = (time) => {
             dayName = 'Sab'
         }
         
-        let date = new Date(time).getUTCDate();
-        let month = new Date(time).getMonth();
+        let date = new Date(fecha).getUTCDate();
+        let month = new Date(fecha).getMonth();
         let monthName
         if(month == 0) {
             monthName = 'Jan'
@@ -74,9 +78,25 @@ export const fechaCompleta = (time) => {
         }else if(month == 11) {
             monthName = 'Dic'
         }
-        let year = new Date(time).getUTCFullYear();
+        let year = new Date(fecha).getUTCFullYear();
         return `${date}-${monthName}-${year}`
     }else{
         return 'Sin fecha'
     }
+}
+
+export const leerHora = (time) => {
+    if (dateIsValid(time)) {
+        const fecha = new Date(time).toISOString()
+        const horaLocal = new Date(fecha)
+        const hora = horaLocal.getHours()
+        const minutos = (horaLocal.getMinutes() < 10) ? `0${horaLocal.getMinutes()}` : horaLocal.getMinutes()
+        return `${hora}:${minutos}`
+    } else {
+        return '-'
+    }
+}
+
+const dateIsValid = (date) => {
+    return !Number.isNaN(new Date(date).getTime());
 }

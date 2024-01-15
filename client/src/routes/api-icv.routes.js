@@ -14,12 +14,12 @@ export default {
         }
         return axios.post('/machines/getAllMachinesByModel', requestBody)
     },
-    getMachineByEquid: (equid) => {
+    /* getMachineByEquid: (equid) => {
         const requestBody = {
             equid: equid,
         }
         return axios.post('/machines/readMachineByEquid', requestBody)
-    },
+    }, */
     getMachineBySiteId: (siteId) => {
         const requestBody = {
             siteId: siteId,

@@ -21,6 +21,17 @@ export default {
         }
         return axios.post('/azure-storage/uploadImageReport', formData, config)
     },
+    uploadMachineImage: (image, path, containerName, name) => {
+        const formData = new FormData();
+        formData.append('image', image, image.name);
+        formData.append('path', path);
+        formData.append('containerName', containerName);
+        formData.append('name', name);
+        const config = {
+            headers: { "Content-Type": "multipart/form-data" },
+        }
+        return axios.post('/azure-storage/uploadMachineImage', formData, config)
+    },
     uploadImage: (image, path, containerName) => {
         const formData = new FormData();
         formData.append('image', image, image.name);

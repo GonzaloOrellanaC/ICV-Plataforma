@@ -14,7 +14,7 @@ import { LianearProgresDialog, LoadingLogoDialog, ReportsResumeDialog } from '..
 import { date, dateSimple, dateWithYear } from '../../config';
 import SeleccionarObraDialog from '../../dialogs/SeleccionarObraDialog';
 import ReportsKPIDialog from '../../dialogs/ReportsKPIDialog';
-import { fechaAno, fechaCompleta, fechaDia, fechaMes } from '../../config/fecha';
+import { fechaAno, fechaCompleta, fechaDia, fechaMes, leerHora } from '../../config/fecha';
 
 const ReportsPage = () => {
     const {sites} = useSitesContext()
@@ -82,6 +82,7 @@ const ReportsPage = () => {
         }
     }, [admin, isSapExecutive])
     useEffect(() => {
+        console.log(reports)
         if (reports.length > 0) {
             const inspeccionesTemp = reports.filter(report => {
                 if (report.reportType === "Inspección") {
@@ -643,9 +644,11 @@ const ReportsPage = () => {
                 'Día de inicio reporte': fechaDia(report.dateInit),
                 'Mes de inicio reporte': fechaMes(report.dateInit),
                 'Año de inicio reporte': fechaAno(report.dateInit),
+                'Hora de inicio reporte': leerHora(report.dateInit),
                 'Día de término reporte': fechaDia(report.endReport),
                 'Mes de término reporte': fechaMes(report.endReport),
                 'Año de término reporte': fechaAno(report.endReport),
+                'Hora de término reporte': leerHora(report.endReport),
                 'Día de cierre': fechaDia(report.dateClose),
                 'Mes de cierre': fechaMes(report.dateClose),
                 'Año de cierre': fechaAno(report.dateClose),
@@ -684,8 +687,12 @@ const ReportsPage = () => {
                     group.forEach((el, n) => {
                         el.forEach((item, i) => {
                             let fecha = 'Sin información'
+                            let hora = 'Sin información'
                             if (item.messages && (item.messages.length > 0)) {
-                                fecha = fechaCompleta(new Date(item.messages[item.messages.length -1].id))
+                                /* console.log(item.messages[item.messages.length - 1]) */
+                                fecha = (item.messages[item.messages.length - 1] && item.messages[item.messages.length - 1].id) ? fechaCompleta(new Date(item.messages[item.messages.length - 1].id)) : 'Sin información'
+                                hora = (item.messages[item.messages.length - 1] && item.messages[item.messages.length - 1].id) ? leerHora(new Date(item.messages[item.messages.length - 1].id)) : 'Sin información'
+
                             }
                             if (item.isWarning) {
                                 reportTemp['Tiene alerta'] = 'SI'
@@ -705,7 +712,7 @@ const ReportsPage = () => {
                                 }
                                 if (item.messages.length > 0) {
                                     item.messages.forEach((message, n) => {
-                                        tareaPendiente[`Mensaje ${n + 1}`] = `${message.name}: ${message.content}`
+                                        tareaPendiente[`Mensaje ${n + 1}`] = message ? `${message.name}: ${message.content}`: ''
                                     })
                                 }
                                 tareasPendientes.push(tareaPendiente)
@@ -713,6 +720,7 @@ const ReportsPage = () => {
                             if (item.unidad !== '*') {
                                 const contenidoMateriales = {
                                     'Fecha': fecha,
+                                    'Hora': hora,
                                     'N° OT': report.idIndex,
                                     'Hoja': item.strpmdesc,
                                     'Tarea': i + 1,

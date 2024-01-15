@@ -7,6 +7,9 @@ import apiIcvConnection from '../api-icv/api-icv.connection';
 import { CronJob } from 'cron'
 import { Sentry } from './sentry.services';
 import notificationService from './notification.service';
+import Tipo from '../models/maquinasTipo';
+import Marca from '../models/maquinasMarcas';
+import Modelo from '../models/maquinasModelo';
 
 const { error: errorMsg } = environment.messages.services.accessControl
 
@@ -123,18 +126,8 @@ const initAccessControl = async () => {
         }) */
         /* const sites = await apiIcvConnection.testGetSites()
         console.log(await sites.json()) */
-        
-        /* const date = new Date()
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'inspeccion')
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'mantencion')
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1, 'inspeccion')
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1, 'mantencion')
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'inspeccion')
-        apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'mantencion') */
-        /* const reports = await Reports.find({reportType:"", guide:""})
-        console.log(reports) */
-        /* try {
-            const findSites = await getSites();
+        try {
+            /* const findSites = await getSites();
             console.log('Starting CRON Job')
             const findMachines = await Machine.find();
             if(findMachines) {
@@ -146,7 +139,7 @@ const initAccessControl = async () => {
             }
             const sitiosCreados = await ApiIcv.createSiteToSend();
             if (sitiosCreados) {
-                sitiosCreados.forEach(async (sitio) => {
+                sitiosCreados.forEach(async (sitio, i) => {
                     await ApiIcv.createMachinesToSend(sitio.idobra, true)
                 })
             }
@@ -159,11 +152,24 @@ const initAccessControl = async () => {
                     await Unidades.create(unidad)
                 }
             })
+            await apiIcvConnection.leerPautas2()
+            const date = new Date()
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'inspeccion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'mantencion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1, 'inspeccion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1, 'mantencion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'inspeccion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'mantencion') */
+            /* const reports = await Reports.find({reportType:"", guide:""})
+            console.log(reports) */
         } catch (error) {
-            console.log(error)
-            Sentry.captureException(error)
-        } */
+            /* console.log(error)
+            Sentry.captureException(error) */
+        }
         initTimeMachinesCron()
+        /* console.log(await Tipo.find())
+        console.log(await Marca.find())
+        console.log(await Modelo.find()) */
 
         /* const findMachines = await Machine.find();
         const group = {}
@@ -233,16 +239,16 @@ const machinesCron = (time) => {
 
 const pautasCron = (time) => {
     try {
-        const jobPautas = new CronJob(time, () => {
-            apiIcvConnection.leerPautas2()
+        const jobPautas = new CronJob(time, async () => {
+            await apiIcvConnection.leerPautas2()
             console.log('Starting CRON Job')
             const date = new Date()
-            apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'inspeccion')
-            apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'mantencion')
-            apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1, 'inspeccion')
-            apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1, 'mantencion')
-            apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'inspeccion')
-            apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'mantencion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'inspeccion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth(), 'mantencion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1, 'inspeccion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 1, 'mantencion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'inspeccion')
+            await apiIcvConnection.getOMSap(date.getUTCFullYear(), date.getUTCMonth() + 2, 'mantencion')
         })
         return jobPautas
     } catch (error) {
@@ -257,10 +263,10 @@ const initTimeMachinesCron = async () => {
         const times = await Cron.find()
         console.log(times)
         if (times.length > 0) {
-            machinesCronState = machinesCron(times[0].timeMachines)
             pautasCroneState = pautasCron(times[0].timePautas)
-            machinesCronState.start()
+            machinesCronState = machinesCron(times[0].timeMachines)
             pautasCroneState.start()
+            machinesCronState.start()
             notificationService.createNotification({})
         }
     } catch (error) {

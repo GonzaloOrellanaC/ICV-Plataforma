@@ -286,6 +286,51 @@ const uploadVideo = async (req, res) => {
     }
 }
 
+const uploadMachineImage = async (req, res) => {
+    const { path, containerName, name } = req.body;
+    try {
+        if(!req.files) {
+            res.send({
+                status: false,
+                message: 'No file uploaded'
+            });
+        } else {
+            let image = req.files.image;
+            const createContainer = await createContainerIfNotExist(containerName);
+            if(createContainer) {
+
+            }else{
+
+            };
+            let stream = image.data;
+            /* let mimetype = image.mimetype.replace('image/', '.');
+            if(mimetype === '.jpeg') {
+                mimetype = '.jpg'
+            }  */
+            const blobName = `${path}/${name}`;
+            const containerClient = blobServiceClient.getContainerClient(containerName);
+            const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+            const blobOptions = { blobHTTPHeaders: { blobContentType: 'image/png' } };
+            const uploadBlobResponse = await blockBlobClient.upload(stream, stream.byteLength, blobOptions);
+            if(uploadBlobResponse) {
+                const blobClient = containerClient.getBlobClient(blobName);
+                const downloadBlockBlobResponse = blobClient.url
+
+                res.send({
+                    status: true,
+                    message: 'File is uploaded',
+                    data: {
+                        url: downloadBlockBlobResponse
+                    }
+                });
+            }
+        }
+    } catch(err) {
+
+        res.status(500).send(err);
+    }
+}
+
 export default {
     uploadImageProfile,
     uploadImageReport,
@@ -293,5 +338,6 @@ export default {
     uploadVideo,
     uploadPdfFile,
     uploadImageFromReport,
-    uploadImageAstFromReport
+    uploadImageAstFromReport,
+    uploadMachineImage
 }

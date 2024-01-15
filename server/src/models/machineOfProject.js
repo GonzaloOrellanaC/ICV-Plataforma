@@ -11,16 +11,25 @@ const MachineOfProjectSchema = new Schema({
         type: Schema.Types.String,
         required: true
     },
+    typeId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Tipo'
+    },
     brand: {
         type: Schema.Types.String,
         required: true
     },
+    brandId: Schema.Types.ObjectId,
     model: {
         type: Schema.Types.String,
         required: true
     },
+    modelId: Schema.Types.ObjectId,
     pIDPM: {
         type: Schema.Types.String,
+    },
+    urlImagen: {
+        type: Schema.Types.String
     }
 },
 {
